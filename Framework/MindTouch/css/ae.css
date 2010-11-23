@@ -1,0 +1,82 @@
+.ae_current { background-color: #DEEDED !important; }
+.ae_deleted { color: #801020 !important; }
+.ae_deleted_col { background-color: #FFD0C0; }
+#calBorder table {border: 1px ridge black;}
+#calBorder td {border: 1px ridge black; line-height: 14px; margin: 0; padding: 2px 5px;}
+#calBorder td > table {border: 0 none !important;}
+#calBorder td td {border: 0 none !important;}
+
+td.ae_editform_field_name { width: 30%; vertical-align: bottom; }
+td.ae_editform_field_value { padding-left: 10px; vertical-align: bottom; }
+ul.ae_editform_field_errors, ul.ae_errors {
+	margin: 0;
+	padding-left: 2em;
+	list-style-type: disc;
+	color: #DF0000;
+}
+
+.tabular_item td { vertical-align: bottom; }
+
+.ae_tabular_section {
+	width: 763px;
+	padding: 0px 5px 4px 0px;
+	overflow: auto;
+}
+.ae_listform {
+	width: 795px;
+	padding: 0px 5px 4px 0px;
+	overflow: auto;
+}
+
+.ae_object_edit_form input[type=text]  { width: 140px; }
+.ae_object_edit_form select { width: 144px; }
+
+.ae_posted {
+	background: url("/skins/common/icons/accept.png") no-repeat scroll left center transparent;
+	padding-left: 22px;
+}
+.ae_field_posted { 
+	background: url("/skins/common/icons/accept.png") no-repeat scroll left center transparent;
+	padding-left: 22px;
+}
+.ae_field_not_posted {
+	background: url("/skins/common/icons/silk/information.png") no-repeat scroll left center transparent;
+	padding-left: 22px;
+	height: 18px;
+}
+
+.ae_field_posted_text { color: #DF0000; }
+.ae_field_not_posted_text { color: #3366CC; }
+
+.ae_editform_actions { padding: 0px 0px 2px 2px; }
+
+.ae_report_form input[type=text]  { width: 140px; }
+.ae_report_form select { width: 144px; }
+.ae_report {
+	width: 795px;
+	padding: 20px 5px 4px 0px;
+	overflow: auto;
+}
+
+.ae_even { background-color: #F5F5F5; }
+tr.tabular_item:hover, tr.ae_list_item:hover { background-color: #EEFFC9/*#DEFECB*/; }
+
+.ae_report *[ondblclick] { cursor: url("/skins/common/icons/sheet.ico"), crosshair; }
+
+.ae_list_pagination {
+   margin: 0px 0px 7px 0px;
+   padding: 3px 0px;
+   background: #eaeaea;
+   clear: both;
+   text-align: center;
+   vertical-align: middle;
+}
+
+a.ae_pagination {
+   text-decoration: none;
+   color: #0000ff;
+}
+
+span.ae_pagination {
+   color: #900010;
+}
