@@ -6,7 +6,19 @@ class Container
 {
    protected static $instance = null;
 
-   protected $ConfigManager = null;
+   protected
+      $ConfigManager    = null,
+      $db               = null,
+      $o_db             = null,
+      $model            = null,
+      $cmodel           = null,
+      $controller       = null,
+      $validator        = null,
+      $event            = null,
+      $event_dispatcher = null,
+      $modules_manager  = null,
+      $request          = null,
+      $responce         = null;
 
    
    /**
@@ -308,7 +320,8 @@ class Container
          
          if (!is_a($controller, 'BaseController') && 
              !is_a($controller, 'ReportsController') &&
-             !is_a($controller, 'DataProcessorsController')
+             !is_a($controller, 'DataProcessorsController') &&
+             !is_a($controller, 'WebServicesController')
          )
          {
             throw new Exception(__METHOD__.': not supported controller class "'.$classname.'"');
@@ -462,4 +475,85 @@ class Container
       return new $classname($kind, $type, $options);
    }
 
+   /**
+    * Get Request object
+    * 
+    * @param array& $options
+    * @return object
+    */
+   public function getRequest(array& $options = array())
+   {
+      if (isset($this->request) && is_object($this->request))
+      {
+         return $this->request;
+      }
+      
+      $_conf = $this->ConfigManager->getRequestConfiguration($options);
+
+      $classname = $_conf['classname'];
+
+      import('lib.request.'.$classname);
+
+      if (!class_exists($classname)) throw new Exception(__METHOD__.': Request class "'.$classname.'" does not exist');
+
+      // Parameters
+      if (isset($options['parameters']) && is_array($options['parameters']))
+      {
+         $_conf['parameters'] = is_array($_conf['parameters']) ? array_merge($_conf['parameters'], $options['parameters']) : $options['parameters'];
+      }
+      elseif (!isset($_conf['parameters']) || !is_array($_conf['parameters']))
+      {
+         $_conf['parameters'] = array();
+      }
+      
+      // Options
+      if (isset($options['options']) && is_array($options['options']))
+      {
+         $_conf['options'] = is_array($_conf['options']) ? array_merge($_conf['options'], $options['options']) : $options['options'];
+      }
+      elseif (!isset($_conf['options']) || !is_array($_conf['options']))
+      {
+         $_conf['options'] = array();
+      }
+      
+      $this->request = call_user_func(array($classname, 'createInstance'), $_conf['parameters'], $_conf['options']);
+      
+      return $this->request;
+   }
+   
+   /**
+    * Get Responce object
+    * 
+    * @param array& $options
+    * @return object
+    */
+   public function getResponce(array& $options = array())
+   {
+      if (isset($this->responce) && is_object($this->responce))
+      {
+         return $this->responce;
+      }
+      
+      $_conf = $this->ConfigManager->getResponceConfiguration($options);
+
+      $classname = $_conf['classname'];
+
+      import('lib.responce.'.$classname);
+
+      if (!class_exists($classname)) throw new Exception(__METHOD__.': Responce class "'.$classname.'" does not exist');
+
+      // Options
+      if (isset($options['options']) && is_array($options['options']))
+      {
+         $_conf['options'] = is_array($_conf['options']) ? array_merge($_conf['options'], $options['options']) : $options['options'];
+      }
+      elseif (!isset($_conf['options']) || !is_array($_conf['options']))
+      {
+         $_conf['options'] = array();
+      }
+      
+      $this->responce = call_user_func(array($classname, 'createInstance'), $_conf['options']);
+      
+      return $this->responce;
+   }
 }

@@ -293,4 +293,57 @@ class Utility
       
       return $value;
    }
+   
+   /**
+    * Set array value by path
+    * 
+    * @param array& $array
+    * @param string $path  - key_1/key_2/../key_n
+    * @param mixed  $value - new value
+    * @return boolean
+    */
+   public static function setArrayValueByPath(array& $array, $path, $value)
+   {
+      if (empty($path) || !is_string($path)) return false;
+      
+      $keys = explode('/', $path);
+      $val  =& $array;
+      
+      foreach ($keys as $key)
+      {
+         if (!is_array($val) || !isset($val[$key])) return false;
+
+         $val =& $val[$key];
+      }
+      
+      $val = $value;
+      
+      return true;
+   }
+   
+   /**
+    * Remove array value by path
+    * 
+    * @param array& $array
+    * @param string $path    - key_1/key_2/../key_n
+    * @return boolean
+    */
+   public static function removeArrayValueByPath(array& $array, $path)
+   {
+      if (empty($path) || !is_string($path)) return false;
+      
+      $keys  = explode('/', $path);
+      $value =& $array;
+      
+      for ($i = 0, $max = count($keys)-1; $i < $max; $i++)
+      {
+         if (!is_array($value) || !isset($value[$keys[$i]])) return false;
+
+         $value =& $value[$keys[$i]];
+      }
+      
+      unset($value[$keys[$i]]);
+      
+      return true;
+   }
 }

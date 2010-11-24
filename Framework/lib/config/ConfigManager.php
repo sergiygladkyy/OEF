@@ -11,6 +11,11 @@ class ConfigManager
    protected $cache = array();
    
    protected $cache_by_kind = array();
+   
+   // Cache variables
+   protected
+      $_container = null,
+      $_db_config = null;
 
    /**
     * Create new instance
@@ -270,5 +275,27 @@ class ConfigManager
    public function getPagerConfiguration(array& $options = array())
    {
       return $this->getFromContainerConfiguration('pager', $options);
+   }
+   
+   /**
+    * Get Request configuration
+    * 
+    * @param array& $options
+    * @return array
+    */
+   public function getRequestConfiguration(array& $options = array())
+   {
+      return $this->getFromContainerConfiguration('request', $options);
+   }
+   
+   /**
+    * Get Responce configuration
+    * 
+    * @param array& $options
+    * @return array
+    */
+   public function getResponceConfiguration(array& $options = array())
+   {
+      return $this->getFromContainerConfiguration('responce', $options);
    }
 }

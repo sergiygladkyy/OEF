@@ -43,5 +43,19 @@ $_conf = array(
          'max_per_page' => 20,
          'max_item_in_scroll' => 15
       )
+   ),
+   
+   /* Request */
+   'request' => array(
+      'classname' => 'Request',
+      'options'   => array()
+   ),
+   
+   /* Request */
+   'responce' => array(
+      'classname' => 'Responce',
+      'options'   => array(
+         //'protocol' => 'HTTP/1.1'
+      )
    )
 );
