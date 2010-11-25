@@ -94,12 +94,12 @@ class ModulesManager
                {
                   if (!mkdir($dir, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$dir.'"');
                }
-            }   
+            //}   
 
             $content = $method ? $this->$method($type, $options) : '';
             
             file_put_contents($file, $content);
-            
+            }
             $this->map[$kind][$type] = $file;
          }
       }
