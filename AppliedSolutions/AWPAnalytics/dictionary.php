@@ -8,7 +8,7 @@ $_dictionary = array(
     'catalogs' => array(
         'Employees' => array(
             'fields' => array(
-                'code' => array(
+                'Code' => array(
                     'precision' => array(
                         'max_length' => 8
                     )
@@ -19,7 +19,7 @@ $_dictionary = array(
                         'type' => "varchar(255) NOT NULL default ''"
                     )
                 ),
-                'Middle_name' => array(
+                'MiddleName' => array(
                     'type' => 'string',
                     'sql'  => array(
                         'type' => "varchar(255) NOT NULL default ''"
@@ -41,7 +41,7 @@ $_dictionary = array(
         // Only system attributes "code" and "description"
         'Projects' => array(
             'fields' => array(
-                'code' => array(
+                'Code' => array(
                     'precision' => array(
                         'max_length' => 8
                     )
@@ -50,9 +50,9 @@ $_dictionary = array(
         ),
         
         // Only system attributes "code" and "description"
-        'Subprojects' => array(
+        'SubProjects' => array(
             'fields' => array(
-                'code' => array(
+                'Code' => array(
                     'precision' => array(
                         'max_length' => 8
                     )
@@ -66,9 +66,9 @@ $_dictionary = array(
             )
         ),
         
-        'BusinessArea' => array(
+        'BusinessAreas' => array(
             'fields' => array(
-                'code' => array(
+                'Code' => array(
                     'precision' => array(
                         'max_length' => 16
                     )
@@ -81,9 +81,9 @@ $_dictionary = array(
     // Documents Section
     ////////////////////
     'documents' => array(
-        'ProjectTimeRecords' => array(
+        'ProjectTimeRecorder' => array(
             'recorder_for' => array(
-                'ResourcesAssignments'
+                'ProjectTimeRecords'
             ),
             
             // Tabular Parts go here
@@ -96,8 +96,8 @@ $_dictionary = array(
                                 'required' => true
                             )
                         ),
-                        'Subproject' => array(
-                            'reference' => 'catalogs.Subprojects',
+                        'SubProject' => array(
+                            'reference' => 'catalogs.SubProjects',
                             /*'precision' => array(
                                 'required' => true
                             )*/
@@ -109,12 +109,90 @@ $_dictionary = array(
                             )
                         ),
                         'BusinessArea' => array(
-                            'reference' => 'catalogs.BusinessArea',
+                            'reference' => 'catalogs.BusinessAreas',
                             'precision' => array(
                                 'required' => true
                             )
                         ),
-                        'Number_of_hours' => array(
+                        'HoursSpent' => array(
+                            'type' => 'float',
+                            'sql'  => array(
+                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                            ),
+                            'precision' => array(
+                                'min' => 0
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        
+        'ProjectRegistration' => array(
+            'tabular_sections' => array(
+                'Records' => array(
+                    'fields' => array(
+                        'Project' => array(
+                            'reference' => 'catalogs.Projects',
+                            'precision' => array(
+                                'required' => true
+                            )
+                        ),
+                        'BudgetNOK' => array(
+                            'type' => 'float',
+                            'sql'  => array(
+                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                            ),
+                            'precision' => array(
+                                'min' => 0
+                            )
+                        ),
+                        'BudgetHRS' => array(
+                            'type' => 'float',
+                            'sql'  => array(
+                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                            ),
+                            'precision' => array(
+                                'min' => 0
+                            )
+                        ),
+                        'Deadline' => array(
+                            'type' => 'date',
+                            'sql'  => array(
+                               'type' => "DATE NOT NULL default '0000-00-00'"
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        
+        'ProjectAssignment' => array(
+            'tabular_sections' => array(
+                'Records' => array(
+                    'fields' => array(
+                        'Resource' => array(
+                            'reference' => 'catalogs.Employees',
+                            'precision' => array(
+                                'required' => true
+                            )
+                        ),
+                        'Project' => array(
+                            'reference' => 'catalogs.Projects',
+                            'precision' => array(
+                                'required' => true
+                            )
+                        ),
+                        'BudgetHRS' => array(
+                            'type' => 'float',
+                            'sql'  => array(
+                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                            ),
+                            'precision' => array(
+                                'min' => 0
+                            )
+                        ),
+                        'Rate' => array(
                             'type' => 'float',
                             'sql'  => array(
                                 'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
@@ -133,7 +211,7 @@ $_dictionary = array(
    // Information registry Section
    ////////////////////////////////
    'information_registry' => array(
-      'ResourcesAssignments' => array(
+      'ProjectTimeRecords' => array(
          'dimensions' => array(
             'Project' => array(
                'reference' => 'catalogs.Projects',
@@ -141,8 +219,8 @@ $_dictionary = array(
                   'required' => true
                )
             ),
-            'Subproject' => array(
-               'reference' => 'catalogs.Subprojects',
+            'SubProject' => array(
+               'reference' => 'catalogs.SubProjects',
                /*'precision' => array(
                   'required' => true
                )*/
@@ -159,12 +237,12 @@ $_dictionary = array(
          
          'fields' => array(
             'BusinessArea' => array(
-               'reference' => 'catalogs.BusinessArea',
+               'reference' => 'catalogs.BusinessAreas',
                'precision' => array(
                   'required' => true
                )
             ),
-            'Number_of_hours' => array(
+            'HoursSpent' => array(
                'type' => 'float',
                'sql'  => array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
@@ -185,7 +263,7 @@ $_dictionary = array(
          ),
          
          'recorders' => array(
-             'ProjectTimeRecords'
+             'ProjectTimeRecorder'
          )
       ),
       
@@ -194,16 +272,16 @@ $_dictionary = array(
             'Project' => array(
                'reference' => 'catalogs.Projects'
             ),
-            'Subproject' => array(
-               'reference' => 'catalogs.Subprojects'
+            'SubProject' => array(
+               'reference' => 'catalogs.SubProjects'
             ),
             'Employee' => array(
                'reference' => 'catalogs.Employees'
             ),
             'BusinessArea' => array(
-               'reference' => 'catalogs.BusinessArea'
+               'reference' => 'catalogs.BusinessAreas'
             ),
-            'Number_of_hours' => array(
+            'HoursSpent' => array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(128) NOT NULL default ''"
@@ -215,7 +293,7 @@ $_dictionary = array(
                   'type' => "varchar(128) NOT NULL default ''"
                )
             ),
-            'DocumentID' => array(
+            'DocumentNumber' => array(
                'type' => 'int',
                'sql'  => array(
                   'type' => "INT(11) NOT NULL default 0"
@@ -227,7 +305,7 @@ $_dictionary = array(
                   'type' => "DATE NOT NULL default '0000-00-00'"
                )
             ),
-            'Errors' => array(
+            'RejectReason' => array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(256) NOT NULL default ''"
@@ -279,7 +357,7 @@ $_dictionary = array(
    // Data processors Section
    ///////////////////////////
    'data_processors' => array(
-      'NavImport' => array(
+      'NavCsvImport' => array(
          'fields' => array(
             'Server' => array(
                'type' => 'string',
@@ -287,13 +365,13 @@ $_dictionary = array(
                   'required' => true
                )
             ),
-            'Filename' => array(
+            'FileName' => array(
                'type' => 'string',
                'precision' => array(
                   'required' => true
                )
             ),
-            'Username' => array(
+            'UserName' => array(
                'type' => 'string',
                'precision' => array(
                   'required' => true
@@ -303,6 +381,53 @@ $_dictionary = array(
                'type' => 'password',
                'precision' => array(
                   'required' => true
+               )
+            )
+         )
+      )
+   ),
+   
+   ////////////////
+   // Web services
+   ////////////////
+   'web_services' => array(
+      'ProjectManagement' => array(
+         'actions' => array(
+            'getProjectList' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
+               )
+            )
+         )/*,
+         'model' => array(
+            'modelclass'  => '...'
+         ),
+         
+         'controller' => array(
+            'classname' => '...'
+         )
+         */
+      ),
+      
+      /*'Finance' => array(
+      )*/
+   ),
+   
+   
+   ////////////
+   // Security
+   ////////////
+   'security' => array(
+      'Admin' => array(
+         'web_services' => array(
+            'ProjectsInfo' => array(
+               'getEmployees' => array(
+                  'remote_calls' => true
                )
             )
          )

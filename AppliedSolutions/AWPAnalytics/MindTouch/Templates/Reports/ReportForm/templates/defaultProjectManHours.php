@@ -13,7 +13,7 @@
    var type     = puid.type;
    var select   = data.select;
    var report   = data.report ?? nil;
-   var dates    = entities.executeQuery("SELECT Date FROM information_registry.ResourcesAssignments GROUP BY Date ORDER BY Date ASC");
+   var dates    = entities.executeQuery("SELECT Date FROM information_registry.ProjectTimeRecords GROUP BY Date ORDER BY Date ASC");
 }}
 <eval:if test="puid is nil">
   <ul class="ae_errors">

@@ -12,7 +12,7 @@ function onGenerate($event)
 
    /* Get data */
 
-   $irModel  = $container->getCModel('information_registry', 'ResourcesAssignments');
+   $irModel  = $container->getCModel('information_registry', 'ProjectTimeRecords');
    
    if (!empty($headline['Date']))
    {
@@ -31,9 +31,9 @@ function onGenerate($event)
    {
       if (isset($hours[$row['Project']]))
       {
-         $hours[$row['Project']] += $row['Number_of_hours'];
+         $hours[$row['Project']] += $row['HoursSpent'];
       }
-      else $hours[$row['Project']] = $row['Number_of_hours'];
+      else $hours[$row['Project']] = $row['HoursSpent'];
    }
 
 

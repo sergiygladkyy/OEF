@@ -13,7 +13,7 @@ function onGenerate($event)
 
    /* Get data */
 
-   $irModel  = $container->getCModel('information_registry', 'ResourcesAssignments');
+   $irModel  = $container->getCModel('information_registry', 'ProjectTimeRecords');
    $criteria = array();
    $attrs    = array();
    $values   = array();
@@ -46,11 +46,11 @@ function onGenerate($event)
    {
       if (isset($hours[$row['Employee']]))
       {
-         $hours[$row['Employee']] += $row['Number_of_hours'];
+         $hours[$row['Employee']] += $row['HoursSpent'];
       }
-      else $hours[$row['Employee']] = $row['Number_of_hours'];
+      else $hours[$row['Employee']] = $row['HoursSpent'];
       
-      $total += $row['Number_of_hours'];
+      $total += $row['HoursSpent'];
    }
 
 
