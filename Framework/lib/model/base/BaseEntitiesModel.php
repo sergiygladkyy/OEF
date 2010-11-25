@@ -183,6 +183,8 @@ abstract class BaseEntitiesModel extends BaseModel
     */
    protected function retrieveCriteriaQuery(array& $db_map, $values, array& $options)
    {
+      $fields = array();
+      
       if (!empty($values) || (!empty($options['attributes']) && !empty($options['criterion'])))
       {
          // Retrieve WHERE

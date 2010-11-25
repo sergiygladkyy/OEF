@@ -131,9 +131,13 @@ class WebServiceModel extends BaseNotStorageEntityModel
       }
       
       // Validate attributes
-      $errors = $this->validateAttributes($this->conf['attributes'], $options);
-      
-      if (!empty($errors)) return $errors;
+      if (!empty($this->conf['attributes']))
+      {
+         $errors = $this->validateAttributes($this->conf['attributes'], $options);
+         
+         if (!empty($errors)) return $errors;
+      }
+      else $this->attributes = array();
       
       // Execute action
       try {

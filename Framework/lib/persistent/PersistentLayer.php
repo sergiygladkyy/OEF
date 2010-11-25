@@ -671,13 +671,17 @@ class PersistentLayer
                 
                /* Check fields config */
                 
-               if (!isset($conf['fields']) || !is_array($conf['fields']))
+               if (!isset($conf['fields']))
+               {
+                  $valid[$name]['actions'][$action]['fields'] = array();
+               }
+               elseif (!is_array($conf['fields']))
                {
                   $errors[$name][] = 'Fields configuration for action "'.$action.'" is wrong';
                }
                elseif (empty($conf['fields']))
                {
-                  $errors[$name][] = 'Fields configuration for action "'.$action.'" is empty';
+                  $valid[$name]['actions'][$action]['fields'] = array();
                }
                else
                {

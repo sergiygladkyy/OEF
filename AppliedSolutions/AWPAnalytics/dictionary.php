@@ -394,14 +394,7 @@ $_dictionary = array(
       'ProjectManagement' => array(
          'actions' => array(
             'getProjectList' => array(
-               'fields' => array(
-                  'Project' => array(
-                     'reference' => 'catalogs.Projects',
-                     'precision' => array(
-                        'required' => true
-                     )
-                  )
-               )
+               'fields' => array()
             )
          )/*,
          'model' => array(
@@ -434,3 +427,4 @@ $_dictionary = array(
       )
    )
 );
+
