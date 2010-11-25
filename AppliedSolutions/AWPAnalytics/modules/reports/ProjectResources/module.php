@@ -56,7 +56,7 @@ function onGenerate($event)
 
    /* Generate report */
 
-   $mockup = new Mockup('mockup/ProjectResources.htm');
+   $mockup = new Mockup('templates/ProjectResources.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');

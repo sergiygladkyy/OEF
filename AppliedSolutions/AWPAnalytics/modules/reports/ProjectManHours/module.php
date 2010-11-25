@@ -39,7 +39,7 @@ function onGenerate($event)
 
    /* Generate report */
 
-   $mockup = new Mockup('mockup/ProjectManHours.htm');
+   $mockup = new Mockup('templates/ProjectManHours.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');
