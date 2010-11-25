@@ -1,0 +1,242 @@
+<mockup version="1.0" skin="sketch" measuredW="1332" measuredH="739" mockupW="1289" mockupH="582">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::TabBar" x="684" y="298" w="638" h="431" measuredW="223" measuredH="100" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>1</selectedIndex>
+        <text>Summary%2C%20Detailed</text>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::FieldSet" x="33" y="270" w="638" h="459" measuredW="200" measuredH="170" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Universal%20report</text>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::TabBar" x="33" y="292" w="638" h="420" measuredW="223" measuredH="100" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>Summary%2C%20Detailed</text>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::DataGrid" x="33" y="520" w="638" h="207" measuredW="373" measuredH="126" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <alternateRowColor>15134199</alternateRowColor>
+        <borderStyle>square</borderStyle>
+        <hLines>true</hLines>
+        <rowHeight>26</rowHeight>
+        <selectedIndex>0</selectedIndex>
+        <size>10</size>
+        <text>MSISDN%2CRate%20Class%2CUsage%2CSessions%2CAmount%2CDuration%0A%5B+31611122233%5D%2C%5BGP%5D%2C%5B12873%5D%2C%5B5%5D%2C%5B%u20AC%2032%5D.%5B30%5D%2C%5B434%5D%0A%5B+31611122233%5D%2C%5BSMS%20MT%5D%2C%5B34%5D%2C%5B29%5D%2C%5B%u20AC%2032%5D.%5B30%5D%2C%5B445%5D%0A%5B+31611155555%5D%2C%5BGr%5D%2C%5B9995%5D%2C%5B3%5D%2C%5B%u20AC%2012.02%5D%2C%5B424%5D%0A%5B+31611155666%5D%2C%5BSMS%20MT%5D%2C%5B555%5D%2C%5B555%5D%2C%5B%u20AC%20101.20%5D%2C%5B564%5D</text>
+        <value>0</value>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="22" controlTypeID="com.balsamiq.mockups::StickyNote" x="410" y="216" w="-1" h="-1" measuredW="109" measuredH="123" zOrder="29" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>The%20pane%20can%20roll-unroll</text>
+      </controlProperties>
+    </control>
+    <control controlID="23" controlTypeID="com.balsamiq.mockups::Arrow" x="463" y="228" w="171" h="91" measuredW="150" measuredH="100" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <curvature>1</curvature>
+        <direction>top</direction>
+        <leftArrow>false</leftArrow>
+        <rightArrow>true</rightArrow>
+      </controlProperties>
+    </control>
+    <control controlID="28" controlTypeID="com.balsamiq.mockups::StickyNote" x="279" y="213" w="-1" h="-1" measuredW="109" measuredH="123" zOrder="31" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>This%20selection%20depends%20on%20User%20rights</text>
+      </controlProperties>
+    </control>
+    <control controlID="38" controlTypeID="com.balsamiq.mockups::DataGrid" x="684" y="327" w="638" h="366" measuredW="393" measuredH="178" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <alternateRowColor>15134199</alternateRowColor>
+        <bold>true</bold>
+        <borderStyle>square</borderStyle>
+        <hLines>true</hLines>
+        <rowHeight>26</rowHeight>
+        <selectedIndex>0</selectedIndex>
+        <size>10</size>
+        <text>MSISDN%2C%20ICCID-SHORT%2C%20IP-adress%2C%20Usage%2C%20Sessions%2C%20Amount%0A316555222%2C%20395124AK%2C%20101.222.222.3%2C%2034%2C%202%2C%20%u20AC%200.45%0A316555333%2C%20395125AK%2C%20101.222.222.4%2C%2035%2C%2014%2C%20%u20AC%200.10%0A316555444%2C%20395126AK%2C%20101.222.222.5%2C%2045%2C%208%2C%20%u20AC%200.20%0A316555555%2C%20395127AK%2C%20101.222.222.6%2C%2054%2C%205%2C%20%u20AC%200.30%0Atotals%3A%0A%2C%20%2C%20%2C%20168%2C%2029%2C%u20AC%201.05</text>
+        <value>0</value>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="39" controlTypeID="com.balsamiq.mockups::Arrow" x="480" y="162" w="147" h="66" measuredW="150" measuredH="100" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <rightArrow>true</rightArrow>
+      </controlProperties>
+    </control>
+    <control controlID="40" controlTypeID="com.balsamiq.mockups::FieldSet" x="61" y="147" w="593" h="70" measuredW="200" measuredH="170" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Settings</text>
+      </controlProperties>
+    </control>
+    <control controlID="41" controlTypeID="com.balsamiq.mockups::Button" x="536" y="162" w="77" h="-1" measuredW="72" measuredH="28" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <state>up</state>
+        <text>Generate</text>
+      </controlProperties>
+    </control>
+    <control controlID="42" controlTypeID="com.balsamiq.mockups::RoundButton" x="634" y="147" w="22" h="25" measuredW="32" measuredH="32" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CircledPlusIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::Label" x="76" y="164" w="460" h="25" measuredW="463" measuredH="23" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Performance%20Report%3B%20Grouped%20by%3A%20MSISDN%3B%20Period%3A%2001/01/2009-01/02/2009</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Label" x="76" y="187" w="452" h="25" measuredW="262" measuredH="23" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Account%28s%29%3A%20All%3B%20Considered%20rateclasses%3A%20All</text>
+      </controlProperties>
+    </control>
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::Label" x="1143" y="693" w="-1" h="-1" measuredW="129" measuredH="23" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%5BDownload%20full%20report%5D</text>
+      </controlProperties>
+    </control>
+    <control controlID="80" controlTypeID="com.balsamiq.mockups::FieldSet" x="48" y="327" w="608" h="184" measuredW="200" measuredH="170" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Settings</text>
+      </controlProperties>
+    </control>
+    <control controlID="81" controlTypeID="com.balsamiq.mockups::Label" x="79" y="444" w="76" h="25" measuredW="73" measuredH="23" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Grouped%20by</text>
+      </controlProperties>
+    </control>
+    <control controlID="82" controlTypeID="com.balsamiq.mockups::Label" x="210" y="345" w="148" h="25" measuredW="142" measuredH="23" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Considered%20rateclasses</text>
+      </controlProperties>
+    </control>
+    <control controlID="83" controlTypeID="com.balsamiq.mockups::Button" x="544" y="458" w="68" h="-1" measuredW="72" measuredH="28" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <state>up</state>
+        <text>Generate</text>
+      </controlProperties>
+    </control>
+    <control controlID="84" controlTypeID="com.balsamiq.mockups::DateChooser" x="205" y="459" w="127" h="-1" measuredW="120" measuredH="27" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>up</state>
+        <text>01/01/2009%20</text>
+      </controlProperties>
+    </control>
+    <control controlID="85" controlTypeID="com.balsamiq.mockups::Label" x="205" y="441" w="74" h="25" measuredW="70" measuredH="23" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Start%20date</text>
+      </controlProperties>
+    </control>
+    <control controlID="86" controlTypeID="com.balsamiq.mockups::Label" x="348" y="441" w="62" h="25" measuredW="58" measuredH="23" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>End%20date</text>
+      </controlProperties>
+    </control>
+    <control controlID="87" controlTypeID="com.balsamiq.mockups::DateChooser" x="348" y="459" w="127" h="-1" measuredW="123" measuredH="27" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>up</state>
+        <text>01/02/2009%20</text>
+      </controlProperties>
+    </control>
+    <control controlID="88" controlTypeID="com.balsamiq.mockups::Label" x="493" y="342" w="108" h="25" measuredW="102" measuredH="23" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>BP%20or%20Account%28s%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="89" controlTypeID="com.balsamiq.mockups::List" x="493" y="367" w="115" h="68" measuredW="100" measuredH="126" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hasHeader>false</hasHeader>
+        <rowHeight>20</rowHeight>
+        <selectedIndex>0</selectedIndex>
+        <text>All%0AKPN%20Test%0AOld%20KPN%20Test</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="90" controlTypeID="com.balsamiq.mockups::RoundButton" x="634" y="327" w="22" h="25" measuredW="32" measuredH="32" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CircledMinusIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="91" controlTypeID="com.balsamiq.mockups::ComboBox" x="79" y="462" w="96" h="-1" measuredW="83" measuredH="23" zOrder="25" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>MSISDN</text>
+      </controlProperties>
+    </control>
+    <control controlID="92" controlTypeID="com.balsamiq.mockups::List" x="210" y="366" w="270" h="68" measuredW="100" measuredH="126" zOrder="26" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>square</borderStyle>
+        <hasHeader>false</hasHeader>
+        <rowHeight>20</rowHeight>
+        <selectedIndex>1</selectedIndex>
+        <text>All%0AData%20inbellen%0AData%20national%20-%20BB%0AData%20national%20-%20flat%20fee</text>
+        <value>0</value>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="93" controlTypeID="com.balsamiq.mockups::List" x="78" y="365" w="115" h="68" measuredW="100" measuredH="126" zOrder="27" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hasHeader>false</hasHeader>
+        <rowHeight>20</rowHeight>
+        <selectedIndex>0</selectedIndex>
+        <text>Performance%0ASIM%20Status%0AThreshold</text>
+        <value>0</value>
+        <verticalScrollbar>false</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="94" controlTypeID="com.balsamiq.mockups::Label" x="78" y="346" w="47" h="25" measuredW="45" measuredH="23" zOrder="28" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Report</text>
+      </controlProperties>
+    </control>
+    <control controlID="95" controlTypeID="com.balsamiq.mockups::Arrow" x="358" y="319" w="138" h="50" measuredW="150" measuredH="100" zOrder="30" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <curvature>1</curvature>
+        <direction>top</direction>
+        <leftArrow>false</leftArrow>
+        <rightArrow>true</rightArrow>
+      </controlProperties>
+    </control>
+    <control controlID="96" controlTypeID="com.balsamiq.mockups::FieldSet" x="684" y="270" w="638" h="459" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Universal%20report</text>
+      </controlProperties>
+    </control>
+    <control controlID="97" controlTypeID="com.balsamiq.mockups::Arrow" x="365" y="496" w="732" h="81" measuredW="150" measuredH="100" zOrder="32" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <rightArrow>true</rightArrow>
+      </controlProperties>
+    </control>
+    <control controlID="98" controlTypeID="com.balsamiq.mockups::StickyNote" x="155" y="213" w="-1" h="-1" measuredW="109" measuredH="123" zOrder="33" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Click%20for%20Detailed%20Report</text>
+      </controlProperties>
+    </control>
+    <control controlID="99" controlTypeID="com.balsamiq.mockups::Arrow" x="257" y="319" w="108" h="242" measuredW="150" measuredH="100" zOrder="34" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <curvature>1</curvature>
+        <direction>top</direction>
+        <leftArrow>false</leftArrow>
+        <rightArrow>true</rightArrow>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
