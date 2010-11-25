@@ -25,7 +25,7 @@ class WebServicesRouter extends Router
       $this->parameters['application'] = isset($params[0]) ? $params[0] : null;
       $this->parameters['kind']        = isset($params[1]) ? $params[1] : null;
       $this->parameters['type']        = isset($params[2]) ? $params[2] : null;
-      $this->parameters['action']      = isset($params[3]) ? $params[3] : null;
+      $this->parameters['action']      = isset($params[3]) ? 'get'.$params[3] : null;
       
       for ($i = 4; $i < $count; $i++)
       {
