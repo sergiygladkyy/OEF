@@ -39,7 +39,7 @@
   <thead>
     <tr>
       <eval:foreach var="field" in="fields">
-        <eval:if test="field != 'owner'">
+        <eval:if test="field != 'Owner'">
           <th>{{ string.ToUpperFirst(field); }}</th>
         </eval:if>
       </eval:foreach>
@@ -49,7 +49,7 @@
     <eval:foreach var="item" in="_list">
       <tr class="tabular_item">
         <eval:foreach var="field" in="fields">
-          <eval:if test="field != 'owner'">
+          <eval:if test="field != 'Owner'">
             <td class="tabular_col">
               <pre class="script">
                 var params = {reference: references[field]};

@@ -36,7 +36,7 @@ class CatalogsModel extends BaseObjectsModel
    public function retrieveSelectData(array $options = array())
    {
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 ORDER BY `description` ASC";
+      $query  = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 ORDER BY `Description` ASC";
       
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);
@@ -61,7 +61,7 @@ class CatalogsModel extends BaseObjectsModel
       if (!is_array($ids)) $ids = array($ids);
       
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `".$db_map['deleted']."`, `description` FROM `".$db_map['table']."` WHERE `".$db_map['pkey']."` IN (".implode(',', $ids).")";
+      $query  = "SELECT `".$db_map['pkey']."`, `".$db_map['deleted']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['pkey']."` IN (".implode(',', $ids).")";
       
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);

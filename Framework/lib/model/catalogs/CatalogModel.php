@@ -10,11 +10,11 @@ class CatalogModel extends BaseObjectModel
    {
       parent::__construct(self::kind, $type, $options);
       
-      $this->setAttribute('code', $this->generateCode($options));
+      $this->setAttribute('Code', $this->generateCode($options));
    }
    
    /**
-    * Load entity with code = 'code'
+    * Load entity with Code = 'Code'
     * 
     * @param string $code
     * @param array& $options
@@ -24,7 +24,7 @@ class CatalogModel extends BaseObjectModel
    {
       $code  = (string) $code;
       $pkey  = $this->conf['db_map']['pkey'];
-      $query = "SELECT * FROM `".$this->conf['db_map']['table']."` WHERE `code`='".$code."'";
+      $query = "SELECT * FROM `".$this->conf['db_map']['table']."` WHERE `Code`='".$code."'";
       $db    = $this->container->getDBManager($options);
       
       $values = $db->loadAssoc($query);
@@ -55,17 +55,17 @@ class CatalogModel extends BaseObjectModel
    {
       $errors = parent::validateAttributes($names, $options);
       
-      // Check code
-      if (!isset($errors['code']) && ($this->isNew || $this->modified['code']))
+      // Check Code
+      if (!isset($errors['Code']) && ($this->isNew || $this->modified['Code']))
       {
-         if (!$this->checkCode($options)) $errors['code'][] = 'Catalog with this code already exists';
+         if (!$this->checkCode($options)) $errors['Code'][] = 'Catalog with this Code already exists';
       }
       
       return $errors;
    }
    
    /**
-    * Check unique code
+    * Check unique Code
     * 
     * @param array& $options
     * @return array - errors
@@ -74,7 +74,7 @@ class CatalogModel extends BaseObjectModel
    {
       $db_map =& $this->conf['db_map'];
       
-      $where[] = "`code`='".$this->attributes['code']."'";
+      $where[] = "`Code`='".$this->attributes['Code']."'";
       
       if (!$this->isNew)
       {
@@ -90,7 +90,7 @@ class CatalogModel extends BaseObjectModel
    }
    
    /**
-    * Generate default value for system attribute 'code'
+    * Generate default value for system attribute 'Code'
     * 
     * @param array& $options
     * @return string
@@ -109,7 +109,7 @@ class CatalogModel extends BaseObjectModel
       
       /* Default generate */
       $dbmap =& $this->conf['db_map'];
-      $query = "SELECT `code` FROM `".$dbmap['table']."` ORDER BY `code` DESC LIMIT 1";
+      $query = "SELECT `Code` FROM `".$dbmap['table']."` ORDER BY `Code` DESC LIMIT 1";
       $db    = $this->container->getDBManager($options);
       
       if (!$row = $db->loadAssoc($query))
@@ -119,8 +119,8 @@ class CatalogModel extends BaseObjectModel
          return '1';
       }
       
-      // Generate next code
-      $code   = $row['code'];
+      // Generate next Code
+      $code   = $row['Code'];
       $length = strlen($code) - 1;
       
       for ($i = $length; $i >= 0; $i--)
@@ -159,7 +159,7 @@ class CatalogModel extends BaseObjectModel
       
       if ($i == -1)
       {
-         if (($length + 1) >= $this->conf['precision']['code']['max_length']) return null;
+         if (($length + 1) >= $this->conf['precision']['Code']['max_length']) return null;
          
          $code = '0'.$code;
       }
@@ -178,9 +178,9 @@ class CatalogModel extends BaseObjectModel
       
       if (empty($values[$pkey]))
       {
-         if (!empty($values['code']) && !empty($options['replace'])) // Load by code
+         if (!empty($values['Code']) && !empty($options['replace'])) // Load by Code
          {
-            if ($this->loadByCode($values['code'], $options)) return array();
+            if ($this->loadByCode($values['Code'], $options)) return array();
          }
          
          // New

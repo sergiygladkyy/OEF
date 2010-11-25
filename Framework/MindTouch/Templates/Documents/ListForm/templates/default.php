@@ -86,7 +86,7 @@
                   let content = 'Template not found';
                 }
               </pre>
-              <eval:if test="field == 'date'">
+              <eval:if test="field == 'Date'">
                 <eval:if test="item._post &gt; 0">
                   <div class="ae_posted">{{ content; }}</div>
                 </eval:if>

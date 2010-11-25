@@ -44,9 +44,9 @@ abstract class ObjectsController extends BaseController
          {
             // This is owner
             $taboptions['criteria'] = array(
-               'attributes' => 'owner',
-               'criterion'  => '`owner`=%%owner%%',
-               'values'     => array('owner' => $id)
+               'attributes' => 'Owner',
+               'criterion'  => '`Owner`=%%Owner%%',
+               'values'     => array('Owner' => $id)
             );
          }
          
@@ -113,9 +113,9 @@ abstract class ObjectsController extends BaseController
          {
             // This is owner
             $taboptions['criteria'] = array(
-               'attributes' => 'owner',
-               'criterion'  => '`owner`=%%owner%%',
-               'values'     => array('owner' => $id)
+               'attributes' => 'Owner',
+               'criterion'  => '`Owner`=%%Owner%%',
+               'values'     => array('Owner' => $id)
             );
          }
           

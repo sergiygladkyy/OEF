@@ -759,7 +759,7 @@ class PersistentLayer
          }
          
          // is attribute
-         if ($kind == 'catalogs' && $field == 'code')
+         if ($kind == 'catalogs' && $field == 'Code')
          {
             $valid[$field] = $conf;
             continue;
@@ -1616,9 +1616,9 @@ class PersistentLayer
          
          if ($kind == 'catalogs')
          {
-            $clength = empty($params['fields']['code']['precision']['max_length']) ? 5 : $params['fields']['code']['precision']['max_length'];
+            $clength = empty($params['fields']['Code']['precision']['max_length']) ? 5 : $params['fields']['Code']['precision']['max_length'];
             $add_fields = array(
-               'code' => array(
+               'Code' => array(
                   'type' => 'string',
                   'sql'  => array(
                      'type' => "varchar(".$clength.") NOT NULL"
@@ -1628,7 +1628,7 @@ class PersistentLayer
                      'max_length' => $clength
                   )
                ),
-               'description' => array(
+               'Description' => array(
                   'type' => 'string',
                   'sql'  => array(
                      'type' => "varchar(255) NOT NULL"
@@ -1637,13 +1637,13 @@ class PersistentLayer
                )
             );
             unset(
-               $params['fields']['code'],
-               $params['fields']['description']
+               $params['fields']['Code'],
+               $params['fields']['Description']
             );
          }
          elseif ($kind == 'documents')
          {
-            $field = 'date';
+            $field = 'Date';
             $add_fields = array(
                $field => array(
                   'type' => 'datetime',
@@ -1856,7 +1856,7 @@ class PersistentLayer
          
          /* Owner */
          
-         $field = 'owner';
+         $field = 'Owner';
          $add_fields = array(
             $field => array(
                'reference' => $type,
@@ -2263,7 +2263,7 @@ class PersistentLayer
 
          if ($kind == 'catalogs')
          {
-            $uKey = ', UNIQUE KEY `code` (`code`)';
+            $uKey = ', UNIQUE KEY `Code` (`Code`)';
          }
          elseif ($kind == 'documents')
          {

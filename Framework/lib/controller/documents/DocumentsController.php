@@ -54,7 +54,7 @@ class DocumentsController extends ObjectsController
          $status = false;
          $result['msg'] = 'Document "'.$this->type.'" not posted';
       }
-      else $result['msg'] = 'Document "'.$this->type.'" posted succesful';
+      else $result['msg'] = 'Document "'.$this->type.'" posted succesfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
@@ -85,7 +85,7 @@ class DocumentsController extends ObjectsController
          $status = false;
          $result['msg'] = 'Document "'.$this->type.'" not unposted';
       }
-      else $result['msg'] = 'Document "'.$this->type.'" unposted succesful';
+      else $result['msg'] = 'Document "'.$this->type.'" unposted succesfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }

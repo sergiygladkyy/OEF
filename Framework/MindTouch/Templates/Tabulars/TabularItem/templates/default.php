@@ -24,7 +24,7 @@
   <td><input type="checkbox" name="{{ name_prefix..'[ids][]' }}" value="{{ item._id ?? 0 }}" /></td>
   <eval:foreach var="field" in="fields">
     {{ var name = name_prefix..'['..i..']['..field..']'; }}
-    <eval:if test="field != 'owner'">
+    <eval:if test="field != 'Owner'">
       {{ var _prefix = class..'_'..i..'_'..field; }}
       <td class="tabular_col">
         <ul class="{{ class..'_'..i..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>

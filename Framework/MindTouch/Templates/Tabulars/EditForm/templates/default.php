@@ -54,7 +54,7 @@
     <tr>
       <th style="width: 10px;"><input type="checkbox" onclick="{{ 'javascript:checkAll(\''..class..'\', this);' }}" /></th>
       <eval:foreach var="field" in="fields">
-        <eval:if test="field != 'owner'">
+        <eval:if test="field != 'Owner'">
           <th>{{ string.ToUpperFirst(field); }}</th>
         </eval:if>
       </eval:foreach>

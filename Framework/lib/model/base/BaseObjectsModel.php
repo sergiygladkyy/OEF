@@ -263,7 +263,7 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       }
       else $types = $this->conf['tabulars'];
       
-      $options = array_merge(array('with_link_desc' => true, 'with_select' => true, 'attributes' => 'owner'), $options);
+      $options = array_merge(array('with_link_desc' => true, 'with_select' => true, 'attributes' => 'Owner'), $options);
       
       foreach ($types as $type)
       {
