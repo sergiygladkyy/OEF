@@ -9,9 +9,9 @@ function getProjectList(array $attributes)
 {
    $container = Container::getInstance();
    
-   $model = $container->getModel('catalogs', 'Projects');
+   $cmodel = $container->getCModel('catalogs', 'Projects');
    
-   $list = $model->getEntities();
+   $list = $cmodel->getEntities();
 
    if (is_null($list)) throw new Exception('Internal model error');
    
