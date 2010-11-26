@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
 	markSelected();
 	
     var import_form_options = {
-       url: '/Special:AEController',
+       url: '/Special:OEController',
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: processResponse,

@@ -262,7 +262,7 @@ function executeDeleteListItem(kind, type, prefix, show_deleted)
 	}
 	
 	jQuery.ajax({
-		url: '/Special:AEController',
+		url: '/Special:OEController',
 	    async: false,
 		type: 'POST',
 		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'delete'}),
@@ -314,7 +314,7 @@ function executeRestoreListItem(kind, type, prefix)
 	}
 	
 	jQuery.ajax({
-	    url: '/Special:AEController',
+	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
 	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'restore'}),
@@ -361,7 +361,7 @@ function executePostListItem(kind, type, prefix)
 	}
 	
 	jQuery.ajax({
-	    url: '/Special:AEController',
+	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
 	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post'}),
@@ -410,7 +410,7 @@ function executeClearPostingListItem(kind, type, prefix)
 	}
 	
 	jQuery.ajax({
-	    url: '/Special:AEController',
+	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
 	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost'}),

@@ -1,5 +1,5 @@
 <?php
-$DEKIWIKI_ROOT = 'C:/Program files/MindTouch/MindTouch/web/';
+$DEKIWIKI_ROOT = 'C:/Program files/MindTouch/MindTouch/web';
 $DEKIWIKI_API = 'http://mars/@api';
 $dbHost = "localhost";
 $dbUser = "root";
@@ -14,10 +14,14 @@ class ExternalConfig {
 
 ExternalConfig::$extconfig = array (
    'installer' => array(
-      'base_dir' => '/ext/AE',
-      'root_templates' => '/Templates',
-      'templates_map'  => '/templates_map.php',
-      'api' => $DEKIWIKI_API
+      'api'  => $DEKIWIKI_API,
+      'root' => $DEKIWIKI_ROOT,
+      'base_dir' => '/ext/OEF',
+      'base_for_deki_ext' => '/OEF',
+      'framework_dir' => '/Framework',
+      'applied_solutions_dir' => '/AppliedSolutions',
+      'templates_dir'  => '/Templates',
+      'templates_map'  => '/Templates/templates_map.php'
    )
 );
 ?>

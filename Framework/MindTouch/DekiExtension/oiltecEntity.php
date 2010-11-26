@@ -52,9 +52,11 @@
    */
   function initialize($full = false)
   {
-     //getcwd();
      if (!CheckPermissions()) return array('You do not have permision to access this page');
-     if (!chdir('AE')) return array('Initialize entity extension error');
+     
+     $framework = '.'.ExternalConfig::$extconfig['installer']['base_for_deki_ext'];
+     
+     if (!chdir($framework)) return array('Initialize entity extension error');
      
      if (!$full)
      {
@@ -64,7 +66,10 @@
      }
      else require_once('config/init.php');
      
-     Container::createInstance();
+     $conf =& ExternalConfig::$extconfig['installer'];
+     $base_dir = $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$conf['applied_solution_name'];
+     
+     Container::createInstance(array('base_dir' => $base_dir));
      
      return array();
   }

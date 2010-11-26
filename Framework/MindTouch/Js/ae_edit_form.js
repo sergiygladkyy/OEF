@@ -12,7 +12,7 @@ jQuery(document).ready(function() {
     var edit_form_options = {
   	  options: {},
   	  async: false,
-      url: '/Special:AEController',
+      url: '/Special:OEController',
       dataType:  'json',
       beforeSubmit: prepareRequest,
       success: function (data, status) { processResponse(data, status, this.options); },
@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
     var object_edit_form_options = {
        options: {},
        async: false,
-       url: '/Special:AEController',
+       url: '/Special:OEController',
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: function (data, status) { processObjectResponse(data, status, this.options); },
@@ -430,7 +430,7 @@ function executePost(kind, type, id, prefix)
 	}
 	
 	jQuery.ajax({
-	    url: '/Special:AEController',
+	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
 	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post'}),
@@ -481,7 +481,7 @@ function executeClearPosting(kind, type, id, prefix)
 	}
 	
 	jQuery.ajax({
-	    url: '/Special:AEController',
+	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
 	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost'}),

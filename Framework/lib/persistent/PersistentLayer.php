@@ -10,8 +10,13 @@ class PersistentLayer
    
    protected static $instance = null;
 
-   protected $dictionary = array();
-
+   protected
+      $applied_solution_name = null,
+      $applied_solution_dir  = null,
+	  $config_dir      = null,
+	  $dictionary_path = null,
+      $config_map_path = null,
+      $dictionary      = array();
    
    /**
     * Get PersistentLayer object
@@ -37,7 +42,53 @@ class PersistentLayer
     */
    protected function __construct(array & $options = array())
    {
-      ;
+      $this->applied_solution_dir  = isset($options['AppliedSolutionDir'])  ? (string) $options['AppliedSolutionDir']  : null;
+      $this->applied_solution_name = isset($options['AppliedSolutionName']) ? (string) $options['AppliedSolutionName'] : null;
+	  
+	  $this->initialize();
+   }
+   
+   /**
+    * Set current Applied Solution Name
+    * 
+    * @param string $name
+    * @return void
+    */
+   public function setAppliedSolutionDir($dir)
+   {
+      $this->applied_solution_dir = (string) $dir;
+	  
+	  $this->initialize();
+   }
+   
+   /**
+    * Set current Applied Solution Name
+    * 
+    * @param string $name
+    * @return void
+    */
+   public function setAppliedSolutionName($name)
+   {
+      $this->applied_solution_name = (string) $name;
+	  
+	  $this->initialize();
+   }
+   
+   
+   /**
+    * Initialize
+	*
+	* @param array& $options
+	* @return void
+	*/
+   protected function initialize(array& $options = array())
+   {
+      $base = $this->applied_solution_dir  ? $this->applied_solution_dir.'/'  : '';
+      $apps = $this->applied_solution_name ? $this->applied_solution_name.'/' : '';
+	  
+	  $this->config_dir      = $base.$apps.self::i_config_dir;
+	  $this->dictionary_path = $base.$apps.self::dictionary_path;
+      $this->config_map_path = $base.$apps.self::config_map_path;
    }
    
    
@@ -49,7 +100,7 @@ class PersistentLayer
     */
    protected function loadDictionary(array& $options = array())
    {
-      $this->dictionary = $this->loadConfigFromFile(self::dictionary_path);
+      $this->dictionary = $this->loadConfigFromFile($this->dictionary_path);
       
       return $this->checkDictionary($this->dictionary, $options);
    }
@@ -1366,7 +1417,7 @@ class PersistentLayer
       $map = array_merge($map, $this->saveInternalConfiguration($result['other']));
       
       // save configuration map
-      if (!file_put_contents(self::config_map_path, "<?php\n".'$_config_map = '.Utility::convertArrayToPHPString($map).';'))
+      if (!file_put_contents($this->config_map_path, "<?php\n".'$_config_map = '.Utility::convertArrayToPHPString($map).';'))
       {
          throw new Exception(__METHOD__.': Can\'t save internal configuration map');
       }
@@ -1384,7 +1435,7 @@ class PersistentLayer
    protected function saveInternalConfiguration(array& $files, $dir = '')
    {
       $map  = array();
-      $path = self::i_config_dir.$dir;
+      $path = $this->config_dir.$dir;
       
       if (!is_dir($path))
       {
@@ -2348,7 +2399,7 @@ class PersistentLayer
     */
    public function isInstalled()
    {
-      return file_exists(self::config_map_path);
+      return file_exists($this->config_map_path);
    }
    
    /**
@@ -2415,9 +2466,9 @@ class PersistentLayer
       );
       
       $map = $this->saveInternalConfiguration($conf);
-      $map = array_merge(Utility::loadArrayFromFile(self::config_map_path), $map);
+      $map = array_merge(Utility::loadArrayFromFile($this->config_map_path), $map);
       
-      if (!file_put_contents(self::config_map_path, "<?php\n".'$_config_map = '.Utility::convertArrayToPHPString($map).';'))
+      if (!file_put_contents($this->config_map_path, "<?php\n".'$_config_map = '.Utility::convertArrayToPHPString($map).';'))
       {
          throw new Exception(__METHOD__.': Can\'t save internal configuration map');
       }
@@ -2497,7 +2548,7 @@ class PersistentLayer
       unset($conf_map['container']);
       
       $paths   = Utility::retrieveTreeLeaves($conf_map);
-      $paths[] = self::config_map_path;
+      $paths[] = $this->config_map_path;
       
       foreach ($paths as $path)
       {

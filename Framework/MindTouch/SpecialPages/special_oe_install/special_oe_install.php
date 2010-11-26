@@ -43,8 +43,17 @@ class SpecialOEInstall extends SpecialPagePlugin
       
       $this->conf = ExternalConfig::$extconfig['installer'];
       $this->conf['IP'] = $IP;
+      $this->conf['Container'] = array(
+         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$this->conf['applied_solution_name']
+      );
+      $this->conf['PersistentLayer'] = array(
+         'AppliedSolutionDir'  => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'],
+         'AppliedSolutionName' => $this->conf['applied_solution_name']
+      );
       
-      if (!chdir($IP.$this->conf['base_dir'])) return false;
+      $framework = $IP.$this->conf['base_dir'].$this->conf['framework_dir'];
+      
+      if (!chdir($framework)) return false;
       
       require_once('lib/utility/Loader.php');
       require_once('lib/container/Container.php');
@@ -76,7 +85,7 @@ class SpecialOEInstall extends SpecialPagePlugin
 
       // generate form view
       $base_url    = $this->getTitle()->getLocalUrl();
-      $isInstalled = PersistentLayer::getInstance()->isInstalled();
+      $isInstalled = PersistentLayer::getInstance($this->conf['PersistentLayer'])->isInstalled();
 
       ob_start();
       include ($this->conf['IP'].$this->getWebPath().'form.tpl');
@@ -98,7 +107,7 @@ class SpecialOEInstall extends SpecialPagePlugin
          // Install
          case 'install':
             
-            $perLay = PersistentLayer::getInstance();
+            $perLay = PersistentLayer::getInstance($this->conf['PersistentLayer']);
             $errors = $perLay->install();
             $msg = 'Installed succesfully';
             
@@ -107,7 +116,7 @@ class SpecialOEInstall extends SpecialPagePlugin
          // Remove
          case 'remove':
             
-            $perLay = PersistentLayer::getInstance();
+            $perLay = PersistentLayer::getInstance($this->conf['PersistentLayer']);
             $errors = $perLay->remove();
             $msg = 'Removed succesfully';
             
@@ -117,7 +126,7 @@ class SpecialOEInstall extends SpecialPagePlugin
          case 'update_modules':
             
             require_once('config/init.php');
-            $container = Container::createInstance();
+            $container = Container::createInstance($this->conf['Container']);
             
             $container->getModulesManager()->clearCache();
             $msg = 'Updated succesfully';
@@ -135,7 +144,7 @@ class SpecialOEInstall extends SpecialPagePlugin
                {
                   if (!is_null($path))
                   {
-                     $path = '.'.$this->conf['root_templates'].$path;
+                     $path = '.'.$this->conf['templates_dir'].$path;
 
                      if (!file_exists($path))
                      {

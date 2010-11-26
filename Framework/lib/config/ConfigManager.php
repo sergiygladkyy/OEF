@@ -58,7 +58,14 @@ class ConfigManager
     */
    protected function __construct(array& $options = array())
    {
-      if (!empty($options['map_path']) && is_string($options['map_path'])) $this->map_path = $options['map_path'];
+      if (!empty($options['map_path']) && is_string($options['map_path']))
+      {
+         $this->map_path = $options['map_path'];
+      }
+      elseif (!empty($options['base_dir']) && is_string($options['base_dir']))
+      {
+         $this->map_path = $options['base_dir'].'/'.$this->map_path;
+      }
       
       if (!file_exists($this->map_path)) throw new Exception(__METHOD__.': Configuration map file is not exists');
 

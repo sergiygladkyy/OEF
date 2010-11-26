@@ -1,12 +1,12 @@
 <?php
 
 if (defined('MINDTOUCH_DEKI')) {
-   DekiPlugin::registerHook('Special:AEController', array('SpecialAEController', 'execute'));
+   DekiPlugin::registerHook('Special:OEController', array('SpecialOEController', 'execute'));
 }
 
-class SpecialAEController extends SpecialPagePlugin
+class SpecialOEController extends SpecialPagePlugin
 {
-   protected $pageName = 'SpecialAEController';
+   protected $pageName = 'OEController';
    
    public static function execute($pageName, &$pageTitle, &$html)
    {
@@ -24,8 +24,6 @@ class SpecialAEController extends SpecialPagePlugin
       $res  = self::executeQuery($pageName, $pageTitle, $html);
       $JSON = new Services_JSON();
 
-      //print 'Сервер отвечает: '.$time.' передача данных прошла успешно!';
-      //echo '<pre>'.print_r($res, true).'</pre>';exit;
       echo $JSON->encode($res); exit;
    }
    
@@ -51,6 +49,7 @@ class SpecialAEController extends SpecialPagePlugin
       $special = new self($pageName, basename(__FILE__, '.php'));
 
       $method = $_POST['action'];
+      
       if (!method_exists($special, $method))
       {
          return array('errors' => array('global' => 'Unknow action "'.$_POST['action'].'"'), 'status' => false);
@@ -70,11 +69,20 @@ class SpecialAEController extends SpecialPagePlugin
    protected function initialize()
    {
       global $IP;
-      if (!chdir($IP.'/ext/AE')) return false;
+      
+      $this->conf = ExternalConfig::$extconfig['installer'];
+      $this->conf['IP'] = $IP;
+      $this->conf['Container'] = array(
+         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$this->conf['applied_solution_name']
+      );
+      
+      $framework = $IP.$this->conf['base_dir'].$this->conf['framework_dir'];
+      
+      if (!chdir($framework)) return false;
        
       require_once('config/init.php');
-             
-      $this->container = Container::getInstance();
+      
+      $this->container = Container::getInstance($this->conf['Container']);
       
       return true;
    }
@@ -94,8 +102,7 @@ class SpecialAEController extends SpecialPagePlugin
          return array('errors' => array('global' => 'Unknow form "'.$_POST['form'].'"'), 'status' => false);
       }
       
-      $result    = array();
-      $container = Container::getInstance();
+      $result = array();
       
       foreach ($_POST['aeform'] as $kind => $params)
       {

@@ -31,6 +31,9 @@
    }
    
    var tpl_name = tpl_map[action];
+   
+   var inst_conf = extconfig.FetchConfig('installer');
+   var js_path = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
 }}
 <eval:if test="puid is nil">
   <ul class="ae_errors">
@@ -65,9 +68,9 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/jquery.form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/ae_edit_form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/datetimepicker/datetimepicker.js"&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/ae_edit_form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
          &lt;tail&gt;&lt;/tail&gt;
@@ -78,7 +81,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/ae_item_form.js"&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/ae_item_form.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
          &lt;tail&gt;
@@ -93,8 +96,8 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/jquery.form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/ae_list_form.js"&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
          &lt;tail&gt;
@@ -109,9 +112,9 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/jquery.form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/ae_report_form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/datetimepicker/datetimepicker.js"&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/ae_report_form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
          &lt;tail&gt;&lt;/tail&gt;
@@ -122,9 +125,9 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/jquery.form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/ae_import_form.js"&gt;&lt;/script&gt;
-           &lt;script type="text/javascript" src="/ext/AE/js/datetimepicker/datetimepicker.js"&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/ae_import_form.js')&gt;&lt;/script&gt;
+           &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
          &lt;tail&gt;&lt;/tail&gt;

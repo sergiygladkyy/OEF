@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
 	markSelected();
 	
     var report_form_options = {
-       url: '/Special:AEController',
+       url: '/Special:OEController',
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: processResponse,
@@ -175,7 +175,7 @@ var aeDecode = function(_type, _params)
 	 */
 	this.sendDecodeRequest = function(params, callback) {
 		jQuery.ajax({
-    		url: '/Special:AEController',
+    		url: '/Special:OEController',
     	    async: true,
     		type: 'POST',
     		data: ({parameters: params, action: 'decode'}),
