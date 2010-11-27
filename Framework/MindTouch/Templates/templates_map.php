@@ -33,7 +33,7 @@ $_templates_map = array(
    
    'Template:Entities/Information_registry' => null,
    'Template:Entities/Information_registry/ListForm' => '/Information_registry/ListForm.php',
-   'Template:Entities/Information_registry/ListForm/default' => '/Information_registry/ListForm/templates/default.php',
+   'Template:Entities/Information_registry/ListForm/default' => '/Information_registry/templates/default.php',
    
    'Template:Entities/ItemFormFields' => '/ItemFormFields/ItemFormFields.php',
    'Template:Entities/ItemFormFields/defaultDate'      => '/ItemFormFields/templates/defaultDate.php',
@@ -41,7 +41,6 @@ $_templates_map = array(
    'Template:Entities/ItemFormFields/defaultEnum'      => '/ItemFormFields/templates/defaultEnum.php',
    'Template:Entities/ItemFormFields/defaultFloat'     => '/ItemFormFields/templates/defaultFloat.php',
    'Template:Entities/ItemFormFields/defaultInt'       => '/ItemFormFields/templates/defaultInt.php',
-   'Template:Entities/ItemFormFields/defaultPassword'  => '/ItemFormFields/templates/defaultPassword.php',
    'Template:Entities/ItemFormFields/defaultReference' => '/ItemFormFields/templates/defaultReference.php',
    'Template:Entities/ItemFormFields/defaultString'    => '/ItemFormFields/templates/defaultString.php',
    
@@ -51,7 +50,6 @@ $_templates_map = array(
    'Template:Entities/ListFormFields/defaultEnum'      => '/ListFormFields/templates/defaultEnum.php',
    'Template:Entities/ListFormFields/defaultFloat'     => '/ListFormFields/templates/defaultFloat.php',
    'Template:Entities/ListFormFields/defaultInt'       => '/ListFormFields/templates/defaultInt.php',
-   'Template:Entities/ListFormFields/defaultPassword'  => '/ListFormFields/templates/defaultPassword.php',
    'Template:Entities/ListFormFields/defaultReference' => '/ListFormFields/templates/defaultReference.php',
    'Template:Entities/ListFormFields/defaultString'    => '/ListFormFields/templates/defaultString.php',
    
@@ -62,7 +60,7 @@ $_templates_map = array(
    'Template:Entities/Pagination/default' => '/Pagination/templates/default.php',
    
    'Template:Entities/Reports' => null,
-   'Template:Entities/Reports/ReportForm' => '/Reports/ReportForm.php',
+   'Template:Entities/Reports/ReportForm' => '/Reports/ReportForm/ReportForm.php',
    'Template:Entities/Reports/ReportForm/default' => '/Reports/ReportForm/templates/default.php',
    
    'Template:Entities/Tabulars' => null,
