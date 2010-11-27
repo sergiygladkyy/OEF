@@ -2413,6 +2413,8 @@ class PersistentLayer
    {
       if (isset($this->Container) && is_a($this->Container, 'Container')) return $this->Container;
       
+      $options = array_merge(array('map_path' => $this->config_map_path), $options);
+      
       $this->Container = Container::createInstance($options);
       
       return $this->Container;
@@ -2427,6 +2429,8 @@ class PersistentLayer
    protected function getConfigManager(array& $options = array())
    {
       if (isset($this->CManager) && is_a($this->CManager, 'ConfigManager')) return $this->CManager;
+      
+      $options = array_merge(array('map_path' => $this->config_map_path), $options);
       
       return $this->getContainer($options)->getConfigManager($options);
    }
