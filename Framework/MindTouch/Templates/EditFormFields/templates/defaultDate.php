@@ -24,5 +24,5 @@
 }}
 <nobr>
   {{ web.html('&lt;input type="text" name="'..name..'" value="'..value..'" /&gt;'); }}
-  <img onclick="{{ 'NewCssCal(\''..id..'\',\'yyyymmdd\',\'arrow\',false, 24, false)' }}" alt="Pick a date" src="/ext/AE/js/datetimepicker/images/cal.gif" style="vertical-align: top; padding-top: 1px;" />
+  <img onclick="{{ 'NewCssCal(\''..id..'\',\'yyyymmdd\',\'arrow\',false, 24, false)' }}" alt="Pick a date" src="/ext/OEF/Framework/MindTouch/Js/datetimepicker/images/cal.gif" style="vertical-align: top; padding-top: 1px;" />
 </nobr>
