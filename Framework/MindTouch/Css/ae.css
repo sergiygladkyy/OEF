@@ -24,7 +24,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 }
 .ae_listform {
 	width: 721px;
-	padding: 0px 0px 4px 0px;
+	padding: 7px 0px 4px 0px;
 	overflow: auto;
 }
 
@@ -79,6 +79,10 @@ tr.tabular_item:hover, tr.ae_list_item:hover { background-color: #EEFFC9/*#DEFEC
 
 span.ae_pagination {
    color: #900010;
+}
+
+.oef_content {
+   padding-bottom: 0px;
 }
 
 .oef_content table {

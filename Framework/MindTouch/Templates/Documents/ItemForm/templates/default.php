@@ -35,7 +35,6 @@
       let references = entities.getInternalConfiguration(kind..'.references', type);
       var tab_s      = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
   }}
-  <h3 style="float: left;">{{ 'Item '..string.ToUpperFirst(string.remove(puid.kind, string.length(puid.kind)-1, 1))..' "'..type..'"' }}</h3>
   <eval:if test="item._deleted != 0">
   <div  style="float: right; margin: 30px 20px 0px 10px; font-size:12px; font-weight: bold; color: rgb(218, 6, 32);">Mark for deletion</div>
   </eval:if>

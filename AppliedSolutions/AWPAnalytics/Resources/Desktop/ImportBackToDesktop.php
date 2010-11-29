@@ -1,7 +1,7 @@
 <style>
 .ae_back_to_desktop {
   background-color: #ffcc44;
-  margin: 0;
+  margin-bottom: 15px;
   padding: 4px 15px;
   color: #456167;
   font-size: 16px;
@@ -10,6 +10,6 @@
   cursor: pointer;
 }
 </style>
-<div class="ae_back_to_desktop" onclick="window.location='/ImportDesktop'">
+<div class="ae_back_to_desktop" onclick="window.location='/Release 1'">
   Back to desktop
 </div>

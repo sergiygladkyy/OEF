@@ -40,7 +40,7 @@
             
       var class = string.replace(kind, '.', '_')..'_'..type;
   }}
-  <h3>{{ 'List '..string.ToUpperFirst(string.remove(puid.kind, string.length(puid.kind)-1, 1))..' "'..type..'"' }}</h3>
+  <h3>{{ string.ToUpperFirst(type) }}</h3>
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
       <ul class="flashMsg">

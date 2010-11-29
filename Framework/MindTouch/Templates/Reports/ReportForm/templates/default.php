@@ -35,7 +35,6 @@
       
       var class  = string.replace(kind, '.', '_')..'_'..type;
   }}
-  <h3 id="{{ class..'_header' }}">{{ string.ToUpperFirst(string.remove(puid.kind, string.length(puid.kind)-1, 1))..' "'..type..'"' }}</h3>
   <form method="post" action="#" class="ae_report_form" id="{{ class..'_report' }}">
     <div class="{{ class..'_message systemmsg' }}" style="display: none;">
       <div class="inner">
