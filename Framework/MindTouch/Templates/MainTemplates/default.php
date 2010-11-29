@@ -32,7 +32,7 @@
    
    var tpl_name = tpl_map[action];
    
-   var inst_conf = extconfig.FetchConfig('installer');
+   var inst_conf = extconfig.Fetch('installer');
    var js_path = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
 }}
 <eval:if test="puid is nil">
@@ -53,17 +53,19 @@
   </ul>
 </eval:elseif>
 <eval:else>
-  <pre class="script">
-    var template = root..'/'..string.ToUpperFirst(puid.kind)..'/'..tpl_name;
-    var content  = wiki.template(template, [uid, puid, root, template, params, prefix]);
+  <div class="oef_content">
+    <pre class="script">
+      var template = root..'/'..string.ToUpperFirst(puid.kind)..'/'..tpl_name;
+      var content  = wiki.template(template, [uid, puid, root, template, params, prefix]);
       
-    if (string.contains(content, 'href="'..template..'"'))
-    {
-       let content = 'Template not found';
-    }
-          
-    content;
-  </pre>
+      if (string.contains(content, 'href="'..template..'"'))
+      {
+         let content = 'Template not found';
+      }
+      
+      content;
+    </pre>
+  </div>
   <eval:if test="action == 'displayEditForm'">
     {{
        &lt;html&gt;
