@@ -18,13 +18,13 @@ ul.ae_editform_field_errors, ul.ae_errors {
 .tabular_item td { vertical-align: bottom; }
 
 .ae_tabular_section {
-	width: 763px;
-	padding: 0px 5px 4px 0px;
+	width: 702px;
+	padding: 0px 0px 4px 0px;
 	overflow: auto;
 }
 .ae_listform {
-	width: 795px;
-	padding: 0px 5px 4px 0px;
+	width: 721px;
+	padding: 0px 0px 4px 0px;
 	overflow: auto;
 }
 
@@ -53,8 +53,8 @@ ul.ae_editform_field_errors, ul.ae_errors {
 .ae_report_form input[type=text]  { width: 140px; }
 .ae_report_form select { width: 144px; }
 .ae_report {
-	width: 795px;
-	padding: 20px 5px 4px 0px;
+	width: 721px;
+	padding: 20px 0px 4px 0px;
 	overflow: auto;
 }
 
@@ -72,11 +72,72 @@ tr.tabular_item:hover, tr.ae_list_item:hover { background-color: #EEFFC9/*#DEFEC
    vertical-align: middle;
 }
 
-a.ae_pagination {
+.oef_content a.ae_pagination {
    text-decoration: none;
-   color: #0000ff;
+   color: #0000ff !important;
 }
 
 span.ae_pagination {
    color: #900010;
+}
+
+.oef_content table {
+   width:100%;
+   margin:0;
+   padding:0;
+   border-collapse:collapse;
+   border-spacing:0;
+   border-color:#AAAAAA -moz-use-text-color #AAAAAA #AAAAAA;
+   border-left:1px solid #AAAAAA;
+   border-right:0 none;
+   border-style:solid none solid solid;
+   border-width:1px 0 1px 1px;
+}
+
+.oef_content th {
+   background: url("/skins/deuce/lighty-blue/bg-tbl-header.gif") no-repeat scroll 0 0 #D9D9D9;
+   border-bottom:1px solid #AAAAAA;
+   border-right:1px solid #AAAAAA;
+   color:#4F6B72;
+   font-family:Verdana,Arial,Sans-Serif;
+   font-size:12px;
+   font-weight:bold;
+   padding:6px 8px;
+   text-align:left;
+   white-space:nowrap;
+   font-style:normal;
+   margin:0;
+   line-height:1.6em;
+}
+
+.oef_content td {
+   border-right:1px solid #AAAAAA;
+   color:#4F6B72;
+   font-family:Verdana,Arial,Sans-Serif;
+   font-size:12px;
+   padding:6px 8px;
+   vertical-align:top;
+   margin:0;
+   line-height:1.6em !important;
+}
+
+.oef_content a {
+   color: #3366CC !important;
+   font-family: Verdana,Arial,Sans-Serif !important;
+   font-size: 12px !important;
+   line-height: 1.6em !important;
+}
+
+.oef_content input {
+   font-family: Verdana,Arial,Sans-Serif !important;
+   font-size: 12px !important;
+   color: #000000 !important;
+   background-color: #FFFFFF !important;
+   border: 1px solid #6690BB !important;
+   font-style: normal !important;
+   font-weight: normal !important;
+   padding: 2px !important;
+}
+.oef_content input[type=checkbox] {
+   margin-top: 4px;
 }
