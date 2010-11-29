@@ -1,0 +1,256 @@
+/**
+ * Special Page styles
+ */
+
+/* Recent Changes & Contributions */
+#pageTypeSpecial form[name=ContributorSelectionForm] {
+	float: left;
+}
+#pageTypeSpecial form[action="/Special:Recentchanges"] {
+	float: right;
+	margin-bottom: 0.75em;
+}
+#pageTypeSpecial h4 {
+	padding-bottom: 0.25em;
+}
+#pageTypeSpecial {
+	/* IE overflow usability hack */
+	margin-bottom: 20px;
+}
+#pageTypeSpecial form.deki-user-autocomplete table,
+#pageTypeSpecial form.deki-user-autocomplete table td {
+	border: none;
+	width: auto;
+	padding: 3px;
+	color: #000;
+	margin: 0;
+}
+
+#pageTypeSpecial ul,
+#pageTypeSpecial ul li {
+  list-style: disc;
+}
+
+#pageTypeSpecial ul li {
+  margin-left: 1em;
+}
+
+/* this is for Page Properties */
+body.page-special #body div.content div.text {
+	overflow: visible;
+}
+
+
+#pageTypeSpecial table {
+	border: 0px none;
+	border-left: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+}
+
+#pageTypeSpecial table th {
+	color: #484848;
+	border-right: 1px solid #aaa;
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	background: url(bg-tbl-header.gif) no-repeat;
+	background-color: #d9d9d9;
+    font-family: Arial;
+    font-weight: bold;
+    padding:2px;
+}
+
+#pageTypeSpecial table td {
+	border-right: 1px solid #aaa;
+	color: #4f6b72;
+    padding:2px;
+}
+
+#pageTypeSpecial table td.bg2,
+#pageTypeSpecial table tr.bg2 td {
+	background-color: #EEEEEE;
+}
+
+
+/* Search Results */
+/* form */
+#searchForm {
+	float: none;
+	margin-bottom: 0;
+
+	padding: 5px;
+	padding-left: 0;
+}
+#searchForm label {
+	display: none;
+}
+#searchForm #lsearchbox {
+	width: 50%;
+	float: left;
+}
+#searchForm #select-language {
+	float: right;
+}
+/* listing */
+#searchResults div.searchResults {
+	font-weight: bold;
+}
+#searchResults ul {
+	padding-left: 0;
+}
+#searchResults ul li {
+	list-style: none;
+	border-top: 1px dotted #dbe2f2;
+	padding: 10px 0;
+}
+#searchResults div.itemmatch {
+	font-size: 90%;
+	color: #aaa;
+}
+#searchResults div.searchpreview span.phrase {
+	background-color: #fffbc5;
+	padding: 1px 2px;
+}
+
+#siteNavTree,
+#siteNavTree a {
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+}
+
+#siteNavTree div.node a {
+  padding:5px 13px;
+  width:161px;
+  border-bottom: 1px solid #747474;
+}
+
+#siteNavTree div.node a:hover {
+  padding:5px 13px;
+  background-color: #747474;
+  color: #fff;
+}
+
+#siteNavTree div.selected a {
+  background-color: #000000;
+  font-weight:normal
+}
+
+#siteNavTree div.homeNode {
+  background-color: #000000;
+}
+
+
+#siteNavTree div.selectedChild
+{
+  /*margin-top: -1px;
+  margin-bottom: 1px;*/
+  background-color: #646464;
+  color: #636466;
+}
+
+#siteNavTree div.selectedChild a
+{
+  background-color: #646464;
+  padding:5px 13px 5px 26px;
+  width:148px;
+ /* margin-top:1px;
+  margin-bottom:1px;
+  border-bottom: 1px solid #636466;*/
+  color: #FFFFFF;
+}
+
+#siteNavTree div.selectedChild a:hover {
+  background-color: #747474;
+  padding:5px 13px 5px 26px;
+  width:148px;
+ /* margin-top:1px;
+  margin-bottom:1px;*/
+  color: #fff;
+}
+
+#siteNavTree span { background:none !important;padding:0 !important; }
+
+.deki-edit-summary{
+  padding: 5px;
+}
+
+
+.extensionlist {
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  background-color:#F4F4F4;
+  border-color:-moz-use-text-color #CCCCCC #CCCCCC;
+  border-style:none solid solid;
+  border-width:0 1px 1px;
+  font-size:11px;
+  float:right;
+  padding:3px;
+}
+
+.ui-msg-wrap {
+  left:0;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:999;
+}
+
+.ui-msg {
+  font-family:Arial,Verdana,Sans-Serif;
+  font-size:11px;
+  min-height:32px;
+  padding:8px;
+}
+.ui-errormsg {
+  background-color:#FFF799;
+  border:4px solid #EEE488;
+}
+.ui-msg:hover {
+  border:4px solid #000000;
+}
+
+#pageText .mt-tabs ul li {
+  list-style-type: none;
+}
+
+#pageText .mt-content ul li {
+  list-style-type: none;
+}
+
+/* Gallery: remove Images # message */
+#deki-image-gallery-lite .table .bg1 .col1 { color: #ffffff; }
+
+
+/* Fixed MT dashboard style: width */
+.pageText #deki-dashboard {
+    margin-top:15px;
+    min-height:350px;
+    width:735px;
+    overflow:hidden;
+}
+
+.pageText .deki-dashboard-group {
+    width:360px;
+}
+
+.pageText #deki-activity-dashboard #col-left {
+    width:365px;
+}
+
+.pageText #deki-activity-dashboard #col-right {
+	width:365px;
+}
+
+/* Rating page button style */
+#deki-page-rating-bar {
+    -moz-border-radius:5px 5px 5px 5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:14px;
+    font-weight:normal;
+    background:none repeat scroll 0 50% #FFFFFF;
+    border:1px solid #CCCCCC;
+    height:15px;
+    padding:5px;
+    margin:9px 5px 5px 5px;
+    height:15px;
+}

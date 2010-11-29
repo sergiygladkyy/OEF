@@ -54,10 +54,9 @@
   {
      if (!CheckPermissions()) return array('You do not have permision to access this page');
      
-     $framework = '.'.ExternalConfig::$extconfig['installer']['base_for_deki_ext'];
+     $framework = '.'.ExternalConfig::$extconfig['installer']['base_for_deki_ext'].ExternalConfig::$extconfig['installer']['framework_dir'];
      
      if (!chdir($framework)) return array('Initialize entity extension error');
-     
      if (!$full)
      {
         require_once('lib/utility/Loader.php');
