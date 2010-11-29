@@ -195,7 +195,7 @@ class SpecialOEInstall extends SpecialPagePlugin
       
       $Plug->SetAuthToken($_REQUEST['authtoken']);
       
-      $Plug = $Plug->At('deki', 'pages', '='.$title, 'contents');
+      $Plug = $Plug->At('deki', 'pages', '='.rawurlencode($title), 'contents');
       $Plug = $Plug->With('edittime', date("YmdHis"));
       
       $result = $Plug->Post($content);
