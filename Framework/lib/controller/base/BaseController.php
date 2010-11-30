@@ -73,7 +73,7 @@ abstract class BaseController
       
       $item = $this->container->getModel($this->kind, $this->type, $options);
       
-      if (!is_null($id) && !$item->load($id, $options))
+      if (!empty($id) && !$item->load($id, $options))
       {
          $errors[] = 'Can\'t load "'.ucfirst($this->kind).'.'.$this->type.'" with id '.(int) $id;
          

@@ -150,7 +150,7 @@
    */
   function displayEditForm($uid, $id = null, array $params = array())
   {
-     if (isset($id) && (int) $id <= 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
+     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
      
      $errors = initialize();
      
@@ -177,7 +177,7 @@
    */
   function displayItemForm($uid, $id, array $params = array())
   {
-     if (empty($id) || (int) $id <= 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
+     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
      
      $errors = initialize();
      

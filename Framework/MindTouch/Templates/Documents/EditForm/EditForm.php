@@ -53,7 +53,7 @@
       
       let data = entities.displayEditForm(uid, id, {options: options});
       
-      if (id > 0 && data.status != True) {
+      if (data.status != True) {
         let content = '&lt;ul class="ae_errors"&gt;';
         foreach (var error in data.errors) {
           let content = content..'&lt;li class="ae_error"&gt;'..error..'&lt;/li&gt;';
