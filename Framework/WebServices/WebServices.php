@@ -8,12 +8,12 @@ $params = $router->parseURI($_SERVER['REQUEST_URI']);
 
 if (!isset($params['solution']))
 {
-   header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request'); exit;
+   header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request'); echo '400 Bad Request'; exit;
 }
 
 try 
 {
-   $container_options = array('base_dir' => '../AppliedSolutions/'.$params['solution']);
+   $container_options = array('base_dir' => $_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/'.$params['solution']);
 
    require_once('config/init.php');
 
@@ -21,7 +21,7 @@ try
 }
 catch (Exception $e)
 {
-   header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request'); exit;
+   header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request'); echo '400 Bad Request'; exit;
 }
 
 $request = $container->getRequest();
@@ -41,7 +41,8 @@ catch (Exception $e)
 {
    // Internal Server Error
    $responce->setStatusCode('400');
-   $responce->sendHttpHeaders();
+   $responce->setContent('400 Bad Request');
+   $responce->send();
    exit;
 }
 

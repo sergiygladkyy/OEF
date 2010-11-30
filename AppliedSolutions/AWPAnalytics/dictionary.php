@@ -391,24 +391,23 @@ $_dictionary = array(
    // Web services
    ////////////////
    'web_services' => array(
-      'ProjectManagement' => array(
+      'Pm' => array(
          'actions' => array(
             'getProjectList' => array(
                'fields' => array()
+            ),
+            'getProjectMembers' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
+               )
             )
-         )/*,
-         'model' => array(
-            'modelclass'  => '...'
-         ),
-         
-         'controller' => array(
-            'classname' => '...'
          )
-         */
-      ),
-      
-      /*'Finance' => array(
-      )*/
+      )
    ),
    
    
@@ -421,7 +420,7 @@ $_dictionary = array(
             'ProjectsInfo' => array(
                'getEmployees' => array(
                   'remote_calls' => true
-               )
+               )               
             )
          )
       )

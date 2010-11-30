@@ -4,6 +4,8 @@ require_once('lib/routing/Router.php');
 
 class WebServicesRouter extends Router
 {
+   const kind = 'web_services';
+   
    /**
     * (non-PHPdoc)
     * @see lib/routing/Router#processParse($uri)
@@ -28,7 +30,7 @@ class WebServicesRouter extends Router
       }
       
       $this->parameters['solution'] = isset($params[(++$i)]) ? $params[$i] : null;
-      $this->parameters['kind']     = isset($params[(++$i)]) ? $params[$i] : null;
+      $this->parameters['kind']     = self::kind;
       $this->parameters['type']     = isset($params[(++$i)]) ? $params[$i] : null;
       $this->parameters['action']   = isset($params[(++$i)]) ? 'get'.$params[$i] : null;
       
