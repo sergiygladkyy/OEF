@@ -1199,7 +1199,7 @@ class PersistentLayer
     */
    protected function checkName($name)
    {
-      return (bool) preg_match('/^[A-Za-z_][A-Za-z0-9_]{2,}$/i', $name); 
+      return (bool) preg_match('/^[A-Za-z_][A-Za-z0-9_]{1,}$/i', $name); 
    }
    
    
