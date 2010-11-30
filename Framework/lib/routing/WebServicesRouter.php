@@ -22,12 +22,17 @@ class WebServicesRouter extends Router
       $params = explode('/', $parts['path']);
       $count  = count($params);
       
-      $this->parameters['application'] = isset($params[0]) ? $params[0] : null;
-      $this->parameters['kind']        = isset($params[1]) ? $params[1] : null;
-      $this->parameters['type']        = isset($params[2]) ? $params[2] : null;
-      $this->parameters['action']      = isset($params[3]) ? 'get'.$params[3] : null;
+      for ($i = 0; $i < $count; $i++)
+      {
+         if ($params[$i] == 'webservices') break;
+      }
       
-      for ($i = 4; $i < $count; $i++)
+      $this->parameters['solution'] = isset($params[(++$i)]) ? $params[$i] : null;
+      $this->parameters['kind']     = isset($params[(++$i)]) ? $params[$i] : null;
+      $this->parameters['type']     = isset($params[(++$i)]) ? $params[$i] : null;
+      $this->parameters['action']   = isset($params[(++$i)]) ? 'get'.$params[$i] : null;
+      
+      for ($i++; $i < $count; $i++)
       {
          $attr = explode('=', $params[$i]);
          $this->parameters[$attr[0]] = isset($attr[1]) ? $attr[1] : true;
