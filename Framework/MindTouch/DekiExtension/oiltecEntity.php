@@ -54,7 +54,13 @@
   {
      if (!CheckPermissions()) return array('You do not have permision to access this page');
      
-     $framework = '.'.ExternalConfig::$extconfig['installer']['base_for_deki_ext'].ExternalConfig::$extconfig['installer']['framework_dir'];
+     $conf =& ExternalConfig::$extconfig['installer'];
+     
+     $framework = '.'.$conf['base_for_deki_ext'].$conf['framework_dir'];
+     
+     $container_options = array(
+         'base_dir' => $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$conf['applied_solution_name']
+     );
      
      if (!chdir($framework)) return array('Initialize entity extension error');
      if (!$full)
@@ -62,13 +68,13 @@
         require_once('lib/utility/Loader.php');
         require_once('lib/utility/Utility.php');
         require_once('lib/container/Container.php');
+        
+        Container::createInstance($container_options);
      }
-     else require_once('config/init.php');
-     
-     $conf =& ExternalConfig::$extconfig['installer'];
-     $base_dir = $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$conf['applied_solution_name'];
-     
-     Container::createInstance(array('base_dir' => $base_dir));
+     else
+     {
+        require_once('config/init.php');
+     }
      
      return array();
   }

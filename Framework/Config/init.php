@@ -8,7 +8,9 @@ require_once($base.'lib/container/Container.php');
 require_once($base.'lib/report/Mockup.php');
 require_once($base.'lib/report/TabularDoc.php');
 
-$container = Container::createInstance();
+if (!isset($container_options)) $container_options = array();
+
+$container = Container::createInstance($container_options);
 
 $modules = $container->getModulesManager();
 $modules->loadGlobalModules();

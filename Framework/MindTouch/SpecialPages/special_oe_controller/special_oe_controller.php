@@ -72,17 +72,18 @@ class SpecialOEController extends SpecialPagePlugin
       
       $this->conf = ExternalConfig::$extconfig['installer'];
       $this->conf['IP'] = $IP;
-      $this->conf['Container'] = array(
-         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$this->conf['applied_solution_name']
-      );
       
       $framework = $IP.$this->conf['base_dir'].$this->conf['framework_dir'];
       
       if (!chdir($framework)) return false;
-       
+      
+      $container_options = array(
+         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$this->conf['applied_solution_name']
+      );
+      
       require_once('config/init.php');
       
-      $this->container = Container::getInstance($this->conf['Container']);
+      $this->container = Container::getInstance();
       
       return true;
    }
