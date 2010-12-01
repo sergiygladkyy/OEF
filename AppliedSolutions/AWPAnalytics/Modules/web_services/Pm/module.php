@@ -47,7 +47,7 @@ function getProjectMembers(array $attributes)
             "WHERE `Project` = ".$proj." AND `Period` <= '".$date."' ".
             "GROUP BY Employee, Period ORDER BY Employee ASC, Period ASC";
    
-   if (null === ($employees = $db->loadAssocList($query, array('key' => 'Resource'))))
+   if (null === ($employees = $db->loadAssocList($query, array('key' => 'Employee'))))
    {
       return $result;
    }
@@ -64,7 +64,7 @@ function getProjectMembers(array $attributes)
    
    $emplIDS = array_keys($employees);
    
-   $query = "SELECT `BusinessArea`, `HoursSpent` FROM information_registry.ProjectTimeRecords ".
+   $query = "SELECT `Employee`, `BusinessArea`, `HoursSpent` FROM information_registry.ProjectTimeRecords ".
             "WHERE `Project` = ".$proj.(!empty($emplIDS) ? " AND `Employee` IN (".implode(',', $emplIDS).")" : '')." AND `Date` <= '".$date."' ".
             "GROUP BY Employee, Date ORDER BY Employee ASC, Date ASC";
    
