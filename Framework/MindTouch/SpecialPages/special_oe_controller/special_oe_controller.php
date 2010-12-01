@@ -217,10 +217,10 @@ class SpecialOEController extends SpecialPagePlugin
          if (!empty($params['deleted']))
          {
             $options = array(
-               'attributes' => array('%pkey', 'owner'),
-               'criterion'  => '`owner` = %%owner%% AND `%pkey` IN (%%pkey%%)'
+               'attributes' => array('%pkey', 'Owner'),
+               'criterion'  => '`Owner` = %%Owner%% AND `%pkey` IN (%%pkey%%)'
             );
-            $result['delete'] = $controller->delete(array('%pkey' => $params['deleted'], 'owner' => $owner_id), $options);
+            $result['delete'] = $controller->delete(array('%pkey' => $params['deleted'], 'Owner' => $owner_id), $options);
          }
          
          unset($params['deleted']);
@@ -229,7 +229,7 @@ class SpecialOEController extends SpecialPagePlugin
       // Save all
       foreach ($params as $key => $values)
       {
-         $values['owner'] = $owner_id;
+         $values['Owner'] = $owner_id;
          
          $action = isset($values['_id']) ? 'update' : 'create';
                   

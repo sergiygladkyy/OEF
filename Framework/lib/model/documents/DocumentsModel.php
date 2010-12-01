@@ -102,11 +102,11 @@ class DocumentsModel extends BaseObjectsModel
    public function unpost($values, array $options = array())
    {
       $db_map =& $this->conf['db_map'];
-      $params =  $this->retrieveQueryParams($db_map, $values, $options);
+      $params =  $this->retrieveCriteriaQuery($db_map, $values, $options);
       
       if (!empty($params['errors'])) return $params['errors'];
       
-      $where = empty($params['where']) ? 'WHERE `'.$db_map['post'].'` <> 0' : str_replace('WHERE', 'WHERE `'.$db_map['post'].'` <> 0 AND (', $params['where']).')';
+      $where = empty($params['criteria']) ? 'WHERE `'.$db_map['post'].'` <> 0' : str_replace('WHERE', 'WHERE `'.$db_map['post'].'` <> 0 AND (', $params['criteria']).')';
       $query = 'SELECT `'.$db_map['pkey'].'` FROM `'.$db_map['table'].'` '.$where;
       $db    = $this->container->getDBManager($options);
       $res   = $db->loadArrayList($query, array('field' => $db_map['pkey']));

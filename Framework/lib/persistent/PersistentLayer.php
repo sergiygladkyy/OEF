@@ -1821,7 +1821,7 @@ class PersistentLayer
          
          if (isset($params['periodical']))
          {
-            $field = 'period';
+            $field = 'Period';
             $per_field = array(
                $field => array(
                   'type' => 'datetime',

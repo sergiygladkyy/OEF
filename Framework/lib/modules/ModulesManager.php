@@ -317,7 +317,7 @@ class ModulesManager
       
       foreach ($actions as $action)
       {
-         $content = <<<CONTENT
+         $content .= <<<CONTENT
 /**
  * Web-service action "$action"
  * 
