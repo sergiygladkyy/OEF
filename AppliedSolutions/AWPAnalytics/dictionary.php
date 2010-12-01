@@ -129,6 +129,10 @@ $_dictionary = array(
         ),
         
         'ProjectRegistration' => array(
+            'recorder_for' => array(
+                'ProjectRegistrationRecords'
+            ),
+            
             'tabular_sections' => array(
                 'Records' => array(
                     'fields' => array(
@@ -168,6 +172,10 @@ $_dictionary = array(
         ),
         
         'ProjectAssignment' => array(
+            'recorder_for' => array(
+                'ProjectAssignmentRecords'
+            ),
+            
             'tabular_sections' => array(
                 'Records' => array(
                     'fields' => array(
@@ -312,6 +320,86 @@ $_dictionary = array(
                )
             )
          )
+      ),
+      
+      'ProjectRegistrationRecords' => array(
+         'dimensions' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'periodical' => 'day', // [ second | day | month | quarter | year ]
+         
+         'fields' => array(
+            'BudgetNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'BudgetHRS' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'Deadline' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               )
+            )
+         )
+      ),
+      
+      'ProjectAssignmentRecords' => array(
+         'dimensions' => array(
+            'Resource' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'periodical' => 'day', // [ second | day | month | quarter | year ]
+         
+         'fields' => array(
+            'BudgetHRS' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'Rate' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            )
+         )
       )
    ),
    
@@ -403,6 +491,9 @@ $_dictionary = array(
                      'precision' => array(
                         'required' => true
                      )
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
                   )
                )
             )
