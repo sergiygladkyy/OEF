@@ -217,6 +217,6 @@ class TabularDoc extends Grid
     */
    protected function renderDecodes(array $decodes)
    {
-      return 'ondblclick="javascript: decode(event, '.Utility::convertArrayToJSONString($decodes).');"';
+      return 'ondblclick="javascript: decode(event, '.htmlspecialchars(Utility::convertArrayToJSONString($decodes)).');"';
    }
 }

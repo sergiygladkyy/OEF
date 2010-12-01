@@ -80,7 +80,7 @@ class Utility
     * @return string
     */
    public static function convertArrayToJSONString($array, $level = 0)
-   {
+   {//return json_encode($array);
       $flag = true;
       $str = "{";
 
@@ -90,8 +90,8 @@ class Utility
          if(is_object($key) || is_object($value)) return '';
           
          // Convert key
-         if(!is_numeric($key)) $key = "'".str_replace(array('\\', "'"), array('\\\\', "\'"), $key)."'";
-          
+         /*if(!is_numeric($key))*/ $key = '"'.str_replace(array('\\', '"'), array('\\\\', '\"'), $key).'"';
+         
          // Convert value
          if (is_null($value))
          {
@@ -107,7 +107,7 @@ class Utility
          }
          elseif(!is_numeric($value))
          {
-            $value = "'".str_replace(array('\\', "'"), array('\\\\', "\'"), $value)."'";
+            $value = '"'.str_replace(array('\\', '"'), array('\\\\', '\"'), $value).'"';
          }
           
          if($flag) $flag = false;
