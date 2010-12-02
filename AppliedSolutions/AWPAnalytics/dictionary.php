@@ -496,6 +496,26 @@ $_dictionary = array(
                      'type' => 'date'
                   )
                )
+            ),
+            'getUserProjects' => array(
+               'fields' => array(
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
+            ),
+            'getProjectCost' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
             )
          )
       )

@@ -11,8 +11,6 @@ class MTUser extends BaseUser
    
    protected static $instance;
    
-   protected $username;
-   
    /**
     * Create current User object
     * 
@@ -27,7 +25,7 @@ class MTUser extends BaseUser
       }
       
       $uri = MT_DEKIWIKI_API.'/deki/users/current?dream.out.format=php';
-       
+      
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($curl, CURLOPT_URL, $uri);
@@ -87,8 +85,6 @@ class MTUser extends BaseUser
 
       /* END Code from DreamPlug::Invoke */
 
-      self::$instance = new self();
-      
       if ($result['status'] == 200)
       {
          self::$instance = new self($result['body']['user']['username']);
@@ -119,7 +115,7 @@ class MTUser extends BaseUser
     */
    protected function __construct($username)
    {
-      $this->username = $username;
+      $this->attributes['username'] = $username;
    }
    
    /**
@@ -146,6 +142,15 @@ class MTUser extends BaseUser
     */
    public function isAnonymous()
    {
-      return $this->username == self::ANONYMOUS_NAME;
+      return $this->attributes['username'] == self::ANONYMOUS_NAME;
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/user/BaseUser#getUsername()
+    */
+   public function getUsername()
+   {
+      return $this->attributes['username'];
    }
 }

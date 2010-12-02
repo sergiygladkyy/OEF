@@ -566,7 +566,7 @@ class Container
     * @param array $options
     * @return object
     */
-   public function getUser($authtype, $key, array $options = array())
+   public function getUser($authtype = '', $key = '', array $options = array())
    {
       if (is_object($this->user))
       {

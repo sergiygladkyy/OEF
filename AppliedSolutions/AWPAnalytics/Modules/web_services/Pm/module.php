@@ -30,10 +30,21 @@ function getProjectMembers(array $attributes)
    
    $container = Container::getInstance();
    
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         'Employee Name',
+         'Role',
+         'Hours Spent',
+         'Hours Budgeted',
+         'Rate'
+      )
+   );
+   
    $proj = (int) $attributes['Project'];
    $date = (!empty($attributes['Date']) && is_string($attributes['Date'])) ? date('Y-m-d', strtotime($attributes['Date'])) : date('Y-m-d');
    
-   $result  = array('list' => array(), 'links' => array());
    $project = $container->getModel('catalogs', 'Projects');
    
    if (!$project->load($proj))
@@ -79,7 +90,9 @@ function getProjectMembers(array $attributes)
    
    $cmodel = $container->getCModel('catalogs', 'Employees');
    $result['links']['Employee Name'] = $cmodel->retrieveLinkData($emplIDS);
-    
+   
+   $fields =& $result['fields'];
+   
    foreach ($employees as $id => $empl)
    {
       $rID = isset($times[$id]['BusinessArea']) ? $times[$id]['BusinessArea'] : 0;
@@ -87,11 +100,11 @@ function getProjectMembers(array $attributes)
       $roleID[$rID] = $rID;
       
       $result['list'][] = array(
-         'Employee Name'  => $id,
-         'Role'           => $rID,
-         'Hours Spent'    => isset($times[$id]['HoursSpent']) ? $times[$id]['HoursSpent'] : 0,
-         'Hours Budgeted' => $registration['BudgetHRS'],
-         'Rate'           => $empl['Rate']
+         $fields[0] => $id,
+         $fields[1] => $rID,
+         $fields[2] => isset($times[$id]['HoursSpent']) ? $times[$id]['HoursSpent'] : 0,
+         $fields[3] => $registration['BudgetHRS'],
+         $fields[4] => $empl['Rate']
       );
    }
    
@@ -106,5 +119,106 @@ function getProjectMembers(array $attributes)
    $result['links']['Role'] = $cmodel->retrieveLinkData($roleID);
    
    return $result;
+}
+
+/**
+ * Web-service action "getUserProjects"
+ * 
+ * @param string $attributes
+ * @return array
+ */
+function getUserProjects(array $attributes)
+{
+   $container = Container::getInstance();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         'Project',
+         'My Budget, hrs',
+         'Spent, hrs',
+         'Deadline'
+      )
+   );
+   
+   $code   = $container->getUser()->getUsername();
+   $date   = (!empty($attributes['Date']) && is_string($attributes['Date'])) ? date('Y-m-d', strtotime($attributes['Date'])) : date('Y-m-d');
+   
+   // Retrieve current employee (current user)
+   $employee = $container->getModel('catalogs', 'Employees');
+   
+   if (!$employee->loadByCode($code))
+   {
+      return $result;
+   }
+   
+   $db = $container->getODBManager();
+   
+   // Retrieve current employee projects
+   $query = "SELECT `Project`, `Period` AS `Date`, `BudgetHRS` FROM information_registry.ProjectAssignmentRecords ".
+            "WHERE `Resource` = ".$employee->getId()." AND `Period` <= '".$date."' ".
+            "GROUP BY Project, Period ORDER BY Project ASC, Period ASC";
+   
+   if (null === ($projects = $db->loadAssocList($query, array('key' => 'Project'))))
+   {
+      return $result;
+   }
+   
+   if (empty($projects)) return $result;
+   
+   // Retrieve deadlines for current employee projects
+   $ids = array_keys($projects);
+   
+   $query = "SELECT `Project`, `Deadline`, `Period` AS `Date` FROM information_registry.ProjectRegistrationRecords ".
+            "WHERE `Project` IN (".implode(',', $ids).") AND `Period` <= '".$date."' ".
+            "GROUP BY `Project`, `Date` ORDER BY `Project` ASC, `Date` ASC";
+   
+   if (null === ($deadline = $db->loadAssocList($query, array('key' => 'Project'))))
+   {
+      return $result;
+   }
+   
+   // Retrieve spent time
+   $query = "SELECT `Project`, `HoursSpent` FROM information_registry.ProjectTimeRecords ".
+            "WHERE `Employee` = ".$employee->getId()." AND `Project` IN (".implode(',', $ids).") AND `Date` <= '".$date."' ".
+            "GROUP BY `Project`, `Date` ORDER BY `Project` ASC, `Date` ASC";
+   
+   if (null === ($spent = $db->loadAssocList($query, array('key' => 'Project'))))
+   {
+      return $result;
+   }
+   
+   // Prepare result
+   
+   $fields =& $result['fields'];
+   
+   foreach ($projects as $id => $project)
+   {
+      $result['list'][] = array(
+         $fields[0] => $id,
+         $fields[1] => $project['BudgetHRS'],
+         $fields[2] => isset($spent[$id]['HoursSpent'])  ? $spent[$id]['HoursSpent'] :  0,
+         $fields[3] => isset($deadline[$id]['Deadline']) ? $deadline[$id]['Deadline'] : 'not set'
+      );
+   }
+   
+   $cmodel = $container->getCModel('catalogs', 'Projects');
+   $result['links']['Project'] = $cmodel->retrieveLinkData($ids);
+   
+   
+   
+   return $result;
+}
+
+/**
+ * Web-service action "getProjectCost"
+ * 
+ * @param string $attributes
+ * @return array
+ */
+function getProjectCost(array $attributes)
+{
+   return array();
 }
 ?>

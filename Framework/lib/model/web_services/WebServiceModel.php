@@ -137,7 +137,8 @@ class WebServiceModel extends BaseNotStorageEntityModel
          
          if (!empty($errors)) return $errors;
       }
-      else $this->attributes = array();
+      
+      if (is_null($this->attributes)) $this->attributes = array();
       
       // Execute action
       try {

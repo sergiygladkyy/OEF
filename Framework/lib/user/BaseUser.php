@@ -68,7 +68,15 @@ abstract class BaseUser
    
    /**
     * Return true if current user is Anonymous
+    * 
     * @return unknown_type
     */
    abstract public function isAnonymous();
+   
+   /**
+    * Get user name
+    * 
+    * @return string
+    */
+   abstract public function getUsername();
 }
