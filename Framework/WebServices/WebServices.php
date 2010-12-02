@@ -35,7 +35,7 @@ $options  = array('protocol' => $request->getHttpHeader('SERVER_PROTOCOL', ''));
 $response = $container->getResponse($options);
 
 // Init User
-$authinfo = $request->getHttpHeader('OEF-Autorization', ''); 
+$authinfo = $request->getHttpHeader('OEF-Autorization');
 $authtype = 'MTAuth';
 $authkey  = '';
 
