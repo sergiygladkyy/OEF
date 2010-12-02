@@ -204,9 +204,53 @@ function oeWidgetsView()
 {
 	this.drawGrid = function(tag_id, data, options)
 	{
-		jQuery('#' + tag_id).html('<pre>' + data + '</pre>');
+		if (!data || !data['fields'])
+		{
+			jQuery('#' + tag_id).html('<span>Data is empty</span>');
+			return;
+		}
+		var list   = data['list']  ? data['list']  : [];
+		var links  = data['links'] ? data['links'] : [];
+		var fields = data['fields'];
+		var numb_f = 0;
+		var html   = "<table>\n<thead>\n\t<tr>";
+		
+		for (var key in fields)
+		{
+			html += "\n\t\t<th>" + fields[key] + "</th>";
+			numb_f++;
+		}
+		
+		html += '\n\t</tr>\n</thead>\n<tbody>';
+		
+		for (var key in list)
+		{
+			var row = list[key];
+			
+			html += "\n\t<tr>";
+			
+			for (var i = 0; i < numb_f; i++)
+			{
+				var name = fields[i];
+				var text = row[name];
+				
+				if (links[name] && links[name][text])
+				{
+					text = links[name][text]['text'];
+				}
+				
+				html += "\n\t\t<td>" + text + "</td>";
+			}
+			
+			html += "\n\t</tr>";
+		}
+		
+		html += '\n</tbody>\n</table>';
+		
+		jQuery('#' + tag_id).html(html);
 	};
 }
+
 
 /**
  * Return cookie value by cookie name
