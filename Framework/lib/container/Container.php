@@ -18,7 +18,8 @@ class Container
       $event_dispatcher = null,
       $modules_manager  = null,
       $request          = null,
-      $responce         = null;
+      $responce         = null,
+      $user             = null;
 
    
    /**
@@ -555,5 +556,54 @@ class Container
       $this->responce = call_user_func(array($classname, 'createInstance'), $_conf['options']);
       
       return $this->responce;
+   }
+   
+   /**
+    * Get user object
+    * 
+    * @param string $authtype
+    * @param string $key
+    * @param array $options
+    * @return object
+    */
+   public function getUser($authtype, $key, array $options = array())
+   {
+      if (is_object($this->user))
+      {
+         return $this->user;
+      }
+      
+      switch ($authtype)
+      {
+         case 'MTAuth':
+            
+            $classname = 'MTUser';
+            
+            import('lib.user.'.$classname);
+            
+            if (!class_exists($classname))
+            {
+               throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
+            }
+            
+            $this->user = call_user_func(array($classname, 'getCurrent'), $key);
+            
+            break;
+         
+         case 'LDAP':
+            throw new Exception('Not supported autorization type "LDAP"');
+            break;
+         
+         case 'Basic':
+         default:
+            throw new Exception('Not supported autorization type "Basic"');
+      }
+      
+      if (!is_a($this->user, 'BaseUser'))
+      {
+         throw new Exception(__METHOD__.': not supported user class "'.$classname.'"');
+      }
+      
+      return $this->user;
    }
 }

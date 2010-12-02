@@ -44,6 +44,13 @@ class WebServicesController
       $request  = $this->container->getRequest();
       $responce = $this->container->getResponce();
       
+      if (!$this->checkPermission())
+      {
+         $responce->setStatusCode('401');
+         $responce->sendHttpHeaders();
+         exit;
+      }
+      
       $m_opt = isset($options['model']) ? $options['model'] : array();
       $model = $this->container->getModel($this->kind, $this->type, $m_opt);
       
@@ -71,5 +78,17 @@ class WebServicesController
       $responce->setContent($content);
       $responce->send();
       exit;
+   }
+   
+   /**
+    * Check permissions for current user
+    * 
+    * @return boolean
+    */
+   protected function checkPermission()
+   {
+      $user = $this->container->getUser();
+      
+      return $user->hasPermission('asd');
    }
 }
