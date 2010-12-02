@@ -42,12 +42,12 @@ class WebServicesController
       $errors   = array();
       $result   = array();
       $request  = $this->container->getRequest();
-      $responce = $this->container->getResponce();
+      $response = $this->container->getResponse();
       
       if (!$this->checkPermission())
       {
-         $responce->setStatusCode('401');
-         $responce->sendHttpHeaders();
+         $response->setStatusCode('401');
+         $response->sendHttpHeaders();
          exit;
       }
       
@@ -58,8 +58,8 @@ class WebServicesController
       
       if (!$model->hasAction($action))
       {
-         $responce->setStatusCode('400');
-         $responce->sendHttpHeaders();
+         $response->setStatusCode('400');
+         $response->sendHttpHeaders();
          exit;
       }
       
@@ -74,9 +74,9 @@ class WebServicesController
       
       $content = Utility::convertArrayToJSONString($return);
       
-      $responce->setStatusCode('200');
-      $responce->setContent($content);
-      $responce->send();
+      $response->setStatusCode('200');
+      $response->setContent($content);
+      $response->send();
       exit;
    }
    

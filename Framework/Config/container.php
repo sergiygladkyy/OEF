@@ -51,9 +51,9 @@ $_conf = array(
       'options'   => array()
    ),
    
-   /* Request */
-   'responce' => array(
-      'classname' => 'Responce',
+   /* Response */
+   'response' => array(
+      'classname' => 'Response',
       'options'   => array(
          //'protocol' => 'HTTP/1.1'
       )

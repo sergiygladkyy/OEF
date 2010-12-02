@@ -32,7 +32,7 @@ $request->addGetParameters($params);
 
 // Init Responce
 $options  = array('protocol' => $request->getHttpHeader('SERVER_PROTOCOL', ''));
-$responce = $container->getResponce($options);
+$response = $container->getResponse($options);
 
 // Init User
 $authinfo = $request->getHttpHeader('OEF-Autorization', ''); 
@@ -51,9 +51,9 @@ try
 }
 catch (Exception $e)
 {
-   $responce->setStatusCode('400');
-   $responce->setContent($e->getMessage());
-   $responce->send();
+   $response->setStatusCode('400');
+   $response->setContent($e->getMessage());
+   $response->send();
    exit;
 }
 
@@ -68,9 +68,9 @@ try
 catch (Exception $e)
 {
    // Internal Server Error
-   $responce->setStatusCode('400');
-   $responce->setContent('400 Bad Request');
-   $responce->send();
+   $response->setStatusCode('400');
+   $response->setContent('400 Bad Request');
+   $response->send();
    exit;
 }
 

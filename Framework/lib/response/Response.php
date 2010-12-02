@@ -1,6 +1,6 @@
 <?php
 
-class Responce
+class Response
 {
    protected
       $headers     = array(),

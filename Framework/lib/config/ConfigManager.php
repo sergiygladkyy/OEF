@@ -296,13 +296,13 @@ class ConfigManager
    }
    
    /**
-    * Get Responce configuration
+    * Get Response configuration
     * 
     * @param array& $options
     * @return array
     */
-   public function getResponceConfiguration(array& $options = array())
+   public function getResponseConfiguration(array& $options = array())
    {
-      return $this->getFromContainerConfiguration('responce', $options);
+      return $this->getFromContainerConfiguration('response', $options);
    }
 }

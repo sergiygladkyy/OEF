@@ -18,7 +18,7 @@ class Container
       $event_dispatcher = null,
       $modules_manager  = null,
       $request          = null,
-      $responce         = null,
+      $response         = null,
       $user             = null;
 
    
@@ -523,25 +523,25 @@ class Container
    }
    
    /**
-    * Get Responce object
+    * Get Response object
     * 
     * @param array& $options
     * @return object
     */
-   public function getResponce(array& $options = array())
+   public function getResponse(array& $options = array())
    {
-      if (isset($this->responce) && is_object($this->responce))
+      if (isset($this->response) && is_object($this->response))
       {
-         return $this->responce;
+         return $this->response;
       }
       
-      $_conf = $this->ConfigManager->getResponceConfiguration($options);
+      $_conf = $this->ConfigManager->getResponseConfiguration($options);
 
       $classname = $_conf['classname'];
 
-      import('lib.responce.'.$classname);
+      import('lib.response.'.$classname);
 
-      if (!class_exists($classname)) throw new Exception(__METHOD__.': Responce class "'.$classname.'" does not exist');
+      if (!class_exists($classname)) throw new Exception(__METHOD__.': Response class "'.$classname.'" does not exist');
 
       // Options
       if (isset($options['options']) && is_array($options['options']))
@@ -553,9 +553,9 @@ class Container
          $_conf['options'] = array();
       }
       
-      $this->responce = call_user_func(array($classname, 'createInstance'), $_conf['options']);
+      $this->response = call_user_func(array($classname, 'createInstance'), $_conf['options']);
       
-      return $this->responce;
+      return $this->response;
    }
    
    /**
