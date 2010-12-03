@@ -202,6 +202,14 @@ function oeLoader(parameters)
  */
 function oeWidgetsView()
 {
+	/**
+	 * Grid
+	 * 
+	 * @param string tag_id
+	 * @param array data
+	 * @param array options
+	 * @return void
+	 */
 	this.drawGrid = function(tag_id, data, options)
 	{
 		if (!data || !data['fields'])
@@ -249,6 +257,54 @@ function oeWidgetsView()
 		
 		jQuery('#' + tag_id).html(html);
 	};
+	
+	/**
+	 * Column Chart
+	 * 
+	 * @param string tag_id
+	 * @param array data
+	 * @param array options
+	 * @return void
+	 */
+	this.drawColumnChart = function(tag_id, data, options)
+	{
+		if (!data || !data['fields'])
+		{
+			jQuery('#' + tag_id).html('<span>Data is empty</span>');
+			return;
+		}
+		var list   = data['list']  ? data['list']  : [];
+		var links  = data['links'] ? data['links'] : [];
+		var fields = data['fields'];
+		
+		google.load("visualization", "1", {packages:["corechart"]});
+		google.setOnLoadCallback(function () {
+			var gdata  = new google.visualization.DataTable();
+			var numb_f = 0;
+			var rows   = 0;
+			
+			for (var field in fields)
+			{
+				gdata.addColumn(fields[field]['type'], field);
+				numb_f++;
+			}
+			
+			for (var key in list)
+			{
+				gdata.addRows(1);
+				
+				for (var i = 0; i < numb_f; i++)
+				{
+					gdata.setValue(rows, i, list[key][i]);
+				}
+				
+				rows++;
+			}
+			
+			var chart = new google.visualization.ColumnChart(document.getElementById(tag_id));
+			chart.draw(gdata, options);
+		});
+	};
 }
 
 
@@ -271,7 +327,7 @@ function getCookie(name)
 		if (offset != -1)
 		{
 			offset += search.length;
-			end = cookie.indexOf(";", offset)
+			end = cookie.indexOf(";", offset);
 			
 			if (end == -1) end = cookie.length;
 			
