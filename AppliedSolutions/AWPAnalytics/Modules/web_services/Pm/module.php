@@ -219,6 +219,63 @@ function getUserProjects(array $attributes)
  */
 function getProjectCost(array $attributes)
 {
-   return array();
+   if (empty($attributes['Project'])) throw new Exception('Unknow project');
+   
+   $container = Container::getInstance();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         'Date'        => array('type' => 'string'),
+         'Budget'      => array('type' => 'number'),
+         'Expenditure' => array('type' => 'number')
+      )
+   );
+   
+   $proj = (int) $attributes['Project'];
+   $date = (!empty($attributes['Date']) && is_string($attributes['Date'])) ? date('Y-m-d', strtotime($attributes['Date'])) : date('Y-m-d');
+   
+   $project = $container->getModel('catalogs', 'Projects');
+   
+   if (!$project->load($proj))
+   {
+      return $result;
+   }
+   
+   $db = $container->getODBManager();
+   
+   // Retrieve project BudgetHRS
+   $query = "SELECT BudgetHRS, MAX(Period) FROM information_registry.ProjectRegistrationRecords ".
+            "WHERE Project = ".$proj." AND Period <= '".$date."'";
+   
+   if (null === ($projInfo = $db->loadAssoc($query)))
+   {
+      return $result;
+   }
+   
+   // Retrieve spent time for project
+   $query = "SELECT `Employee`, `HoursSpent` FROM information_registry.ProjectTimeRecords ".
+            "WHERE  `Project` = ".$project->getId()." AND `Date` <= '".$date."' ".
+            "GROUP BY `Employee`, `Date` ORDER BY `Employee` ASC, `Date` ASC";
+   
+   if (null === ($spent = $db->loadAssocList($query, array('key' => 'Employee'))))
+   {
+      return $result;
+   }
+   
+   // Prepare result
+   $expenditure = 0;
+   
+   foreach ($spent as $empl => $row)
+   {
+      $expenditure += $row['HoursSpent']; 
+   }
+   
+   $result['list'][0][0] = MGlobal::getFormattedDate($date, '%d.%m.%Y');
+   $result['list'][0][1] = $projInfo['BudgetHRS'];
+   $result['list'][0][2] = $expenditure;
+    
+   return $result;
 }
 ?>
