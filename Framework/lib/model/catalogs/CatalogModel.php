@@ -161,8 +161,11 @@ class CatalogModel extends BaseObjectModel
       {
          if (($length + 1) >= $this->conf['precision']['Code']['max_length']) return null;
          
-         $code = '0'.$code;
+         $code = '1'.$code;
       }
+      
+      // @todo addition of code to a maximum length: Если не дополнять - сортировка будет работать не правильно 
+      // $code = str_pad($code, $this->conf['precision']['Code']['max_length'], '0', STR_PAD_LEFT);  
       
       return $code;
    }
