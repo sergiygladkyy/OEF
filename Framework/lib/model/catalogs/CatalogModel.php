@@ -164,7 +164,7 @@ class CatalogModel extends BaseObjectModel
          $code = '1'.$code;
       }
       
-      // @todo addition of code to a maximum length: Если не дополнять - сортировка будет работать не правильно 
+      // @todo addition of code to a maximum length: Р•СЃР»Рё РЅРµ РґРѕРїРѕР»РЅСЏС‚СЊ - СЃРѕСЂС‚РёСЂРѕРІРєР° Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ РЅРµ РїСЂР°РІРёР»СЊРЅРѕ 
       // $code = str_pad($code, $this->conf['precision']['Code']['max_length'], '0', STR_PAD_LEFT);  
       
       return $code;
@@ -195,6 +195,8 @@ class CatalogModel extends BaseObjectModel
       {
          $errors[$pkey] = 'Invalid entity id';
       }
+      
+      unset($values[$pkey]);
       
       return $errors;
    }

@@ -108,7 +108,7 @@ class PersistentLayer
    /**
     * Check dictionary file
     * 
-    * @param array $config - !!! метод вносит изменения в передаваемый массив
+    * @param array $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param array $options
     * @return array - errors
     */
@@ -167,7 +167,7 @@ class PersistentLayer
    /**
     * Check catalogs configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkCatalogsConfig(array& $config)
@@ -252,7 +252,7 @@ class PersistentLayer
    /**
     * Check information registry configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkInformationRegistryConfig(array& $config)
@@ -399,7 +399,7 @@ class PersistentLayer
    /**
     * Check documents configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkDocumentsConfig(array& $config)
@@ -507,7 +507,7 @@ class PersistentLayer
    /**
     * Check Tabular Sections configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkTabularSectionsConfig(array& $config)
@@ -563,7 +563,7 @@ class PersistentLayer
    /**
     * Check Reports configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkReportsConfig(array& $config)
@@ -619,7 +619,7 @@ class PersistentLayer
    /**
     * Check Data Processors configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkDataProcessorsConfig(array& $config)
@@ -675,7 +675,7 @@ class PersistentLayer
    /**
     * Check Web services configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkWebServicesConfig(array& $config)
@@ -768,7 +768,7 @@ class PersistentLayer
    /**
     * Check Security configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkSecurityConfig(array& $config)
@@ -786,7 +786,7 @@ class PersistentLayer
     * Check fields configuration
     * 
     * @param string $kind - entity kind
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkFieldsConfig($kind, array& $config)
@@ -838,7 +838,7 @@ class PersistentLayer
    /**
     * Check reference configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkReferenceConfig(array& $config)
@@ -888,7 +888,7 @@ class PersistentLayer
     * Check attribute configuration array
     * 
     * @param string $kind - entity kind
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkAttributeConfig($kind, array& $config)
@@ -979,7 +979,7 @@ class PersistentLayer
    /**
     * Check precision configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param string $type - field type
     * @return array - errors
     */
@@ -1025,7 +1025,7 @@ class PersistentLayer
    /**
     * Check recorders configuration array (by information_registry)
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkRecordesConfig($config)
@@ -1053,7 +1053,7 @@ class PersistentLayer
     * 
     * @param string $kind
     * @param string $type
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkCommonConfig($kind, $type, array& $conf)
@@ -1126,7 +1126,7 @@ class PersistentLayer
    /**
     * Check model configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkModelConfig(array& $config)
@@ -1166,7 +1166,7 @@ class PersistentLayer
    /**
     * Check controller configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param string $type - field type
     * @return array - errors
     */
@@ -2497,10 +2497,10 @@ class PersistentLayer
    public function update(array& $options = array())
    {
       //echo '<pre>'; print_r($this->dictionary); echo '</pre>';
-      /* Копируем старую конфигурацию в папку config/internal/backup */
-      /* Генерируем новую */
-      /* Сравниваем старую и новую, создаем таблицу отличий */
-      /* Генерируем SQL для обновления */
+      /* РљРѕРїРёСЂСѓРµРј СЃС‚Р°СЂСѓСЋ РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ РІ РїР°РїРєСѓ config/internal/backup */
+      /* Р“РµРЅРµСЂРёСЂСѓРµРј РЅРѕРІСѓСЋ */
+      /* РЎСЂР°РІРЅРёРІР°РµРј СЃС‚Р°СЂСѓСЋ Рё РЅРѕРІСѓСЋ, СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ РѕС‚Р»РёС‡РёР№ */
+      /* Р“РµРЅРµСЂРёСЂСѓРµРј SQL РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ */
    }
    
    public function remove(array& $options = array())
