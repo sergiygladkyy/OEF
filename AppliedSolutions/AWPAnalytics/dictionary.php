@@ -411,9 +411,6 @@ $_dictionary = array(
          'fields' => array(
             'Date' => array(
                'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               ),
                'precision' => array(
                   'required' => true
                )
@@ -424,9 +421,6 @@ $_dictionary = array(
          'fields' => array(
             'Date' => array(
                'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               ),
                'precision' => array(
                   'required' => true
                )
@@ -436,6 +430,52 @@ $_dictionary = array(
                'precision' => array(
                   'required' => true
                )
+            )
+         )
+      ),
+      // Which projects are ongoing
+      'RegisteredProjects' => array(
+         'fields' => array(
+            'Date' => array(
+               'type' => 'date'
+            )
+         )
+      ),
+      // How large are the projects (personnel involved and budget)
+      'ProjectOverview' => array(
+         'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      // Who are working on my projects
+      'ResourceAssignments' => array(
+         'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      // How many hours/money have we spent vs. how much is budgeted.
+      'ProjectPerformance' => array(
+         'fields' => array(                        // Use extra field extProjects
+            'Projects' => array(
+               'reference' => 'catalogs.Projects'
+            )
+         )
+      ),
+      // What is the hourly cost of the different consultants?
+      'ResourceCost' => array(
+         'fields' => array(                        // Use extra field extEmployees
+            'Employees' => array(
+               'reference' => 'catalogs.Employees'
             )
          )
       )
