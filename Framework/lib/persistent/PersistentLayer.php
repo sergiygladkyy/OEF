@@ -102,13 +102,60 @@ class PersistentLayer
    {
       $this->dictionary = $this->loadConfigFromFile($this->dictionary_path);
       
+      $this->addSystemEntities($this->dictionary, $options);
+      
       return $this->checkDictionary($this->dictionary, $options);
+   }
+   
+   /**
+    * Add system entities
+    * 
+    * @param array& $dict - dictionary
+    * @param array& $options
+    * @return array
+    */
+   protected function addSystemEntities(array& $dict, array& $options = array())
+   {
+      $dict['catalogs']['SystemUsers'] = array(
+         'fields' => null // Only system fields: Code - login, Description - UserName  
+      );
+      
+      $dict['information_registry']['AuthenticationRecords'] = array(
+         'dimensions' => array(
+            'User' => array(
+               'reference' => 'catalogs.SystemUsers',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AuthType' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('MTAuth', 'Basic', 'LDAP')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'MTAuth', 2 => 'Basic', 3 => 'LDAP'),
+                  'required' => true
+               )
+            )
+         ),
+         'fields' => array(
+            'Attributes' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(256) NOT NULL default ''"
+               )
+            )
+         )
+      );
+       
+      return $dict;
    }
    
    /**
     * Check dictionary file
     * 
-    * @param array $config - !!! метод вносит изменения в передаваемый массив
+    * @param array $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param array $options
     * @return array - errors
     */
@@ -167,7 +214,7 @@ class PersistentLayer
    /**
     * Check catalogs configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkCatalogsConfig(array& $config)
@@ -252,7 +299,7 @@ class PersistentLayer
    /**
     * Check information registry configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkInformationRegistryConfig(array& $config)
@@ -399,7 +446,7 @@ class PersistentLayer
    /**
     * Check documents configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkDocumentsConfig(array& $config)
@@ -507,7 +554,7 @@ class PersistentLayer
    /**
     * Check Tabular Sections configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkTabularSectionsConfig(array& $config)
@@ -563,7 +610,7 @@ class PersistentLayer
    /**
     * Check Reports configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkReportsConfig(array& $config)
@@ -619,7 +666,7 @@ class PersistentLayer
    /**
     * Check Data Processors configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkDataProcessorsConfig(array& $config)
@@ -675,7 +722,7 @@ class PersistentLayer
    /**
     * Check Web services configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkWebServicesConfig(array& $config)
@@ -768,15 +815,129 @@ class PersistentLayer
    /**
     * Check Security configuration
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkSecurityConfig(array& $config)
    {
-      ;
+      $errors = array();
+      $valid  = array();
+
+      foreach ($config as $role => $conf)
+      {
+         if (!$this->checkName($role))
+         {
+            $errors['global'][] = 'Invalid name "'.$role.'"';
+         }
+         
+         /* Check entities permission configuration */
+         
+         if (!isset($conf['entities']))
+         {
+            $valid[$role]['entities'] = array();
+         }
+         elseif (!is_array($conf['entities']))
+         {
+            $errors['global'][] = 'Entities configuration for Role "'.$role.'" is wrong';
+         }
+         elseif (empty($conf['entities']))
+         {
+            $valid[$role]['entities'] = array();
+         }
+         else
+         {
+            $kinds = $this->getAllowedKinds();
+            
+            foreach ($conf['entities'] as $kind => $_conf)
+            {
+               if (!in_array($kind, $kinds))
+               {
+                  $errors[$role]['entities'][] = 'Unknow kind "'.$kind.'"';
+               }
+               elseif (empty($_conf) || !is_array($_conf))
+               {
+                  $errors[$role]['entities'][$kind] = 'Global configuration for "'.$kind.'" is wrong';
+               }
+               else
+               {
+                  foreach ($_conf as $type => $permissions)
+                  {
+                     if (!$err = $this->checkPermissionConfig($kind, $permissions))
+                     {
+                        $valid[$role]['entities'][$kind][$type] = $permissions;
+                     }
+                     else $errors[$role]['entities'][$kind][$type] = $err;
+                  }
+               }
+            }
+         }
+         
+         /* Check global permission configuration */
+          
+         if (!isset($conf['global']))
+         {
+            $valid[$role]['global'] = array();
+         }
+         elseif (!is_array($conf['global']))
+         {
+            $errors['global'][] = 'Global configuration for Role "'.$role.'" is wrong';
+         }
+         elseif (empty($conf['global']))
+         {
+            $valid[$role]['global'] = array();
+         }
+         else
+         {
+            if (!$err = $this->checkPermissionConfig('global', $conf['global']))
+            {
+               $valid[$role]['global'] = $conf['global'];
+            }
+            else $errors[$role]['global'] = $err;
+         }
+      }
+
+      $config = $valid;
+      unset($valid);
+
+      return $errors;
    }
    
-   
+   /**
+    * Check permissions configuration
+    * 
+    * @param string $kind
+    * @param array& $permissions
+    * @return array
+    */
+   protected function checkPermissionConfig($kind, array& $permissions)
+   {
+      $errors  = array();
+      $valid   = array();
+      $allowed = $this->getAllowedPermissions($kind);
+      $diff    = array();
+
+      foreach ($permissions as $permission => $value)
+      {
+         if (!isset($allowed[$permission]))
+         {
+            $diff[] = $permission;
+            continue;
+         }
+          
+         $valid[$permission] = $value ? true : false;
+      }
+
+      if (!empty($diff))
+      {
+         $errors[] = 'Not allowed permissions: '.implode(', ', $diff).'.';
+         $valid = array();
+      }
+       
+      $config = $valid;
+      unset($valid);
+
+      return $errors;
+   }
    
    
    
@@ -786,7 +947,7 @@ class PersistentLayer
     * Check fields configuration
     * 
     * @param string $kind - entity kind
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkFieldsConfig($kind, array& $config)
@@ -838,7 +999,7 @@ class PersistentLayer
    /**
     * Check reference configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkReferenceConfig(array& $config)
@@ -888,7 +1049,7 @@ class PersistentLayer
     * Check attribute configuration array
     * 
     * @param string $kind - entity kind
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkAttributeConfig($kind, array& $config)
@@ -979,7 +1140,7 @@ class PersistentLayer
    /**
     * Check precision configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param string $type - field type
     * @return array - errors
     */
@@ -1025,7 +1186,7 @@ class PersistentLayer
    /**
     * Check recorders configuration array (by information_registry)
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkRecordesConfig($config)
@@ -1053,7 +1214,7 @@ class PersistentLayer
     * 
     * @param string $kind
     * @param string $type
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkCommonConfig($kind, $type, array& $conf)
@@ -1126,7 +1287,7 @@ class PersistentLayer
    /**
     * Check model configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @return array - errors
     */
    protected function checkModelConfig(array& $config)
@@ -1166,7 +1327,7 @@ class PersistentLayer
    /**
     * Check controller configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config - !!! РјРµС‚РѕРґ РІРЅРѕСЃРёС‚ РёР·РјРµРЅРµРЅРёСЏ РІ РїРµСЂРµРґР°РІР°РµРјС‹Р№ РјР°СЃСЃРёРІ
     * @param string $type - field type
     * @return array - errors
     */
@@ -1209,6 +1370,15 @@ class PersistentLayer
    
    
       
+   /**
+    * Return allowed entity kinds
+    * 
+    * @return array
+    */
+   protected function getAllowedKinds()
+   {
+      return array('catalogs', 'documents', 'information_registry', 'reports', 'data_processors', 'web_services');
+   }
    
    /**
     * Return entity kinds that can't storage (not have table in db)
@@ -1279,6 +1449,24 @@ class PersistentLayer
       }
       
       return $this->_periods;
+   }
+   
+   /**
+    * Get list allowed permissions
+    * 
+    * @param string $kind
+    * @return array
+    */
+   public function getAllowedPermissions($kind = null)
+   {
+      if (!isset($this->_permissions))
+      {
+         $this->_permissions = $this->loadConfigFromFile(self::p_config_dir.'permissions.php');
+      }
+      
+      if (!empty($kind)) return isset($this->_permissions[$kind]) ? $this->_permissions[$kind] : array();
+      
+      return $this->_permissions;
    }
    
    /**
@@ -2497,10 +2685,10 @@ class PersistentLayer
    public function update(array& $options = array())
    {
       //echo '<pre>'; print_r($this->dictionary); echo '</pre>';
-      /* Копируем старую конфигурацию в папку config/internal/backup */
-      /* Генерируем новую */
-      /* Сравниваем старую и новую, создаем таблицу отличий */
-      /* Генерируем SQL для обновления */
+      /* РљРѕРїРёСЂСѓРµРј СЃС‚Р°СЂСѓСЋ РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ РІ РїР°РїРєСѓ config/internal/backup */
+      /* Р“РµРЅРµСЂРёСЂСѓРµРј РЅРѕРІСѓСЋ */
+      /* РЎСЂР°РІРЅРёРІР°РµРј СЃС‚Р°СЂСѓСЋ Рё РЅРѕРІСѓСЋ, СЃРѕР·РґР°РµРј С‚Р°Р±Р»РёС†Сѓ РѕС‚Р»РёС‡РёР№ */
+      /* Р“РµРЅРµСЂРёСЂСѓРµРј SQL РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ */
    }
    
    public function remove(array& $options = array())

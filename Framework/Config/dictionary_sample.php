@@ -121,6 +121,125 @@ $_dictionary = array(
       ),
     //................................................................................................................ 
    ),
+   
+   ///////////////////
+   // Reports Section
+   ///////////////////
+   'reports' => array(
+      'ProjectManHours' => array(
+         'fields' => array(
+            'Date' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      'ProjectResources' => array(
+         'fields' => array(
+            'Date' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      )
+   ),
+   
+   ///////////////////////////
+   // Data processors Section
+   ///////////////////////////
+   'data_processors' => array(
+      'NavCsvImport' => array(
+         'fields' => array(
+            'Server' => array(
+               'type' => 'string',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'FileName' => array(
+               'type' => 'string',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'UserName' => array(
+               'type' => 'string',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Password' => array(
+               'type' => 'password',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      )
+   ),
+   
+   ////////////////
+   // Web services
+   ////////////////
+   'web_services' => array(
+      '<web_service_name>' => array(
+         'actions' => array(
+            '<method_name>' => array(
+               'fields' => array()
+            ),
+            'getProjectMembers' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
+            )
+         )
+      )
+   ),
+   
+   ////////////
+   // Security
+   ////////////
+   'security' => array(
+      '<Role>' => array(
+         'entities' => array(
+            '<entity_kind>' => array(
+               '<entity_type>' => array(
+                  '<permissions>' => array(
+                     'permission_1' => true,
+                     'permission_2' => false
+                  )               
+               )
+            )
+         ),
+         'global' =>array(
+            'UseRemoteCalls' => true
+         )
+      )
+   )
 );
 
 
