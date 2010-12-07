@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Project Overview</title>
+  <style>
+    table { border-collapse: collapse; padding: 0px; color: #111111;}
+	th, td { border: 1px solid #000000; padding: 0px 3px 1px 3px;}
+	
+	*[area=total]    { background-color: #ffdeed; }
+	*[area=headline] { background-color: #dedeed; }
+	*[area=body]    { background-color: #eeffc9; }
+  </style>
+</head>
+<body>
+    <!-- BEG Макет -->
+    <table>
+	<tr area="header">
+	  <td colspan="4" style="border: 0 none;">Project Overview for [ProjectName]</td>
+    </tr>
+	<tr area="header">
+	  <td colspan="4" style="border: 0 none;">Overall Project Budget is: [BudgetNOK] NOK and [BudgetHRS] hours</td>
+	</tr>
+	<tr area="header">
+	  <td colspan="4" style="border: 0 none; height: 0.8em;"> </td>
+	</tr>
+    <tr area="headline">
+	  <th>Employee</th>
+      <th>Budgeted Hours</th>
+	  <th>Rate for Customer</th>
+	  <th>Allocated Budget</th>
+    </tr>
+    <tr area="body">
+      <td>[Employee]</td>
+	  <td>[BudgetedHours]</td>
+	  <td>[RateForCustomer]</td>
+	  <td>[AllocatedBudget]</td>
+    </tr>
+	<tr area="total">
+      <td colspan="4" style="border: 0 none; height: 0.7em;"> </td>
+    </tr>
+    <tr area="total">
+      <td colspan="4" style="border: 0 none;"><b>Totals</b></td>
+    </tr>
+	<tr area="total">
+      <td style="border: 0 none;">Overall hours:</td>
+	  <td style="border: 0 none;" colspan="3">[OverallHours]</td>
+    </tr>
+	<tr area="total">
+      <td style="border: 0 none;">Overall hours:</td>
+	  <td style="border: 0 none;" colspan="3">[OverallNOK]</td>
+    </tr>
+	</table>
+  <!-- END Макет -->
+</body>
+</html>

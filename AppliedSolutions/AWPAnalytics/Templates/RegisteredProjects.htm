@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Registered Projects</title>
+  <style>
+    table { border-collapse: collapse; padding: 0px; color: #111111;}
+	th, td { border: 1px solid #000000; padding: 0px 3px 1px 3px;}
+	
+	*[area=headline] { background-color: #dedeed; }
+	*[area=project]   { background-color: #eeffc9; }
+  </style>
+</head>
+<body>
+    <!-- BEG Макет -->
+    <table>
+	<tr area="header">
+	  <td colspan="4" style="border: 0 none;">[header]</td>
+    </tr>
+    <tr area="headline">
+	  <th>Project Name</th>
+      <th>Project Budget (NOK)</th>
+	  <th>Prject Budget (Hours)</th>
+	  <th>Deliver Date</th>
+    </tr>
+    <tr area="project">
+      <td decode="ProjectOverview">[ProjectName]</td>
+	  <td>[BudgetNOK]</td>
+	  <td>[BudgetHRS]</td>
+	  <td>[DeliverDate]</td>
+    </tr>
+	</table>
+  <!-- END Макет -->
+</body>
+</html>

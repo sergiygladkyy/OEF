@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Resource Assignments</title>
+  <style>
+    table { border-collapse: collapse; padding: 0px; color: #111111;}
+	th, td { border: 1px solid #000000; padding: 0px 3px 1px 3px;}
+	
+	*[area=total]    { background-color: #ffdeed; }
+	*[area=headline] { background-color: #dedeed; }
+	*[area=body]    { background-color: #eeffc9; }
+  </style>
+</head>
+<body>
+    <!-- BEG Макет -->
+    <table>
+	<tr area="header">
+	  <td colspan="3" style="border: 0 none;">Resource Assignments for [ProjectName]. Approved Budget is [ProjectBudgetHRS] hours.</td>
+    </tr>
+	<tr area="header">
+	  <td colspan="3" style="border: 0 none; height: 0.8em;"> </td>
+	</tr>
+    <tr area="headline">
+	  <th>Employee</th>
+      <th>Budgeted Hours</th>
+	  <th>Assigned From</th>
+    </tr>
+    <tr area="body">
+      <td>[Employee]</td>
+	  <td>[BudgetedHours]</td>
+	  <td>[AssignedFrom]</td>
+    </tr>
+	<tr area="total">
+      <td colspan="3" style="border: 0 none; height: 0.7em;"> </td>
+    </tr>
+    <tr area="total">
+      <td colspan="3" style="border: 0 none;"><b>Totals</b></td>
+    </tr>
+	<tr area="total">
+      <td style="border: 0 none;">Overall hours allocated:</td>
+	  <td style="border: 0 none;" colspan="2">[SumBugdetedHours]</td>
+    </tr>
+	</table>
+  <!-- END Макет -->
+</body>
+</html>
