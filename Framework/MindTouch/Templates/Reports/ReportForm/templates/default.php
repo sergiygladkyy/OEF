@@ -75,7 +75,7 @@
   </form>
   {{ 
      &lt;div class="ae_report" type=(type)&gt;
-     report.output is nil ? '&nbsp;' : web.xml(report.output);
+     report.output is nil ? '&nbsp;' : web.html(report.output);
      &lt;/div&gt;
   }}
 </eval:else>

@@ -95,22 +95,6 @@ function onGenerate($event)
    
    $report->put($area);
    
-   echo "
-   <style>
-      .ae_report table {
-         border: 0px none !important;
-      }
-         
-      .ae_report td, .ae_report th {
-         border: 1px solid #AAAAAA !important;
-      }
-      
-      .ae_report td.oe_report_none_border {
-         border: 0px none !important;
-      }
-   </style>
-   ";
-   
    echo $report->show();
 }
  
