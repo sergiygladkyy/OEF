@@ -21,7 +21,7 @@ function onGenerate($event)
    
    if (null === ($projects = $db->loadAssocList($query, array('key' => 'Project'))))
    {
-      echo '<span>DataBase error</span>'; exit;
+      echo '<span>DataBase error</span>'; return;
    }
    
    if (!empty($projects))
