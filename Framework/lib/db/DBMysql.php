@@ -283,7 +283,7 @@ class DBMysql implements DBManager
          return $object;
       }
       
-      return null;
+      return false;
    }
    
    /**
@@ -330,7 +330,7 @@ class DBMysql implements DBManager
          return $row;
       }
       
-      return null;
+      return false;
    }
    
    /**
@@ -383,7 +383,7 @@ class DBMysql implements DBManager
          return $row;
       }
       
-      return null;
+      return false;
    }
    
    /**
@@ -436,7 +436,7 @@ class DBMysql implements DBManager
          return $row;
       }
       
-      return null;
+      return false;
    }
    
    /**
