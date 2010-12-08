@@ -22,7 +22,7 @@ function onGenerate($event)
    $date = date('Y-m-d');
    $db   = $container->getODBManager();
    
-   $query = "SELECT Project, Period, BudgetNOK, BudgetHRS FROM information_registry.ProjectRegistrationRecords ".
+   $query = "SELECT Project, Period, BudgetHRS FROM information_registry.ProjectRegistrationRecords ".
             "WHERE Project = ".$proj." ".
             "ORDER BY Period DESC";
    
@@ -41,7 +41,7 @@ function onGenerate($event)
    }
    
    // Retrieve project info
-   $query = "SELECT Resource AS Employee, Period, BudgetHRS, Rate FROM information_registry.ProjectAssignmentRecords ".
+   $query = "SELECT Resource AS Employee, Period, BudgetHRS FROM information_registry.ProjectAssignmentRecords ".
             "WHERE Project = ".$proj." AND Period <= '".$date."' ".
             "GROUP BY Resource, Period ORDER BY Resource ASC, Period ASC";
    
@@ -59,17 +59,16 @@ function onGenerate($event)
       $links['Employee'] = array();
    }
    
-   $total = array('OverallHours' => 0, 'OverallNOK' => 0);
+   $total = array('SumBugdetedHours' => 0);
    
    /* Generate report */
 
-   $mockup = new Mockup($_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/ProjectOverview.htm');
+   $mockup = new Mockup($_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/ResourceAssignments.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');
-   $area->parameters['ProjectName'] = $links['Project'][$proj]['text'];
-   $area->parameters['BudgetNOK']   = $project['BudgetNOK'];
-   $area->parameters['BudgetHRS']   = $project['BudgetHRS'];
+   $area->parameters['ProjectName']      = $links['Project'][$proj]['text'];
+   $area->parameters['ProjectBudgetHRS'] = $project['BudgetHRS'];
 
    $report->put($area);
    $report->put($mockup->getArea('headline'));
@@ -78,20 +77,17 @@ function onGenerate($event)
    
    foreach ($employees as $employee => $attributes)
    {
-      $a_body->parameters['Employee']        = $links['Employee'][$employee]['text'];
-      $a_body->parameters['BudgetedHours']   = $attributes['BudgetHRS'];
-      $a_body->parameters['RateForCustomer'] = $attributes['Rate'];
-      $a_body->parameters['AllocatedBudget'] = $attributes['BudgetHRS'] * $attributes['Rate'];
+      $a_body->parameters['Employee']      = $links['Employee'][$employee]['text'];
+      $a_body->parameters['BudgetedHours'] = $attributes['BudgetHRS'];
+      $a_body->parameters['AssignedFrom']  = MGlobal::getFormattedDate($attributes['Period'], '%d.%m.%Y');
       
-      $total['OverallHours'] += $attributes['BudgetHRS'];
-      $total['OverallNOK']   += $a_body->parameters['AllocatedBudget'];
+      $total['SumBugdetedHours'] += $attributes['BudgetHRS'];
       
       $report->put($a_body);
    }
    
    $area = $mockup->getArea('total');
-   $area->parameters['OverallHours'] = $total['OverallHours'];
-   $area->parameters['OverallNOK']   = $total['OverallNOK'];
+   $area->parameters['SumBugdetedHours'] = $total['SumBugdetedHours'];
    
    $report->put($area);
    
