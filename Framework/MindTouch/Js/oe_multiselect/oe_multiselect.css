@@ -1,0 +1,47 @@
+.oe_multiselect {
+	width: 600px;
+	height: 300px;
+}
+
+.oe_list {
+	width: 250px;
+	height: 100%;
+	overflow: auto;
+	border: 1px solid #AAAAAA;
+	float: left;
+}
+
+.oe_controll {
+	width: 96px;
+	float: left;
+	text-align: center;
+	padding-top: 100px;
+}
+
+.oe_controll input {
+	margin: 5px;
+}
+
+.oe_selected {
+	width: 250px;
+	height: 100%;
+	overflow: auto;
+	border: 1px solid #AAAAAA;
+	float: left;
+}
+
+.oe_list_item {
+	width: 100%;
+}
+
+.oe_multiselect .oe_list_even {
+	background-color: #dedeed;
+}
+
+.oe_multiselect .oe_selected_even {
+	background-color: #dedeed;
+}
+
+.oe_mark {
+	background-color: #eeffc9 !important;
+}
