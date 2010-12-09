@@ -12,10 +12,16 @@ function onGenerate($event)
 
    /* Get data */
 
+   if (!empty($headline['extra']['ex_employees']))
+   {
+      $headline['Employees'] = $headline['extra']['ex_employees'];
+   }
+   
    if (empty($headline['Employees']))
    {
       echo '<span>Unknow employees</span>'; return;
    }
+   
    
    $empls = is_array($headline['Employees']) ? $headline['Employees'] : array($headline['Employees']);
    $date  = date('Y-m-d');

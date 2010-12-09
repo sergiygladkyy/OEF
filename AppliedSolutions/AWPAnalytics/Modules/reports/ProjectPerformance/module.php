@@ -9,13 +9,19 @@ function onGenerate($event)
 {
    $headline  = $event['headline'];
    $container = Container::getInstance();
-
+   
    /* Get data */
 
+   if (!empty($headline['extra']['ex_projects']))
+   {
+      $headline['Projects'] = $headline['extra']['ex_projects'];
+   }
+   
    if (empty($headline['Projects']))
    {
       echo '<span>Unknow projects</span>'; return;
    }
+   
    
    // Retrieve project
    $projs     = is_array($headline['Projects']) ? $headline['Projects'] : array($headline['Projects']);
