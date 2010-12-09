@@ -130,8 +130,19 @@ function oeMultiselect()
 	 */
 	this.markItem = function(event)
 	{
-		var node = event.currentTarget;
-		
+		if (!event)
+		{
+			// @todo зависит от верстки
+			var node = window.event.srcElement;
+			
+			if (!(jQuery(node).hasClass('.oe_list_item') ||
+			    jQuery(node).hasClass('.oe_selected_item')))
+			{
+				node = node.parentNode;
+			}
+		}
+		else var node = event.currentTarget;
+
 		if (jQuery(node).hasClass('oe_mark'))
 		{
 			jQuery(node).removeClass('oe_mark');
@@ -150,7 +161,7 @@ function oeMultiselect()
 	 */
 	this.addFromList = function(event)
 	{
-		var node = event.currentTarget;
+		var node = event ? event.currentTarget : window.event.srcElement;
 		var ms   = jQuery(node).parents('.oe_multiselect').get(0);
 		var data = {};
 		var func = this.getSelectedElement;
@@ -172,7 +183,7 @@ function oeMultiselect()
 	 */
 	this.removeFromSelected = function(event)
 	{
-		var node = event.currentTarget;
+		var node = event ? event.currentTarget : window.event.srcElement;
 		var ms   = jQuery(node).parents('.oe_multiselect').get(0);
 		var data = {};
 		var func = this.getListElement;
