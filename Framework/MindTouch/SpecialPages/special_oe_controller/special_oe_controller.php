@@ -371,7 +371,7 @@ class SpecialOEController extends SpecialPagePlugin
       list($type, $params) = each($values);
       
       $headline = isset($params['attributes']) ? $params['attributes'] : array();
-      
+
       if (empty($type)) $errors[] = 'Unknow entity type';
       
       if ($errors)
@@ -381,7 +381,7 @@ class SpecialOEController extends SpecialPagePlugin
       
       $controller = $this->container->getController('reports', $type);
       
-      return array('reports' => array($type => $controller->generate(Utility::escaper($headline))));
+      return array('reports' => array($type => $controller->generate(Utility::escapeRecursive($headline))));
    }
    
    /**
