@@ -85,9 +85,26 @@ class MTUser extends BaseUser
 
       /* END Code from DreamPlug::Invoke */
 
-      if ($result['status'] == 200)
+      if ($result['status'] == 200 && $result['body']['user']['username'] != self::ANONYMOUS_NAME)
       {
-         self::$instance = new self($result['body']['user']['username']);
+         $result =& $result['body']['user'];
+         
+         $attributes  = array('username' => $result['username']);
+         $roles       = array();
+         
+         // Roles
+         if (!empty($result['groups']['group']))
+         {
+            $groups =& $result['groups']['group'];
+            
+            if (!isset($groups['@id']))
+            {
+               foreach ($groups as $group) $roles[] = $group['groupname'];
+            }
+            else $roles[] = $groups['groupname'];
+         }
+         
+         self::$instance = new self($attributes, true, $roles);
       }
       else
       {
@@ -104,7 +121,7 @@ class MTUser extends BaseUser
     */
    public static function getAnonymous()
    {
-      self::$instance = new self(self::ANONYMOUS_NAME);
+      self::$instance = new self();
    }
    
    /**
@@ -113,38 +130,13 @@ class MTUser extends BaseUser
     * @param string $username
     * @return void
     */
-   protected function __construct($username)
+   protected function __construct(array& $attributes = array(), $authenticated = false, array& $roles = array())
    {
-      $this->attributes['username'] = $username;
+      $this->attributes    = $attributes;
+      $this->roles         = $roles;
+      $this->authenticated = $authenticated;
    }
-   
-   /**
-    * (non-PHPdoc)
-    * @see ext/OEF/Framework/lib/user/BaseUser#getRoles()
-    */
-   public function getRoles()
-   {
-      return array();
-   }
-   
-   /**
-    * (non-PHPdoc)
-    * @see ext/OEF/Framework/lib/user/BaseUser#hasRole($role)
-    */
-   public function hasRole($role)
-   {
-      return false;
-   }
-   
-   /**
-    * (non-PHPdoc)
-    * @see ext/OEF/Framework/lib/user/BaseUser#isAnonymous()
-    */
-   public function isAnonymous()
-   {
-      return $this->attributes['username'] == self::ANONYMOUS_NAME;
-   }
-   
+
    /**
     * (non-PHPdoc)
     * @see ext/OEF/Framework/lib/user/BaseUser#getUsername()

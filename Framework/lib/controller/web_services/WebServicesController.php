@@ -44,10 +44,13 @@ class WebServicesController
       $request  = $this->container->getRequest();
       $response = $this->container->getResponse();
       
-      if (!$this->checkPermission())
+      $user = $this->container->getUser();
+      
+      if (!$user->hasPermission('global.UseRemoteCalls'))
       {
-         $response->setStatusCode('401');
-         $response->sendHttpHeaders();
+         $response->setStatusCode('200');
+         $response->setContent('{"status": false, "result": [], "errors": ["Access Denied"]}');
+         $response->send();
          exit;
       }
       
@@ -78,17 +81,5 @@ class WebServicesController
       $response->setContent($content);
       $response->send();
       exit;
-   }
-   
-   /**
-    * Check permissions for current user
-    * 
-    * @return boolean
-    */
-   protected function checkPermission()
-   {
-      $user = $this->container->getUser();
-      
-      return $user->hasPermission('asd');
    }
 }

@@ -29,8 +29,8 @@ $_permissions = array(
       'InteractiveUnmarkForDeletion' => false,
       'InteractiveDeleteMarked'      => false,
       'InteractivePosting'        => false,
-      'InteractiveUndoPosting'    => false,
-      'InteractiveChangeOfPosted' => false // very rare right, allowing to change the document without unposting
+      'InteractiveUndoPosting'    => false//,
+      //'InteractiveChangeOfPosted' => false // very rare right, allowing to change the document without unposting
    ),
    'information_registry' => array(
       'Read'   => false,

@@ -2,7 +2,12 @@
 
 abstract class BaseUser
 {
-   protected $attributes;
+   protected
+      $attributes    = array(),
+      $roles         = array(),
+      $permissions   = array(),
+      $roles_perm    = array(),
+      $authenticated = null;
    
    /**
     * Create current User object
@@ -10,7 +15,7 @@ abstract class BaseUser
     * @param string $authtoken
     * @return this
     */
-   abstract static public function getCurrent($authtoken);
+   //static public function getCurrent($authtoken) {;}
 
    /**
     * Constructor
@@ -35,7 +40,10 @@ abstract class BaseUser
     * 
     * @return array
     */
-   abstract public function getRoles();
+   public function getRoles()
+   {
+      return $this->roles;
+   }
    
    /**
     * Check role by name
@@ -43,7 +51,10 @@ abstract class BaseUser
     * @param string $role
     * @return boolean
     */
-   abstract public function hasRole($role);
+   public function hasRole($role)
+   {
+      return in_array($role, $this->roles);
+   }
    
    /**
     * Get all permissions
@@ -52,7 +63,8 @@ abstract class BaseUser
     */
    public function getPermissions()
    {
-      return array();
+      // @todo Get only loaded permission
+      return $this->permissions;
    }
    
    /**
@@ -63,15 +75,49 @@ abstract class BaseUser
     */
    public function hasPermission($permission)
    {
-      return !$this->isAnonymous();
+      if (isset($this->permissions[$permission]))
+      {
+         return $this->permissions[$permission];
+      }
+      
+      if (empty($this->roles))
+      {
+         return ($this->permissions[$permission] = false);
+      }
+      
+      $this->permissions[$permission] = true;
+      
+      foreach ($this->roles as $role)
+      {
+         if (!isset($this->roles_perm[$role]))
+         {
+            if (!isset($CManager))
+            {
+               $CManager = Container::getInstance()->getConfigManager();
+            }
+            
+            $this->roles_perm[$role] = $CManager->getInternalConfiguration('security.permissions', $role);
+         }
+
+         if (empty($this->roles_perm[$role][$permission]))
+         {
+            $this->permissions[$permission] = false;
+            break;
+         }
+      }
+
+      return $this->permissions[$permission];
    }
    
    /**
-    * Return true if current user is Anonymous
+    * Return true if current user is Authenticated
     * 
     * @return unknown_type
     */
-   abstract public function isAnonymous();
+   public function isAuthenticated()
+   {
+      return $this->authenticated ? true : false;
+   }
    
    /**
     * Get user name
@@ -79,4 +125,4 @@ abstract class BaseUser
     * @return string
     */
    abstract public function getUsername();
-}
+ }

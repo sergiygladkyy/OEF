@@ -47,7 +47,15 @@ if (preg_match('/^[\s]*([\S]+)[\s]*([\S]*)[\s]*$/i', $authinfo, $matches))
 
 try
 {
-   $container->getUser($authtype, $authkey);
+   $user = $container->getUser($authtype, $authkey);
+   
+   if (!$user->isAuthenticated())
+   {
+      $response->setStatusCode('401');
+      $response->setContent('401 Unauthorized');
+      $response->send();
+      exit;
+   }
 }
 catch (Exception $e)
 {

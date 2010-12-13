@@ -1589,6 +1589,7 @@ class PersistentLayer
       $result['other']['relations']   = $this->generateRelationsMap($result, $options);
       
       // save internal configuration (and generate configuration map)
+      $map['security']                = $this->saveInternalConfiguration($result['security'],                'security/');
       $map['information_registry']    = $this->saveInternalConfiguration($result['information_registry'],    'information_registry/');
       $map['reports']                 = $this->saveInternalConfiguration($result['reports'],                 'reports/');
       $map['data_processors']         = $this->saveInternalConfiguration($result['data_processors'],         'data_processors/');
@@ -1752,6 +1753,17 @@ class PersistentLayer
       if (!isset($result['errors']))
       {
          $internal['web_services'] = $result;
+      }
+      else $errors = array_merge($errors, $result['errors']);
+      
+      
+      /* Security */
+      
+      $result = $this->generateSecurityInternalConfiguration($dictionary['security'], $options);
+      
+      if (!isset($result['errors']))
+      {
+         $internal['security'] = $result;
       }
       else $errors = array_merge($errors, $result['errors']);
       
@@ -2207,7 +2219,174 @@ class PersistentLayer
       return empty($errors) ? $result : array('errors' => $errors);
    }
    
-   
+   /**
+    * Generate Security internal configuration
+    * 
+    * @param array& $dict
+    * @param array& $options
+    * @return array - 'errors' => $errors or list <confName> => array()
+    */
+   protected function generateSecurityInternalConfiguration(array& $dict, array& $options = array())
+   {
+      $kind   = 'security';
+      $errors = array();
+      $result = array(
+         'roles'       => array(),
+         'permissions' => array()
+      );
+      
+      foreach ($dict as $role => $config)
+      {
+         $result['roles'][] = $role;
+         
+         /* Entities */
+         
+         
+         foreach ($config['entities'] as $kind => $conf)
+         {
+            switch ($kind)
+            {
+               case 'catalogs':
+               case 'documents':
+                  
+                  foreach ($conf as $type => $permissions)
+                  {
+                     // Read
+                     if (empty($permissions['Read']))
+                     {
+                        continue;
+                     }
+                     // Edit
+                     if (empty($permissions['Insert']))
+                     {
+                        if (empty($permissions['Update']))
+                        {
+                           unset(
+                              $permissions['InteractiveInsert'],
+                              $permissions['Edit']
+                           );
+                        }
+                        else unset($permissions['InteractiveInsert']);
+                     }
+                     elseif (empty($permissions['Update']))
+                     {
+                        unset($permissions['Edit']);
+                     }
+                     // Delete
+                     if (empty($permissions['Delete']))
+                     {
+                        unset(
+                           $permissions['InteractiveDelete'],
+                           $permissions['InteractiveMarkForDeletion'],
+                           $permissions['InteractiveUnmarkForDeletion'],
+                           $permissions['InteractiveDeleteMarked']
+                        );
+                     }
+                     elseif (empty($permissions['InteractiveDelete']))
+                     {
+                        unset(
+                           $permissions['InteractiveMarkForDeletion'],
+                           $permissions['InteractiveUnmarkForDeletion'],
+                           $permissions['InteractiveDeleteMarked']
+                        );
+                     }
+                     elseif (empty($permissions['InteractiveDeleteMarked']))
+                     {
+                        unset(
+                           $permissions['InteractiveMarkForDeletion'],
+                           $permissions['InteractiveUnmarkForDeletion']
+                        );
+                     }
+                     // View
+                     if (empty($permissions['View']))
+                     {
+                        unset(
+                           $permissions['Edit'],
+                           $permissions['InteractiveInsert'],
+                           $permissions['InteractiveDelete'],
+                           $permissions['InteractiveMarkForDeletion'],
+                           $permissions['InteractiveUnmarkForDeletion'],
+                           $permissions['InteractiveDeleteMarked']
+                        );
+                     }
+                     // Post
+                     if ($kind == 'documents')
+                     {
+                        if (empty($permissions['Posting'])) unset($permissions['InteractivePosting']);
+                        if (empty($permissions['UndoPosting'])) unset($permissions['InteractiveUndoPosting']);
+                     }
+                     
+                     foreach ($permissions as $name => $value)
+                     {
+                        if ($value) $result['permissions'][$role][$kind.'.'.$type.'.'.$name] = true;
+                     }
+                  }
+                  break;
+                  
+               
+               case 'information_registry':
+                  
+                  foreach ($conf as $type => $permissions)
+                  {
+                     // Read
+                     if (empty($permissions['Read']))
+                     {
+                        continue;
+                     }
+                     // Edit
+                     if (empty($permissions['Update']))
+                     {
+                        unset($permissions['Edit']);
+                     }
+                     // View
+                     if (empty($permissions['View']))
+                     {
+                        unset($permissions['Edit']);
+                     }
+                     
+                     foreach ($permissions as $name => $value)
+                     {
+                        if ($value) $result['permissions'][$role][$kind.'.'.$type.'.'.$name] = true;
+                     }
+                  }
+                  break;
+               
+               
+               case 'reports':
+               case 'data_processors':
+                  
+                  foreach ($conf as $type => $permissions)
+                  {
+                     if (empty($permissions['Use'])) continue;
+                     
+                     foreach ($permissions as $name => $value)
+                     {
+                        if ($value) $result['permissions'][$role][$kind.'.'.$type.'.'.$name] = true;
+                     }
+                  }
+                  break;
+               
+               
+               case 'web_services':
+                  ;
+                  break;
+               
+               
+               default:
+                  throw new Exception(__METHOD__.': Unknow entity kind "'.$kind.'"');
+            }
+         }
+         
+         /* Global */
+         
+         foreach ($config['global'] as $permission => $value)
+         {
+            if ($value) $result['permissions'][$role]['global.'.$permission] = true;
+         }
+      }
+      
+      return empty($errors) ? $result : array('errors' => $errors);
+   }
    
    
    
