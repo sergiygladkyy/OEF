@@ -19,7 +19,8 @@ class Container
       $modules_manager  = null,
       $request          = null,
       $response         = null,
-      $user             = null;
+      $user             = null,
+      $storage          = null;
 
    
    /**
@@ -596,7 +597,36 @@ class Container
          
          case 'Basic':
          default:
-            throw new Exception('Not supported autorization type "Basic"');
+            
+            if (!$this->storage)
+            {
+               $storage = 'SessionStorage';
+               import('lib.storage.'.$storage);
+               
+               if (!class_exists($storage))
+               {
+                  throw new Exception(__METHOD__.': storage class "'.$storage.'" does not exist');
+               }
+
+               $this->storage = new $storage();
+            }
+            
+            $classname = 'BasicUser';
+            import('lib.user.'.$classname);
+            
+            if (!class_exists($classname))
+            {
+               throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
+            }
+            
+            $this->user = call_user_func(array($classname, 'getCurrent'), $this->storage);
+            
+            if (!$this->user->isAuthenticated() && !empty($key))
+            {
+               $params = explode('/', base64_decode($key));
+               
+               if (isset($params[1])) $this->user->login($params[0], $params[1]); 
+            }
       }
       
       if (!is_a($this->user, 'BaseUser'))

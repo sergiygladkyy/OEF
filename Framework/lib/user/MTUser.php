@@ -8,6 +8,7 @@ define('MT_DEKIWIKI_API', ExternalConfig::$extconfig['installer']['api']);
 class MTUser extends BaseUser
 {
    const ANONYMOUS_NAME = 'Anonymous';
+   const ADMIN_ROLE     = 'Admin';
    
    protected static $instance;
    
@@ -135,6 +136,7 @@ class MTUser extends BaseUser
       $this->attributes    = $attributes;
       $this->roles         = $roles;
       $this->authenticated = $authenticated;
+      $this->isAdmin       = in_array(self::ADMIN_ROLE, $this->roles);
    }
 
    /**

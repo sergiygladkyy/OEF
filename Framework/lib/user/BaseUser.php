@@ -7,7 +7,9 @@ abstract class BaseUser
       $roles         = array(),
       $permissions   = array(),
       $roles_perm    = array(),
-      $authenticated = null;
+      $authenticated = null,
+      $storage       = null,
+      $isAdmin       = false;
    
    /**
     * Create current User object
@@ -75,6 +77,8 @@ abstract class BaseUser
     */
    public function hasPermission($permission)
    {
+      if ($this->isAdmin) return true;
+      
       if (isset($this->permissions[$permission]))
       {
          return $this->permissions[$permission];
@@ -112,11 +116,21 @@ abstract class BaseUser
    /**
     * Return true if current user is Authenticated
     * 
-    * @return unknown_type
+    * @return boolean
     */
    public function isAuthenticated()
    {
       return $this->authenticated ? true : false;
+   }
+   
+   /**
+    * Return true if current user is Admin
+    * 
+    * @return boolean
+    */
+   public function isAdmin()
+   {
+      return $this->isAdmin;
    }
    
    /**
