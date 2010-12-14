@@ -223,21 +223,30 @@ $_dictionary = array(
    ////////////
    // Security
    ////////////
-   'security' => array(
+   'AccessRights' => array(
       '<Role>' => array(
          'entities' => array(
             '<entity_kind>' => array(
                '<entity_type>' => array(
-                  '<permissions>' => array(
-                     'permission_1' => true,
-                     'permission_2' => false
-                  )               
+                  'permission_1' => true,
+                  'permission_2' => false               
                )
             )
          ),
          'global' =>array(
             'UseRemoteCalls' => true
          )
+      )
+   ),
+   
+   'Roles' => array(
+      'Admin' => array(
+         'password' => 'Admin',
+         'roles'    => array('Admin')
+      ),
+      '<login>' => array(
+         'password' => '<password>',
+         'roles'    => array('<role_1>', '<role_2>', '<...>', '<role_N>')
       )
    )
 );

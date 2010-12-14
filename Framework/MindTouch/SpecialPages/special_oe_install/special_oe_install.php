@@ -102,6 +102,8 @@ class SpecialOEInstall extends SpecialPagePlugin
     */
    protected function executeAction($action)
    {
+      $errors = array();
+      
       switch ($action)
       {
          // Install
@@ -110,6 +112,15 @@ class SpecialOEInstall extends SpecialPagePlugin
             $perLay = PersistentLayer::getInstance($this->conf['PersistentLayer']);
             $errors = $perLay->install();
             $msg = 'Installed succesfully';
+            
+            break;
+            
+         // Update
+         case 'update':
+            
+            $perLay = PersistentLayer::getInstance($this->conf['PersistentLayer']);
+            $errors = $perLay->update();
+            $msg = 'Updated succesfully (only modules, AccessRights and Roles)';
             
             break;
       

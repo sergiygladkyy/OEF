@@ -117,7 +117,13 @@ class PersistentLayer
    protected function addSystemEntities(array& $dict, array& $options = array())
    {
       $dict['catalogs']['SystemUsers'] = array(
-         'fields' => null // Only system fields: Code - login, Description - UserName  
+         'fields' => array( // Only system fields: Code - login, Description - UserName
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 128
+               )
+            )
+         )  
       );
       
       $dict['information_registry']['AuthenticationRecords'] = array(
@@ -170,7 +176,8 @@ class PersistentLayer
          'reports',
          'data_processors',
          'web_services',
-         'security'
+         'AccessRights',
+         'Roles'
       );
       
       foreach ($sections as $kind)
@@ -813,16 +820,18 @@ class PersistentLayer
    }
    
    /**
-    * Check Security configuration
+    * Check AccessRights configuration
     * 
     * @param array& $config - !!! метод вносит изменения в передаваемый массив
     * @return array - errors
     */
-   protected function checkSecurityConfig(array& $config)
+   protected function checkAccessRightsConfig(array& $config)
    {
       $errors = array();
       $valid  = array();
 
+      $config['Admin'] = array();
+      
       foreach ($config as $role => $conf)
       {
          if (!$this->checkName($role))
@@ -939,7 +948,83 @@ class PersistentLayer
       return $errors;
    }
    
-   
+   /**
+    * Check Roles configuration
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkRolesConfig(array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+
+      foreach ($config as $login => $_conf)
+      {
+         if (!$this->checkName($login))
+         {
+            $errors['global'][] = 'Invalid Login "'.$login.'"';
+         }
+
+         if (!is_array($_conf))
+         {
+            $errors[$login][] = 'User "'.$login.'" configuration is wrong';
+         }
+         elseif (empty($_conf))
+         {
+            $errors[$login][] = 'User "'.$login.'" configuration is empty';
+         }
+         else
+         {
+            /* Check password */
+            
+            if (!isset($_conf['password']))
+            {
+               $errors[$login]['password'][] = 'User "'.$login.'" password is empty';
+            }
+            elseif (!is_string($_conf['password']))
+            {
+               $errors[$login]['password'][] = 'Invalid user "'.$login.'" password';
+            }
+            else $valid[$login]['password'] = $_conf['password'];
+            
+            
+            /* Check roles */
+            
+            if (empty($_conf['roles']))
+            {
+               $errors[$login]['roles'][] = 'Roles configuration for user "'.$login.'" is empty';
+            }
+            elseif (!is_array($_conf['roles']))
+            {
+               $errors[$login]['roles'][] = 'Roles configuration for user "'.$login.'" is wrong';
+            }
+            else
+            {
+               foreach ($_conf['roles'] as $key => $role)
+               {
+                  if (empty($role))
+                  {
+                     $errors[$login]['roles'][] = 'Role name is empty';
+                  }
+                  elseif (!(is_string($role) && $this->checkName($role)))
+                  {
+                     $errors[$login]['roles'][] = 'Invalid role name "'.$role.'"';
+                  }
+                  else
+                  {
+                     $valid[$login]['roles'][$key] = $role;
+                  }
+               }
+            }
+         }
+      }
+
+      $config = $valid;
+      unset($valid);
+
+      return $errors;
+   }
    
    
    
@@ -1589,7 +1674,7 @@ class PersistentLayer
       $result['other']['relations']   = $this->generateRelationsMap($result, $options);
       
       // save internal configuration (and generate configuration map)
-      $map['security']                = $this->saveInternalConfiguration($result['security'],                'security/');
+      $map['security']                = $this->saveInternalConfiguration($result['AccessRights'],            'security/');
       $map['information_registry']    = $this->saveInternalConfiguration($result['information_registry'],    'information_registry/');
       $map['reports']                 = $this->saveInternalConfiguration($result['reports'],                 'reports/');
       $map['data_processors']         = $this->saveInternalConfiguration($result['data_processors'],         'data_processors/');
@@ -1757,13 +1842,13 @@ class PersistentLayer
       else $errors = array_merge($errors, $result['errors']);
       
       
-      /* Security */
+      /* AccessRights */
       
-      $result = $this->generateSecurityInternalConfiguration($dictionary['security'], $options);
+      $result = $this->generateAccessRightsInternalConfiguration($dictionary['AccessRights'], $options);
       
       if (!isset($result['errors']))
       {
-         $internal['security'] = $result;
+         $internal['AccessRights'] = $result;
       }
       else $errors = array_merge($errors, $result['errors']);
       
@@ -2220,15 +2305,14 @@ class PersistentLayer
    }
    
    /**
-    * Generate Security internal configuration
+    * Generate AccessRights internal configuration
     * 
     * @param array& $dict
     * @param array& $options
     * @return array - 'errors' => $errors or list <confName> => array()
     */
-   protected function generateSecurityInternalConfiguration(array& $dict, array& $options = array())
+   protected function generateAccessRightsInternalConfiguration(array& $dict, array& $options = array())
    {
-      $kind   = 'security';
       $errors = array();
       $result = array(
          'roles'       => array(),
@@ -2759,6 +2843,130 @@ class PersistentLayer
    
    
    
+   /**
+    * Add system users
+    * 
+    * @param array& $dict
+    * @param array $allowed
+    * @param array& $options
+    * @return array - errors
+    */
+   protected function addSystemUsers(array& $dict, array $allowed, array& $options = array())
+   {
+      // Generate configuration
+      $errors = array();
+      $result = array(
+         'users'      => array(),
+         'attributes' => array()
+      );
+      
+      foreach ($dict as $login => $conf)
+      {
+         $diff = array_diff($conf['roles'], $allowed);
+         
+         if (!empty($diff))
+         {
+            $errors[$login] = 'Unknow roles: '.implode(', ', $diff).'.';
+            continue;
+         }
+         
+         $result['users'][] = $login;
+         $result['attributes'][$login]['roles'] = $conf['roles'];
+         $result['attributes'][$login]['password'] = $conf['password'];
+      }
+      
+      if (!empty($errors)) return $errors;
+      
+      // Add records
+      $container = $this->getContainer($options);
+      $SystemUsers = $container->getModel('catalogs', 'SystemUsers');
+      $AuthRecords = $container->getModel('information_registry', 'AuthenticationRecords');
+      $arecCModel  = $container->getCModel('information_registry', 'AuthenticationRecords');
+      $m_opt       = array('replace' => true);
+      $authTypes   = array('MTAuth' => 1, 'Basic' => 2, 'LDAP' => 3);
+      $userIds     = array();
+      $recIds      = array();
+      
+      foreach ($result['users'] as $login)
+      {
+         // Insert/Update SystemUsers
+         $user = clone $SystemUsers;
+         $err  = $user->fromArray(array('Code' => $login, 'Description' => ucfirst($login)), $m_opt);
+         
+         if (!$err) $err = $user->save();
+         
+         if ($err)
+         {
+            $errors = array_merge($errors, $err);
+            continue;
+         }
+         
+         $userIds[] = $user->getId();
+         
+         // Insert/Update AuthenticationRecords
+         if (null === ($res = $arecCModel->getEntities($user->getId(), array('attributes' => array('User')))))
+         {
+            $errors[] = 'DB error'; 
+         }
+         
+         $in  = array();
+         
+         foreach ($res as $record)
+         {
+            $in[$record['AuthType']] = $record['_id'];
+         }
+         
+         foreach ($authTypes as $name => $index)
+         {
+            $arec  = clone $AuthRecords;
+            $attrs = array(
+               'User'       => $user->getId(),
+               'AuthType'   => $name,
+               'Attributes' => ''
+            );
+            
+            if (isset($in[$name])) $attrs['_id']        = $in[$name];
+            if ($name == 'Basic')  $attrs['Attributes'] = serialize($result['attributes'][$login]);
+            
+            $err = $arec->fromArray($attrs);
+            
+            if (!$err) $err = $arec->save();
+            
+            if (!$err)
+            {
+               $recIds[] = $arec->getId();
+            }
+            else $errors = array_merge($errors, $err);
+         }
+      }
+      
+      if (!$errors)
+      {
+         $db    = $container->getDBManager();
+         $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map');
+         $query = "DELETE FROM `".$dbmap['catalogs']['SystemUsers']['table']."` ".
+                  "WHERE ".$dbmap['catalogs']['SystemUsers']['pkey']." NOT IN(".implode(", ",  $userIds).")";
+         
+         if (null === $db->executeQuery($query))
+         {
+            $errors[] = $db->getError();
+         }
+         
+         $query = "DELETE FROM `".$dbmap['information_registry']['AuthenticationRecords']['table']."` ".
+                  "WHERE ".$dbmap['information_registry']['AuthenticationRecords']['pkey']." NOT IN(".implode(", ",  $recIds).")";
+         
+         if (null === $db->executeQuery($query))
+         {
+            $errors[] = $db->getError();
+         }
+      }
+      
+      return $errors;
+   }
+   
+   
+   
+   
    
    
    /**
@@ -2858,9 +3066,23 @@ class PersistentLayer
          }
       }
       
+      if (!empty($errors)) return $errors;
+      
+      // SystemUsers and AuthenticationRecords
+      if (!empty($this->dictionary['Roles']))
+      {
+         $errors = $this->addSystemUsers($this->dictionary['Roles'], array_keys($this->dictionary['AccessRights']), $options);
+      }
+      
       return $errors;
    }
    
+   /**
+    * Update
+    * 
+    * @param array& $options
+    * @return array errors
+    */
    public function update(array& $options = array())
    {
       //echo '<pre>'; print_r($this->dictionary); echo '</pre>';
@@ -2868,8 +3090,45 @@ class PersistentLayer
       /* Генерируем новую */
       /* Сравниваем старую и новую, создаем таблицу отличий */
       /* Генерируем SQL для обновления */
+      
+      if (!$this->isInstalled()) return array('Entities not installed');
+      
+      // Load dictionary
+      $errors = $this->loadDictionary($options);
+      
+      if (!empty($errors)) return $errors;
+      
+      // Update modules
+      if (!$this->getContainer($options)->getModulesManager()->clearCache())
+      {
+         $errors['modules'][] = 'Modules not updated';
+      }
+      
+      // Update access rights
+      $result = $this->generateAccessRightsInternalConfiguration($this->dictionary['AccessRights']);
+      
+      if (isset($result['errors']))
+      {
+         return array_merge($errors, $result['errors']);
+      }
+      
+      $this->saveInternalConfiguration($result, 'security/');
+      
+      // Update SystemUsers and AuthenticationRecords
+      if (!empty($this->dictionary['Roles']))
+      {
+         $errors = array_merge($errors, $this->addSystemUsers($this->dictionary['Roles'], array_keys($this->dictionary['AccessRights']), $options));
+      }
+      
+      return $errors;
    }
    
+   /**
+    * Remove
+    * 
+    * @param array& $options
+    * @return array errors
+    */
    public function remove(array& $options = array())
    {
       if (!$this->isInstalled()) return array('Entities not installed');
