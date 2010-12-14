@@ -2853,107 +2853,118 @@ class PersistentLayer
     */
    protected function addSystemUsers(array& $dict, array $allowed, array& $options = array())
    {
-      // Generate configuration
-      $errors = array();
-      $result = array(
+      $errors    = array();
+      $container = $this->getContainer($options);
+      
+      if (!empty($dict))
+      {
+         // Generate configuration
+         $result = array(
          'users'      => array(),
          'attributes' => array()
-      );
-      
-      foreach ($dict as $login => $conf)
-      {
-         $diff = array_diff($conf['roles'], $allowed);
-         
-         if (!empty($diff))
+         );
+
+         foreach ($dict as $login => $conf)
          {
-            $errors[$login] = 'Unknow roles: '.implode(', ', $diff).'.';
-            continue;
+            $diff = array_diff($conf['roles'], $allowed);
+             
+            if (!empty($diff))
+            {
+               $errors[$login] = 'Unknow roles: '.implode(', ', $diff).'.';
+               continue;
+            }
+             
+            $result['users'][] = $login;
+            $result['attributes'][$login]['roles'] = $conf['roles'];
+            $result['attributes'][$login]['password'] = $conf['password'];
          }
-         
-         $result['users'][] = $login;
-         $result['attributes'][$login]['roles'] = $conf['roles'];
-         $result['attributes'][$login]['password'] = $conf['password'];
-      }
-      
-      if (!empty($errors)) return $errors;
-      
-      // Add records
-      $container = $this->getContainer($options);
-      $SystemUsers = $container->getModel('catalogs', 'SystemUsers');
-      $AuthRecords = $container->getModel('information_registry', 'AuthenticationRecords');
-      $arecCModel  = $container->getCModel('information_registry', 'AuthenticationRecords');
-      $m_opt       = array('replace' => true);
-      $authTypes   = array('MTAuth' => 1, 'Basic' => 2, 'LDAP' => 3);
-      $userIds     = array();
-      $recIds      = array();
-      
-      foreach ($result['users'] as $login)
-      {
-         // Insert/Update SystemUsers
-         $user = clone $SystemUsers;
-         $err  = $user->fromArray(array('Code' => $login, 'Description' => ucfirst($login)), $m_opt);
-         
-         if (!$err) $err = $user->save();
-         
-         if ($err)
+
+         if (!empty($errors)) return $errors;
+
+         // Add records
+         $SystemUsers = $container->getModel('catalogs', 'SystemUsers');
+         $AuthRecords = $container->getModel('information_registry', 'AuthenticationRecords');
+         $arecCModel  = $container->getCModel('information_registry', 'AuthenticationRecords');
+         $m_opt       = array('replace' => true);
+         $authTypes   = array('MTAuth' => 1, 'Basic' => 2, 'LDAP' => 3);
+         $userIds     = array();
+         $recIds      = array();
+
+         foreach ($result['users'] as $login)
          {
-            $errors = array_merge($errors, $err);
-            continue;
-         }
-         
-         $userIds[] = $user->getId();
-         
-         // Insert/Update AuthenticationRecords
-         if (null === ($res = $arecCModel->getEntities($user->getId(), array('attributes' => array('User')))))
-         {
-            $errors[] = 'DB error'; 
-         }
-         
-         $in  = array();
-         
-         foreach ($res as $record)
-         {
-            $in[$record['AuthType']] = $record['_id'];
-         }
-         
-         foreach ($authTypes as $name => $index)
-         {
-            $arec  = clone $AuthRecords;
-            $attrs = array(
+            // Insert/Update SystemUsers
+            $user = clone $SystemUsers;
+            $err  = $user->fromArray(array('Code' => $login, 'Description' => ucfirst($login)), $m_opt);
+             
+            if (!$err) $err = $user->save();
+             
+            if ($err)
+            {
+               $errors = array_merge($errors, $err);
+               continue;
+            }
+             
+            $userIds[] = $user->getId();
+             
+            // Insert/Update AuthenticationRecords
+            if (null === ($res = $arecCModel->getEntities($user->getId(), array('attributes' => array('User')))))
+            {
+               $errors[] = 'DB error';
+            }
+             
+            $in  = array();
+             
+            foreach ($res as $record)
+            {
+               $in[$record['AuthType']] = $record['_id'];
+            }
+             
+            foreach ($authTypes as $name => $index)
+            {
+               $arec  = clone $AuthRecords;
+               $attrs = array(
                'User'       => $user->getId(),
                'AuthType'   => $name,
                'Attributes' => ''
-            );
-            
-            if (isset($in[$name])) $attrs['_id']        = $in[$name];
-            if ($name == 'Basic')  $attrs['Attributes'] = serialize($result['attributes'][$login]);
-            
-            $err = $arec->fromArray($attrs);
-            
-            if (!$err) $err = $arec->save();
-            
-            if (!$err)
-            {
-               $recIds[] = $arec->getId();
+               );
+
+               if (isset($in[$name])) $attrs['_id']        = $in[$name];
+               if ($name == 'Basic')  $attrs['Attributes'] = serialize($result['attributes'][$login]);
+
+               $err = $arec->fromArray($attrs);
+
+               if (!$err) $err = $arec->save();
+
+               if (!$err)
+               {
+                  $recIds[] = $arec->getId();
+               }
+               else $errors = array_merge($errors, $err);
             }
-            else $errors = array_merge($errors, $err);
          }
       }
       
+      // Remove old records
       if (!$errors)
       {
          $db    = $container->getDBManager();
          $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map');
-         $query = "DELETE FROM `".$dbmap['catalogs']['SystemUsers']['table']."` ".
-                  "WHERE ".$dbmap['catalogs']['SystemUsers']['pkey']." NOT IN(".implode(", ",  $userIds).")";
+         $query = "DELETE FROM `".$dbmap['catalogs']['SystemUsers']['table']."`";
+         if (!empty($userIds))
+         {
+            $query .= " WHERE ".$dbmap['catalogs']['SystemUsers']['pkey']." NOT IN(".implode(", ",  $userIds).")";
+         }
          
          if (null === $db->executeQuery($query))
          {
             $errors[] = $db->getError();
          }
          
-         $query = "DELETE FROM `".$dbmap['information_registry']['AuthenticationRecords']['table']."` ".
-                  "WHERE ".$dbmap['information_registry']['AuthenticationRecords']['pkey']." NOT IN(".implode(", ",  $recIds).")";
+         $query = "DELETE FROM `".$dbmap['information_registry']['AuthenticationRecords']['table']."`";
+         if (!empty($recIds))
+         {
+            $query .= "WHERE ".$dbmap['information_registry']['AuthenticationRecords']['pkey']." NOT IN(".implode(", ",  $recIds).")";
+         }
          
          if (null === $db->executeQuery($query))
          {
@@ -3115,10 +3126,7 @@ class PersistentLayer
       $this->saveInternalConfiguration($result, 'security/');
       
       // Update SystemUsers and AuthenticationRecords
-      if (!empty($this->dictionary['Roles']))
-      {
-         $errors = array_merge($errors, $this->addSystemUsers($this->dictionary['Roles'], array_keys($this->dictionary['AccessRights']), $options));
-      }
+      $errors = array_merge($errors, $this->addSystemUsers($this->dictionary['Roles'], array_keys($this->dictionary['AccessRights']), $options));
       
       return $errors;
    }
