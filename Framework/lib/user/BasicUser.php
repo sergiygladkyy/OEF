@@ -4,7 +4,7 @@ require_once('lib/user/BaseUser.php');
 
 class BasicUser extends BaseUser
 {
-   const ADMIN_ROLE = 'Admin';
+   protected static $instance;
    
    /**
     * Create current User object
@@ -12,9 +12,31 @@ class BasicUser extends BaseUser
     * @param string $storage
     * @return this
     */
-   static public function getCurrent(Storage $storage)
+   static public function createInstance(Storage $storage)
    {
-      return new self($storage);
+      if (is_object(self::$instance))
+      {
+         throw new Exception('User alredy exists', 1);
+      }
+      
+      self::$instance = new self($storage);
+      
+      return self::$instance;
+   }
+   
+   /**
+    * Get current User object
+    *  
+    * @return this
+    */
+   static public function getCurrent()
+   {
+      if (!is_object(self::$instance))
+      {
+         throw new Exception('The object was not created', 2);
+      }
+      
+      return self::$instance;
    }
    
    /**
@@ -37,7 +59,7 @@ class BasicUser extends BaseUser
             if (!empty($authRecords))
             {
                $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
-               $this->isAdmin = in_array(self::ADMIN_ROLE, $this->roles);
+               $this->isAdmin = in_array(Constants::ADMIN_ROLE, $this->roles);
             }
          }
          else $this->logout();
@@ -66,7 +88,7 @@ class BasicUser extends BaseUser
    {
       if ($this->authenticated)
       {
-         throw new Exception('User alredy authenticated');
+         throw new Exception('User alredy authenticated', 4);
       }
       
       $container = Container::getInstance();
@@ -84,7 +106,7 @@ class BasicUser extends BaseUser
       $this->attributes['username'] = $user->getAttribute('Description');
       
       $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
-      $this->isAdmin = in_array(self::ADMIN_ROLE, $this->roles);
+      $this->isAdmin = in_array(Constants::ADMIN_ROLE, $this->roles);
       
       $this->authenticated = true;
       //$this->shutdown();

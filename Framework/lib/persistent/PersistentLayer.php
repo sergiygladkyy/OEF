@@ -1,5 +1,7 @@
 <?php
 
+require_once('lib/persistent/config/Constants.php');
+
 class PersistentLayer
 {
    const m_config_dir    = 'config/';   
@@ -2860,10 +2862,11 @@ class PersistentLayer
       {
          // Generate configuration
          $result = array(
-         'users'      => array(),
-         'attributes' => array()
+            'users'      => array(),
+            'attributes' => array()
          );
-
+         $have_admin = false;
+         
          foreach ($dict as $login => $conf)
          {
             $diff = array_diff($conf['roles'], $allowed);
@@ -2873,13 +2876,21 @@ class PersistentLayer
                $errors[$login] = 'Unknow roles: '.implode(', ', $diff).'.';
                continue;
             }
-             
+            
+            if (!$have_admin) $have_admin = in_array(Constants::ADMIN_ROLE, $conf['roles']);
+            
             $result['users'][] = $login;
             $result['attributes'][$login]['roles'] = $conf['roles'];
             $result['attributes'][$login]['password'] = $conf['password'];
          }
 
-         if (!empty($errors)) return $errors;
+         if (!$have_admin) 
+         {
+            $errors[] = 'Not specified admanistrator (user with role "'.Constants::ADMIN_ROLE.'")';
+            
+            return $errors;
+         }
+         elseif (!empty($errors)) return $errors;
 
          // Add records
          $SystemUsers = $container->getModel('catalogs', 'SystemUsers');

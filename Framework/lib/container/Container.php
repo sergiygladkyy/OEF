@@ -577,32 +577,45 @@ class Container
       switch ($authtype)
       {
          case 'MTAuth':
-            
+            // Get user class
             $classname = 'MTUser';
             
             import('lib.user.'.$classname);
-            
+
             if (!class_exists($classname))
             {
                throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
             }
-            
-            $this->user = call_user_func(array($classname, 'getCurrent'), $key);
+
+            // Create User object
+            try {
+               $this->user = call_user_func(array($classname, 'createInstance'), $key);
+            }
+            catch (Exception $e)
+            {
+               if ($e->getCode() == 1) // Alredy exists
+               {
+                  $this->user = call_user_func(array($classname, 'getCurrent'));
+               }
+               else throw $e;
+            }
             
             break;
+         
          
          case 'LDAP':
             throw new Exception('Not supported autorization type "LDAP"');
             break;
          
+         
          case 'Basic':
          default:
-            
+            // Get storage object
             if (!$this->storage)
             {
                $storage = 'SessionStorage';
                import('lib.storage.'.$storage);
-               
+                
                if (!class_exists($storage))
                {
                   throw new Exception(__METHOD__.': storage class "'.$storage.'" does not exist');
@@ -611,6 +624,7 @@ class Container
                $this->storage = new $storage();
             }
             
+            // Get user class
             $classname = 'BasicUser';
             import('lib.user.'.$classname);
             
@@ -618,17 +632,30 @@ class Container
             {
                throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
             }
-            
-            $this->user = call_user_func(array($classname, 'getCurrent'), $this->storage);
-            
+
+            // Create User object
+            try {
+               $this->user = call_user_func(array($classname, 'createInstance'), $this->storage);
+            }
+            catch (Exception $e)
+            {
+               if ($e->getCode() == 1) // Alredy exists
+               {
+                  $this->user = call_user_func(array($classname, 'getCurrent'));
+               }
+               else throw $e;
+            }
+
+            // Login
             if (!$this->user->isAuthenticated() && !empty($key))
             {
                $params = explode('/', base64_decode($key));
-               
-               if (isset($params[1])) $this->user->login($params[0], $params[1]); 
+                
+               if (isset($params[1])) $this->user->login($params[0], $params[1]);
             }
       }
       
+      // Check User object
       if (!is_a($this->user, 'BaseUser'))
       {
          throw new Exception(__METHOD__.': not supported user class "'.$classname.'"');

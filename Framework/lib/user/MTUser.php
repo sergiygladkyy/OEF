@@ -8,29 +8,71 @@ define('MT_DEKIWIKI_API', ExternalConfig::$extconfig['installer']['api']);
 class MTUser extends BaseUser
 {
    const ANONYMOUS_NAME = 'Anonymous';
-   const ADMIN_ROLE     = 'Admin';
    
    protected static $instance;
    
    /**
-    * Create current User object
+    * Create current User object by authtoken
     * 
     * @param string $authtoken
     * @return this
     */
-   public static function getCurrent($authtoken)
+   static public function createInstance($authtoken)
+   {
+      if (is_object(self::$instance))
+      {
+         throw new Exception('User alredy exists', 1);
+      }
+      
+      self::createUser(array('authtoken' => $authtoken));
+      
+      return self::$instance;
+   }
+   
+   /**
+    * Create current User object by id
+    * 
+    * @param int $userId
+    * @return this
+    */
+   static public function createInstanceById($userId)
+   {
+      if (is_object(self::$instance))
+      {
+         throw new Exception('User alredy exists', 1);
+      }
+      
+      self::createUser(array('id' => $userId));
+      
+      return self::$instance;
+   }
+   
+   /**
+    * Create User object by parameters
+    * 
+    * @param array $parameters
+    * @return void
+    */
+   static private function createUser(array $parameters)
    {
       if (!defined('MT_DEKIWIKI_API'))
       {
-         throw new Exception('MindTouch extensions not initialized');
+         throw new Exception('MindTouch extensions not initialized', 3);
       }
-      
-      $uri = MT_DEKIWIKI_API.'/deki/users/current?dream.out.format=php';
       
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      
+      if (!isset($parameters['id']))
+      {
+         $uri = MT_DEKIWIKI_API.'/deki/users/current?dream.out.format=php';
+         $authtoken = isset($parameters['authtoken']) ? $parameters['authtoken'] : '';
+         
+         curl_setopt($curl, CURLOPT_HTTPHEADER, array('X-Authtoken: '.$authtoken));
+      }
+      else $uri = MT_DEKIWIKI_API.'/deki/users/'.$parameters['id'].'?dream.out.format=php';
+      
       curl_setopt($curl, CURLOPT_URL, $uri);
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array('X-Authtoken: '.$authtoken));
       curl_setopt($curl, CURLOPT_HEADER, 1);
       
       // execute request
@@ -109,20 +151,25 @@ class MTUser extends BaseUser
       }
       else
       {
-         self::getAnonymous();
+         $attributes  = array('username' => self::ANONYMOUS_NAME);
+         
+         self::$instance = new self($attributes);
       }
-      
-      return self::$instance;
    }
    
    /**
-    * Return Anonymous user object
+    * Get current User object
     * 
     * @return this
     */
-   public static function getAnonymous()
+   public static function getCurrent()
    {
-      self::$instance = new self();
+      if (!is_object(self::$instance))
+      {
+         throw new Exception('The object was not created', 2);
+      }
+      
+      return self::$instance;
    }
    
    /**
@@ -136,7 +183,7 @@ class MTUser extends BaseUser
       $this->attributes    = $attributes;
       $this->roles         = $roles;
       $this->authenticated = $authenticated;
-      $this->isAdmin       = in_array(self::ADMIN_ROLE, $this->roles);
+      $this->isAdmin       = in_array(Constants::ADMIN_ROLE, $this->roles);
    }
 
    /**

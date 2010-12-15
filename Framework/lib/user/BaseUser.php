@@ -1,5 +1,7 @@
 <?php
 
+require_once('lib/persistent/config/Constants.php');
+
 abstract class BaseUser
 {
    protected
