@@ -6,19 +6,32 @@ if (defined('MINDTOUCH_DEKI')) {
 
 class SpecialOEController extends SpecialPagePlugin
 {
-   protected $pageName = 'OEController';
+   protected
+      $pageName  = 'OEController', // SpecialPage name
+      $container = null,           // OEF factory object
+      $user      = null;           // OEF User object
    
+   
+   /**
+    * Main function for SpecialPage (see MindTouch docs)
+    * 
+    * @param string $pageName
+    * @param string& $pageTitle
+    * @param string& $html
+    * @return void
+    */
    public static function execute($pageName, &$pageTitle, &$html)
    {
       global $IP;
       
-      require_once($IP.'/includes/JSON.php');
-      
-      if($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest')
+      if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest')
       {
          self::redirectHome();
       }
-
+      
+      // Send response
+      require_once($IP.'/includes/JSON.php');
+      
       header('Content-Type: text/html; charset=utf-8');
 
       $res  = self::executeQuery($pageName, $pageTitle, $html);
@@ -30,41 +43,45 @@ class SpecialOEController extends SpecialPagePlugin
    /**
     * Execute user query
     * 
+    * @param string $pageName
+    * @param string& $pageTitle
+    * @param string& $html
     * @return array
     */
    public static function executeQuery($pageName, &$pageTitle, &$html)
    {
-      $User = DekiUser::getCurrent();
-
-      if ($User->isAnonymous())
-      {
-         return array('errors' => array('global' => 'Access denied'), 'status' => false);
-      }
-
-      if (empty($_POST['action']))
-      {
-         return array('errors' => array('global' => 'Unknow action "'.$_POST['action'].'"'), 'status' => false);
-      }
-
+      // Initialize OEF framework
       $special = new self($pageName, basename(__FILE__, '.php'));
-
-      $method = $_POST['action'];
       
-      if (!method_exists($special, $method))
-      {
-         return array('errors' => array('global' => 'Unknow action "'.$_POST['action'].'"'), 'status' => false);
-      }
-
       $special->initialize();
       
+      // Check user
+      if (defined('IS_SECURE'))
+      {
+         $special->user = $special->container->getUser('MTAuth', DekiToken::get());
+         
+         if (!$special->user->isAuthenticated())
+         {
+            return array('errors' => array('global' => 'You must be logged in'), 'status' => false);
+         }
+      }
+      
+      // Execute action
+      if (empty($_POST['action']) || !method_exists($special, $_POST['action']))
+      {
+         return array('errors' => array('global' => 'Unknow action'), 'status' => false);
+      }
+      
+      $method = $_POST['action'];
+
       return $special->$method();
    }
    
    
    /**
-    * Initialize AE Framework
+    * Initialize OEF framework
     * 
-    * @return bool
+    * @return boolean
     */
    protected function initialize()
    {
@@ -88,6 +105,10 @@ class SpecialOEController extends SpecialPagePlugin
       return true;
    }
    
+   
+   /************************************* Actions *********************************************/
+      
+   
    /**
     * Save Entity Form
     * 
@@ -95,12 +116,16 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function save()
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      if (empty($_POST['aeform']))
+      {
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      }
 
       $method = 'process'.(isset($_POST['form']) ? $_POST['form'] : 'Form');
+      
       if (!method_exists($this, $method))
       {
-         return array('errors' => array('global' => 'Unknow form "'.$_POST['form'].'"'), 'status' => false);
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
       }
       
       $result = array();
@@ -138,9 +163,44 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function processForm($kind, $type, array $params)
    {
-      $controller = $this->container->getController($kind, $type);
-      
       $action = isset($values['_id']) ? 'update' : 'create';
+      
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         switch($kind)
+         {
+            case 'catalogs':
+            case 'documents':
+               if ($action == 'update')
+               {
+                   $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+               }
+               else
+               {
+                  $access = $this->user->hasPermission($kind.'.'.$type.'.InteractiveInsert');
+               }
+               break;
+               
+            case 'information_registry':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+               break;
+            
+            default:
+               $access = false;
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      $controller = $this->container->getController($kind, $type);
       
       return $controller->$action(Utility::escaper($values));
    }
@@ -157,27 +217,55 @@ class SpecialOEController extends SpecialPagePlugin
    {
       if (!in_array($kind, array('catalogs', 'documents')))
       {
-         throw new Exception(__METHOD__.' "'.$kind.'" is not object type');
+         throw new Exception('"'.$kind.'" is not object type');
       }
       
-      $controller = $this->container->getController($kind, $type);
-      
-      // Save object
+      // Check attributes
       if (empty($params['attributes']) || !is_array($params['attributes']))
       {
-         return array('errors' => array('global' => '"'.$kind.'.'.$type.'" object attributes is empty'), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
       }
+      
       $values = $params['attributes'];
       $action = isset($values['_id']) ? 'update' : 'create';
-      $return = $controller->$action(Utility::escaper($values));
+      
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         if ($action == 'update')
+         {
+            $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+         }
+         else
+         {
+            $access = $this->user->hasPermission($kind.'.'.$type.'.InteractiveInsert');
+         }
+          
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      // Save object
+      $controller = $this->container->getController($kind, $type);
+      $return     = $controller->$action(Utility::escaper($values));
       
       if (!$return['status']) return $return; 
       
       // Save tabular section
       $owner_id = $return['result']['_id'];
+      
       if ($action != 'create') unset($return['result']['_id']);
       
-      if (empty($params['tabulars']) || !is_array($params['tabulars'])) return $return;
+      if (empty($params['tabulars']) || !is_array($params['tabulars']))
+      {
+         return $return;
+      }
       
       $t_kind = $kind.'.'.$type.'.tabulars';
       
@@ -241,18 +329,27 @@ class SpecialOEController extends SpecialPagePlugin
          }
       }
       
-      
       return $result;
    }
    
+   
+   
+   
+   
    /**
-    * Delete entity
+    * Delete entity (Mark for deletion for object types) 
+    * 
+    * Only for 'catalogs', 'documents', 'information_registry'
     * 
     * @return array
     */
    protected function delete()
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
       
       $values = $_POST['aeform'];
       $errors = array();
@@ -263,22 +360,49 @@ class SpecialOEController extends SpecialPagePlugin
       
       if ($errors)
       {
-         return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         if ($kind == 'information_registry')
+         {
+            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.Edit');
+         }
+         else
+         {
+            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveMarkForDeletion');
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      // Delete not object and Mark For Deletion object type entity
       $controller = $this->container->getController($values['kind'], $values['type']);
       
       return $controller->delete((int) $values['_id']);
    }
    
    /**
-    * Restore entity
+    * Restore object entity
     * 
     * @return array
     */
    protected function restore()
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
       
       $values = $_POST['aeform'];
       $errors = array();
@@ -292,15 +416,29 @@ class SpecialOEController extends SpecialPagePlugin
          return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveUnmarkForDeletion'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Access denied'),
+            'errors' => array()
+         );
+      }
+      
+      // Restore entity (UnmarkForDeletion)
       $controller = $this->container->getController($values['kind'], $values['type']);
       
       if (!method_exists($controller, 'restore'))
       {
-         return array('errors' => array('global' => '"'.$values['kind'].'.'.$values['type'].'" not supported restore'), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
       }
       
       return $controller->restore((int) $values['_id']);
    }
+   
+   
+   
    
    /**
     * Post
@@ -330,7 +468,11 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function changePost($post)
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
       
       $values = $_POST['aeform'];
       $errors = array();
@@ -341,20 +483,46 @@ class SpecialOEController extends SpecialPagePlugin
       
       if ($errors)
       {
-         return array('errors' => array('global' => $errors), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         if ($post)
+         {
+            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractivePosting');
+         }
+         else
+         {
+            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveUndoPosting');
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      // Change post
       $controller = $this->container->getController($values['kind'], $values['type']);
       
       $method = $post ? 'post' : 'unpost';
       
       if (!method_exists($controller, $method))
       {
-         return array('errors' => array('global' => '"'.$values['kind'].'.'.$values['type'].'" not supported '.($post ? 'post' : 'unpost').' action'), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
       }
       
       return $controller->$method((int) $values['_id']);
    }
+   
+   
+   
    
    /**
     * Generate report
@@ -363,7 +531,11 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function generate()
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
       
       $values = $_POST['aeform'];
       $errors = array();
@@ -372,16 +544,27 @@ class SpecialOEController extends SpecialPagePlugin
       
       $headline = isset($params['attributes']) ? $params['attributes'] : array();
       
-      if (empty($type)) $errors[] = 'Unknow entity type';
+      if (empty($type)) $errors[] = 'Unknow report type';
       
       if ($errors)
       {
-         return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission('reports.'.$type.'.Use'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Unknow report'),
+            'errors' => array()
+         );
+      }
+      
+      // Generate report
       $controller = $this->container->getController('reports', $type);
       
-      return array('reports' => array($type => $controller->generate(Utility::escaper($headline))));
+      return array('reports' => array($type => $controller->generate(Utility::escapeRecursive($headline))));
    }
    
    /**
@@ -391,22 +574,37 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function decode()
    {
+      // Check data
       $values = $_POST['parameters'];
       $errors = array();
       
       list($type, $params) = each($values);
       
-      if (empty($type)) $errors[] = 'Unknow entity type';
+      if (empty($type)) $errors[] = 'Unknow report type';
       
       if ($errors)
       {
-         return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission('reports.'.$type.'.Use'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Unknow report'),
+            'errors' => array()
+         );
+      }
+      
+      // Decode
       $controller = $this->container->getController('reports', $type);
       
       return $controller->decode(Utility::escapeRecursive($params));
    }
+   
+   
+   
    
    /**
     * Data import
@@ -415,7 +613,11 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function import()
    {
-      if (empty($_POST['aeform'])) return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
       
       $values = $_POST['aeform'];
       $errors = array();
@@ -424,13 +626,24 @@ class SpecialOEController extends SpecialPagePlugin
       
       $headline = isset($params['attributes']) ? $params['attributes'] : array();
       
-      if (empty($type)) $errors[] = 'Unknow entity type';
+      if (empty($type)) $errors[] = 'Unknow data processor type';
       
       if ($errors)
       {
-         return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission('data_processors.'.$type.'.Use'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Unknow data processor'),
+            'errors' => array()
+         );
+      }
+      
+      // Import
       $controller = $this->container->getController('data_processors', $type);
       
       return array('data_processors' => array($type => $controller->import(Utility::escaper($headline))));

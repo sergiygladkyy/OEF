@@ -29,31 +29,51 @@
 
   // ------------------------------------------------------------------------
 
+  $OEF_USER = null;
+  
   /**
-   * Checking permissions using environment variables
+   * Initilaze OEF user object
    * 
    * @return boolean
    */ 
-  function CheckPermissions()
+  function initializeOEFUser()
   {
-     $env = $_SERVER["HTTP_X_DEKISCRIPT_ENV"];
+     global $OEF_USER;
      
-     if (!strlen($env)) return false;
+     $env_info  = $_SERVER["HTTP_X_DEKISCRIPT_ENV"];
+  
+     $classname = 'MTUser';
+     import('lib.user.'.$classname);
+
+     if (!class_exists($classname))
+     {
+        return array('Initialize error');
+     }
      
-     if (strstr($env, 'user.anonymous="false"')) return true;
+     if (!$env_info)
+     {
+        $OEF_USER = call_user_func(array($classname, 'createInstance'));
+     }
+     else
+     {
+        if (!preg_match('/(?<=,|\s)user\.id=["\']([\d]+)["\'](?=,|\s)/i', $env_info, $matches))
+        {
+           return array('Initialize error');
+        }
         
-     return false;
+        $OEF_USER = call_user_func(array($classname, 'createInstanceById'), $matches[1]);
+     }
+     
+     return array();
   }
 
   /**
-   * Initialize AE Framework
+   * Initialize OE framework
    * 
    * @return array - errors
    */
   function initialize($full = false)
   {
-     if (!CheckPermissions()) return array('You do not have permision to access this page');
-     
      $conf =& ExternalConfig::$extconfig['installer'];
      
      $framework = '.'.$conf['base_for_deki_ext'].$conf['framework_dir'];
@@ -62,18 +82,42 @@
          'base_dir' => $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$conf['applied_solution_name']
      );
      
-     if (!chdir($framework)) return array('Initialize entity extension error');
+     if (!chdir($framework)) return array('Initialize error');
      if (!$full)
      {
         require_once('lib/utility/Loader.php');
         require_once('lib/utility/Utility.php');
         require_once('lib/container/Container.php');
         
-        Container::createInstance($container_options);
+        $container = Container::createInstance($container_options);
+        
+        // Security (duplicated piece of code of 123 config/init.php)
+        $odb = $container->getODBManager();
+        $res = $odb->loadAssoc('SELECT count(*) AS cnt FROM catalogs.SystemUsers');
+
+        if (!isset($res['cnt'])) return array('Initialize error');
+
+        if ($res['cnt'] > 0) define('IS_SECURE', true);
      }
      else
      {
         require_once('config/init.php');
+     }
+     
+     // Initialize user
+     $errors = initializeOEFUser();
+     
+     if ($errors) return $errors;
+     
+     // Check current user
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->isAuthenticated())
+        {
+           return array('You must be logged in');
+        }
      }
      
      return array();
@@ -89,12 +133,29 @@
    */
   function displayListForm($uid, array $params = array())
   {
+     // Initialize OEF
      $errors = initialize();
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
       
      list($kind, $type) = Utility::parseUID($uid);
-      
+     
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Read'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
      $options = empty($params['options']) ? array() : $params['options'];
       
      $controller = Container::getInstance()->getController($kind, $type, $options);
@@ -150,13 +211,30 @@
    */
   function displayEditForm($uid, $id = null, array $params = array())
   {
-     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
-     
+     // Initialize OEF
      $errors = initialize();
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
 
      list($kind, $type) = Utility::parseUID($uid);
+     
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Edit'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
+     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
      
      $options = empty($params['options']) ? array() : $params['options'];
      
@@ -177,14 +255,31 @@
    */
   function displayItemForm($uid, $id, array $params = array())
   {
-     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
-     
+     // Initialize OEF
      $errors = initialize();
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
      
      list($kind, $type) = Utility::parseUID($uid);
 
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Read'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
+     if (!is_null($id) && (int) $id < 0) return array('status' => false, 'errors' => array('Invalid parameter id'));
+     
      $options = empty($params['options']) ? array() : $params['options'];
      
      $controller = Container::getInstance()->getController($kind, $type, $options);
@@ -205,12 +300,29 @@
    */
   function displayReportForm($uid, array $params = array())
   {
+     // Initialize OEF
      $errors = initialize(true);
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
 
      list($kind, $type) = Utility::parseUID($uid);
      
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Use'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
      $headline = empty($params['headline']) ? array() : $params['headline'];
      $options  = empty($params['options'])  ? array() : $params['options'];
      
@@ -230,12 +342,29 @@
    */
   function displayImportForm($uid, array $params = array())
   {
+     // Initialize OEF
      $errors = initialize(true);
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
 
      list($kind, $type) = Utility::parseUID($uid);
      
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Use'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
      $options  = empty($params['options'])  ? array() : $params['options'];
      
      $controller = Container::getInstance()->getController($kind, $type, $options);
