@@ -574,6 +574,29 @@ class Container
          return $this->user;
       }
       
+      // Retrieve User object
+      try {
+         $classname = 'BaseUser';
+         import('lib.user.'.$classname);
+
+         if (!class_exists($classname))
+         {
+            throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
+         }
+         
+         $this->user = call_user_func(array($classname, 'getCurrent'));
+         
+          return $this->user;
+      }
+      catch (Exception $e)
+      {
+         if ($e->getCode() != 2) // Not create
+         {
+            throw $e;
+         } 
+      }
+      
+      // Create User object
       switch ($authtype)
       {
          case 'MTAuth':
@@ -587,18 +610,7 @@ class Container
                throw new Exception(__METHOD__.': user class "'.$classname.'" does not exist');
             }
 
-            // Create User object
-            try {
-               $this->user = call_user_func(array($classname, 'createInstance'), $key);
-            }
-            catch (Exception $e)
-            {
-               if ($e->getCode() == 1) // Alredy exists
-               {
-                  $this->user = call_user_func(array($classname, 'getCurrent'));
-               }
-               else throw $e;
-            }
+            $this->user = call_user_func(array($classname, 'createInstance'), $key);
             
             break;
          
@@ -634,17 +646,7 @@ class Container
             }
 
             // Create User object
-            try {
-               $this->user = call_user_func(array($classname, 'createInstance'), $this->storage);
-            }
-            catch (Exception $e)
-            {
-               if ($e->getCode() == 1) // Alredy exists
-               {
-                  $this->user = call_user_func(array($classname, 'getCurrent'));
-               }
-               else throw $e;
-            }
+            $this->user = call_user_func(array($classname, 'createInstance'), $this->storage);
 
             // Login
             if (!$this->user->isAuthenticated() && !empty($key))

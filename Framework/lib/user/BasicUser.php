@@ -4,8 +4,6 @@ require_once('lib/user/BaseUser.php');
 
 class BasicUser extends BaseUser
 {
-   protected static $instance;
-   
    /**
     * Create current User object
     * 
@@ -20,21 +18,6 @@ class BasicUser extends BaseUser
       }
       
       self::$instance = new self($storage);
-      
-      return self::$instance;
-   }
-   
-   /**
-    * Get current User object
-    *  
-    * @return this
-    */
-   static public function getCurrent()
-   {
-      if (!is_object(self::$instance))
-      {
-         throw new Exception('The object was not created', 2);
-      }
       
       return self::$instance;
    }

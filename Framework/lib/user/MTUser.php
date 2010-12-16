@@ -9,8 +9,6 @@ class MTUser extends BaseUser
 {
    const ANONYMOUS_NAME = 'Anonymous';
    
-   protected static $instance;
-   
    /**
     * Create current User object by authtoken
     * 
@@ -155,21 +153,6 @@ class MTUser extends BaseUser
          
          self::$instance = new self($attributes);
       }
-   }
-   
-   /**
-    * Get current User object
-    * 
-    * @return this
-    */
-   public static function getCurrent()
-   {
-      if (!is_object(self::$instance))
-      {
-         throw new Exception('The object was not created', 2);
-      }
-      
-      return self::$instance;
    }
    
    /**
