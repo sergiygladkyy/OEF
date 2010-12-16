@@ -35,6 +35,13 @@ class CatalogsModel extends BaseObjectsModel
     */
    public function retrieveSelectData(array $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.View'))
+      {
+         return array();
+      }
+      
+      // Execute method
       $db_map =& $this->conf['db_map'];
       $query  = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 ORDER BY `Description` ASC";
       
@@ -56,6 +63,13 @@ class CatalogsModel extends BaseObjectsModel
     */
    public function retrieveLinkData($ids, array $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.View'))
+      {
+         return array();
+      }
+      
+      // Execute method
       if (empty($ids)) return array();
       
       if (!is_array($ids)) $ids = array($ids);
@@ -74,5 +88,123 @@ class CatalogsModel extends BaseObjectsModel
       
       return $list;
    }
+   
+   
+   
+   /************************** For control access rights **************************************/
+   
+   
+   
+   /**
+    * Mark for deletion
+    * (non-PHPdoc)
+    * @see BaseObjectsModel#delete($values, $options)
+    */
+   public function delete($values, array $options = array())
+   {
+      // Check permissions
+      // None
+      
+      // Execute method
+      return parent::delete($values, $options);
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseObjectsModel#retrieveTabularSections($ids, $types, $options)
+    */
+   public function retrieveTabularSections($ids, $types = array(), array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      return parent::retrieveTabularSections($ids, $types, $options);
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseObjectsModel#getTabularsList($options)
+    */
+   public function getTabularsList(array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      return parent::getTabularsList($options);
+   }
+   
+   
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntitiesModel#getEntities($values, $options)
+    */
+   public function getEntities($values = null, array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      return parent::getEntities($values, $options);
+   }
 
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntitiesModel#hasEntities($values, $options)
+    */
+   public function hasEntities($values, array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return false;
+      }
+      
+      // Execute method
+      return parent::hasEntities($values, $options);
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntitiesModel#countEntities($values, $options)
+    */
+   public function countEntities($values = null, array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return 0;
+      }
+      
+      // Execute method
+      return parent::countEntities($values, $options);
+   }
+
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntitiesModel#retrieveSelectDataForRelated($fields, $options)
+    */
+   public function retrieveSelectDataForRelated($fields = array(), array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      return parent::retrieveSelectDataForRelated($fields, $options);
+   }
 }  

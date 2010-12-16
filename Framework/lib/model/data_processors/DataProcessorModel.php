@@ -19,6 +19,13 @@ class DataProcessorModel extends BaseNotStorageEntityModel
     */
    public function import(array $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Use'))
+      {
+         return array('Access denied');
+      }
+      
+      // Execute method
       $errors = $this->validateAttributes($this->conf['attributes']);
       
       if (!empty($errors)) return $errors;
@@ -51,6 +58,13 @@ class DataProcessorModel extends BaseNotStorageEntityModel
     */
    public function retrieveSelectDataForRelated($fields = array(), array $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Use'))
+      {
+         return array();
+      }
+      
+      // Execute method
       $result = array();
       
       if (!empty($fields))

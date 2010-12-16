@@ -19,9 +19,16 @@ class DocumentModel extends BaseObjectModel
     */
    public function post(array& $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Posting'))
+      {
+         return array('Access denied');
+      }
+      
+      // Execute method
       if ($errors = $this->changePost(true, $options))
       {
-         $this->unpost($options);
+         $this->changePost(false, $options);
       }
       
       return $errors;
@@ -35,6 +42,13 @@ class DocumentModel extends BaseObjectModel
     */
    public function unpost(array& $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.UndoPosting'))
+      {
+         return array('Access denied');
+      }
+      
+      // Execute method
       return $this->changePost(false, $options);
    }
    
@@ -94,8 +108,80 @@ class DocumentModel extends BaseObjectModel
     */
    public function save(array& $options = array())
    {
+      // Check permissions
+      if (defined('IS_SECURE'))
+      { 
+         if ($this->isNew)
+         {
+            $access = $this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Insert');
+         }
+         else
+         {
+            $access = $this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Update');
+         }
+         
+         if (!$access)
+         {
+            return array('Access denied');
+         }
+      }
+      
+      // Execute method
       if ($this->isPosted()) return array('This document is posted. You must clear posting before saving.');
       
       return parent::save($options);
+   }
+   
+
+   
+   
+   /************************** For control access rights **************************************/
+   
+   
+   
+   /**
+    * Mark for deletion
+    * (non-PHPdoc)
+    * @see BaseObjectModel#delete($options)
+    */
+   public function delete(array& $options = array())
+   {
+      // Check permissions
+      // None
+      
+      // Execute method
+      return parent::delete($options);
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntityModel#load($id, $options)
+    */
+   public function load($id, array& $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return false;
+      }
+      
+      // Execute method
+      return parent::load($id, $options);
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntityModel#toArray($options)
+    */
+   public function toArray(array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->isNew && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      return parent::toArray($options);
    }
 }

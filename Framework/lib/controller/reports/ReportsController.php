@@ -119,7 +119,16 @@ class ReportsController
     */
    public function decode($parameters, array $options = array())
    {
-      $model = $this->container->getModel($this->kind, $this->type, $options);
+      $model  = $this->container->getModel($this->kind, $this->type, $options);
+      $result = $model->decode($parameters);
+      
+      if (isset($result['errors']))
+      {
+         return array('status' => false,
+                      'result' => array('msg' => implode('; ', $result['errors']).'.'),
+                      'errors' => $result['errors']
+         );
+      }
       
       return array('status' => true,
                    'result' => array(
