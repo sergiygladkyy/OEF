@@ -175,6 +175,7 @@ class PersistentLayer
          'catalogs',
          'documents',
          'information_registry',
+         'AccumulationRegisters',
          'reports',
          'data_processors',
          'web_services',
@@ -395,10 +396,10 @@ class PersistentLayer
                $errors[$registry]['global'][] = 'Dimensions and Fields use one namespace. Duplicate name in information registry "'.$registry.'": '.implode(", ", array_keys($duplicate)).'.';
             }
 
-            if ($check_periodical && isset($conf['fields']['period']))
+            if ($check_periodical && isset($conf['fields']['Period']))
             {
                $duplicate = true;
-               $errors[$registry]['global'][] = '"period" - is system field name. Rename your field "period".';
+               $errors[$registry]['global'][] = '"Period" - is system field name. Rename your field "Period".';
             }
             if (!$duplicate)
             {
@@ -452,6 +453,165 @@ class PersistentLayer
       return $errors;
    }
    
+   /**
+    * Check Accumulation Registers configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkAccumulationRegistersConfig(array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      
+      foreach ($config as $registry => $conf)
+      {
+         $check_duplicate  = false;
+         $check_periodical = false;
+      
+         if (!$this->checkName($registry))
+         {
+            $errors[$registry]['global'][] = 'Invalid name';
+         }
+         
+         /* Check register type */
+         
+         if (!isset($conf['register_type']))
+         {
+            $errors[$registry]['global'][] = 'Not set register type configuration for Accumulation Register "'.$registry.'"';
+         }
+         elseif (!is_string($conf['register_type']) || !in_array($conf['register_type'], array('Balances', 'Turnovers')))
+         {
+            $errors[$registry]['global'][] = 'Register type configuration for Accumulation Register "'.$registry.'" is wrong';
+         }
+         else
+         {
+            $valid[$registry]['register_type'] = $conf['register_type'];
+         }
+         
+         /* Check dimensions config */
+         
+         if (!isset($conf['dimensions']))
+         {
+            $valid[$registry]['dimensions'] = array();
+         }
+         elseif (!is_array($conf['dimensions']))
+         {
+            $errors[$registry]['global'][] = 'Dimensions configuration for Accumulation Register "'.$registry.'" is wrong';
+         }
+         elseif (empty($conf['dimensions']))
+         {
+            $errors[$registry]['global'][] = 'Dimensions configuration for Accumulation Register "'.$registry.'" is empty';
+         }
+         else
+         {
+            $check_duplicate = true;
+            
+            if (!$err = $this->checkFieldsConfig('AccumulationRegisters', $conf['dimensions']))
+            {
+               $valid[$registry]['dimensions'] = $conf['dimensions'];
+            }
+            else $errors[$registry]['dimensions'] = $err;
+         }
+      
+         /* Check periodical config */
+         
+         if (!isset($conf['periodical']))
+         {
+            $errors[$registry]['global'][] = 'Not set "periodical" configuration for Accumulation Register "'.$registry.'"';
+         }
+         elseif (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
+         {
+            $errors[$registry]['global'][] = '"periodical" configuration for Accumulation Register "'.$registry.'" is wrong';
+         }
+         else
+         {
+            $check_periodical = true;
+            
+            $valid[$registry]['periodical'] = $conf['periodical'];
+         }
+         
+         /* Check fields config */
+          
+         if (!isset($conf['fields']))
+         {
+            $valid[$registry]['fields'] = array();
+         }
+         elseif (!is_array($conf['fields']))
+         {
+            $errors[$registry]['global'][] = 'Fields configuration for Accumulation Register "'.$registry.'" is wrong';
+         }
+         elseif (empty($conf['fields']))
+         {
+            $errors[$registry]['global'][] = 'Fields configuration for Accumulation Register "'.$registry.'" is empty';
+         }
+         else
+         {
+            $duplicate = false;
+
+            if ($check_duplicate && $duplicate = array_intersect_key($conf['dimensions'], $conf['fields']))
+            {
+               $duplicate = true;
+               $errors[$registry]['global'][] = 'Dimensions and Fields use one namespace. Duplicate name in Accumulation Register "'.$registry.'": '.implode(", ", array_keys($duplicate)).'.';
+            }
+
+            if ($check_periodical && isset($conf['fields']['Period']))
+            {
+               $duplicate = true;
+               $errors[$registry]['global'][] = '"Period" - is system field name. Rename your field "Period".';
+            }
+            if (!$duplicate)
+            {
+               if (!$err = $this->checkFieldsConfig('AccumulationRegisters', $conf['fields']))
+               {
+                  $valid[$registry]['fields'] = $conf['fields'];
+               }
+               else $errors[$registry]['fields'] = $err;
+            }
+         }
+         
+         /* Check Recorders config */
+         
+         if (!isset($conf['recorders']))
+         {
+            $errors[$registry]['global'][] = 'Not set recorders configuration for Accumulation Register "'.$registry.'"';
+         }
+         elseif (!is_array($conf['recorders']))
+         {
+            $errors[$registry]['global'][] = 'Recorders configuration for Accumulation Register "'.$registry.'" is wrong';
+         }
+         elseif (empty($conf['recorders']))
+         {
+            $errors[$registry]['global'][] = 'Recorders configuration for Accumulation Register "'.$registry.'" is empty';
+         }
+         else
+         {
+            if (!$err = $this->checkRecordesConfig($conf['recorders']))
+            {
+               $valid[$registry]['recorders'] = $conf['recorders'];
+            }
+            else $errors[$registry]['recorders'] = $err;
+         }
+         
+         /* Check common config */
+          
+         if ($err = $this->checkCommonConfig('AccumulationRegisters', $registry, $conf))
+         {
+            $errors = isset($errors[$registry]) && is_array($errors[$registry]) ? array_merge($errors[$registry], $err) : $err;
+         }
+         else
+         {
+            $valid[$registry]['model'] = $conf['model'];
+            $valid[$registry]['controller'] = $conf['controller'];
+         }
+      }
+      
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+
    /**
     * Check documents configuration array
     * 
@@ -1464,7 +1624,7 @@ class PersistentLayer
     */
    protected function getAllowedKinds()
    {
-      return array('catalogs', 'documents', 'information_registry', 'reports', 'data_processors', 'web_services');
+      return array('catalogs', 'documents', 'information_registry', 'AccumulationRegisters', 'reports', 'data_processors', 'web_services');
    }
    
    /**
@@ -1678,6 +1838,7 @@ class PersistentLayer
       // save internal configuration (and generate configuration map)
       $map['security']                = $this->saveInternalConfiguration($result['AccessRights'],            'security/');
       $map['information_registry']    = $this->saveInternalConfiguration($result['information_registry'],    'information_registry/');
+      $map['AccumulationRegisters']   = $this->saveInternalConfiguration($result['AccumulationRegisters'],   'AccumulationRegisters/');
       $map['reports']                 = $this->saveInternalConfiguration($result['reports'],                 'reports/');
       $map['data_processors']         = $this->saveInternalConfiguration($result['data_processors'],         'data_processors/');
       $map['catalogs']['tabulars']    = $this->saveInternalConfiguration($result['catalogs']['tabulars'],    'catalogs/tabulars/');
@@ -1763,11 +1924,22 @@ class PersistentLayer
       
       /* Information registry */
       
-      $result = $this->generateInfRegistryInternalConfiguration($dictionary['information_registry'], $options);
+      $result = $this->generateRegistersInternalConfiguration('information_registry', $dictionary['information_registry'], $options);
       
       if (!isset($result['errors']))
       {
          $internal['information_registry'] = $result;
+      }
+      else $errors = array_merge($errors, $result['errors']);
+      
+      
+      /* Accumulation Registers */
+      
+      $result = $this->generateRegistersInternalConfiguration('AccumulationRegisters', $dictionary['AccumulationRegisters'], $options);
+      
+      if (!isset($result['errors']))
+      {
+         $internal['AccumulationRegisters'] = $result;
       }
       else $errors = array_merge($errors, $result['errors']);
       
@@ -1787,29 +1959,40 @@ class PersistentLayer
       // Recorders and Recorder for
       if (!$errors)
       {
-         foreach ($internal['documents']['recorders'] as $r_type => $recorder)
+         foreach ($internal['documents']['recorders'] as $r_kind => $conf)
          {
-            if (isset($internal['information_registry']['recorders'][$r_type]))
+            foreach ($conf as $r_type => $recorder)
             {
-               $internal['information_registry']['recorders'][$r_type] = array_merge($recorder, $internal['information_registry']['recorders'][$r_type]);
-               $internal['information_registry']['recorders'][$r_type] = array_unique($internal['information_registry']['recorders'][$r_type]);
+               if (isset($internal[$r_kind]['recorders'][$r_type]))
+               {
+                  $internal[$r_kind]['recorders'][$r_type] = array_merge($recorder, $internal[$r_kind]['recorders'][$r_type]);
+                  $internal[$r_kind]['recorders'][$r_type] = array_unique($internal[$r_kind]['recorders'][$r_type]);
+               }
+               else $internal[$r_kind]['recorders'][$r_type] = $recorder;
             }
-            else $internal['information_registry']['recorders'][$r_type] = $recorder;
          }
          unset($internal['documents']['recorders']);
          
-         foreach ($internal['information_registry']['recorder_for'] as $r_type => $recorder)
+         $register_kinds = array(
+            'information_registry',
+            'AccumulationRegisters'
+         );
+         
+         foreach ($register_kinds as $reg_kind)
          {
-            if (isset($internal['documents']['recorder_for'][$r_type]))
+            foreach ($internal[$reg_kind]['recorder_for'] as $doc_type => $reg_types)
             {
-               $internal['documents']['recorder_for'][$r_type] = array_merge($recorder, $internal['documents']['recorder_for'][$r_type]);
-               $internal['documents']['recorder_for'][$r_type] = array_unique($internal['documents']['recorder_for'][$r_type]);
+               if (isset($internal['documents']['recorder_for'][$doc_type][$reg_kind]))
+               {
+                  $dr =& $internal['documents']['recorder_for'][$doc_type][$reg_kind];
+                  $dr = array_merge($reg_types, $dr);
+                  $dr = array_unique($dr);
+               }
+               else $internal['documents']['recorder_for'][$doc_type][$reg_kind] = $reg_types;
             }
-            else $internal['documents']['recorder_for'][$r_type] = $recorder;
+            unset($internal[$reg_kind]['recorder_for']);
          }
-         unset($internal['information_registry']['recorder_for']);
       }
-      
       
       /* Reports */
       
@@ -2023,14 +2206,23 @@ class PersistentLayer
          
          if ($kind == 'documents')
          {
-            foreach ($params['recorder_for'] as $r_type)
+            foreach ($params['recorder_for'] as $uid)
             {
-               if (isset($this->dictionary['information_registry'][$r_type]))
+               try
                {
-                  $result['recorder_for'][$type][] = $r_type;
-                  $result['recorders'][$r_type][] = $type;
+                  list($r_kind, $r_type) = Utility::parseUID($uid);
+                  
+                  if (isset($this->dictionary[$r_kind][$r_type]))
+                  {
+                     $result['recorder_for'][$type][$r_kind][] = $r_type;
+                     $result['recorders'][$r_kind][$r_type][]  = $type;
+                  }
+                  else $errors[] = $r_kind.' register "'.$r_type.'" not exists';
                }
-               else $errors[] = 'Information registry "'.$r_type.'" not exists';
+               catch (Exception $e)
+               {
+                  $errors[] = 'Document "'.$type.'": invalid recorder uid "'.$uid.'"';
+               }
             }
          }
          
@@ -2062,17 +2254,18 @@ class PersistentLayer
    }
    
    /**
-    * Generate information registry internal configuration
+    * Generate Regicters internal configuration
     * 
-    * @param array& $registry_dictionary
+    * @param string $kind - registers kind
+    * @param array& $dict - registers dictionary
     * @param array& $options
     * @return array - 'errors' => $errors or list <confName> => array()
     */
-   protected function generateInfRegistryInternalConfiguration(array& $registry_dictionary, array& $options = array())
+   protected function generateRegistersInternalConfiguration($kind, array& $dict, array& $options = array())
    {
       $errors = array();
       $result = array(
-         'information_registry' => array(),
+         "$kind"      => array(),
          'dimensions' => array(),
          'periodical' => array(),
          'fields'     => array(),
@@ -2088,9 +2281,19 @@ class PersistentLayer
       
       $result['recorder_for'] = array();
       
-      foreach ($registry_dictionary as $registry => $params)
+      if ($kind == 'AccumulationRegisters')
       {
-         $result['information_registry'][] = $registry;
+         $result['register_type'] = array();
+      }
+      
+      foreach ($dict as $registry => $params)
+      {
+         $result[$kind][] = $registry;
+         
+         if ($kind == 'AccumulationRegisters')
+         {
+            $result['register_type'][$registry] = $params['register_type'];
+         }
          
          /* Dimensions */
          
@@ -2113,7 +2316,7 @@ class PersistentLayer
                $field => array(
                   'type' => 'datetime',
                   'sql'  => array(
-                     'type' => "DATETIME NOT NULL default '0000-00-00'"
+                     'type' => "DATETIME NOT NULL default '0000-00-00 00:00:00'"
                   ),
                   'precision' => array('required' => true)
                )
@@ -2128,7 +2331,7 @@ class PersistentLayer
          
          $_fields = array_merge($params['dimensions'], $per_field, $params['fields']);
          
-         $res = $this->generateFieldsInternalConfiguration($_fields, 'information_registry', $options);
+         $res = $this->generateFieldsInternalConfiguration($_fields, $kind, $options);
          
          unset($_fields);
          
@@ -2146,14 +2349,14 @@ class PersistentLayer
          
          /* Recorders */
          
-         foreach ($params['recorders'] as $type)
+         foreach ($params['recorders'] as $doc_type)
          {
-            if (isset($this->dictionary['documents'][$type]))
+            if (isset($this->dictionary['documents'][$doc_type]))
             {
-               $result['recorders'][$registry][] = $type;
-               $result['recorder_for'][$type][]  = $registry;
+               $result['recorders'][$registry][]    = $doc_type;
+               $result['recorder_for'][$doc_type][] = $registry;
             }
-            else $errors[] = 'Information registry "'.$registry.'": documents "'.$type.'" not exists.';
+            else $errors[] = $kind.' register "'.$registry.'": documents "'.$doc_type.'" not exists.';
          }
          
          
@@ -2170,6 +2373,7 @@ class PersistentLayer
       return empty($errors) ? $result : array('errors' => $errors);
    }
    
+
    /**
     * Generate tabular internal configuration
     * 
@@ -2565,13 +2769,16 @@ class PersistentLayer
    {
       $db_map   = array();
       $dbprefix = '';
-      $catalogs   =& $configuration['catalogs']['catalogs'];
-      $registries =& $configuration['information_registry']['information_registry'];
-      $periodical =& $configuration['information_registry']['periodical'];
-      $documents  =& $configuration['documents']['documents'];
-      $recorders  =& $configuration['information_registry']['recorders'];
+      $catalogs    =& $configuration['catalogs']['catalogs'];
+      $iRegistries =& $configuration['information_registry']['information_registry'];
+      $iRecorders  =& $configuration['information_registry']['recorders'];
+      $aRegistries =& $configuration['AccumulationRegisters']['AccumulationRegisters'];
+      $aRegType    =& $configuration['AccumulationRegisters']['register_type'];
+      $aRecorders  =& $configuration['AccumulationRegisters']['recorders'];
+      $documents   =& $configuration['documents']['documents'];
       
-      if (!empty($options['dbprefix']))  $dbprefix  = $options['dbprefix'];
+      
+      if (!empty($options['dbprefix']))  $dbprefix = $options['dbprefix'];
       
       /* Catalogs */
       
@@ -2600,24 +2807,47 @@ class PersistentLayer
       
       /* Information registry */
       
-      foreach ($registries as $registry)
+      foreach ($iRegistries as $register)
       {
-         $db_map['information_registry'][$registry]['table'] = $dbprefix.'information_registry_'.$registry;
-         $db_map['information_registry'][$registry]['pkey']  = '_id';
-         //$db_map['information_registry'][$registry]['deleted'] = '_deleted';
-         
-         // Period
-         /*if (array_key_exists($registry, $periodical))
-         {
-            $db_map['information_registry'][$registry]['period'] = '_period';
-         }*/
+         $db_map['information_registry'][$register]['table'] = $dbprefix.'information_registry_'.$register;
+         $db_map['information_registry'][$register]['pkey']  = '_id';
          
          // Recorders
-         if (array_key_exists($registry, $recorders))
+         if (array_key_exists($register, $iRecorders))
          {
-            $db_map['information_registry'][$registry]['recorder_type'] = '_rec_type';
-            $db_map['information_registry'][$registry]['recorder_id'] = '_rec_id';
+            $db_map['information_registry'][$register]['recorder_type'] = '_rec_type';
+            $db_map['information_registry'][$register]['recorder_id'] = '_rec_id';
          }
+      }
+      
+      /* AccumulationRegisters */
+      
+      foreach ($aRegistries as $register)
+      {
+         $db_map['AccumulationRegisters'][$register]['table']  = $dbprefix.'accumulation_registers_'.$register;
+         $db_map['AccumulationRegisters'][$register]['pkey']   = '_id';
+         $db_map['AccumulationRegisters'][$register]['line']   = '_line';
+         $db_map['AccumulationRegisters'][$register]['active'] = '_active';
+         $db_map['AccumulationRegisters'][$register]['total']  = array();
+         
+         $total_map =& $db_map['AccumulationRegisters'][$register]['total'];
+         
+         $total_map['table'] = $dbprefix.'accumulation_registers_'.$register.'_total';
+         $total_map['pkey']  = '_id';
+         
+         // Register type
+         if ($aRegType == 'Balances')
+         {
+            $db_map['AccumulationRegisters'][$register]['operation'] = '_operation';
+         }
+         
+         // Recorders
+         if (array_key_exists($register, $aRecorders))
+         {
+            $db_map['AccumulationRegisters'][$register]['recorder_type'] = '_rec_type';
+            $db_map['AccumulationRegisters'][$register]['recorder_id'] = '_rec_id';
+         }
+         else throw new Exception('Internal configuration is wrong'); 
       }
       
       /* Documents */
@@ -2659,8 +2889,14 @@ class PersistentLayer
    protected function generateRelationsMap(array& $configuration, array& $options = array())
    {
       $relations = array();
+      $storage   = array(
+         'catalogs',
+         'documents',
+         'information_registry',
+         'AccumulationRegisters'
+      );
       
-      foreach (array('catalogs', 'documents', 'information_registry') as $kind)
+      foreach ($storage as $kind)
       {
          // Objects and registries
          $references =& $configuration[$kind]['references'];
@@ -2719,6 +2955,9 @@ class PersistentLayer
       // Information registry
       $query = array_merge($query, $this->generateSQLCreate('information_registry', $CManager, $dbcharset, $options));
       
+      // Accumulation Registers
+      $query = array_merge($query, $this->generateSQLCreate('AccumulationRegisters', $CManager, $dbcharset, $options));
+      
       // Documents
       $query = array_merge($query, $this->generateSQLCreate('documents', $CManager, $dbcharset, $options));
       
@@ -2736,6 +2975,11 @@ class PersistentLayer
     */
    protected function generateSQLCreate($kind, $CManager, $dbcharset, array& $options = array())
    {
+      if ($kind == 'AccumulationRegisters')
+      {
+         return $this->generateAccumulationRegistersSQLCreate($CManager, $dbcharset, $options);
+      }
+      
       $db_map    = $CManager->getInternalConfiguration('db_map', null, $options);
       $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
       $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
@@ -2788,7 +3032,7 @@ class PersistentLayer
                $q .= ', `'.$db_map[$type]['recorder_type'].'` varchar(255) NOT NULL default \'\'';
                $q .= ', `'.$db_map[$type]['recorder_id'].'` int(11) NOT NULL default 0';
                
-               $uKey .= $db_map[$type]['recorder_type'].'`, `'.$db_map[$type]['recorder_id'].'`, `';
+               //$uKey .= $db_map[$type]['recorder_type'].'`, `'.$db_map[$type]['recorder_id'].'`, `';
             }
             
             $uKey .= isset($demensions[$type]) ? implode("`, `", $demensions[$type]) : '';
@@ -2841,7 +3085,86 @@ class PersistentLayer
       return $query;
    }
    
-   
+   /**
+    * Generate AccumulationRegisters CREATE SQL-query to create entities tables
+    * 
+    * @param object $CManager
+    * @param string $dbcharset
+    * @param array& $options
+    * @return array
+    */
+   protected function generateAccumulationRegistersSQLCreate($CManager, $dbcharset, array& $options = array())
+   {
+      $kind      = 'AccumulationRegisters';
+      $db_map    = $CManager->getInternalConfiguration('db_map', $kind, $options);
+      $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
+      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
+      
+      $query  = array();
+      
+      $periodical    = $CManager->getInternalConfiguration($kind.'.periodical',    null, $options);
+      $demensions    = $CManager->getInternalConfiguration($kind.'.dimensions',    null, $options);
+      $recorders     = $CManager->getInternalConfiguration($kind.'.recorders',     null, $options);
+      $register_type = $CManager->getInternalConfiguration($kind.'.register_type', null, $options);
+
+      foreach ($fields as $type => $e_fields)
+      {
+         $table = $db_map[$type]['table'];
+         $pKey  = $db_map[$type]['pkey'];
+         $uKey  = '';
+         
+         $q  = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (';
+         $q .= '`'.$pKey.'` int(11) NOT NULL AUTO_INCREMENT';
+         $q .= ', `'.$db_map[$type]['recorder_type'].'` varchar(255) NOT NULL default \'\'';
+         $q .= ', `'.$db_map[$type]['recorder_id'].'` int(11) NOT NULL default 0';
+         $q .= ', `'.$db_map[$type]['line'].'` int(11) NOT NULL default 0';
+         $q .= ', `'.$db_map[$type]['active'].'` tinyint(1) NOT NULL default 0';
+         
+         /* Fields */
+         
+         foreach ($e_fields as $field)
+         {
+            $sql_def = isset($field_sql[$type][$field]) ? $field_sql[$type][$field] : 'int(11) NOT NULL';
+            $q .= ', `'.$field.'` '.$sql_def;
+         }
+
+         // Keys
+         $uKey .= isset($demensions[$type]) ? implode("`, `", $demensions[$type]) : '';
+         
+         if (isset($periodical[$type]))
+         {
+            $uKey .= (isset($demensions[$type]) ? '`, `' : '').$periodical[$type]['field'];
+         }
+            
+         if (strlen($uKey)) $uKey = ', UNIQUE KEY `demensions` (`'.$uKey.'`)';
+         
+         $q .= ', PRIMARY KEY (`'.$pKey.'`)'.$uKey;
+          
+         $query[$table] = $q.') ENGINE=InnoDB DEFAULT CHARSET='.$dbcharset.' COLLATE='.$dbcharset.'_general_ci AUTO_INCREMENT=1';
+          
+         /* Total */
+          
+         $dbmap =& $db_map[$type]['total'];
+
+         $table = $dbmap['table'];
+         $pKey  = $dbmap['pkey'];
+         
+         $q  = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (';
+         $q .= '`'.$pKey.'` int(11) NOT NULL AUTO_INCREMENT';
+         
+         foreach ($e_fields as $field)
+         {
+            $sql_def = isset($field_sql[$type][$field]) ? $field_sql[$type][$field] : 'int(11) NOT NULL';
+            $q .= ', `'.$field.'` '.$sql_def;
+         }
+
+         $q .= ', PRIMARY KEY (`'.$pKey.'`)';
+         
+         $query[$table] = $q.') ENGINE=InnoDB DEFAULT CHARSET='.$dbcharset.' COLLATE='.$dbcharset.'_general_ci AUTO_INCREMENT=1';
+      }
+      
+      return $query;
+   }
    
    
    

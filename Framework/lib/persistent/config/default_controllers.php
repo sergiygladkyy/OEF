@@ -9,6 +9,10 @@ $_default_controllers = array(
       'classname' => 'InfRegistriesController'
    ),
    
+   'AccumulationRegisters' => array(
+      'classname'  => 'AccumulationRegistersController'
+   ),
+   
    'tabular_sections' => array(
       'classname' => 'TabularsController'
    ),

@@ -11,6 +11,11 @@ $_default_models = array(
       'cmodelclass' => 'InfRegistriesModel'
    ),
    
+   'AccumulationRegisters' => array(
+      'modelclass'  => 'AccumulationRegisterModel',
+      'cmodelclass' => 'AccumulationRegistersModel'
+   ),
+   
    'tabular_sections' => array(
       'modelclass'  => 'TabularModel',
       'cmodelclass' => 'TabularsModel'
