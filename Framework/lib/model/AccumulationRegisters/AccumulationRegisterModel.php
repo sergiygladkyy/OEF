@@ -224,13 +224,7 @@ class AccumulationRegisterModel extends BaseRegisterModel
       
       if (!$errors && $this->options['auto_update_total'])
       {
-         $periodical =& $this->conf['periodical'];
-         
-         if (!empty($periodical))
-         {
-            $from = $this->attributes[$periodical['field']];
-         }
-         else $from = null;
+         $from = $this->attributes[$this->conf['periodical']['field']];
          
          $errors = $this->total->countTotals($from);
       }
@@ -287,13 +281,7 @@ class AccumulationRegisterModel extends BaseRegisterModel
       
       if (!$errors && $this->options['auto_update_total'])
       {
-         $periodical =& $this->conf['periodical'];
-         
-         if (!empty($periodical))
-         {
-            $from = $this->attributes[$periodical['field']];
-         }
-         else $from = null;
+         $from = $this->attributes[$this->conf['periodical']['field']];
          
          $errors = $this->total->countTotals($from);
       }

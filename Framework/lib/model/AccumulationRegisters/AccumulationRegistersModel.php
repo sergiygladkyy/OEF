@@ -97,7 +97,7 @@ class AccumulationRegistersModel extends BaseRegistersModel
       }
       
       // Execute method
-      return $this->totalgetTotals($from, $to);
+      return $this->total->getTotals($from, $to);
    }
    
    /**
@@ -151,33 +151,27 @@ class AccumulationRegistersModel extends BaseRegistersModel
       if ($this->options['auto_update_total'])
       {
          $periods = array();
-         $periodical =& $this->conf['periodical'];
-         
-         if (!empty($periodical))
+         $pField  = $this->conf['periodical']['field'];
+         $query   = 'SELECT `'.$db_map['pkey'].'`, `'.$pField.'` FROM `'.$db_map['table'].'` '.$params['criteria'];
+
+         if (!($res = $db->executeQuery($query)))
          {
-            $pField = $periodical['field']; 
-            $query  = 'SELECT `'.$db_map['pkey'].'`, `'.$pField.'` FROM `'.$db_map['table'].'` '.$params['criteria'];
-            
-            if (!($res = $db->executeQuery($query)))
-            {
-               return array($db->getError());
-            }
-            
-            while ($row = $this->fetchAssoc($res))
-            {
-               $periods[$row[$pField]] = $row[$pField];
-               $ids[] = $row[$db_map['pkey']];
-            }
-            
-            if (empty($ids)) return array();
-            
-            $query = 'DELETE FROM `'.$db_map['table'].'` WHERE `'.$db_map['pkey'].'` IN ('.implode(',', $ids).')';
+            return array($db->getError());
          }
+
+         while ($row = $this->fetchAssoc($res))
+         {
+            $periods[$row[$pField]] = $row[$pField];
+            $ids[] = $row[$db_map['pkey']];
+         }
+
+         if (empty($ids)) return array();
+
+         $query = 'DELETE FROM `'.$db_map['table'].'` WHERE `'.$db_map['pkey'].'` IN ('.implode(',', $ids).')';
       }
+      else $query = 'DELETE FROM `'.$db_map['table'].'` '.$params['criteria'];
       
       // Delete
-      if (!$query) $query = 'DELETE FROM `'.$db_map['table'].'` '.$params['criteria'];
-      
       if (!$db->executeQuery($query))
       {
          return array($db->getError());

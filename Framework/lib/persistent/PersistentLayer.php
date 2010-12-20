@@ -516,7 +516,9 @@ class PersistentLayer
       
          /* Check periodical config */
 
-         if (isset($conf['periodical']))
+         $valid[$registry]['periodical'] = 'month';
+         
+         /*if (isset($conf['periodical']))
          {
             if (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
             {
@@ -528,7 +530,7 @@ class PersistentLayer
 
                $valid[$registry]['periodical'] = $conf['periodical'];
             }
-         }
+         }*/
          
          /* Check fields config */
           
