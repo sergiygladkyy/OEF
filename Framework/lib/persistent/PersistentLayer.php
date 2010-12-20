@@ -515,20 +515,19 @@ class PersistentLayer
          }
       
          /* Check periodical config */
-         
-         if (!isset($conf['periodical']))
+
+         if (isset($conf['periodical']))
          {
-            $errors[$registry]['global'][] = 'Not set "periodical" configuration for Accumulation Register "'.$registry.'"';
-         }
-         elseif (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
-         {
-            $errors[$registry]['global'][] = '"periodical" configuration for Accumulation Register "'.$registry.'" is wrong';
-         }
-         else
-         {
-            $check_periodical = true;
-            
-            $valid[$registry]['periodical'] = $conf['periodical'];
+            if (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
+            {
+               $errors[$registry]['global'][] = '"periodical" configuration for Accumulation Register "'.$registry.'" is wrong';
+            }
+            else
+            {
+               $check_periodical = true;
+
+               $valid[$registry]['periodical'] = $conf['periodical'];
+            }
          }
          
          /* Check fields config */
@@ -2836,7 +2835,7 @@ class PersistentLayer
          $total_map['pkey']  = '_id';
          
          // Register type
-         if ($aRegType == 'Balances')
+         if ($aRegType[$register] == 'Balances')
          {
             $db_map['AccumulationRegisters'][$register]['operation'] = '_operation';
          }
@@ -3119,6 +3118,11 @@ class PersistentLayer
          $q .= ', `'.$db_map[$type]['recorder_id'].'` int(11) NOT NULL default 0';
          $q .= ', `'.$db_map[$type]['line'].'` int(11) NOT NULL default 0';
          $q .= ', `'.$db_map[$type]['active'].'` tinyint(1) NOT NULL default 0';
+         
+         if (isset($db_map[$type]['operation']))
+         {
+            $q .= ', `'.$db_map[$type]['operation'].'` tinyint(1) NOT NULL default 0';
+         }
          
          /* Fields */
          
@@ -3488,7 +3492,12 @@ class PersistentLayer
          foreach ($map as $config)
          {
             $tables[] = $config['table'];
-             
+            
+            if (!empty($config['total']))
+            {
+               $tables[] = $config['total']['table'];
+            }
+            
             if (empty($config['tabulars'])) continue;
              
             foreach ($config['tabulars'] as $conf)
