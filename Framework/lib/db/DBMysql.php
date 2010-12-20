@@ -278,12 +278,7 @@ class DBMysql implements DBManager
    {
       if (!($res = $this->executeQuery($query))) return null;
       
-      if ($object = $this->fetchObject($res))
-      {
-         return $object;
-      }
-      
-      return null;
+      return $this->fetchObject($res);
    }
    
    /**
@@ -325,12 +320,7 @@ class DBMysql implements DBManager
    {
       if (!($res = $this->executeQuery($query))) return null;
       
-      if ($row = $this->fetchRow($res))
-      {
-         return $row;
-      }
-      
-      return null;
+      return $this->fetchRow($res);
    }
    
    /**
@@ -378,12 +368,7 @@ class DBMysql implements DBManager
    {
       if (!($res = $this->executeQuery($query))) return null;
       
-      if ($row = $this->fetchAssoc($res))
-      {
-         return $row;
-      }
-      
-      return null;
+      return $this->fetchAssoc($res);
    }
    
    /**
@@ -431,12 +416,7 @@ class DBMysql implements DBManager
    {
       if (!($res = $this->executeQuery($query))) return null;
       
-      if ($row = $this->fetchArray($res))
-      {
-         return $row;
-      }
-      
-      return null;
+      return $this->fetchArray($res);
    }
    
    /**

@@ -36,7 +36,7 @@ class CatalogModel extends BaseObjectModel
       
       $values = $db->loadAssoc($query);
       
-      if (is_null($values)) return false;
+      if (empty($values)) return false;
       
       $this->id = $values[$pkey];
       unset($values[$pkey]);
