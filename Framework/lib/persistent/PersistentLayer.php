@@ -516,7 +516,7 @@ class PersistentLayer
       
          /* Check periodical config */
 
-         $valid[$registry]['periodical'] = 'month';
+         $valid[$registry]['periodical'] = 'second';
          
          /*if (isset($conf['periodical']))
          {
@@ -3135,14 +3135,14 @@ class PersistentLayer
          }
 
          // Keys
-         $uKey .= isset($demensions[$type]) ? implode("`, `", $demensions[$type]) : '';
-         
          if (isset($periodical[$type]))
          {
-            $uKey .= (isset($demensions[$type]) ? '`, `' : '').$periodical[$type]['field'];
+            $uKey .= '`'.$periodical[$type]['field'].'`';
          }
-            
-         if (strlen($uKey)) $uKey = ', UNIQUE KEY `demensions` (`'.$uKey.'`)';
+         
+         $uKey .= isset($demensions[$type]) ? ',`'.implode("`, `", $demensions[$type]).'`' : '';
+         
+         if (strlen($uKey)) $uKey = ', UNIQUE KEY `demensions` ('.$uKey.')';
          
          $q .= ', PRIMARY KEY (`'.$pKey.'`)'.$uKey;
           
@@ -3163,8 +3163,8 @@ class PersistentLayer
             $sql_def = isset($field_sql[$type][$field]) ? $field_sql[$type][$field] : 'int(11) NOT NULL';
             $q .= ', `'.$field.'` '.$sql_def;
          }
-
-         $q .= ', PRIMARY KEY (`'.$pKey.'`)';
+         
+         $q .= ', PRIMARY KEY (`'.$pKey.'`)'.$uKey;
          
          $query[$table] = $q.') ENGINE=InnoDB DEFAULT CHARSET='.$dbcharset.' COLLATE='.$dbcharset.'_general_ci AUTO_INCREMENT=1';
       }
