@@ -80,9 +80,10 @@ interface DBManager
    
    /**
     * 
+    * @param resource $resource
     * @return int
     */
-   public function getNumRows();
+   public function getNumRows($resource);
    
    /**
     * 

@@ -197,9 +197,9 @@ class DBMysql implements DBManager
     * (non-PHPdoc)
     * @see lib/db/mDBManager#getNumRows()
     */
-   public function getNumRows()
+   public function getNumRows($resource)
    {
-      return mysql_num_rows($this->conn);
+      return mysql_num_rows($resource);
    }
    
    /**
