@@ -27,7 +27,7 @@ class AccumulationRegisterModel extends BaseRegisterModel
       }
       else
       {
-         require_once('lib/model/AccumulationRegisters/BalancesModel.php');
+         require_once('lib/model/AccumulationRegisters/TurnoversModel.php');
          
          $classname = 'TurnoversModel';
       }

@@ -2,7 +2,9 @@
 
 class BalancesModel
 {
-   protected $conf = null;
+   protected
+      $conf      = null,
+      $resources = null;
 
    private static $numeric_types = array(
       'bool'      => 'bool',
@@ -113,7 +115,7 @@ class BalancesModel
          return array();
       }
       
-      if (empty($res)) return $total;
+      if ($db->getNumRows($res) == 0) return $total;
       
       $map    = array();
       $dimstr = '';
