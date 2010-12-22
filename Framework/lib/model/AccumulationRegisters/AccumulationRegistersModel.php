@@ -39,6 +39,29 @@ class AccumulationRegistersModel extends BaseRegistersModel
       
       $this->total = new $classname($this->conf);
    }
+
+   /**
+    * (non-PHPdoc)
+    * @see lib/model/base/BaseModel#setup($kind, $type)
+    */
+   protected function initialize($kind, $type)
+   {
+      if (!parent::initialize($kind, $type)) return false;
+      
+      $confname = self::getConfigurationName($kind, $type);
+
+      if (!isset(self::$config[$confname]['periodical']))
+      {
+         self::$config[$confname]['periodical'] = $this->container->getConfigManager()->getInternalConfigurationByKind($kind.'.periodical', $type);
+      }
+      
+      if (!isset(self::$config[$confname]['register_type']))
+      {
+         self::$config[$confname]['register_type'] = $this->container->getConfigManager()->getInternalConfigurationByKind($kind.'.register_type', $type);
+      }
+      
+      return true;
+   }
    
    /**
     * Get instance
@@ -84,11 +107,11 @@ class AccumulationRegistersModel extends BaseRegistersModel
    /**
     * Get totals
     * 
-    * @param string $from - from date
-    * @param string $to   - to date
+    * @param string $date
+    * @param array  $options
     * @return array
     */
-   public function getTotals($from = null, $to = null)
+   public function getTotals($date = null, array $options = array())
    {
       // Check permissions
       if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
@@ -97,7 +120,7 @@ class AccumulationRegistersModel extends BaseRegistersModel
       }
       
       // Execute method
-      return $this->total->getTotals($from, $to);
+      return $this->total->getTotals($date, $options);
    }
    
    /**

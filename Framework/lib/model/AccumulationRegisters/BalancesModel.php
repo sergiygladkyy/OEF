@@ -3,6 +3,13 @@
 class BalancesModel
 {
    protected $conf = null;
+
+   private static $numeric_types = array(
+      'bool'      => 'bool',
+      'int'       => 'int',
+      'float'     => 'float',
+      'reference' => 'reference'
+   );
    
    public function __construct(array $configuration, array $options = array())
    {
@@ -10,9 +17,158 @@ class BalancesModel
       $this->resources = array_diff($this->conf['attributes'], $this->conf['dimensions'], array($this->conf['periodical']['field']));
    }
    
-   public function getTotals($from = null, $to = null)
+   
+   /**
+    * Get total
+    * 
+    * [
+    *    $options = array(
+    *       'criterion' => array(
+    *          '<dimension_name>' => <value>,
+    *          .............................
+    *       )
+    *    )
+    *    
+    *    Embed by AND
+    * ]
+    * 
+    * @param string $date
+    * @param array  $options
+    * @return array
+    */
+   public function getTotals($date = null, array $options = array())
    {
+      $pfield = $this->conf['periodical']['field'];
+      $_date  = explode('-', date('Y-m', strtotime($date)));
+      $period = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
+      
+      if (!empty($options['criteria']) && is_array($options['criteria']))
+      {
+         $criterion = $this->retrieveCriteriaQuery($options['criteria']);
+      }
+      else $criterion = '';
+      
+      $db = Container::getInstance()->getDBManager();
+      
+      if (!empty($this->conf['dimensions']))
+      {
+         $select = implode(',', $this->conf['dimensions']).',';
+      }
+      else $select = '';
+      
+      $select .= implode(',', $this->resources);
+      
+      // Retrieve current period
+      $query = 'SELECT `'.$pfield.'` FROM `'.$this->conf['db_map']['total']['table'].'` '.
+               'WHERE `'.$pfield."`='".$period."'";
+      
+      if (null === ($cur = $db->loadRow($query)))
+      {
+         return array($db->getError());
+      }
+      
+      if (empty($cur))
+      {
+         // Retrieve previous period
+         $query = 'SELECT `'.$pfield.'` FROM `'.$this->conf['db_map']['total']['table'].'` '.
+                  'WHERE `'.$pfield."`<'".$period."' ".
+                  'GROUP BY `'.$pfield.'` ORDER BY `'.$pfield.'` DESC LIMIT 1';
+
+         if (null === ($prev = $db->loadRow($query)))
+         {
+            return array($db->getError());
+         }
+
+         if (empty($prev)) return array();
+         
+         $query = 'SELECT '.$select.' FROM `'.$this->conf['db_map']['total']['table'].'` '.
+                  'WHERE `'.$pfield."`='".$prev[0]."'".($criterion ? ' AND '.$criterion : '');
+      
+         if (null === ($total = $db->loadAssocList($query)))
+         {
+            return array();
+         }
+      
+         return $total;
+      }
+      
+      // Count total
+      $query = 'SELECT '.$select.' FROM `'.$this->conf['db_map']['total']['table'].'` '.
+               'WHERE `'.$pfield."`='".$period."'".($criterion ? ' AND '.$criterion : '');
+      
+      if (null === ($total = $db->loadAssocList($query)))
+      {
+         return array();
+      }
+      
+      $op_field = $this->conf['db_map']['operation'];
+      
+      $query = 'SELECT '.$select.','.$op_field.' FROM `'.$this->conf['db_map']['table'].'` '.
+               'WHERE `'.$pfield."`>'".$date."' AND `".$pfield."`<'".$period."' AND `".$this->conf['db_map']['active']."` = 1 ".
+               ($criterion ? 'AND '.$criterion.' ' : '').
+               'ORDER BY `'.$pfield.'` ASC';
+      
+      if (!($res = $db->executeQuery($query)))
+      {
+         return array();
+      }
+      
+      if (empty($res)) return $total;
+      
+      $map    = array();
+      $dimstr = '';
+      
+      foreach ($this->conf['dimensions'] as $field)
+      {
+         $dimstr .= '$row[\''.$field.'\'].';
+      }
+      $dimstr = $dimstr."' '";
+      
+      foreach ($total as $key => $row)
+      {
+         eval('$map['.$dimstr.'] = '.$key.';');
+      }
+      
+      $cnt = count($total);
+      
+      while ($row = $db->fetchAssoc($res))
+      {
+         eval('$key = isset($map['.$dimstr.']) ? $map['.$dimstr.'] : null;');
+         
+         if (!is_null($key))
+         {
+            $op = ($row[$op_field] == 1) ? '-' : '+';
+            
+            $exec = '$total["'.$key.'"][$field]'.$op.'=$row[$field];';
+            
+            foreach ($this->resources as $field)
+            {
+               eval($exec);
+            }
+         }
+         else
+         {
+            eval('$map['.$dimstr.'] = '.$cnt.';');
+            
+            $total[$cnt] = $row;
+            
+            unset($total[$cnt][$op_field]);
+            
+            if ($row[$op_field] == 1)
+            {
+               foreach ($this->resources as $field)
+               {
+                  $total[$cnt][$field] = -$total[$cnt][$field];
+               }
+            }
+            
+            $cnt++;
+         }
+      }
+      
+      return $total;
    }
+   
    
    /**
     * Count total
@@ -34,7 +190,9 @@ class BalancesModel
       
       $total          = array();
       $pfield         = $this->conf['periodical']['field'];
-      $firstNotActual = date('Y-m', strtotime($from)).'-01 00:00:00';
+      $_date          = explode('-', date('Y-m', strtotime($from)));
+      $acregPeriod    = $_date[0].'-'.$_date[1].'-01 00:00:00';
+      $firstNotActual = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
       $totalActual    = '2999-01-01 00:00:00';
    
       
@@ -52,12 +210,7 @@ class BalancesModel
       $dimstr = '';
       $fields = '('.$pfield;
       
-      $numeric_types = array(
-         'bool'      => 'bool',
-         'int'       => 'int',
-         'float'     => 'float',
-         'reference' => 'reference'
-      );
+      $numeric_types =& self::$numeric_types;
       
       foreach ($this->conf['dimensions'] as $field)
       {
@@ -114,7 +267,7 @@ class BalancesModel
       
       // Retrieve records from Accumulation Register
       $query = 'SELECT * FROM `'.$this->conf['db_map']['table'].'` '.
-               'WHERE `'.$pfield."`>='".$firstNotActual."' AND `".$this->conf['db_map']['active']."` = 1 ".
+               'WHERE `'.$pfield."`>='".$acregPeriod."' AND `".$this->conf['db_map']['active']."` = 1 ".
                'ORDER BY `'.$pfield.'` ASC';
       
       if (!($res = $db->executeQuery($query)))
@@ -129,7 +282,8 @@ class BalancesModel
       
       while ($row = $db->fetchAssoc($res))
       {
-         $cdate = date('Y-m', strtotime($row[$pfield])).'-01 00:00:00';
+         $_date = explode('-', date('Y-m', strtotime($row[$pfield])));
+         $cdate = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
          
          if ($prev && $prev != $cdate)
          {
@@ -172,16 +326,23 @@ class BalancesModel
       {
          foreach ($data as $dim => $resources)
          {
-            $tmp = ",('".$date."'".$dim;
+            $tmp  = ",('".$date."'".$dim;
+            $exec = true;
             
-            foreach ($resources as $field => $val)
+            while ($exec)
             {
-               if ($val == 0) continue;
+               if (false === ($cuurent = each($resources)))
+               {
+                  $values .= $tmp.")";
+                  $exec    = false;
+               }
                
-               $tmp .= ",".$val;
+               if ($cuurent['value'] != 0) 
+               {
+                  $tmp .= ",".$cuurent['value'];
+               }
+               else $exec = false;
             }
-            
-            $values .= $tmp.")";
          }
       }
       
@@ -197,5 +358,30 @@ class BalancesModel
       }
       
       return array();
+   }
+   
+   /**
+    * 
+    * @return array
+    */
+   protected function retrieveCriteriaQuery(array& $criteria)
+   {
+      $criterion = array();
+      
+      $dimensions =& $this->conf['dimensions'];
+      $types      =& $this->conf['types'];
+      
+      foreach ($dimensions as $field)
+      {
+         if (!isset($criteria[$field])) continue;
+         
+         if (isset(self::$numeric_types[$types[$field]]))
+         {
+            $criterion[] = '`'.$field.'`='.$criteria[$field];
+         }
+         else $criterion[] = '`'.$field."`='".$criteria[$field]."'";
+      }
+      
+      return implode(' AND ', $criterion);
    }
 }
