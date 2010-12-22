@@ -6,12 +6,14 @@ class BalancesModel
       $conf      = null,
       $resources = null;
 
-   private static $numeric_types = array(
-      'bool'      => 'bool',
-      'int'       => 'int',
-      'float'     => 'float',
-      'reference' => 'reference'
-   );
+   private static
+      $numeric_types = array(
+         'bool'      => 'bool',
+         'int'       => 'int',
+         'float'     => 'float',
+         'reference' => 'reference'
+      ),
+      $totalActual = '2999-01-01 00:00:00';
    
    public function __construct(array $configuration, array $options = array())
    {
@@ -40,6 +42,11 @@ class BalancesModel
     */
    public function getTotals($date = null, array $options = array())
    {
+      if (empty($date))
+      {
+         return $this->getActualTotal($options);
+      }
+      
       $pfield = $this->conf['periodical']['field'];
       $_date  = explode('-', date('Y-m', strtotime($date)));
       $period = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
@@ -195,7 +202,7 @@ class BalancesModel
       $_date          = explode('-', date('Y-m', strtotime($from)));
       $acregPeriod    = $_date[0].'-'.$_date[1].'-01 00:00:00';
       $firstNotActual = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
-      $totalActual    = '2999-01-01 00:00:00';
+      $totalActual    =& self::$totalActual;
    
       
       // Delete not actual records
@@ -385,5 +392,43 @@ class BalancesModel
       }
       
       return implode(' AND ', $criterion);
+   }
+   
+   /**
+    * Get actual total
+    * 
+    * @param array& $options
+    * @return array()
+    */
+   protected function getActualTotal(array& $options = array())
+   {
+      $pfield = $this->conf['periodical']['field'];
+      
+      if (!empty($options['criteria']) && is_array($options['criteria']))
+      {
+         $criterion = $this->retrieveCriteriaQuery($options['criteria']);
+      }
+      else $criterion = '';
+      
+      $db = Container::getInstance()->getDBManager();
+      
+      if (!empty($this->conf['dimensions']))
+      {
+         $select = implode(',', $this->conf['dimensions']).',';
+      }
+      else $select = '';
+      
+      $select .= implode(',', $this->resources);
+      
+      // Retrieve total
+      $query = 'SELECT '.$select.' FROM `'.$this->conf['db_map']['total']['table'].'` '.
+               'WHERE `'.$pfield."`='".self::$totalActual."'".($criterion ? ' AND '.$criterion : '');
+
+      if (null === ($total = $db->loadAssocList($query)))
+      {
+         return array();
+      }
+
+      return $total;
    }
 }
