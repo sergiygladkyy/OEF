@@ -77,7 +77,7 @@ class DocumentModel extends BaseObjectModel
       
       if ($this->isPosted() && $post) return array('Document already posted');
       
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.($post ? '.onPost' : '.onUnpost'));
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model'.($post ? '.onPost' : '.onUnpost'));
       $event->setReturnValue(true);
       try
       {

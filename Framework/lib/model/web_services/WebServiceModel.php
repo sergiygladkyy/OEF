@@ -142,7 +142,7 @@ class WebServiceModel extends BaseNotStorageEntityModel
       
       // Execute action
       try {
-         $classname = ucfirst($this->kind).ucfirst($this->type);
+         $classname = ucfirst($this->kind).ucfirst($this->type).'ModelModule';
          $result = call_user_func(array($classname, $this->action), $this->attributes);
       }
       catch (Exception $e)

@@ -30,7 +30,7 @@ class DataProcessorModel extends BaseNotStorageEntityModel
       
       if (!empty($errors)) return $errors;
       
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.onImport');
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onImport');
       $event['headline'] = $this->toArray();
       
       $event->setReturnValue(true);

@@ -30,7 +30,7 @@ class ReportModel extends BaseNotStorageEntityModel
       
       if (!empty($errors)) return $errors;
       
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.onGenerate');
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onGenerate');
       $event['headline'] = $this->toArray();
       
       ob_start();
@@ -57,7 +57,7 @@ class ReportModel extends BaseNotStorageEntityModel
       }
       
       // Execute method
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.onDecode');
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onDecode');
       $event['parameters'] = $parameters;
       
       $this->container->getEventDispatcher()->notify($event);

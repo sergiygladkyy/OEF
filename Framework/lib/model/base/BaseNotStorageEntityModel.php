@@ -344,7 +344,7 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       
       /* onAfterValidation */
       
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.onBeforeAddingRecord');
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onBeforeAddingRecord');
       $event->setReturnValue(array());
       
       $this->container->getEventDispatcher()->notify($event);

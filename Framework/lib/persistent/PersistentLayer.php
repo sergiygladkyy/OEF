@@ -295,8 +295,10 @@ class PersistentLayer
          }
          else
          {
-            $valid[$catalog]['model'] = $conf['model'];
+            $valid[$catalog]['model']      = $conf['model'];
             $valid[$catalog]['controller'] = $conf['controller'];
+            $valid[$catalog]['Forms']      = $conf['Forms'];
+            $valid[$catalog]['Templates']  = $conf['Templates'];
          }
       }
       
@@ -314,143 +316,7 @@ class PersistentLayer
     */
    protected function checkInformationRegistryConfig(array& $config)
    {
-      $errors = array();
-      $valid  = array();
-      
-      foreach ($config as $registry => $conf)
-      {
-         $check_duplicate  = false;
-         $check_periodical = false;
-      
-         if (!$this->checkName($registry))
-         {
-            $errors[$registry]['global'][] = 'Invalid name';
-         }
-         
-         /* Check dimensions config */
-         
-         if (!isset($conf['dimensions']))
-         {
-            $valid[$registry]['dimensions'] = array();
-         }
-         elseif (!is_array($conf['dimensions']))
-         {
-            $errors[$registry]['global'][] = 'Dimensions configuration for information registry "'.$registry.'" is wrong';
-         }
-         elseif (empty($conf['dimensions']))
-         {
-            $errors[$registry]['global'][] = 'Dimensions configuration for information registry "'.$registry.'" is empty';
-         }
-         else
-         {
-            $check_duplicate = true;
-            
-            if (!$err = $this->checkFieldsConfig('information_registry', $conf['dimensions']))
-            {
-               $valid[$registry]['dimensions'] = $conf['dimensions'];
-            }
-            else $errors[$registry]['dimensions'] = $err;
-         }
-      
-         /* Check periodical config */
-         
-         if (isset($conf['periodical']))
-         {
-            if (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
-            {
-               $errors[$registry]['global'][] = '"Periodical" configuration for information registry "'.$registry.'" is wrong';
-            }
-            else
-            {
-               $check_periodical = true;
-               
-               $valid[$registry]['periodical'] = $conf['periodical'];
-            }
-         }
-         /*elseif (!isset($conf['dimensions']))
-         {
-            $errors[$registry]['global'][] = 'Configuration for information registry "'.$registry.'" is wrong. You must specify the dimensions and/or periodical.';
-         }*/
-         
-         /* Check fields config */
-          
-         if (!isset($conf['fields']))
-         {
-            $valid[$registry]['fields'] = array();
-         }
-         elseif (!is_array($conf['fields']))
-         {
-            $errors[$registry]['global'][] = 'Fields configuration for information registry "'.$registry.'" is wrong';
-         }
-         elseif (empty($conf['fields']))
-         {
-            $errors[$registry]['global'][] = 'Fields configuration for information registry "'.$registry.'" is empty';
-         }
-         else
-         {
-            $duplicate = false;
-
-            if ($check_duplicate && $duplicate = array_intersect_key($conf['dimensions'], $conf['fields']))
-            {
-               $duplicate = true;
-               $errors[$registry]['global'][] = 'Dimensions and Fields use one namespace. Duplicate name in information registry "'.$registry.'": '.implode(", ", array_keys($duplicate)).'.';
-            }
-
-            if ($check_periodical && isset($conf['fields']['Period']))
-            {
-               $duplicate = true;
-               $errors[$registry]['global'][] = '"Period" - is system field name. Rename your field "Period".';
-            }
-            if (!$duplicate)
-            {
-               if (!$err = $this->checkFieldsConfig('information_registry', $conf['fields']))
-               {
-                  $valid[$registry]['fields'] = $conf['fields'];
-               }
-               else $errors[$registry]['fields'] = $err;
-            }
-         }
-         
-         /* Check Recorders config */
-         
-         if (!isset($conf['recorders']))
-         {
-            $valid[$registry]['recorders'] = array();
-         }
-         elseif (!is_array($conf['recorders']))
-         {
-            $errors[$registry]['global'][] = 'Recorders configuration for information registry "'.$registry.'" is wrong';
-         }
-         elseif (empty($conf['recorders']))
-         {
-            $errors[$registry]['global'][] = 'Recorders configuration for information registry "'.$registry.'" is empty';
-         }
-         else
-         {
-            if (!$err = $this->checkRecordesConfig($conf['recorders']))
-            {
-               $valid[$registry]['recorders'] = $conf['recorders'];
-            }
-            else $errors[$registry]['recorders'] = $err;
-         }
-         
-         /* Check common config */
-          
-         if ($err = $this->checkCommonConfig('information_registry', $registry, $conf))
-         {
-            $errors = isset($errors[$registry]) && is_array($errors[$registry]) ? array_merge($errors[$registry], $err) : $err;
-         }
-         else
-         {
-            $valid[$registry]['model'] = $conf['model'];
-            $valid[$registry]['controller'] = $conf['controller'];
-         }
-      }
-      
-      $config = $valid;
-      unset($valid);
-      
-      return $errors;
+      return $this->checkRegistersConfig($config, 'information_registry');
    }
    
    /**
@@ -460,6 +326,18 @@ class PersistentLayer
     * @return array - errors
     */
    protected function checkAccumulationRegistersConfig(array& $config)
+   {
+      return $this->checkRegistersConfig($config, 'AccumulationRegisters');
+   }
+   
+   /**
+    * Check Registers configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param string $kind
+    * @return array - errors
+    */
+   protected function checkRegistersConfig(array& $config, $kind)
    {
       $errors = array();
       $valid  = array();
@@ -474,19 +352,22 @@ class PersistentLayer
             $errors[$registry]['global'][] = 'Invalid name';
          }
          
-         /* Check register type */
-         
-         if (!isset($conf['register_type']))
+         if ($kind == 'AccumulationRegisters')
          {
-            $errors[$registry]['global'][] = 'Not set register type configuration for Accumulation Register "'.$registry.'"';
-         }
-         elseif (!is_string($conf['register_type']) || !in_array($conf['register_type'], array('Balances', 'Turnovers')))
-         {
-            $errors[$registry]['global'][] = 'Register type configuration for Accumulation Register "'.$registry.'" is wrong';
-         }
-         else
-         {
-            $valid[$registry]['register_type'] = $conf['register_type'];
+            /* Check register type */
+             
+            if (!isset($conf['register_type']))
+            {
+               $errors[$registry]['global'][] = 'Not set register type configuration for Accumulation Register "'.$registry.'"';
+            }
+            elseif (!is_string($conf['register_type']) || !in_array($conf['register_type'], array('Balances', 'Turnovers')))
+            {
+               $errors[$registry]['global'][] = 'Register type configuration for Accumulation Register "'.$registry.'" is wrong';
+            }
+            else
+            {
+               $valid[$registry]['register_type'] = $conf['register_type'];
+            }
          }
          
          /* Check dimensions config */
@@ -497,40 +378,50 @@ class PersistentLayer
          }
          elseif (!is_array($conf['dimensions']))
          {
-            $errors[$registry]['global'][] = 'Dimensions configuration for Accumulation Register "'.$registry.'" is wrong';
+            $errors[$registry]['global'][] = 'Dimensions configuration for '.$kind.' "'.$registry.'" is wrong';
          }
          elseif (empty($conf['dimensions']))
          {
-            $errors[$registry]['global'][] = 'Dimensions configuration for Accumulation Register "'.$registry.'" is empty';
+            $errors[$registry]['global'][] = 'Dimensions configuration for '.$kind.' "'.$registry.'" is empty';
          }
          else
          {
             $check_duplicate = true;
             
-            if (!$err = $this->checkFieldsConfig('AccumulationRegisters', $conf['dimensions']))
+            if (!$err = $this->checkFieldsConfig($kind, $conf['dimensions']))
             {
                $valid[$registry]['dimensions'] = $conf['dimensions'];
             }
             else $errors[$registry]['dimensions'] = $err;
          }
-      
+
          /* Check periodical config */
 
-         $valid[$registry]['periodical'] = 'second';
-         
-         /*if (isset($conf['periodical']))
+         if ($kind == 'AccumulationRegisters')
          {
-            if (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
+            $valid[$registry]['periodical'] = 'second';
+         }
+         else
+         {
+            if (isset($conf['periodical']))
             {
-               $errors[$registry]['global'][] = '"periodical" configuration for Accumulation Register "'.$registry.'" is wrong';
+               if (!is_string($conf['periodical']) || !in_array($conf['periodical'], $this->getAllowedPeriods()))
+               {
+                  $errors[$registry]['global'][] = '"Periodical" configuration for '.$kind.' "'.$registry.'" is wrong';
+               }
+               else
+               {
+                  $check_periodical = true;
+                   
+                  $valid[$registry]['periodical'] = $conf['periodical'];
+               }
             }
-            else
-            {
-               $check_periodical = true;
+            /*elseif (!isset($conf['dimensions']))
+             {
+             $errors[$registry]['global'][] = 'Configuration for information registry "'.$registry.'" is wrong. You must specify the dimensions and/or periodical.';
+            }*/
+         }
 
-               $valid[$registry]['periodical'] = $conf['periodical'];
-            }
-         }*/
          
          /* Check fields config */
           
@@ -540,11 +431,11 @@ class PersistentLayer
          }
          elseif (!is_array($conf['fields']))
          {
-            $errors[$registry]['global'][] = 'Fields configuration for Accumulation Register "'.$registry.'" is wrong';
+            $errors[$registry]['global'][] = 'Fields configuration for '.$kind.' "'.$registry.'" is wrong';
          }
          elseif (empty($conf['fields']))
          {
-            $errors[$registry]['global'][] = 'Fields configuration for Accumulation Register "'.$registry.'" is empty';
+            $errors[$registry]['global'][] = 'Fields configuration for '.$kind.' "'.$registry.'" is empty';
          }
          else
          {
@@ -553,7 +444,7 @@ class PersistentLayer
             if ($check_duplicate && $duplicate = array_intersect_key($conf['dimensions'], $conf['fields']))
             {
                $duplicate = true;
-               $errors[$registry]['global'][] = 'Dimensions and Fields use one namespace. Duplicate name in Accumulation Register "'.$registry.'": '.implode(", ", array_keys($duplicate)).'.';
+               $errors[$registry]['global'][] = 'Dimensions and Fields use one namespace. Duplicate name in '.$kind.' "'.$registry.'": '.implode(", ", array_keys($duplicate)).'.';
             }
 
             if ($check_periodical && isset($conf['fields']['Period']))
@@ -563,27 +454,31 @@ class PersistentLayer
             }
             if (!$duplicate)
             {
-               if (!$err = $this->checkFieldsConfig('AccumulationRegisters', $conf['fields']))
+               if (!$err = $this->checkFieldsConfig($kind, $conf['fields']))
                {
                   $valid[$registry]['fields'] = $conf['fields'];
                }
                else $errors[$registry]['fields'] = $err;
             }
          }
-         
+
          /* Check Recorders config */
          
          if (!isset($conf['recorders']))
          {
-            $errors[$registry]['global'][] = 'Not set recorders configuration for Accumulation Register "'.$registry.'"';
+            if ($kind == 'AccumulationRegisters')
+            {
+               $errors[$registry]['global'][] = 'Not set recorders configuration for Accumulation Register "'.$registry.'"';
+            }
+            else $valid[$registry]['recorders'] = array();
          }
          elseif (!is_array($conf['recorders']))
          {
-            $errors[$registry]['global'][] = 'Recorders configuration for Accumulation Register "'.$registry.'" is wrong';
+            $errors[$registry]['global'][] = 'Recorders configuration for '.$kind.' "'.$registry.'" is wrong';
          }
          elseif (empty($conf['recorders']))
          {
-            $errors[$registry]['global'][] = 'Recorders configuration for Accumulation Register "'.$registry.'" is empty';
+            $errors[$registry]['global'][] = 'Recorders configuration for '.$kind.' "'.$registry.'" is empty';
          }
          else
          {
@@ -593,17 +488,19 @@ class PersistentLayer
             }
             else $errors[$registry]['recorders'] = $err;
          }
-         
+    
          /* Check common config */
           
-         if ($err = $this->checkCommonConfig('AccumulationRegisters', $registry, $conf))
+         if ($err = $this->checkCommonConfig($kind, $registry, $conf))
          {
             $errors = isset($errors[$registry]) && is_array($errors[$registry]) ? array_merge($errors[$registry], $err) : $err;
          }
          else
          {
-            $valid[$registry]['model'] = $conf['model'];
+            $valid[$registry]['model']      = $conf['model'];
             $valid[$registry]['controller'] = $conf['controller'];
+            $valid[$registry]['Forms']      = $conf['Forms'];
+            $valid[$registry]['Templates']  = $conf['Templates'];
          }
       }
       
@@ -710,8 +607,10 @@ class PersistentLayer
          }
          else
          {
-            $valid[$document]['model'] = $conf['model'];
+            $valid[$document]['model']      = $conf['model'];
             $valid[$document]['controller'] = $conf['controller'];
+            $valid[$document]['Forms']      = $conf['Forms'];
+            $valid[$document]['Templates']  = $conf['Templates'];
          }
       }
       
@@ -822,8 +721,10 @@ class PersistentLayer
          }
          else
          {
-            $valid[$name]['model'] = $conf['model'];
+            $valid[$name]['model']      = $conf['model'];
             $valid[$name]['controller'] = $conf['controller'];
+            $valid[$name]['Forms']      = $conf['Forms'];
+            $valid[$name]['Templates']  = $conf['Templates'];
          }
       }
 
@@ -878,8 +779,10 @@ class PersistentLayer
          }
          else
          {
-            $valid[$type]['model'] = $conf['model'];
+            $valid[$type]['model']      = $conf['model'];
             $valid[$type]['controller'] = $conf['controller'];
+            $valid[$type]['Forms']      = $conf['Forms'];
+            $valid[$type]['Templates']  = $conf['Templates'];
          }
       }
 
@@ -1527,8 +1430,69 @@ class PersistentLayer
       }
        
       $conf['controller'] = $valid;
-      unset($valid);
+      $valid = array();
 
+      
+      /* Check Forms config */
+      
+      if (!isset($conf['Forms']))
+      {
+         $valid = array();
+      }
+      elseif (!is_array($conf['Forms']))
+      {
+         $errors['global'][] = 'Forms configuration for "'.$kind.'.'.$type.'" is wrong';
+      }
+      elseif (empty($conf['Forms']))
+      {
+         $errors['global'][] = 'Forms configuration for "'.$kind.'.'.$type.'" is empty';
+      }
+      else
+      {
+         if ($err = $this->checkFormsConfig($conf['Forms']))
+         {
+            $errors['Forms'] = $err;
+         }
+         else
+         {
+            $valid = $conf['Forms'];
+         }
+      }
+       
+      $conf['Forms'] = $valid;
+      $valid = array();
+      
+      
+      /* Check Templates config */
+      
+      if (!isset($conf['Templates']))
+      {
+         $valid = array();
+      }
+      elseif (!is_array($conf['Templates']))
+      {
+         $errors['global'][] = 'Templates configuration for "'.$kind.'.'.$type.'" is wrong';
+      }
+      elseif (empty($conf['Templates']))
+      {
+         $errors['global'][] = 'Templates configuration for "'.$kind.'.'.$type.'" is empty';
+      }
+      else
+      {
+         if ($err = $this->checkTemplatesConfig($conf['Templates']))
+         {
+            $errors['Templates'] = $err;
+         }
+         else
+         {
+            $valid = $conf['Templates'];
+         }
+      }
+       
+      $conf['Templates'] = $valid;
+      unset($valid);
+      
+      
       return $errors;
    }
    
@@ -1576,7 +1540,6 @@ class PersistentLayer
     * Check controller configuration array
     * 
     * @param array& $config - !!! метод вносит изменения в передаваемый массив
-    * @param string $type - field type
     * @return array - errors
     */
    protected function checkControllerConfig(array& $config)
@@ -1594,6 +1557,72 @@ class PersistentLayer
       }
       else $valid['classname'] = $config['classname'];
       
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check Forms configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkFormsConfig(array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      
+      foreach ($config as $form)
+      {
+         if (!is_string($form))
+         {
+            $errors['global'][] = 'Form configuration is wrong';
+         }
+         elseif (!$this->checkName($form))
+         {
+            $errors['global'][] = 'Invalid Form name "'.$form.'"';
+         }
+         else
+         {
+            $valid[] = $form;
+         }
+      }
+
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check Templates configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkTemplatesConfig(array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      
+      foreach ($config as $template)
+      {
+         if (!is_string($template))
+         {
+            $errors['global'][] = 'Template configuration is wrong';
+         }
+         elseif (!$this->checkName($template))
+         {
+            $errors['global'][] = 'Invalid Template name "'.$template.'"';
+         }
+         else
+         {
+            $valid[] = $template;
+         }
+      }
+
       $config = $valid;
       unset($valid);
       
@@ -2109,7 +2138,9 @@ class PersistentLayer
          'references' => array(),
          'required'   => array(),
          'model'      => array(),
-         'controller' => array()
+         'controller' => array(),
+         'forms'      => array(),
+         'templates'  => array()
       );
       
       if (in_array($kind, $this->getHaveTabulars()))
@@ -2249,6 +2280,14 @@ class PersistentLayer
          /* Controller */
          
          $result['controller'][$type] = $params['controller'];
+         
+         /* Forms */
+         
+         $result['forms'][$type] = $params['Forms'];
+         
+         /* Templates */
+         
+         $result['templates'][$type] = $params['Templates'];
       }
       
       return empty($errors) ? $result : array('errors' => $errors);
@@ -2277,7 +2316,9 @@ class PersistentLayer
          'required'   => array(),
          'recorders'  => array(),
          'model'      => array(),
-         'controller' => array()
+         'controller' => array(),
+         'forms'      => array(),
+         'templates'  => array()
       );
       
       $result['recorder_for'] = array();
@@ -2365,10 +2406,17 @@ class PersistentLayer
          
          $result['model'][$registry] = $params['model'];
          
-         
          /* Controller */
          
          $result['controller'][$registry] = $params['controller'];
+         
+         /* Forms */
+         
+         $result['forms'][$registry] = $params['Forms'];
+         
+         /* Templates */
+         
+         $result['templates'][$registry] = $params['Templates'];
       }
       
       return empty($errors) ? $result : array('errors' => $errors);

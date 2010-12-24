@@ -2,27 +2,39 @@
 
 class ModulesManager
 {
-   protected static $EVENTS = array(
-      'catalogs' => array(
-         'onGenerateCode',
-         'onBeforeAddingRecord'
+   protected static
+      $model_events = array(
+         'catalogs' => array(
+            'onGenerateCode',
+            'onBeforeAddingRecord'
+         ),
+         'documents' => array(
+            'onPost',
+            'onUnpost',
+            'onBeforeAddingRecord'
+         ),
+         'reports' => array(
+            'onGenerate',
+            'onDecode'
+         ),
+         'data_processors' => array('onImport'),
+         'information_registry'  => array('onBeforeAddingRecord'),
+         'AccumulationRegisters' => array('onBeforeAddingRecord')
       ),
-      'documents' => array(
-         'onPost',
-         'onUnpost',
-         'onBeforeAddingRecord'
-      ),
-      'reports' => array(
-         'onGenerate',
-         'onDecode'
-      ),
-      'data_processors'     => array('onImport'),
-      'information_regisry' => array('onBeforeAddingRecord')
-   );
+      $forms_events = array(
+         'catalogs'  => array('onGenerate', 'onProccess'),
+         'documents' => array('onGenerate', 'onProccess'),
+         'reports'   => array('onGenerate', 'onProccess'),
+         'data_processors' => array('onGenerate', 'onProccess'),
+         'information_registry'  => array('onGenerate', 'onProccess'),
+         'AccumulationRegisters' => array('onGenerate', 'onProccess')
+      );
    
-   protected static $modules_dir = null;
-   protected static $cache_dir   = null;
-   protected static $instance    = null;
+   protected static
+      $instance     = null,
+      $modules_dir  = null,
+      $cache_dir    = null,
+      $template_dir = null;
    
    protected $map = array();
    
@@ -42,14 +54,23 @@ class ModulesManager
       return self::$instance;
    }
    
+   /**
+    * Constructor
+    * 
+    * @param array& $options
+    * @return void
+    */
    protected function __construct(array& $options = array())
    {
-      self::$modules_dir = isset($options['modules_dir']) ? $options['modules_dir'] : 'modules/';
-      self::$cache_dir   = isset($options['cache_dir'])   ? $options['cache_dir']   : 'cache/';
+      self::$modules_dir  = isset($options['modules_dir'])  ? $options['modules_dir']  : 'modules/';
+      self::$cache_dir    = isset($options['cache_dir'])    ? $options['cache_dir']    : 'cache/';
+      self::$template_dir = isset($options['template_dir']) ? $options['template_dir'] : 'templates/';
       
       $this->container = Container::getInstance($options);
-      $CManager  = $this->container->getConfigManager($options);
-      try {
+      $CManager = $this->container->getConfigManager($options);
+      
+      try
+      {
          $this->map = $CManager->getInternalConfiguration('modules');
       }
       catch(Exception $e)
@@ -59,7 +80,7 @@ class ModulesManager
    }
    
    /**
-    * Create empty modules if not exists
+    * Create all modules with templates
     * 
     * @throws Exception
     * @param mixed $kinds - string or array
@@ -70,7 +91,32 @@ class ModulesManager
    {
       if (!is_array($kinds)) $kinds = array($kinds);
       
+      $this->map = $this->createEntitiesModules($kinds, $options);
+      
+      if (false !== ($key = array_search('web_services', $kinds)))
+      {
+         unset($kinds[$key]);
+      }
+      
+      $this->map = array_merge_recursive($this->map, $this->createFormsModules($kinds, $options));
+      $this->map = array_merge_recursive($this->map, $this->createTemplates($kinds, $options));
+      
+      return array('modules' => $this->map);
+   }
+   
+   /**
+    * Create empty entities modules if not exists
+    * 
+    * @throws Exception
+    * @param array $kinds
+    * @param array& $options
+    * @return array - map
+    */
+   public function createEntitiesModules(array $kinds, array& $options = array())
+   {
       $CManager = $this->container->getConfigManager($options);
+      
+      $map = array();
       
       foreach ($kinds as $kind)
       {
@@ -78,7 +124,7 @@ class ModulesManager
          $basepath = self::$modules_dir.$kind.'/';
          $method   = 'generate'.str_replace(' ', '', ucwords(str_replace('_', ' ', $kind))).'Content';
          
-         $this->map[$kind] = array();
+         $map[$kind] = array();
       
          if (!method_exists($this, $method)) $method = false;
          
@@ -100,15 +146,115 @@ class ModulesManager
             
             file_put_contents($file, $content);
             }
-            $this->map[$kind][$type] = $file;
+            $map[$kind][$type]['model']['module'] = $file;
          }
       }
 
-      return array('modules' => $this->map);
+      return $map;
    }
    
    /**
-    * Remove all modules
+    * Create empty forms modules
+    * 
+    * @throws Exception
+    * @param array $kinds
+    * @param array& $options
+    * @return array - modules map
+    */
+   protected function createFormsModules(array $kinds, array& $options = array())
+   {
+      $CManager = $this->container->getConfigManager($options);
+      
+      $map = array();
+      
+      foreach ($kinds as $kind)
+      {
+         $entities = $CManager->getInternalConfiguration($kind.'.'.$kind);
+         $forms    = $CManager->getInternalConfiguration($kind.'.forms');
+         $basepath = self::$modules_dir.$kind.'/';
+         
+         $map[$kind] = array();
+         
+         // Create modules
+         foreach ($entities as $type)
+         {
+            $dir = $basepath.$type.'/forms/';
+            
+            if (!is_dir($dir))
+            {
+               if (!mkdir($dir, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$dir.'"');
+            }
+            
+            foreach ($forms[$type] as $name)
+            {
+               $file = $dir.$name.'.php';
+                
+               if (!file_exists($file))
+               {
+                  file_put_contents($file, '');
+               }
+               
+               $map[$kind][$type]['forms'][$name] = $file;
+            }
+         }
+      }
+      
+      return $map;
+   }
+   
+   /**
+    * Create empty templates
+    * 
+    * @throws Exception
+    * @param array $kinds
+    * @param array& $options
+    * @return array - modules map
+    */
+   protected function createTemplates(array $kinds, array& $options = array())
+   {
+      if (!is_array($kinds)) $kinds = array($kinds);
+      
+      $CManager = $this->container->getConfigManager($options);
+      
+      $map = array();
+      
+      foreach ($kinds as $kind)
+      {
+         $entities  = $CManager->getInternalConfiguration($kind.'.'.$kind);
+         $templates = $CManager->getInternalConfiguration($kind.'.templates');
+         $basepath  = self::$template_dir.$kind.'/';
+         
+         $map[$kind] = array();
+         
+         // Create templates
+         foreach ($entities as $type)
+         {
+            $dir = $basepath.$type.'/';
+            
+            if (!is_dir($dir))
+            {
+               if (!mkdir($dir, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$dir.'"');
+            }
+            
+            foreach ($templates[$type] as $name)
+            {
+               $file = $dir.$name.'.php';
+                
+               if (!file_exists($file))
+               {
+                  file_put_contents($file, '');
+               }
+               
+               $map[$kind][$type]['templates'][$name] = $file;
+            }
+         }
+      }
+
+      return $map;
+   }
+   
+   /**
+    * Remove all modules with templates
     * 
     * @param array& $options
     * @return array - errors
@@ -119,11 +265,17 @@ class ModulesManager
       
       foreach ($this->map as $kind => $map)
       {
-         foreach ($map as $type => $file)
+         foreach ($map as $type => $modules)
          {
-            if (file_exists($file) && filesize($file) == 0)
+            foreach ($modules as $module_type => $paths)
             {
-               if (!unlink($file)) $errors[] = 'Can\'t delete module file "'.$file.'"';
+               foreach ($paths as $name => $file)
+               {
+                  if (file_exists($file) && filesize($file) == 0)
+                  {
+                     if (!unlink($file)) $errors[] = 'Can\'t delete '.$module_type.' file "'.$file.'"';
+                  }
+               }
             }
          }
       }
@@ -144,9 +296,20 @@ class ModulesManager
       
       if (!isset($this->map[$kind])) throw new Exception(__METHOD__.': Unknow kind "'.$kind.'"');
       
-      foreach ($this->map[$kind] as $type => $file)
+      foreach ($this->map[$kind] as $type => $modules)
       {
-         if (!$this->loadModule($kind, $type)) $errors[] = 'Module for "'.$kind.'.'.$type.'" not loaded';
+         foreach ($modules as $module_type => $paths)
+         {
+            if ($module_type == 'templates') continue;
+            
+            foreach ($paths as $name => $path)
+            {
+               if (!$this->loadModule($kind, $type, $module_type, $name))
+               {
+                  $errors[] = 'Module '.$name.' for '.$kind.'.'.$type.' not loaded';
+               }
+            }
+         }
       }
       
       return $errors;
@@ -157,13 +320,15 @@ class ModulesManager
     * 
     * @param string $kind
     * @param string $type
+    * @param string $module_type
+    * @param string $module_name
     * @return boolean
     */
-   protected function loadModule($kind, $type)
+   protected function loadModule($kind, $type, $module_type, $module_name)
    {
       // Check cache
-      $cache = self::$cache_dir.$kind.'/'.$type.'/';
-      $fname = $cache.'module.php';
+      $cache = self::$cache_dir.$kind.'/'.$type.'/'.$module_type.'/';
+      $fname = $cache.$module_name.'.php';
       
       if (file_exists($fname))
       {
@@ -171,12 +336,13 @@ class ModulesManager
          return true;
       }
       
-      $events = isset(self::$EVENTS[$kind]) ? self::$EVENTS[$kind] : array();
+      $ev_inf = $module_type.'_events';
+      $events  = isset(self::${$ev_inf}[$kind]) ? self::${$ev_inf}[$kind] : array();
       
       // Check module template
-      if (empty($this->map[$kind][$type])) return false;
+      if (empty($this->map[$kind][$type][$module_type][$module_name])) return false;
       
-      $file = $this->map[$kind][$type];
+      $file = $this->map[$kind][$type][$module_type][$module_name];
       
       if (!file_exists($file)) return false;
       
@@ -198,13 +364,15 @@ class ModulesManager
                return false;
             }
             
-            $classname = ucfirst($kind).ucfirst($type);
+            $classname = ucfirst($kind).ucfirst($type).ucfirst($module_type).ucfirst($module_name);
             
             foreach ($events as $event)
             {
                if (in_array($event, $matches[1]))
                {
-                  $code .= "\$dispatcher->connect('".$kind.'.'.$type.'.'.$event."', array('".$classname."', '".$event."'));\n\n";
+                  $event_id = ($module_type == 'forms') ? $module_type.'.'.$module_name : $module_type;
+                  
+                  $code .= "\$dispatcher->connect('".$kind.'.'.$type.'.'.$event_id.'.'.$event."', array('".$classname."', '".$event."'));\n\n";
                }
             }
             
@@ -335,4 +503,6 @@ CONTENT;
       
       return "<?php\n".$content.'?>';
    }
+   
+
 }

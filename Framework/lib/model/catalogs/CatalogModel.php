@@ -105,7 +105,7 @@ class CatalogModel extends BaseObjectModel
    protected function generateCode(array& $options = array())
    {
       /* Custom generate */
-      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.onGenerateCode');
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onGenerateCode');
       $event['object'] = $this;
       
       $event->setReturnValue(null);

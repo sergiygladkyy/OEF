@@ -25,8 +25,9 @@ $_conf = array(
    'modules' => array(
       'classname' => 'ModulesManager',
       'options'   => array(
-         'modules_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/modules/',
-         'cache_dir'   => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/cache/'
+         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/modules/',
+         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/cache/',
+         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/templates/'
       )
    ),
    
