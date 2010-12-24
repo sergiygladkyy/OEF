@@ -125,6 +125,8 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
          $this->isDeleted = false;
       }
       
+      unset($values[$pkey]);
+      
       return $errors;
    }
    

@@ -58,7 +58,15 @@ abstract class BaseNotStorageEntityModel extends BaseModel
    {
       if (!$this->hasAttribute($name))
       {
-         throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
+         if ($name != 'extra')
+         {
+            throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
+         }
+         
+         // Set extra attribute
+         $this->attributes[$name] = $value;
+         
+         return true;
       }
       
       if (!$this->checkAttributeValueType($name, $value)) return false;
@@ -83,8 +91,16 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       if (!$this->hasAttribute($name))
       {
          throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
+         
+         if ($name != 'extra')
+         {
+            throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
+         }
+         
+         // Extra attribute
+         return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
       }
-      
+
       // Not set
       if (!isset($this->attributes[$name])) return null;
       
@@ -362,8 +378,12 @@ abstract class BaseNotStorageEntityModel extends BaseModel
              {
                 $errors[$name] = 'Invalid value type';
              }
+             
+             unset($values[$name]);
          }
       }
+      
+      if (!empty($values)) $this->setAttribute('extra', $values);
       
       return $errors;
    }
