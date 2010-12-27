@@ -213,4 +213,120 @@ abstract class BaseController
       else return array('status' => false, 'errors' => $res);
    }
 
+   /**
+    * Generate custom form
+    * 
+    * @param string $name - form name
+    * @param array $options
+    * @return array
+    */
+   public function generateCustomForm($name, array $options = array())
+   {
+      // Check form name
+      $forms = $this->container->getConfigManager($options)->getInternalConfiguration($this->kind.'.forms', $this->type);
+      
+      if (!in_array($name, $forms))
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array('Unknow form '.$name)
+         );
+      }
+      
+      // Generate form
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$name.'.onGenerate');
+      $event['name']    = $name;
+      $event['options'] = $options;
+
+      try
+      {
+         ob_start();
+         
+         $this->container->getEventDispatcher()->notify($event);
+         
+         $output = ob_get_clean();
+      }
+      catch(Exception $e)
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array($e->getMessage())
+         );
+      }
+      
+      return array(
+            'status' => true,
+            'result' => array('form' => $output), 
+            'errors' => array()
+      );
+   }
+   
+   /**
+    * Process custom form
+    * 
+    * @param string $name - form name
+    * @param mixed $values - values
+    * @param array $options
+    * @return array
+    */
+   public function processCustomForm($name, $values, array $options = array())
+   {
+      // Check form name
+      $forms = $this->container->getConfigManager($options)->getInternalConfiguration($this->kind.'.forms', $this->type);
+      
+      if (!in_array($name, $forms))
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array('Unknow form '.$name)
+         );
+      }
+      
+      // Process form
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$name.'.onProcess');
+      $event->setReturnValue(null);
+      $event['name']    = $name;
+      $event['values']  = $values;
+      $event['options'] = $options;
+      
+      try
+      {
+         $this->container->getEventDispatcher()->notify($event);
+      }
+      catch(Exception $e)
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array($e->getMessage())
+         );
+      }
+      
+      $result = $event->getReturnValue();
+      
+      if (is_null($result))
+      {
+         $status = false;
+         $errors = array('Form not processed. Module error');
+      }
+      elseif (!is_array($result))
+      {
+         $status = false;
+         $errors = array('Module error');
+      }
+      elseif (!(isset($result['status']) && (isset($result['result']) || isset($result['errors']))))
+      {
+         $status = false;
+         $errors = array('Module error');
+      }
+         
+      return !isset($status) ? $result : array(
+         'status' => $status,
+         'result' => array(), 
+         'errors' => $errors
+      );
+   }
 }

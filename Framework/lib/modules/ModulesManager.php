@@ -22,12 +22,12 @@ class ModulesManager
          'AccumulationRegisters' => array('onBeforeAddingRecord')
       ),
       $forms_events = array(
-         'catalogs'  => array('onGenerate', 'onProccess'),
-         'documents' => array('onGenerate', 'onProccess'),
-         'reports'   => array('onGenerate', 'onProccess'),
-         'data_processors' => array('onGenerate', 'onProccess'),
-         'information_registry'  => array('onGenerate', 'onProccess'),
-         'AccumulationRegisters' => array('onGenerate', 'onProccess')
+         'catalogs'  => array('onGenerate', 'onProcess'),
+         'documents' => array('onGenerate', 'onProcess'),
+         'reports'   => array('onGenerate', 'onProcess'),
+         'data_processors' => array('onGenerate', 'onProcess'),
+         'information_registry'  => array('onGenerate', 'onProcess'),
+         'AccumulationRegisters' => array('onGenerate', 'onProcess')
       );
    
    protected static
@@ -382,8 +382,9 @@ class ModulesManager
             }
             else $code = "<?php\n\n";
             
-            $code .= "class ".$classname."\n{\n   ".str_replace("\n", "\n   ", $content)."\n}";
-            
+            $code .= "class ".$classname."\n{\n   ";
+            $code .= "protected static \$templates_dir = '".self::$template_dir.$kind.'/'.$type."/';\n   \n   ";
+            $code .= str_replace("\n", "\n   ", $content)."\n}";
          }
          elseif ($res === false)
          {
@@ -503,6 +504,4 @@ CONTENT;
       
       return "<?php\n".$content.'?>';
    }
-   
-
 }

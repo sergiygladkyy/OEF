@@ -23,6 +23,7 @@
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
+          "generateForm(uid:str, name:str, params:map):map" => 'generateCustomForm',
           "GetFormattedDate(date:str, format:str):str" => 'getFormattedDate'
       )
   );
@@ -440,6 +441,57 @@
      else $status = true;
      
      return array('status' => $status, 'result' => $data, 'errors' => $errors);
+  }
+  
+  /**
+   * Generate custom form
+   * 
+   * @param string $uid
+   * @param string $name
+   * @param array $params
+   * @return array
+   */
+  function generateCustomForm($uid, $name, array $params = array())
+  {
+     // Initialize OEF
+     $errors = initialize(true);
+     
+     if (!empty($errors)) return array('status' => false, 'errors' => $errors);
+
+     list($kind, $type) = Utility::parseUID($uid);
+     
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if ($kind == 'reports' || $kind == 'data_processors')
+        {
+           $perm = 'Use';
+        }
+        else $perm = 'Edit';
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.'.$perm))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve form
+     $options = empty($params['options'])  ? array() : $params['options'];
+     
+     $controller = Container::getInstance()->getController($kind, $type, $options);
+
+     if (!method_exists($controller, 'generateCustomForm'))
+     {
+        return array('status' => false, 'errors' => array('Not supported operation'));
+     }
+     
+     return $controller->generateCustomForm($name, $options);
   }
   
   /**

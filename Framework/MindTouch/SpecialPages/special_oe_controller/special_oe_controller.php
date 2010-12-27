@@ -163,6 +163,13 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function processForm($kind, $type, array $params)
    {
+      // Check attributes
+      if (empty($params['attributes']) || !is_array($params['attributes']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $values = $params['attributes'];
       $action = isset($values['_id']) ? 'update' : 'create';
       
       // Check interactive permission
@@ -183,6 +190,7 @@ class SpecialOEController extends SpecialPagePlugin
                break;
                
             case 'information_registry':
+            case 'AccumulationRegisters':
                $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
                break;
             
@@ -332,6 +340,65 @@ class SpecialOEController extends SpecialPagePlugin
       return $result;
    }
    
+   /**
+    * Process custom form
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param array $params
+    * @return array
+    */
+   protected function processCustomForm($kind, $type, array $params)
+   {
+      // Check attributes
+      if (empty($params['attributes']) || empty($params['name']) || !is_array($params['attributes']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $values = $params['attributes'];
+      $name   = $params['name']; 
+      
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         switch($kind)
+         {
+            case 'catalogs':
+            case 'documents':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Edit') ||
+                         $this->user->hasPermission($kind.'.'.$type.'.InteractiveInsert');
+               break;
+               
+            case 'information_registry':
+            case 'AccumulationRegisters':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+               break;
+            
+            case 'reports':
+            case 'data_processors':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Use');
+               break;
+               
+            default:
+               $access = false;
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      $controller = $this->container->getController($kind, $type);
+      
+      return $controller->processCustomForm($name, Utility::escapeRecursive($values));
+   }
+   
    
    
    
@@ -366,7 +433,7 @@ class SpecialOEController extends SpecialPagePlugin
       // Check interactive permission
       if (defined('IS_SECURE'))
       {
-         if ($kind == 'information_registry')
+         if ($kind == 'information_registry' || $kind == 'AccumulationRegisters')
          {
             $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.Edit');
          }
@@ -648,5 +715,63 @@ class SpecialOEController extends SpecialPagePlugin
       
       return array('data_processors' => array($type => $controller->import(Utility::escaper($headline))));
    }
+   
+   
 
+   /**
+    * Generate custom form
+    * 
+    * @return array
+    */
+   protected function generateForm()
+   {
+      // Check data
+      if (empty($_REQUEST['uid']) || !is_string($_REQUEST['uid']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      if (empty($_REQUEST['name']) || !is_string($_REQUEST['name']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      list($kind, $type) = Utility::parseUID(Utility::escaper($_REQUEST['uid']));
+      $name = $_REQUEST['name']; 
+      
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         switch($kind)
+         {
+            case 'catalogs':
+            case 'documents':
+            case 'information_registry':
+            case 'AccumulationRegisters':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+               break;
+            
+            case 'reports':
+            case 'data_processors':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Use');
+               break;
+               
+            default:
+               $access = false;
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      $controller = $this->container->getController($kind, $type);
+      
+      return $controller->generateCustomForm(Utility::escaper($name));
+   }
 }
