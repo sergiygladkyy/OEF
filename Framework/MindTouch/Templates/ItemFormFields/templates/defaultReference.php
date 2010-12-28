@@ -1,12 +1,12 @@
 {{
-    var values  = args[0];
+    var values  = (#args[0] == 0) ? {} : args[0];
     var params  = args[1];
     var ref     = params.reference;
     var attrs   = params.attrs ?? {};
     var attributes = '';
-    var value   = values.value ?? 0;
-    var deleted = values.deleted ?? 0;
-    var text    = values.text;
+    var value   = values['value'] ?? 0;
+    var deleted = values['deleted'] ?? 0;
+    var text    = values['text'] ?? '';
 }}
 <eval:if test="ref is nil">
   <ul class="ae_errors">

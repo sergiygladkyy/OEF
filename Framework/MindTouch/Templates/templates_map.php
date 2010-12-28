@@ -70,4 +70,6 @@ $_templates_map = array(
    'Template:Entities/Tabulars/ItemForm/default' => '/Tabulars/ItemForm/templates/default.php',
    'Template:Entities/Tabulars/TabularItem' => '/Tabulars/TabularItem/TabularItem.php',
    'Template:Entities/Tabulars/TabularItem/default' => '/Tabulars/TabularItem/templates/default.php',
+   
+   'Template:Entities/CustomForm' => '/CustomForm/CustomForm.php'
 );

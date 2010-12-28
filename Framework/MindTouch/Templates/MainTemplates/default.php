@@ -10,7 +10,8 @@
       displayEditForm: 'EditForm', 
       displayItemForm: 'ItemForm', 
       displayReportForm: 'ReportForm',
-      displayImportForm: 'ImportForm'
+      displayImportForm: 'ImportForm',
+      displayCustomForm: 'CustomForm'
    };
    
    if (action is nil)
@@ -51,6 +52,32 @@
   <ul class="ae_errors">
     <li class="ae_error">Unknow action</li>
   </ul>
+</eval:elseif>
+<eval:elseif test="action == 'displayCustomForm'">
+  <div class="oef_content">
+    <pre class="script">
+      var template = root..'/'..tpl_name;
+      var content  = wiki.template(template, [uid, puid, root, template, params, prefix]);
+      
+      if (string.contains(content, 'href="'..template..'"'))
+      {
+         let content = 'Template not found';
+      }
+      
+      content;
+    </pre>
+  </div>
+  {{
+     &lt;html&gt;
+       &lt;head&gt;
+         &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+         &lt;script type="text/javascript" src=(js_path..'/ae_edit_form.js')&gt;&lt;/script&gt;
+         &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
+       &lt;/head&gt;
+       &lt;body&gt;&lt;/body&gt;
+       &lt;tail&gt;&lt;/tail&gt;
+     &lt;/html&gt;
+  }}
 </eval:elseif>
 <eval:else>
   <div class="oef_content">

@@ -3,6 +3,16 @@ var ae_index = {};
 var ae_name_prefix = {};
 var ae_template = {};
 
+var custom_edit_form_options = {
+	options: {},
+    async: false,
+    url: '/Special:OEController',
+    dataType:  'json',
+    beforeSubmit: prepareRequest,
+    success: function (data, status) { processResponse(data, status, this.options); },
+    data: {action: 'save', form: 'CustomForm'}
+};
+
 /************************************* OnLoad ******************************************/
 
 jQuery(document).ready(function() {
@@ -132,17 +142,20 @@ function processResponse(data, status, options)
 	{
 		for(var type in data[kind])
 		{
-			alert(data[kind][type]['result']['msg']);
 			if(!data[kind][type]['status'])
 			{
 				var msg = '';
 				
 				for(var index in data[kind][type]['errors'])
 				{
-					msg += index + ': ' + data[kind][type]['errors'][index]+'\n';
+					msg += data[kind][type]['errors'][index] + '\n';
 				}
 				
-				alert(msg);
+				displayMessage(kind + '_' + type, msg, false);
+			}
+			else
+			{
+				displayMessage(kind + '_' + type, data[kind][type]['result']['msg'], true);
 			}
 		}
 	}
@@ -694,4 +707,52 @@ function appAddLoader()
 	if (jQuery('#TB_overlay #TB_load').size() != 0) return;
 	
 	jQuery('#TB_overlay').append('<div id="TB_load" style="display: block; margin-top: -10%;"><img src="/skins/common/jquery/thickbox/loadingAnimation.gif"></div>');
+}
+
+
+
+/**
+ * Get and display custom form
+ * 
+ * @param string uid    - entity uid
+ * @param string form   - form name
+ * @param array  params - other params
+ * @param string tag_id - tag id
+ * @return void
+ */
+function displayCustomForm(uid, form, params, tag_id)
+{
+	params.uid    = uid;
+	params.tag_id = tag_id;
+	
+	jQuery.ajax({
+	    url: '/Special:OEController',
+	    async: false,
+	    type: 'POST',
+	    data: ({action: 'generateForm', uid: uid, name: form, parameters: params}),
+	    dataType: 'json',
+	    success: function (data , status)
+	    {
+			if (!data['status'])
+			{
+				var msg = '';
+				for (var index in data['errors'])
+				{
+					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
+				}
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Clear posting there were some errors:" + msg + ".", false);
+			}
+			else
+			{
+				jQuery('head').append(data['result']['scripts']);
+				jQuery('#' + tag_id).html(data['result']['form']);
+				markSelected();
+			}
+	    },
+	    error: function (XMLHttpRequest, textStatus, errorThrown)
+	    {
+			//alert('Request error');
+			;
+	    }
+	});
 }

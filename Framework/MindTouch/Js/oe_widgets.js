@@ -171,7 +171,7 @@ function oeLoader(parameters)
 		var loader = this;
 		
 		jQuery.ajax({
-			url: uri,status: 'zxc',
+			url: uri,
 		    async: false,
 			type: 'GET',
 			cache: false,

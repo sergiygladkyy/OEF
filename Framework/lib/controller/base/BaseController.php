@@ -14,6 +14,16 @@ abstract class BaseController
       $this->container = Container::getInstance();
    }
    
+   public function getKind()
+   {
+      return $this->kind;
+   }
+   
+   public function getType()
+   {
+      return $this->type;
+   }
+   
    /**
     * Return params for ListForm
     * 
@@ -236,8 +246,8 @@ abstract class BaseController
       
       // Generate form
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$name.'.onGenerate');
-      $event['name']    = $name;
-      $event['options'] = $options;
+      $event['name']       = $name;
+      $event['parameters'] = $options;
 
       try
       {
@@ -258,7 +268,10 @@ abstract class BaseController
       
       return array(
             'status' => true,
-            'result' => array('form' => $output), 
+            'result' => array(
+               'form'    => $output,
+               'scripts' => (!empty($event['append_to_head']) && is_string($event['append_to_head']) ? $event['append_to_head'] : '')
+            ), 
             'errors' => array()
       );
    }

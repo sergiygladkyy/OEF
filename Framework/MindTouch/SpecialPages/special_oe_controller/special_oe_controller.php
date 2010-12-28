@@ -736,7 +736,7 @@ class SpecialOEController extends SpecialPagePlugin
          return array('status' => false, 'errors' => array('global' => 'Invalid data'));
       }
       
-      list($kind, $type) = Utility::parseUID(Utility::escaper($_REQUEST['uid']));
+      list($kind, $type) = Utility::parseUID(Utility::escapeString($_REQUEST['uid']));
       $name = $_REQUEST['name']; 
       
       // Check interactive permission
@@ -772,6 +772,6 @@ class SpecialOEController extends SpecialPagePlugin
       
       $controller = $this->container->getController($kind, $type);
       
-      return $controller->generateCustomForm(Utility::escaper($name));
+      return $controller->generateCustomForm(Utility::escapeString($name), Utility::escapeRecursive($_REQUEST['parameters']));
    }
 }
