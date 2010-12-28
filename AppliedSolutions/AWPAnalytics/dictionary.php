@@ -83,7 +83,7 @@ $_dictionary = array(
     'documents' => array(
         'ProjectTimeRecorder' => array(
             'recorder_for' => array(
-                'ProjectTimeRecords'
+                'information_registry.ProjectTimeRecords'
             ),
             
             // Tabular Parts go here
@@ -130,7 +130,7 @@ $_dictionary = array(
         
         'ProjectRegistration' => array(
             'recorder_for' => array(
-                'ProjectRegistrationRecords'
+                'information_registry.ProjectRegistrationRecords'
             ),
             
             'tabular_sections' => array(
@@ -173,7 +173,7 @@ $_dictionary = array(
         
         'ProjectAssignment' => array(
             'recorder_for' => array(
-                'ProjectAssignmentRecords'
+                'information_registry.ProjectAssignmentRecords'
             ),
             
             'tabular_sections' => array(
@@ -219,6 +219,58 @@ $_dictionary = array(
    // Information registry Section
    ////////////////////////////////
    'information_registry' => array(
+      'BaseCalendar' => array(
+         'dimensions' => array(
+            'Year' => array(
+               'type' => 'year',
+               'sql'  => array(
+                  'type' => "YEAR NOT NULL default '0000'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Date' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'Working' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               )
+            ),
+            'FiveDaysSchedule' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               )
+            ),
+            'WorkingDayNumber' => array(
+               'type' => 'int',
+               'sql'  => array(
+                  'type' => "SMALLINT(2) NOT NULL default 0"
+               )
+            )
+         ),
+         
+         'Forms' => array(
+            'BaseCalendar'
+         ),
+         
+         'Templates' => array(
+            'BaseCalendar'
+         )
+      ),
+      
       'ProjectTimeRecords' => array(
          'dimensions' => array(
             'Project' => array(
@@ -411,9 +463,6 @@ $_dictionary = array(
          'fields' => array(
             'Date' => array(
                'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               ),
                'precision' => array(
                   'required' => true
                )
@@ -424,9 +473,6 @@ $_dictionary = array(
          'fields' => array(
             'Date' => array(
                'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               ),
                'precision' => array(
                   'required' => true
                )
@@ -436,6 +482,52 @@ $_dictionary = array(
                'precision' => array(
                   'required' => true
                )
+            )
+         )
+      ),
+      // Which projects are ongoing
+      'RegisteredProjects' => array(
+         'fields' => array(
+            'Date' => array(
+               'type' => 'date'
+            )
+         )
+      ),
+      // How large are the projects (personnel involved and budget)
+      'ProjectOverview' => array(
+         'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      // Who are working on my projects
+      'ResourceAssignments' => array(
+         'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      // How many hours/money have we spent vs. how much is budgeted.
+      'ProjectPerformance' => array(
+         'fields' => array(                        // Use extra field extProjects
+            'Projects' => array(
+               'reference' => 'catalogs.Projects'
+            )
+         )
+      ),
+      // What is the hourly cost of the different consultants?
+      'ResourceCost' => array(
+         'fields' => array(                        // Use extra field extEmployees
+            'Employees' => array(
+               'reference' => 'catalogs.Employees'
             )
          )
       )
@@ -525,15 +617,52 @@ $_dictionary = array(
    ////////////
    // Security
    ////////////
-   'security' => array(
-      'Admin' => array(
-         'web_services' => array(
-            'ProjectsInfo' => array(
-               'getEmployees' => array(
-                  'remote_calls' => true
-               )               
+   'AccessRights' => array(
+      'OEF_ROLE_3' => array(
+         'entities' => array(
+            'catalogs' => array(
+               'SubProjects' => array(
+                  'Read'   => true,
+                  'Insert' => false,
+                  'Update' => true,
+                  'Delete' => true,
+                  'View'   => true,
+                  'Edit'   => true,
+                  'InteractiveInsert' => true,
+                  'InteractiveDelete' => false,
+                  'InteractiveMarkForDeletion'   => true,
+                  'InteractiveUnmarkForDeletion' => true,
+                  'InteractiveDeleteMarked'      => true
+               ),
+               'Projects' => array(
+                  'Read'   => false,
+                  'Insert' => false,
+                  'Update' => false,
+                  'Delete' => false,
+                  'View'   => false,
+                  'Edit'   => false,
+                  'InteractiveInsert' => false,
+                  'InteractiveDelete' => false,
+                  'InteractiveMarkForDeletion'   => false,
+                  'InteractiveUnmarkForDeletion' => false,
+                  'InteractiveDeleteMarked'      => false
+               )
             )
+         ),
+         'global' =>array(
+            'UseRemoteCalls' => true
          )
+      )
+   ),
+   
+   'Roles' => array(
+      'Admin' => array(
+         'password' => 'Admin',
+         'roles'    => array('Admin')
+      ),
+      'User_1' => array(
+         'password' => 'User_1',
+         'roles'    => array('OEF_ROLE_3')
       )
    )
 );
