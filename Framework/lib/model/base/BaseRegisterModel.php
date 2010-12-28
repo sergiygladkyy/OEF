@@ -331,9 +331,12 @@ class BaseRegisterModel extends BaseEntityModel
          }
          
          // New
-         $this->id        = null;
-         $this->isNew     = true;
-         $this->isDeleted = false;
+         $this->id         = null;
+         $this->isNew      = true;
+         $this->isDeleted  = false;
+         $this->attributes = null;
+         $this->isModified = false;
+         $this->modified   = array();
       }
       else if (!$this->load($values[$pkey], $options)) // Load by id
       {

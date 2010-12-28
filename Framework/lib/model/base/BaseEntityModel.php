@@ -120,9 +120,12 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
       }
       else // New
       {
-         $this->id        = null;
-         $this->isNew     = true;
-         $this->isDeleted = false;
+         $this->id         = null;
+         $this->isNew      = true;
+         $this->isDeleted  = false;
+         $this->attributes = null;
+         $this->isModified = false;
+         $this->modified   = array();
       }
       
       unset($values[$pkey]);
