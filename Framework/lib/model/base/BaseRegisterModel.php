@@ -313,4 +313,79 @@ class BaseRegisterModel extends BaseEntityModel
          $fields[] = "`".$this->conf['db_map']['recorder_id']."`=".$this->attributes[$this->conf['db_map']['recorder_id']];
       }
    }
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/AE/lib/model/base/BaseEntityModel#prepareToImport($values, $options)
+    */
+   protected function prepareToImport(array& $values, array& $options = array())
+   {
+      $errors = array();
+      $pkey   = $this->conf['db_map']['pkey'];
+      
+      if (empty($values[$pkey]))
+      {
+         if (!empty($this->conf['dimensions']) && !empty($options['replace'])) // Load by Dimensions
+         {
+            if ($this->loadByDimensions($values, $options)) return array();
+         }
+         
+         // New
+         $this->id        = null;
+         $this->isNew     = true;
+         $this->isDeleted = false;
+      }
+      else if (!$this->load($values[$pkey], $options)) // Load by id
+      {
+         $errors[$pkey] = 'Invalid entity id';
+      }
+      
+      unset($values[$pkey]);
+      
+      return $errors;
+   }
+   
+   /**
+    * Load entity by dimensions
+    * 
+    * @param array  $dimensions
+    * @param array& $options
+    * @return boolean
+    */
+   public function loadByDimensions(array $dimensions, array& $options = array())
+   {
+      $dim =& $this->conf['dimensions'];
+      
+      if (empty($dim)) return false;
+      
+      $where = array();
+      
+      foreach ($dim as $field)
+      {
+         if (!isset($dimensions[$field])) return false;
+         
+         $where[] = '`'.$field.'`='.$this->getValueForSQL($field, $dimensions[$field]);
+      }
+      
+      $pkey  = $this->conf['db_map']['pkey'];
+      $query = "SELECT * FROM `".$this->conf['db_map']['table']."` WHERE ". implode(' AND ', $where);
+      $db    = $this->container->getDBManager($options);
+      
+      $values = $db->loadAssoc($query);
+      
+      if (empty($values)) return false;
+      
+      $this->id = $values[$pkey];
+      unset($values[$pkey]);
+      
+      $this->attributes = $values;
+      unset($values);
+         
+      $this->isNew = false;
+      $this->isDeleted  = false;
+      $this->isModified = false;
+      $this->modified   = array();
+      
+      return true;
+   }
 }

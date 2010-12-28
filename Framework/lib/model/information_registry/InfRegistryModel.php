@@ -52,6 +52,22 @@ class InfRegistryModel extends BaseRegisterModel
    
    /**
     * (non-PHPdoc)
+    * @see BaseRegisterModel#loadByDimensions($dimensions, $options)
+    */
+   public function loadByDimensions(array $dimensions, array& $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return false;
+      }
+      
+      // Execute method
+      return parent::loadByDimensions($dimensions, $options);
+   }
+   
+   /**
+    * (non-PHPdoc)
     * @see BaseEntityModel#toArray($options)
     */
    public function toArray(array $options = array())
