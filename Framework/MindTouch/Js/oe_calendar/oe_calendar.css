@@ -1,0 +1,50 @@
+.oe_calendar {
+	/*border: 1px solid #EAEAEA;*/
+	min-width: 430px;
+	font-family: Arial, sans-serif !important;
+	/*height: 100%;*/
+}
+
+.oe_month {
+   float: left;
+   margin: 2px 6px 2px 2px;
+   height: 195px;
+}
+
+.oe_month table {
+   border-collapse: separate;
+   border: 0 none;
+}
+
+.oe_month .oe_month_name {
+   background-color: #FFEEFF;
+   font-size: 15px;
+   font-weight: bold;
+   color: #303030;
+   padding: 2px 0px 2px 0px;
+}
+
+.oe_month td, .oe_month th {
+   padding: 0px;
+   text-align: center;
+   border-collapse: separate;
+   border: 1px solid white;
+   font-family: Arial, sans-serif !important;
+}
+
+.oe_month .oe_day_name {
+   width: 26px;
+   font-size: 11px;
+   font-weight: bold;
+   color: #3f3f3f;
+   padding-top: 1px;
+}
+
+.oe_month .oe_date {
+   font-size: 14px;
+   color: #303030;
+}
+
+.oe_month .oe_day_off {
+   background-color: #FFAAB0;
+}
