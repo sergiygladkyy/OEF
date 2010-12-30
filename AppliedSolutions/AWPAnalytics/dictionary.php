@@ -74,6 +74,24 @@ $_dictionary = array(
                     )
                 )
             )
+        ),
+        
+        'Schedules' => array(
+            'fields' => array(
+                'Code' => array(
+                    'precision' => array(
+                        'max_length' => 8
+                    )
+                )
+            ),
+                     
+            'Forms' => array(
+               'Schedule'
+            ),
+            
+            'Templates' => array(
+               'Schedule'
+            )
         )
     ),
     
@@ -268,6 +286,47 @@ $_dictionary = array(
          
          'Templates' => array(
             'BaseCalendar'
+         )
+      ),
+      
+      'Schedules' => array(
+         'dimensions' => array(
+            'Schedule' => array(
+               'reference' => 'catalogs.Schedules',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Year' => array(
+               'type' => 'year',
+               'sql'  => array(
+                  'type' => "YEAR NOT NULL default '0000'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Date' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'Hours' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            )
          )
       ),
       
