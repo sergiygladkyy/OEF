@@ -47,7 +47,7 @@ jQuery(document).ready(function() {
     });
     
     jQuery('.ae_object_edit_form').submit(function() {
-    	submitForm(this, object_edit_form_options);
+    	submitObjectForm(this, object_edit_form_options);
     	
     	return false;
     });
@@ -67,13 +67,20 @@ jQuery(document).ready(function() {
     function commandForm(element)
     {
     	var options;
+    	var method;
     	var form    = jQuery(element).parents('form');
     	var command = jQuery(element).attr('command');
     	
     	if (jQuery(form).hasClass('ae_object_edit_form')) {
-    		options = object_edit_form_options;	
+    		method  = 'submitObjectForm';
+    		options = object_edit_form_options;
+    	}
+    	else if (jQuery(form).hasClass('oe_custom_edit_form')) {
+    		method  = 'submitForm';
+    		options = custom_edit_form_options;
     	}
     	else {
+    		method  = 'submitForm';
     		options = edit_form_options;
     	}
     	
@@ -88,7 +95,7 @@ jQuery(document).ready(function() {
     	}
     	
     	try {
-    		submitForm(form, options);
+    		eval(method + '(form, options)');
     	}
     	catch(e) { ; }
     }
@@ -100,7 +107,22 @@ jQuery(document).ready(function() {
 /************************************* Forms ******************************************/
 
 /**
- * Submit form
+ * Submit object form
+ * 
+ * @param form - form object
+ * @return void
+ */
+function submitObjectForm(form, options)
+{
+	appInactive();
+	
+	if (beforeSubmit(form)) jQuery(form).ajaxSubmit(options);
+	
+	appActive();
+}
+
+/**
+ * Submit simple form
  * 
  * @param form - form object
  * @return void
@@ -108,9 +130,12 @@ jQuery(document).ready(function() {
 function submitForm(form, options)
 {
 	appInactive();
+	appAddLoader();
 	
-	if (beforeSubmit(form)) jQuery(form).ajaxSubmit(options);
+	hideFieldErrors('ae_editform_field');
 	
+	jQuery(form).ajaxSubmit(options);
+
 	appActive();
 }
 
@@ -142,21 +167,65 @@ function processResponse(data, status, options)
 	{
 		for(var type in data[kind])
 		{
+			var result = data[kind][type];
+			var msg = '';
+			
 			if(!data[kind][type]['status'])
 			{
-				var msg = '';
-				
-				for(var index in data[kind][type]['errors'])
+				for(var field in result['errors'])
 				{
-					msg += data[kind][type]['errors'][index] + '\n';
+					if (!displayErrors(kind + '_' + type + '_' + field, result['errors'][field])) {
+						msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + result['errors'][field];
+					}
 				}
 				
-				displayMessage(kind + '_' + type, msg, false);
+				if (result['result'] && result['result']['msg']) {
+					if (msg) {
+						msg = result['result']['msg'] + msg;
+					}
+					else msg = result['result']['msg'];
+				}
 			}
-			else
+			
+            /* Check close flag */
+			
+			if (options.close == true && result['status'] == true) // Close window
 			{
-				displayMessage(kind + '_' + type, data[kind][type]['result']['msg'], true);
+				window.self.close();
+				
+				if (window.opener && window.opener.length)
+				{
+					if (window.opener.childClose)
+					{
+						window.opener.childClose({
+							prefix:  (kind + '_' + type),
+							message: (msg.length > 0 ? msg : result['result']['msg']),
+							type:     result['status']
+						});
+					}
+					
+					window.opener.focus();
+				}
+				
+				return;
 			}
+			
+			if (result['result']['_id']) // Insert main ID
+			{
+				insertId(kind + '_' + type, result['result']['_id']);
+				var header = document.getElementById(kind + '_' + type + '_header');
+				if (header)	{
+					header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
+				}
+				jQuery('#'+ kind + '_' + type + '_item input[type=submit]').attr('value', 'Update');
+				if (jQuery('.' + prefix + '_actions')) {
+					var prefix = kind + '_' + type;
+					jQuery('.' + prefix + '_actions').css('display', 'block');
+				}
+			}
+			
+			// Print main message
+			displayMessage(kind + '_' + type,  msg.length > 0 ? msg : result['result']['msg'], result['status']);
 		}
 	}
 }
@@ -224,8 +293,9 @@ function processObjectResponse(data, status, options)
 			else if (m_data['result']['_id']) // Insert main ID
 			{
 				insertId(main_kind + '_' + main_type, m_data['result']['_id']);
-				var header = document.getElementById(main_kind + '_' + main_type + '_header');
-				header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
+				if (header)	{
+					header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
+				}
 				jQuery('#'+ main_kind + '_' + main_type + '_item input[type=submit]').attr('value', 'Update');
 				if (jQuery('.' + prefix + '_actions')) {
 					var prefix = main_kind + '_' + main_type;
@@ -740,7 +810,7 @@ function displayCustomForm(uid, form, params, tag_id)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Clear posting there were some errors:" + msg + ".", false);
+				displayMessage(uid.replace(/\./g, '_'), "At generate form there were some errors:" + msg + ".", false);
 			}
 			else
 			{

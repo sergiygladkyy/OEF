@@ -1,0 +1,53 @@
+.oe_schedule {
+	min-width: 430px;
+	overflow: auto;
+	margin: 0 0 10px 0;
+}
+
+.oe_schedule td, .oe_schedule th {
+   text-align: center;
+}
+
+.oe_schedule .oe_hours {
+   cursor: pointer;
+   padding: 6px 4px !important;
+}
+
+.oe_schedule th.oe_day {
+   padding: 6px 18px !important;
+}
+
+.oe_schedule .oe_day_off {
+   background-color: #FFAAB0;
+   border-top: 1px solid #AAAAAA;
+   border-bottom: 1px solid #AAAAAA;
+   
+}
+
+.oe_schedule .oe_day_undefined {
+   background-color: #EEEEEE;
+   color: #888888;
+}
+
+.oe_hours input {
+   width: 40px !important;
+}
+
+select.oe_year {
+   margin-left: 5px;
+   width: 56px !important;
+}
+
+
+.oe_schedule_options {
+	position: fixed;
+	width: 290px;
+	top: 50%;
+	left: 50%;
+	margin: -11% 0 0 -151px;
+	background-color: #F7F7F7;
+	padding: 6px;
+	z-index: 1000;
+	border-radius: 5px;
+	-moz-border-radius: 8px;
+}

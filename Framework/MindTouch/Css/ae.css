@@ -6,11 +6,15 @@
 #calBorder td > table {border: 0 none !important;}
 #calBorder td td {border: 0 none !important;}
 
-td.ae_editform_field_name { width: 30%; vertical-align: bottom; }
+td.ae_editform_field_name {
+	width: 30%;
+	vertical-align: bottom;
+	overflow: hidden;
+}
 td.ae_editform_field_value { padding-left: 10px; vertical-align: bottom; }
 ul.ae_editform_field_errors, ul.ae_errors {
-	margin: 0;
-	padding-left: 2em;
+	margin: 0 !important;
+	padding-left: 1em;
 	list-style-type: disc;
 	color: #DF0000;
 }
