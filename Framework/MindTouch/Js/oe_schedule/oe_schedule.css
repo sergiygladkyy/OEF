@@ -31,6 +31,7 @@
 
 .oe_hours input {
    width: 40px !important;
+   height: 13px !important;
 }
 
 select.oe_year {
