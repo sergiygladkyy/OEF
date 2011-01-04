@@ -170,7 +170,7 @@ function processResponse(data, status, options)
 			var result = data[kind][type];
 			var msg = '';
 			
-			if(!data[kind][type]['status'])
+			if (!result['status'])
 			{
 				for(var field in result['errors'])
 				{
@@ -293,6 +293,7 @@ function processObjectResponse(data, status, options)
 			else if (m_data['result']['_id']) // Insert main ID
 			{
 				insertId(main_kind + '_' + main_type, m_data['result']['_id']);
+				var header = document.getElementById(main_kind + '_' + main_type + '_header');
 				if (header)	{
 					header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
 				}

@@ -33,7 +33,7 @@ class TabularsModel extends BaseEntitiesModel
    {
       if (!parent::initialize($kind, $type)) return false;
       
-      $pKind = Utility::UtparseKindString($this->kind);
+      $pKind = Utility::parseKindString($this->kind);
       
       if (!isset($pKind['main_kind'])) return false;
       
