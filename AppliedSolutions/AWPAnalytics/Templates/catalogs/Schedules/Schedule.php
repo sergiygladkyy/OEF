@@ -49,8 +49,10 @@
     {
   	    appInactive();
         appAddLoader();
-  	  
-  	    displayCustomForm('<?php echo $params['uid'] ?>', '<?php echo $name ?>', {year: element.value, schedule: <?php echo $schedule ?>}, '<?php echo $params['tag_id'] ?>');
+
+  	    var sched = jQuery('<?php echo '#'.$kind.'_'.$type.'_item' ?>').find('input[name="<?php echo $attr_prefix."[attributes][_id]" ?>"]').attr('value');
+  	    
+  	    displayCustomForm('<?php echo $params['uid'] ?>', '<?php echo $name ?>', {year: element.value, schedule: sched}, '<?php echo $params['tag_id'] ?>');
     }
     
   <?php if ($generate): ?>
