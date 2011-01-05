@@ -19,7 +19,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 	color: #DF0000;
 }
 
-.tabular_item td { vertical-align: bottom; }
+.tabular_item td { vertical-align: bottom !important; }
 
 .ae_tabular_section {
 	width: 702px;
@@ -147,5 +147,40 @@ span.ae_pagination {
    padding: 2px !important;
 }
 .oef_content input[type=checkbox] {
-   margin-top: 4px;
+   margin: 4px 0 3px 0;
+}
+
+/************************************** MT messages ******************************************/
+
+.oef_content div.systemmsg {
+    margin: 10px 0;
+    padding: 0;
+    border: 1px solid #ABA000;
+    background: url("bg-yellow.gif") repeat-x scroll 0 0 #FFF9AE;
+    font: 14px/22px Verdana,Helvetica,Arial,Sans-Serif;
+}
+
+.oef_content div.systemmsg div.inner {
+    border: 1px solid #FFFFFF;
+    padding-left: 42px;
+}
+
+.oef_content div.successmsg div.inner {
+    background: url("/skins/common/icons/icon-32-success.gif") no-repeat scroll 4px 3px transparent;
+}
+
+.oef_content div.errormsg div.inner {
+    color: #9D0A0E;
+    background: url("/skins/common/icons/icon-32-error.gif") no-repeat scroll 4px 3px transparent;
+    font-weight: 600;
+}
+
+.oef_content div.systemmsg ul, #topic div.systemmsg ul {
+    margin: 4px 0 !important;
+    padding: 4px 0 4px 0px;
+}
+
+.oef_content div.systemmsg ul li {
+    list-style-type: none !important;
+    margin-left: 5px !important;
 }
