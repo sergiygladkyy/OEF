@@ -189,8 +189,8 @@ $_dictionary = array(
          ),
          
          'fields' => array(
-            'Manager' => array(
-               'reference' => 'catalogs.Employees',
+            'Responsible' => array(
+               'reference' => 'catalogs.SystemUsers',
                'precision' => array(
                   'required' => true
                )
@@ -200,14 +200,11 @@ $_dictionary = array(
          'tabular_sections' => array(
             'Employees' => array(
                'fields' => array(
+                  'Manager' => array(
+                     'reference' => 'catalogs.Employees',
+                  ),
                   'NaturalPerson' => array(
                      'reference' => 'catalogs.NaturalPersons',
-                     'precision' => array(
-                        'required' => true
-                     )
-                  ),
-                  'Employee' => array(
-                     'reference' => 'catalogs.Employees',
                      'precision' => array(
                         'required' => true
                      )
@@ -246,7 +243,8 @@ $_dictionary = array(
                      ),
                      'precision' => array(
                         'required' => true,
-                        'min' => 0
+                        'min' => 0,
+                        'max_length' => 10
                      )
                   ),
                   'YearlyVacationDays' => array(
@@ -256,7 +254,8 @@ $_dictionary = array(
                      ),
                      'precision' => array(
                         'required' => true,
-                        'min' => 0
+                        'min' => 0,
+                        'max_length' => 3
                      )
                   )
                )
@@ -267,12 +266,13 @@ $_dictionary = array(
       // Document DismissalOrder
       'DismissalOrder' => array(
          'recorder_for' => array(
-            'information_registry.StaffEmploymentPeriods'
+            'information_registry.StaffEmploymentPeriods',
+            'information_registry.StaffHistoricalRecords'
          ),
          
          'fields' => array(
-            'Manager' => array(
-               'reference' => 'catalogs.Employees',
+            'Responsible' => array(
+               'reference' => 'catalogs.SystemUsers',
                'precision' => array(
                   'required' => true
                )
@@ -639,7 +639,8 @@ $_dictionary = array(
          ),
          
          'recorders' => array(
-            'RecruitingOrder'
+            'RecruitingOrder',
+            'DismissalOrder'
          )
       ),
       
