@@ -296,7 +296,7 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       
       foreach ($this->conf['required'] as $attribute)
       {
-         if (empty($this->attributes[$attribute]))
+         if (!isset($this->attributes[$attribute]) || ($this->conf['types'][$attribute] != 'bool' && empty($this->attributes[$attribute])))
          {
             $errors[$attribute] = "Required";
          }
