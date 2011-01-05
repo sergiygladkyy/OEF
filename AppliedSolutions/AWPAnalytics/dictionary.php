@@ -2,241 +2,466 @@
 
 $_dictionary = array(
     
-    ////////////////////
-    // Catalogs Section
-    ////////////////////
-    'catalogs' => array(
-        'Employees' => array(
-            'fields' => array(
-                'Code' => array(
-                    'precision' => array(
-                        'max_length' => 8
-                    )
-                ),
-                'Name' => array(
-                    'type' => 'string',
-                    'sql'  => array(
-                        'type' => "varchar(255) NOT NULL default ''"
-                    )
-                ),
-                'MiddleName' => array(
-                    'type' => 'string',
-                    'sql'  => array(
-                        'type' => "varchar(255) NOT NULL default ''"
-                    )
-                    
-                ),
-                'Surname' => array(
-                    'type' => 'string',
-                    'sql'  => array(
-                        'type' => "varchar(255) NOT NULL default ''"
-                    ),
-                    'precision' => array(
-                        'required' => true
-                    )
-                )
-            )
-        ),
-        
-        // Only system attributes "code" and "description"
-        'Projects' => array(
-            'fields' => array(
-                'Code' => array(
-                    'precision' => array(
-                        'max_length' => 8
-                    )
-                )
-            )
-        ),
-        
-        // Only system attributes "code" and "description"
-        'SubProjects' => array(
-            'fields' => array(
-                'Code' => array(
-                    'precision' => array(
-                        'max_length' => 8
-                    )
-                ),
-                'Project' => array(
-                    'reference' => 'catalogs.Projects',
-                    'precision' => array(
-                        'required' => true
-                    )
-                )
-            )
-        ),
-        
-        'BusinessAreas' => array(
-            'fields' => array(
-                'Code' => array(
-                    'precision' => array(
-                        'max_length' => 16
-                    )
-                )
-            )
-        ),
-        
-        'Schedules' => array(
-            'fields' => array(
-                'Code' => array(
-                    'precision' => array(
-                        'max_length' => 8
-                    )
-                )
+   ////////////////////
+   // Catalogs Section
+   ////////////////////
+   'catalogs' => array(
+   
+      // List of Departments of the Enterprise (Organization)
+      'OrganizationalUnits' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
             ),
-                     
-            'Forms' => array(
-               'Schedule'
+         )
+      ),
+      
+      // Contains a list of Positions that can be assigned, when hiring the person
+      'OrganizationalPositions' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
             ),
-            
-            'Templates' => array(
-               'Schedule'
+         )
+      ),
+      
+      // List of Private individuals and their base attributes
+      'NaturalPersons' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            ),
+            'Name' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Surname' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Birthday' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Gender' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('Male', 'Female')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'Male', 2 => 'Female'),
+                  'required' => true
+               )
+            ),
+            'PlaceOfBirh' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
             )
-        )
-    ),
+         )
+      ),
+      
+      // List of employees
+      'Employees' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            ),
+            'NaturalPerson' => array(
+               'reference' => 'catalogs.NaturalPersons',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'NowEmployed' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      
+      // List of Projects
+      'Projects' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            )
+         )
+      ),
+      
+      // List of SubProjects
+      'SubProjects' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      
+      // List of Counteragents
+      'Counteragents' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            ),
+            'ContactInformation' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            )
+         )
+      ),
+      
+      // List of Schedules
+      'Schedules' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            )
+         ),
+         
+         'Forms' => array(
+            'Schedule'
+         ),
+         
+         'Templates' => array(
+            'Schedule'
+         )
+      )
+   ),
+   
+   
     
-    ////////////////////
-    // Documents Section
-    ////////////////////
-    'documents' => array(
-        'ProjectTimeRecorder' => array(
-            'recorder_for' => array(
-                'information_registry.ProjectTimeRecords'
-            ),
-            
-            // Tabular Parts go here
-            'tabular_sections' => array(
-                'Records' => array(
-                    'fields' => array(
-                        'Project' => array(
-                            'reference' => 'catalogs.Projects',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'SubProject' => array(
-                            'reference' => 'catalogs.SubProjects',
-                            /*'precision' => array(
-                                'required' => true
-                            )*/
-                        ),
-                        'Employee' => array(
-                            'reference' => 'catalogs.Employees',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'BusinessArea' => array(
-                            'reference' => 'catalogs.BusinessAreas',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'HoursSpent' => array(
-                            'type' => 'float',
-                            'sql'  => array(
-                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-                            ),
-                            'precision' => array(
-                                'min' => 0
-                            )
-                        )
-                    )
-                )
+   ////////////////////
+   // Documents Section
+   ////////////////////
+   'documents' => array(
+   
+      // Document RecruitingOrder
+      'RecruitingOrder' => array(
+         'recorder_for' => array(
+            'information_registry.StaffEmploymentPeriods',
+            'information_registry.StaffHistoricalRecords'
+         ),
+         
+         'fields' => array(
+            'Manager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
             )
-        ),
-        
-        'ProjectRegistration' => array(
-            'recorder_for' => array(
-                'information_registry.ProjectRegistrationRecords'
-            ),
-            
-            'tabular_sections' => array(
-                'Records' => array(
-                    'fields' => array(
-                        'Project' => array(
-                            'reference' => 'catalogs.Projects',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'BudgetNOK' => array(
-                            'type' => 'float',
-                            'sql'  => array(
-                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-                            ),
-                            'precision' => array(
-                                'min' => 0
-                            )
-                        ),
-                        'BudgetHRS' => array(
-                            'type' => 'float',
-                            'sql'  => array(
-                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-                            ),
-                            'precision' => array(
-                                'min' => 0
-                            )
-                        ),
-                        'Deadline' => array(
-                            'type' => 'date',
-                            'sql'  => array(
-                               'type' => "DATE NOT NULL default '0000-00-00'"
-                            )
-                        )
-                    )
-                )
+         ),
+         
+         'tabular_sections' => array(
+            'Employees' => array(
+               'fields' => array(
+                  'NaturalPerson' => array(
+                     'reference' => 'catalogs.NaturalPersons',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Employee' => array(
+                     'reference' => 'catalogs.Employees',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'StartDate' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Position' => array(
+                     'reference' => 'catalogs.OrganizationalPositions',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'OrganizationalUnit' => array(
+                     'reference' => 'catalogs.OrganizationalUnits',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Schedule' => array(
+                     'reference' => 'catalogs.Schedules',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'InternalHourlyRate' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'required' => true,
+                        'min' => 0
+                     )
+                  ),
+                  'YearlyVacationDays' => array(
+                     'type' => 'int',
+                     'sql'  => array(
+                        'type' => "TINYINT UNSIGNED NOT NULL default 0"
+                     ),
+                     'precision' => array(
+                        'required' => true,
+                        'min' => 0
+                     )
+                  )
+               )
             )
-        ),
-        
-        'ProjectAssignment' => array(
-            'recorder_for' => array(
-                'information_registry.ProjectAssignmentRecords'
-            ),
-            
-            'tabular_sections' => array(
-                'Records' => array(
-                    'fields' => array(
-                        'Resource' => array(
-                            'reference' => 'catalogs.Employees',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'Project' => array(
-                            'reference' => 'catalogs.Projects',
-                            'precision' => array(
-                                'required' => true
-                            )
-                        ),
-                        'BudgetHRS' => array(
-                            'type' => 'float',
-                            'sql'  => array(
-                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-                            ),
-                            'precision' => array(
-                                'min' => 0
-                            )
-                        ),
-                        'Rate' => array(
-                            'type' => 'float',
-                            'sql'  => array(
-                                'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-                            ),
-                            'precision' => array(
-                                'min' => 0
-                            )
-                        )
-                    )
-                )
+         )
+      ),
+      
+      // Document DismissalOrder
+      'DismissalOrder' => array(
+         'recorder_for' => array(
+            'information_registry.StaffEmploymentPeriods'
+         ),
+         
+         'fields' => array(
+            'Manager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
             )
-        )
-    ),
-    
+         ),
+         
+         'tabular_sections' => array(
+            'Employees' => array(
+               'fields' => array(
+                  'Employee' => array(
+                     'reference' => 'catalogs.Employees',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'DismissalDate' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Reason' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  )
+               )
+            )
+         )
+      ),
+      
+      // Document VacationOrder
+      'VacationOrder' => array(
+         'fields' => array(
+            'Manager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            'Employees' => array(
+               'fields' => array(
+                  'NaturalPerson' => array(
+                     'reference' => 'catalogs.NaturalPersons',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Employee' => array(
+                     'reference' => 'catalogs.Employees',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'StartDate' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'EndDate' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
+               )
+            )
+         )
+      ),
+      
+      // Document ProjectRegistration
+      'ProjectRegistration' => array(
+         /*'recorder_for' => array(
+            'information_registry.ProjectRegistrationRecords'
+         ),*/
+         
+         'fields' => array(
+            'ProjectManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'BudgetNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'BudgetHRS' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'DeliveryDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               )
+            ),
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      
+      // Document ProjectAssignment
+      'ProjectAssignment' => array(
+         /*'recorder_for' => array(
+            'information_registry.ProjectAssignmentRecords'
+         ),*/
+         
+         'tabular_sections' => array(
+            'Resources' => array(
+               'fields' => array(
+                  'Employee' => array(
+                     'reference' => 'catalogs.Employees',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'BudgetHRS' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'min' => 0
+                     )
+                  ),
+                  'Rate' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'min' => 0
+                     )
+                  )
+               )
+            )
+         )
+      )
+   ),
+   
+
+   
    ////////////////////////////////
    // Information registry Section
    ////////////////////////////////
    'information_registry' => array(
+      
+      // Calendar
       'BaseCalendar' => array(
          'dimensions' => array(
             'Year' => array(
@@ -289,6 +514,7 @@ $_dictionary = array(
          )
       ),
       
+      // Schedules
       'Schedules' => array(
          'dimensions' => array(
             'Schedule' => array(
@@ -330,7 +556,94 @@ $_dictionary = array(
          )
       ),
       
-      'ProjectTimeRecords' => array(
+      // Staff Employment Periods
+      'StaffEmploymentPeriods' => array(
+         'dimensions' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'StartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               )
+            ),
+            'EndDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'RecruitingOrder',
+            'DismissalOrder'
+         )
+      ),
+      
+      // Staff Historical Records
+      'StaffHistoricalRecords' => array(
+         'dimensions' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'periodical' => 'day', // [ second | day | month | quarter | year ]
+         
+         'fields' => array(
+            'OrganizationalUnit' => array(
+               'reference' => 'catalogs.OrganizationalUnits'
+            ),
+            'Schedule' => array(
+               'reference' => 'catalogs.Schedules'
+            ),
+            'OrganizationalPosition' => array(
+               'reference' => 'catalogs.OrganizationalPositions'
+            ),
+            'InternalHourlyRate' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'YearlyVacationDays' => array(
+               'type' => 'int',
+               'sql'  => array(
+                  'type' => "TINYINT UNSIGNED NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            ),
+            'RegisteredEvent' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('Hiring', 'Firing', 'Move')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'Hiring', 2 => 'Firing', 3 => 'Move'),
+                  'required' => true
+               )
+            ),
+         ),
+         
+         'recorders' => array(
+            'RecruitingOrder'
+         )
+      ),
+      
+   /*   'ProjectTimeRecords' => array(
          'dimensions' => array(
             'Project' => array(
                'reference' => 'catalogs.Projects',
@@ -343,7 +656,7 @@ $_dictionary = array(
                /*'precision' => array(
                   'required' => true
                )*/
-            ),
+/*            ),
             'Employee' => array(
                'reference' => 'catalogs.Employees',
                'precision' => array(
@@ -511,13 +824,13 @@ $_dictionary = array(
                )
             )
          )
-      )
+      )*/
    ),
    
    ///////////////////
    // Reports Section
    ///////////////////
-   'reports' => array(
+/*   'reports' => array(
       'ProjectManHours' => array(
          'fields' => array(
             'Date' => array(
@@ -671,7 +984,7 @@ $_dictionary = array(
          )
       )
    ),
-   
+   */
    
    ////////////
    // Security
