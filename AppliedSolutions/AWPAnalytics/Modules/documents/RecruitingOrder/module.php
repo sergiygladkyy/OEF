@@ -95,7 +95,7 @@ function onPost($event)
          
          if ($period >= $records[$person]['StartDate'])
          {
-            $errors[] = $employees[$person]['Description'].' employee record for that date already exists';
+            $errors[] = 'Record about '.$employees[$person]['Description'].' for that date already exists';
             continue;
          }
          
@@ -185,7 +185,7 @@ function onPost($event)
       if (!$hIR->setAttribute('RegisteredEvent', 1))             $err[] = 'Invalid value for attribute RegisteredEvent';
       if (!$hIR->setAttribute('Employee', $employee))            $err[] = 'Invalid value for attribute Employee';
       if (!$hIR->setAttribute('Schedule', $values['Schedule']))  $err[] = 'Invalid value for attribute Schedule';
-      if (!$hIR->setAttribute('Period',   $values['StartDate'].' 00:00:00'))        $err[] = 'Invalid value for attribute StartDate';
+      if (!$hIR->setAttribute('Period',   $values['StartDate'].' 00:00:00'))        $err[] = 'Invalid value for attribute Period';
       if (!$hIR->setAttribute('OrganizationalPosition', $values['Position']))       $err[] = 'Invalid value for attribute OrganizationalPosition';
       if (!$hIR->setAttribute('OrganizationalUnit', $values['OrganizationalUnit'])) $err[] = 'Invalid value for attribute OrganizationalUnit';
       if (!$hIR->setAttribute('InternalHourlyRate', $values['InternalHourlyRate'])) $err[] = 'Invalid value for attribute InternalHourlyRate';
