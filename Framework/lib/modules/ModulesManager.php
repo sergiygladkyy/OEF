@@ -22,12 +22,12 @@ class ModulesManager
          'AccumulationRegisters' => array('onBeforeAddingRecord')
       ),
       $forms_events = array(
-         'catalogs'  => array('onGenerate', 'onProcess'),
-         'documents' => array('onGenerate', 'onProcess'),
-         'reports'   => array('onGenerate', 'onProcess'),
-         'data_processors' => array('onGenerate', 'onProcess'),
-         'information_registry'  => array('onGenerate', 'onProcess'),
-         'AccumulationRegisters' => array('onGenerate', 'onProcess')
+         'catalogs'  => array('onGenerate', 'onProcess', 'onFormUpdateRequest'),
+         'documents' => array('onGenerate', 'onProcess', 'onFormUpdateRequest'),
+         'reports'   => array('onGenerate', 'onProcess', 'onFormUpdateRequest'),
+         'data_processors' => array('onGenerate', 'onProcess', 'onFormUpdateRequest'),
+         'information_registry'  => array('onGenerate', 'onProcess', 'onFormUpdateRequest'),
+         'AccumulationRegisters' => array('onGenerate', 'onProcess', 'onFormUpdateRequest')
       );
    
    protected static

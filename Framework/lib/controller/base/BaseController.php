@@ -342,4 +342,58 @@ abstract class BaseController
          'errors' => $errors
       );
    }
+   
+   /**
+    * Notify form event
+    * 
+    * @param string $formName
+    * @param string $eventName
+    * @param array  $parameters
+    * @return array
+    */
+   public function notifyFormEvent($formName, $eventName, array $parameters = array())
+   {
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$formName.'.'.$eventName);
+      $event->setReturnValue(null);
+      $event['form'] = $formName;
+      $event['parameters'] = $parameters;
+      
+      try
+      {
+         $this->container->getEventDispatcher()->notify($event);
+      }
+      catch(Exception $e)
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array($e->getMessage())
+         );
+      }
+      
+      $result = $event->getReturnValue();
+      
+      if (is_null($result))
+      {
+         $status = false;
+         $errors = array('Event not processed. Module error');
+      }
+      elseif (!is_array($result))
+      {
+         $status = false;
+         $errors = array('Module error');
+      }
+      elseif (!isset($result['type']) || !isset($result['data']))
+      {
+         $status = false;
+         $errors = array('Module error');
+      }
+      else $status = true;
+      
+      return array(
+         'status' => $status,
+         'result' => $status ? $result : array(), 
+         'errors' => $errors
+      );
+   }
 }

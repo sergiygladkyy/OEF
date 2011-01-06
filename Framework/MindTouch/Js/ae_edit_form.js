@@ -782,6 +782,9 @@ function appAddLoader()
 
 
 
+
+/************************************ For form module ****************************************/
+
 /**
  * Get and display custom form
  * 
@@ -826,4 +829,117 @@ function displayCustomForm(uid, form, params, tag_id)
 			;
 	    }
 	});
+}
+
+/**
+ * Notify about form event
+ * 
+ * @param string uid       - entity uid
+ * @param string formName  - form name
+ * @param string eventName - event name
+ * @param mixed  params    - json object (contents list of optional parameters)
+ * @return void
+ */
+function notifyFormEvent(uid, formName, eventName, params)
+{
+	var dispatcher = new oeEventDispatcher();
+	
+	dispatcher.notify(uid, formName, eventName, params);
+}
+
+/**
+ * Constructor object oeEventDispatcher
+ */
+function oeEventDispatcher()
+{
+	this.event = {};
+	
+	/**
+	 * Notify about form event
+	 * 
+	 * @param string uid       - entity uid
+	 * @param string formName  - form name
+	 * @param string eventName - event name
+	 * @param mixed  params    - json object (contents list of optional parameters)
+	 * @return void
+	 */
+	this.notify = function(uid, formName, eventName, params)
+	{
+		this.event.uid    = uid;
+		this.event.name   = eventName;
+		this.event.params = params;
+		
+		var callback = this.getCallback(eventName);
+		
+		if (callback === null)
+		{
+			displayMessage(uid.replace(/\./g, '_'), "Unknow form event " + eventName, false);
+			return;
+		}
+		
+		jQuery.ajax({
+		    url: '/Special:OEController',
+		    async: false,
+		    type: 'POST',
+		    data: ({action: 'notifyFormEvent', uid: uid, form: formName, event: eventName, parameters: params}),
+		    dataType: 'json',
+		    success: function (data, status)
+		    {
+				if (!data['status'])
+				{
+					var msg = '';
+					for (var index in data['errors'])
+					{
+						msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
+					}
+					displayMessage(uid.replace(/\./g, '_'), "At processing form event there were some errors:" + msg + ".", false);
+				}
+				else
+				{
+					callback(uid, data['result']);
+				}
+		    },
+		    error: function (XMLHttpRequest, textStatus, errorThrown)
+		    {
+				alert('Request error');
+				;
+		    }
+		});
+	};
+	
+	/**
+	 * Get callback function by event name
+	 * 
+	 * @param string eventName
+	 * @return function
+	 */
+	this.getCallback = function(eventName)
+	{
+		switch(eventName)
+		{
+			case 'onFormUpdateRequest':
+				return this.processOnFormUpdateRequestResponse;
+				break;
+				
+			default:
+				return null;
+		}
+	};
+    
+	/**
+	 * Process response to event 'onFormUpdateRequest'
+	 * 
+	 * @param string uid
+	 * @param array data
+	 * @return void
+	 */
+	this.processOnFormUpdateRequestResponse = function(uid, data)
+	{
+		if (data['msg'])
+		{
+			displayMessage(uid.replace(/\./g, '_'), data['msg'], true);
+		}
+		
+		alert('processOnFormUpdateRequest');
+	};
 }

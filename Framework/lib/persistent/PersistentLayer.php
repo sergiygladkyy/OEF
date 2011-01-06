@@ -1437,7 +1437,7 @@ class PersistentLayer
       
       if (!isset($conf['Forms']))
       {
-         $valid = array();
+         $valid = array('Default');
       }
       elseif (!is_array($conf['Forms']))
       {
@@ -1456,6 +1456,11 @@ class PersistentLayer
          else
          {
             $valid = $conf['Forms'];
+            
+            if (!in_array('Default', $valid))
+            {
+               $valid[] = 'Default';
+            }
          }
       }
        

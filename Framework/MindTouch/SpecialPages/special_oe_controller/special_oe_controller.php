@@ -737,7 +737,7 @@ class SpecialOEController extends SpecialPagePlugin
       }
       
       list($kind, $type) = Utility::parseUID(Utility::escapeString($_REQUEST['uid']));
-      $name = $_REQUEST['name']; 
+      $name = $_REQUEST['name'];
       
       // Check interactive permission
       if (defined('IS_SECURE'))
@@ -773,5 +773,81 @@ class SpecialOEController extends SpecialPagePlugin
       $controller = $this->container->getController($kind, $type);
       
       return $controller->generateCustomForm(Utility::escapeString($name), Utility::escapeRecursive($_REQUEST['parameters']));
+   }
+   
+   /**
+    * Notify form event
+    * 
+    * @return array
+    */
+   protected function notifyFormEvent()
+   {
+      // Check data
+      if (empty($_REQUEST['uid']) || !is_string($_REQUEST['uid']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      if (empty($_REQUEST['form']) || !is_string($_REQUEST['form']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      if (empty($_REQUEST['event']) || !is_string($_REQUEST['event']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      list($kind, $type) = Utility::parseUID(Utility::escapeString($_REQUEST['uid']));
+      
+      // Check interactive permission
+      if (defined('IS_SECURE'))
+      {
+         switch($kind)
+         {
+            case 'catalogs':
+            case 'documents':
+            case 'information_registry':
+            case 'AccumulationRegisters':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Edit');
+               break;
+            
+            case 'reports':
+            case 'data_processors':
+               $access = $this->user->hasPermission($kind.'.'.$type.'.Use');
+               break;
+               
+            default:
+               $access = false;
+         }
+         
+         if (!$access)
+         {
+            return array(
+               'status' => false,
+               'result' => array('msg' => 'Access denied'),
+               'errors' => array()
+            );
+         }
+      }
+      
+      // Process parameters
+      $form  = Utility::escapeString($_REQUEST['form']);
+      $event = Utility::escapeString($_REQUEST['event']);
+      
+      if (isset($_REQUEST['parameters']))
+      {
+         if (is_array($_REQUEST['parameters']))
+         {
+            $parameters = Utility::escapeRecursive($_REQUEST['parameters']);
+         }
+         else $parameters = Utility::escapeString($_REQUEST['parameters']);
+      }
+      else $parameters = array();
+      
+      // Execute action
+      $controller = $this->container->getController($kind, $type);
+      
+      return $controller->notifyFormEvent($form, $event, $parameters);
    }
 }
