@@ -348,14 +348,16 @@ abstract class BaseController
     * 
     * @param string $formName
     * @param string $eventName
-    * @param array  $parameters
+    * @param array& $formData
+    * @param array& $parameters
     * @return array
     */
-   public function notifyFormEvent($formName, $eventName, array $parameters = array())
+   public function notifyFormEvent($formName, $eventName, array& $formData = array(), array& $parameters = array())
    {
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$formName.'.'.$eventName);
       $event->setReturnValue(null);
-      $event['form'] = $formName;
+      $event['formName'] = $formName;
+      $event['formData'] = $formData;
       $event['parameters'] = $parameters;
       
       try

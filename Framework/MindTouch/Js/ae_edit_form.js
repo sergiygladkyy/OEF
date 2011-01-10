@@ -782,6 +782,23 @@ function appAddLoader()
 	jQuery('#TB_overlay').append('<div id="TB_load" style="display: block; margin-top: -10%;"><img src="/skins/common/jquery/thickbox/loadingAnimation.gif"></div>');
 }
 
+/**
+ * Display loader
+ * 
+ * @param boolean flag - if false - loader hide. Else - lodaer show
+ * @return void
+ */
+function appDisplayLoader(flag)
+{
+	if (jQuery('#TB_overlay #TB_load').size() == 0 && flag)
+	{
+		appAddLoader();
+	}
+	else
+	{
+		jQuery('#TB_load').css("display", flag ? 'block' : 'none');
+	}
+}
 
 
 
@@ -846,7 +863,12 @@ function notifyFormEvent(uid, formName, eventName, params)
 {
 	var dispatcher = new oeEventDispatcher();
 	
+	appInactive();
+	appAddLoader();
+	
 	dispatcher.notify(uid, formName, eventName, params);
+	
+	appActive();
 }
 
 /**
@@ -880,11 +902,20 @@ function oeEventDispatcher()
 			return;
 		}
 		
+		var formData = jQuery('#' + uid.replace(/\./g, '_') + '_item').formSerialize();
+		
 		jQuery.ajax({
 		    url: '/Special:OEController',
 		    async: false,
 		    type: 'POST',
-		    data: ({action: 'notifyFormEvent', uid: uid, form: formName, event: eventName, parameters: params}),
+		    data: ({
+		    	action: 'notifyFormEvent',
+		    	uid:   uid,
+		    	event: eventName,
+		    	formName: formName,
+		    	formData: formData,
+		    	parameters: params
+		    }),
 		    dataType: 'json',
 		    success: function (data, status)
 		    {
@@ -971,7 +1002,9 @@ function oeEventDispatcher()
 		}
 		if (!data['data']) return;
 		
-		// Update edit form
+		// Prepare update
+		var msg = new Array(), i = 0;
+		
 		for (var kind in data['data'])
 		{
 			var cdata = data['data'][kind];
@@ -980,27 +1013,62 @@ function oeEventDispatcher()
 			{
 				if (cdata[type]['attributes'])
 				{
-					this.updateAttributes(kind, type, cdata[type]['attributes']);
+					for (var attr in cdata[type]['attributes'])
+					{
+						msg[i++] = '\n   - ' + kind + ' ' + type + ' ' + attr + ' attribute';
+					}
 				}
 				
 				if (cdata[type]['tabulars'])
 				{
 					for (var ttype in cdata[type]['tabulars'])
 					{
-						this.updateTabular(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]);
+						msg[i++] = '\n   - ' + kind + ' ' + type + ' tabular ' + ttype;
 					}
 				}
 			}
 		}
 		
-		// Display message
-		if (data['msg'])
+		// Update edit form
+		if (msg.length > 0)
 		{
-			displayMessage(uid.replace(/\./g, '_'), data['msg'], true);
+			appDisplayLoader(false);
+			
+			if (confirm('Will be changed:\n' + msg.join(';\n') + '.\n\nChange?'))
+			{
+				appDisplayLoader(true);
+				
+				for (var kind in data['data'])
+				{
+					var cdata = data['data'][kind];
+					
+					for (var type in cdata)
+					{
+						if (cdata[type]['attributes'])
+						{
+							this.updateAttributes(kind, type, cdata[type]['attributes']);
+						}
+						
+						if (cdata[type]['tabulars'])
+						{
+							for (var ttype in cdata[type]['tabulars'])
+							{
+								this.updateTabular(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]);
+							}
+						}
+					}
+				}
+				
+				// Display message
+				if (data['msg'])
+				{
+					displayMessage(uid.replace(/\./g, '_'), data['msg'], true);
+				}
+				
+				// Mark selected
+				markSelected();
+			}
 		}
-		
-		// Mark selected
-		markSelected();
 	};
 	
 	/**

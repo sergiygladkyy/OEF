@@ -788,7 +788,7 @@ class SpecialOEController extends SpecialPagePlugin
          return array('status' => false, 'errors' => array('global' => 'Invalid data'));
       }
       
-      if (empty($_REQUEST['form']) || !is_string($_REQUEST['form']))
+      if (empty($_REQUEST['formName']) || !is_string($_REQUEST['formName']))
       {
          return array('status' => false, 'errors' => array('global' => 'Invalid data'));
       }
@@ -832,8 +832,16 @@ class SpecialOEController extends SpecialPagePlugin
       }
       
       // Process parameters
-      $form  = Utility::escapeString($_REQUEST['form']);
-      $event = Utility::escapeString($_REQUEST['event']);
+      $formName = Utility::escapeString($_REQUEST['formName']);
+      $event    = Utility::escapeString($_REQUEST['event']);
+      
+      if (isset($_REQUEST['formData']) && is_string($_REQUEST['formData']))
+      {
+         $formData = array();
+         parse_str(urldecode($_REQUEST['formData']), $formData);
+         $formData = Utility::escapeRecursive($formData);
+      }
+      else $formData = array();
       
       if (isset($_REQUEST['parameters']))
       {
@@ -841,13 +849,13 @@ class SpecialOEController extends SpecialPagePlugin
          {
             $parameters = Utility::escapeRecursive($_REQUEST['parameters']);
          }
-         else $parameters = Utility::escapeString($_REQUEST['parameters']);
+         else $parameters = array(Utility::escapeString($_REQUEST['parameters']));
       }
       else $parameters = array();
       
       // Execute action
       $controller = $this->container->getController($kind, $type);
       
-      return $controller->notifyFormEvent($form, $event, $parameters);
+      return $controller->notifyFormEvent($formName, $event, $formData, $parameters);
    }
 }
