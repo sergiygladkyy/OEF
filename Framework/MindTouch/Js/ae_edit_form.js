@@ -415,9 +415,9 @@ function beforeSubmit(form)
 /**
  * Add tabular section item
  * 
- * @param uid
- * @param prefix
- * @return
+ * @param string uid    - entity uid
+ * @param string prefix - prefix for id
+ * @return int - row index
  */
 function addTabularSectionItem(uid, prefix)
 {
@@ -426,6 +426,8 @@ function addTabularSectionItem(uid, prefix)
 	content = content.replace(/%%i%%/g, ae_index[uid]);
 	content = content.replace(/%%script%%/g, 'script');
 	jQuery('#' + prefix + '_edit_block').append(content);
+	
+	return ae_index[uid];
 }
 
 /**
@@ -605,10 +607,10 @@ function executeClearPosting(kind, type, id, prefix)
 /**
  * Insert id tag after entity creation
  * 
- * @param uid
- * @param id
- * @param i
- * @return
+ * @param string  uid - entity uid
+ * @param integer id  - entity id
+ * @param integer i   - item index (optional)
+ * @return void
  */
 function insertId(uid, id, i)
 {
@@ -852,7 +854,8 @@ function notifyFormEvent(uid, formName, eventName, params)
  */
 function oeEventDispatcher()
 {
-	this.event = {};
+	this.event  = {};
+	this.prefix = ae_name_prefix;
 	
 	/**
 	 * Notify about form event
@@ -896,7 +899,7 @@ function oeEventDispatcher()
 				}
 				else
 				{
-					callback(uid, data['result']);
+					callback.call(new oeEventDispatcher(), uid, data['result']);
 				}
 		    },
 		    error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -929,17 +932,186 @@ function oeEventDispatcher()
 	/**
 	 * Process response to event 'onFormUpdateRequest'
 	 * 
-	 * @param string uid
-	 * @param array data
+	 * data = array(
+	 *    <kind> => array(
+     *       <type> => array(
+     *          'attributes' => array(
+     *             <attr_1_name> => value,
+     *             ........................,
+     *             <attr_N_name> => value
+     *          ),
+     *          'tabulars' => array(
+     *             <type> => array(
+     *                <index> => array(
+     *                   <attr_1_name> => value,
+     *                   ........................,
+     *                   <attr_N_name> => value
+     *                ),
+     *                ............................
+     *             ),
+     *             ............................
+     *          )
+     *       ),
+     *       ...............................
+     *    ),
+     *    ...............................
+     * );
+     *    
+	 * @param string uid - uid entity that generated the event
+	 * @param array data - response data
 	 * @return void
 	 */
 	this.processOnFormUpdateRequestResponse = function(uid, data)
 	{
+		// Check data
+		if (data['type'] != 'array')
+		{
+			alert('Not supported response type');
+			return;
+		}
+		if (!data['data']) return;
+		
+		// Update edit form
+		for (var kind in data['data'])
+		{
+			var cdata = data['data'][kind];
+			
+			for (var type in cdata)
+			{
+				if (cdata[type]['attributes'])
+				{
+					this.updateAttributes(kind, type, cdata[type]['attributes']);
+				}
+				
+				if (cdata[type]['tabulars'])
+				{
+					for (var ttype in cdata[type]['tabulars'])
+					{
+						this.updateTabular(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]);
+					}
+				}
+			}
+		}
+		
+		// Display message
 		if (data['msg'])
 		{
 			displayMessage(uid.replace(/\./g, '_'), data['msg'], true);
 		}
 		
-		alert('processOnFormUpdateRequest');
+		// Mark selected
+		markSelected();
+	};
+	
+	/**
+	 * Update attributes
+	 * 
+	 * @param string kind - entity kind
+	 * @param string type - entity type
+	 * @param array attributes - values for entity attributes
+	 * @return boolean
+	 */
+	this.updateAttributes = function(kind, type, attributes)
+	{
+		if (!this.prefix[kind + '_' + type]) return false;
+		
+		var prefix = this.prefix[kind + '_' + type];
+		
+		for (var attr in attributes)
+		{
+			var value   = attributes[attr];
+			var element = jQuery('*[name="' + prefix + '[' + attr + ']' + '"]').get(0);
+			
+			if (typeof element != 'object') continue;
+			
+			this.setElementValue(element, value);
+		}
+		
+		return true;
+	};
+	
+	/**
+	 * Update tabular section
+	 * 
+	 * @param string kind - tabular kind
+	 * @param string type - tabular type 
+	 * @param array items - tabular rows
+	 * @return boolean
+	 */
+	this.updateTabular = function(kind, type, items)
+	{
+		if (!this.prefix[kind + '_' + type]) return false;
+		
+		var uid    = kind + '_' + type;
+		var prefix = this.prefix[uid];
+		
+		var edit_block = document.getElementById(uid + '_edit_block');
+		
+		if (!edit_block) return false;
+		
+		edit_block.innerHTML = '';
+		
+		for (var i in items)
+		{
+			// Add tabular item
+			var index = addTabularSectionItem(uid, uid);
+			
+			// Update item attributes
+			for (var attr in items[i])
+			{
+				var value = items[i][attr];
+				
+				if (attr == '_id')
+				{
+					insertId(uid, value, index);
+					continue;
+				}
+				
+				var element = jQuery('*[name="' + prefix + '[' + index + '][' + attr + ']' + '"]').get(0);
+				
+				if (typeof element != 'object') continue;
+				
+				this.setElementValue(element, value);
+			}
+		}
+		
+		return true;
+	};
+	
+	/**
+	 * Set value for input, select, textarea
+	 *  
+	 * @param element
+	 * @param value
+	 * @return
+	 */
+	this.setElementValue = function(element, value)
+	{
+		switch(element.nodeName)
+		{
+			case 'INPUT':
+				element.value = value;
+				break;
+				
+			case 'SELECT':
+				for (i = 0; i < element.length; i++)
+				{
+					var option = element.options[i];
+					
+					if (option.value == value)
+					{
+						element.selectedIndex = i;
+						break;
+					}
+				}
+				break;
+				
+			case 'TEXTAREA':
+				element.innerHTML = value;
+				break;
+				
+			default:
+				element.value = value;
+		}
 	};
 }
