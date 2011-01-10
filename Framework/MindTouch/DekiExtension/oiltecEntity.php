@@ -213,7 +213,7 @@
   function displayEditForm($uid, $id = null, array $params = array())
   {
      // Initialize OEF
-     $errors = initialize();
+     $errors = initialize(true);
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
 

@@ -19,44 +19,107 @@ abstract class ObjectsController extends BaseController
    public function displayEditForm($id = null, array $options = array())
    {
       $errors = array();
+      $result = array();
+      $tabdef = array();
       
+      // Default values
+      $default = $this->getDefaultValuesForEditForm();
+      
+      if ($default['status'])
+      {
+         $def =& $default['result'];
+         
+         $result['item'] = $def['attributes'];
+         
+         if (isset($def['select']) && is_array($def['select']))
+         {
+            $result['select'] = $def['select'];
+         }
+         
+         if (isset($def['tabulars']) && is_array($def['tabulars']))
+         {
+            $tabdef =& $def['tabulars'];
+         }
+      }
+      else $result = array('item' => array());
+      
+      // Get current item
       $item = $this->container->getModel($this->kind, $this->type, $options);
       
-      if (!empty($id) && !$item->load($id, $options))
+      if (!empty($id))
       {
-         $errors[] = 'Can\'t load "'.ucfirst($this->kind).'.'.$this->type.'" with id '.(int) $id;
+         if (!$item->load($id, $options))
+         {
+            $errors[] = 'Can\'t load '.ucfirst($this->kind).'.'.$this->type.' with id '.(int) $id;
+            
+            return array('status' => false, 'result' => null, 'errors' => $errors);
+         }
          
-         return array('status' => false, 'result' => null, 'errors' => $errors);
-      } 
+         $result['item'] = $item->toArray($options);
+      }
       
-      $model  = $this->container->getCModel($this->kind, $this->type, $options);
-      $select = $model->retrieveSelectDataForRelated(array(), $options);
-      $types  = $model->getTabularsList();
+      $model = $this->container->getCModel($this->kind, $this->type, $options);
+      $types = $model->getTabularsList();
       
+      if (!isset($result['select']))
+      {
+         $result['select'] = $model->retrieveSelectDataForRelated(array(), $options);
+      }
+      
+      // Get current tabular sections
       $tabulars = array();
       
       foreach ($types as $type)
       {
-         $controller = $this->container->getController($this->kind.'.'.$this->type.'.tabulars', $type, $options);
          $taboptions = (!empty($options[$type]) && is_array($options[$type])) ? $options[$type] : array();
          
-         if (empty($taboptions['criteria']))
+         if (!empty($id))
          {
-            // This is owner
-            $taboptions['criteria'] = array(
-               'attributes' => 'Owner',
-               'criterion'  => '`Owner`=%%Owner%%',
-               'values'     => array('Owner' => $id)
+            $controller = $this->container->getController($this->kind.'.'.$this->type.'.tabulars', $type, $options);
+            
+            if (empty($taboptions['criteria']))
+            {
+               // This is owner
+               $taboptions['criteria'] = array(
+                  'attributes' => 'Owner',
+                  'criterion'  => '`Owner`=%%Owner%%',
+                  'values'     => array('Owner' => $id)
+               );
+            }
+             
+            $tabpage = isset($taboptions['page']) ? $taboptions['page'] : 1;
+            $tabulars[$type] = $controller->displayListForm($tabpage, $taboptions);
+             
+            if (!$tabulars[$type]['status']) continue;
+         }
+         else
+         {
+            $tabulars[$type] = array(
+               'status' => true,
+               'result' => array(),
+               'errors' => array()
             );
+            
+            if (!empty($tabdef[$type]))
+            {
+               $tabulars[$type]['result']['list'] = (isset($tabdef[$type]['list']) && is_array($tabdef[$type]['list'])) ? $tabdef[$type]['list'] : array();
+               
+               if (isset($tabdef[$type]['select']) && is_array($tabdef[$type]['select']))
+               {
+                  $tabulars[$type]['result']['select'] = $tabdef[$type]['select'];
+               }
+            }
+            else
+            {
+               $tabulars[$type]['result']['list'] = array();
+            }
          }
          
-         $tabpage = isset($taboptions['page']) ? $taboptions['page'] : 1;
-         $tabulars[$type] = $controller->displayListForm($tabpage, $taboptions);
-         
-         if (!$tabulars[$type]['status']) continue;
-         
-         $tmodel = $this->container->getCModel($this->kind.'.'.$this->type.'.tabulars', $type, $options);
-         $tabulars[$type]['result']['select'] = $tmodel->retrieveSelectDataForRelated(array(), $taboptions);
+         if (!isset($tabulars[$type]['result']['select']))
+         {
+            $tmodel = $this->container->getCModel($this->kind.'.'.$this->type.'.tabulars', $type, $options);
+            $tabulars[$type]['result']['select'] = $tmodel->retrieveSelectDataForRelated(array(), $taboptions);
+         }
          
          /* BEGIN - FOR MT */
          if (!empty($tabulars[$type]['result']['pagination']))
@@ -70,8 +133,8 @@ abstract class ObjectsController extends BaseController
       
       return array('status' => true, 
                    'result' => array(
-                      'item'     => $item->toArray($options),
-                      'select'   => $select,
+                      'item'     => $result['item'],
+                      'select'   => $result['select'],
                       'tabulars' => $tabulars
                    ),
                    'errors' => $errors

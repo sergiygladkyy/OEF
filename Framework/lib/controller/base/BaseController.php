@@ -80,24 +80,47 @@ abstract class BaseController
    public function displayEditForm($id = null, array $options = array())
    {
       $errors = array();
+      $result = array();
       
+      // Default values
+      $default = $this->getDefaultValuesForEditForm();
+      
+      if ($default['status'])
+      {
+         $default =& $default['result'];
+         
+         $result['item'] = $default['attributes'];
+         
+         if (isset($default['select']) && is_array($default['select']))
+         {
+            $result['select'] = $default['select'];
+         }
+      }
+      else $result = array('item' => array());
+      
+      // Get current item
       $item = $this->container->getModel($this->kind, $this->type, $options);
       
-      if (!empty($id) && !$item->load($id, $options))
+      if (!empty($id))
       {
-         $errors[] = 'Can\'t load "'.ucfirst($this->kind).'.'.$this->type.'" with id '.(int) $id;
+         if (!$item->load($id, $options))
+         {
+            $errors[] = 'Can\'t load '.ucfirst($this->kind).'.'.$this->type.' with id '.(int) $id;
+            
+            return array('status' => false, 'result' => null, 'errors' => $errors);
+         }
          
-         return array('status' => false, 'result' => null, 'errors' => $errors);
-      } 
+         $result['item'] = $item->toArray($options);
+      }
       
-      $model  = $this->container->getCModel($this->kind, $this->type, $options);
-      $select = $model->retrieveSelectDataForRelated(array(), $options);
+      if (!isset($result['select']))
+      {
+         $model = $this->container->getCModel($this->kind, $this->type, $options);
+         $result['select'] = $model->retrieveSelectDataForRelated(array(), $options);
+      }
       
-      return array('status' => true, 
-                   'result' => array(
-                      'item'   => $item->toArray($options),
-                      'select' => $select
-                   ),
+      return array('status' => true,
+                   'result' => $result,
                    'errors' => $errors
       );
    }
@@ -373,6 +396,7 @@ abstract class BaseController
          );
       }
       
+      $errors = array();
       $result = $event->getReturnValue();
       
       if (is_null($result))
@@ -386,6 +410,54 @@ abstract class BaseController
          $errors = array('Module error');
       }
       elseif (!isset($result['type']) || !isset($result['data']))
+      {
+         $status = false;
+         $errors = array('Module error');
+      }
+      else $status = true;
+      
+      return array(
+         'status' => $status,
+         'result' => $status ? $result : array(), 
+         'errors' => $errors
+      );
+   }
+   
+   /**
+    * Get default values for edit form
+    * 
+    * @param array& $options
+    * @return array
+    */
+   protected function getDefaultValuesForEditForm($formName = 'Default', array& $options = array())
+   {
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$formName.'.onBeforeOpening');
+      $event->setReturnValue(null);
+      $event['formName'] = $formName;
+      $event['options']  = $options;
+      
+      try
+      {
+         $this->container->getEventDispatcher()->notify($event);
+      }
+      catch(Exception $e)
+      {
+         return array(
+            'status' => false,
+            'result' => array(),
+            'errors' => array($e->getMessage())
+         );
+      }
+      
+      $errors = array();
+      $result = $event->getReturnValue();
+      
+      if (is_null($result))
+      {
+         $status = false;
+         $errors = array('Event not processed. Module error');
+      }
+      elseif (!is_array($result) || !isset($result['attributes']))
       {
          $status = false;
          $errors = array('Module error');
