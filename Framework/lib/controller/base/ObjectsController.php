@@ -58,13 +58,11 @@ abstract class ObjectsController extends BaseController
          $result['item'] = $item->toArray($options);
       }
       
-      $model = $this->container->getCModel($this->kind, $this->type, $options);
-      $types = $model->getTabularsList();
+      $model  = $this->container->getCModel($this->kind, $this->type, $options);
+      $select = $model->retrieveSelectDataForRelated(array(), $options);
+      $types  = $model->getTabularsList();
       
-      if (!isset($result['select']))
-      {
-         $result['select'] = $model->retrieveSelectDataForRelated(array(), $options);
-      }
+      $result['select'] = isset($result['select']) ? array_merge($select, $result['select']) : $select;
       
       // Get current tabular sections
       $tabulars = array();
@@ -115,11 +113,10 @@ abstract class ObjectsController extends BaseController
             }
          }
          
-         if (!isset($tabulars[$type]['result']['select']))
-         {
-            $tmodel = $this->container->getCModel($this->kind.'.'.$this->type.'.tabulars', $type, $options);
-            $tabulars[$type]['result']['select'] = $tmodel->retrieveSelectDataForRelated(array(), $taboptions);
-         }
+         $tmodel = $this->container->getCModel($this->kind.'.'.$this->type.'.tabulars', $type, $options);
+         $select = $tmodel->retrieveSelectDataForRelated(array(), $taboptions);
+         
+         $tabulars[$type]['result']['select'] = isset($tabulars[$type]['result']['select']) ? array_merge($select, $tabulars[$type]['result']['select']) : $select;
          
          /* BEGIN - FOR MT */
          if (!empty($tabulars[$type]['result']['pagination']))

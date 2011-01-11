@@ -113,11 +113,10 @@ abstract class BaseController
          $result['item'] = $item->toArray($options);
       }
       
-      if (!isset($result['select']))
-      {
-         $model = $this->container->getCModel($this->kind, $this->type, $options);
-         $result['select'] = $model->retrieveSelectDataForRelated(array(), $options);
-      }
+      $model  = $this->container->getCModel($this->kind, $this->type, $options);
+      $select = $model->retrieveSelectDataForRelated(array(), $options);
+      
+      $result['select'] = isset($result['select']) ? array_merge($select, $result['select']) : $select;
       
       return array('status' => true,
                    'result' => $result,
@@ -457,7 +456,7 @@ abstract class BaseController
          $status = false;
          $errors = array('Event not processed. Module error');
       }
-      elseif (!is_array($result) || !isset($result['attributes']))
+      elseif (!is_array($result) || !(isset($result['attributes']) || isset($result['select']) || isset($result['tabulars'])))
       {
          $status = false;
          $errors = array('Module error');
