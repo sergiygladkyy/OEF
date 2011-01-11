@@ -642,7 +642,7 @@ function displayErrors(prefix, errors)
 	if (jQuery('.' + prefix + '_errors').size() == 0) return false;
 	
 	jQuery('.' + prefix + '_errors').each(function (index) { 
-		this.innerHTML = '<li>' + errors + '</li>';
+		this.innerHTML = '<li>' + errors.join('</li>\n<li>') + '</li>';
 	});
 	jQuery('.' + prefix + '_errors').css('display', 'block');
 	
@@ -878,6 +878,7 @@ function oeEventDispatcher()
 {
 	this.event  = {};
 	this.prefix = ae_name_prefix;
+	this.index  = {};
 	
 	/**
 	 * Notify about form event
@@ -968,17 +969,30 @@ function oeEventDispatcher()
      *       <type> => array(
      *          'attributes' => array(
      *             <attr_1_name> => value,
-     *             ........................,
+     *             ......................,
      *             <attr_N_name> => value
+     *          ),
+     *          'errors' => array(
+     *             <attr_1_name> => array('msg_1', .., 'msg_N'),
+     *             ............................................
      *          ),
      *          'tabulars' => array(
      *             <type> => array(
-     *                <index> => array(
-     *                   <attr_1_name> => value,
-     *                   ........................,
-     *                   <attr_N_name> => value
+     *                'items' => array(
+     *                   <index> => array(
+     *                      <t_attr_1_name> => value,
+     *                      ........................,
+     *                      <t_attr_N_name> => value
+     *                   ),
+     *                   .........................
      *                ),
-     *                ............................
+     *                'errors' => array(
+     *                   <index> => array(
+     *                      <t_attr_1_name> => array('msg_1', .., 'msg_N'),
+     *                      ..............................................
+     *                   ),
+     *                   .........................
+     *                )
      *             ),
      *             ............................
      *          )
@@ -1023,7 +1037,10 @@ function oeEventDispatcher()
 				{
 					for (var ttype in cdata[type]['tabulars'])
 					{
-						msg[i++] = '\n   - ' + kind + ' ' + type + ' tabular ' + ttype;
+						if (cdata[type]['tabulars'][ttype]['items'])
+						{
+							msg[i++] = '\n   - ' + kind + ' ' + type + ' tabular ' + ttype;
+						}
 					}
 				}
 			}
@@ -1041,19 +1058,40 @@ function oeEventDispatcher()
 				for (var kind in data['data'])
 				{
 					var cdata = data['data'][kind];
+					var res   = true;
 					
 					for (var type in cdata)
 					{
+						// Update entity attributes
 						if (cdata[type]['attributes'])
 						{
-							this.updateAttributes(kind, type, cdata[type]['attributes']);
+							res = this.updateAttributes(kind, type, cdata[type]['attributes']);
 						}
 						
+						// Display entity attributes errors
+						if (res && cdata[type]['errors'])
+						{
+							this.displayAttributesErrors(kind, type, cdata[type]['errors']);
+						}
+						
+						// Process tabular sections data
 						if (cdata[type]['tabulars'])
 						{
 							for (var ttype in cdata[type]['tabulars'])
 							{
-								this.updateTabular(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]);
+								res = true;
+								
+								// Update entity tabular section attributes
+								if (cdata[type]['tabulars'][ttype]['items'])
+								{
+									res = this.updateTabular(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]['items']);
+								}
+								
+								// Display entity tabular section attributes errors
+								if (res && cdata[type]['tabulars'][ttype]['errors'])
+								{
+									this.displayTabularErrors(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]['errors']);
+								}
 							}
 						}
 					}
@@ -1113,6 +1151,8 @@ function oeEventDispatcher()
 		var uid    = kind + '_' + type;
 		var prefix = this.prefix[uid];
 		
+		this.index[type] = {};
+		           
 		var edit_block = document.getElementById(uid + '_edit_block');
 		
 		if (!edit_block) return false;
@@ -1141,6 +1181,8 @@ function oeEventDispatcher()
 				
 				this.setElementValue(element, value);
 			}
+			
+			this.index[type][i] = index;
 		}
 		
 		return true;
@@ -1181,5 +1223,61 @@ function oeEventDispatcher()
 			default:
 				element.value = value;
 		}
+	};
+	
+	/**
+	 * Display entity attributes errors
+	 * 
+	 * @param string kind  - entity kind
+	 * @param string type  - entity type
+	 * @param array errors - error messages
+	 * @return
+	 */
+	this.displayAttributesErrors = function(kind, type, errors)
+	{
+		var ret = true;
+		
+		for (var attribute in errors)
+		{
+			if (!displayErrors(kind + '_' + type + '_' + attribute, errors[attribute]))
+			{
+				ret = false;
+			}
+		}
+		
+		return ret;
+	};
+	
+	/**
+	 * Display entity tabular section attributes errors
+	 * 
+	 * @param string kind    - tabular kind
+	 * @param string type    - tabular type
+	 * @param array errors   - error messages
+	 * @return
+	 */
+	this.displayTabularErrors = function(kind, type, errors)
+	{
+		var ret   = true;
+		var index = null;
+		
+		for (var i in errors)
+		{
+			if (this.index[type][i])
+			{
+				index = this.index[type][i];
+			}
+			else index = i;
+			
+			for (var attribute in errors[i])
+			{
+				if (!displayErrors(kind + '_' + type + '_' + index + '_' + attribute, errors[i][attribute]))
+				{
+					ret = false;
+				}
+			}
+		}
+		
+		return ret;
 	};
 }
