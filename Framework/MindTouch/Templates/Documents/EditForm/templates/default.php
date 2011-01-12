@@ -10,7 +10,7 @@
    var required = []; 
    var kind     = '';
    var type     = puid.type;
-   var item     = data.item;
+   var item     = data.item is map ? data.item : {};
    var select   = data.select;
    var tabulars = data.tabulars;
 }}
