@@ -182,7 +182,7 @@ class AccumulationRegistersModel extends BaseRegistersModel
             return array($db->getError());
          }
 
-         while ($row = $this->fetchAssoc($res))
+         while ($row = $db->fetchAssoc($res))
          {
             $periods[$row[$pField]] = $row[$pField];
             $ids[] = $row[$db_map['pkey']];
