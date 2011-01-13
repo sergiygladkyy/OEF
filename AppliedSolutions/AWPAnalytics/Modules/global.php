@@ -58,3 +58,178 @@ class MGlobal
       return strftime($format, $mt);
    }
 }
+
+
+
+class MVacation
+{
+   /**
+    * Check vacation item
+    * 
+    * @param array& $attrs
+    * @return array - errors
+    */
+   public static function checkVacationItem(array& $attrs)
+   {
+      $container = Container::getInstance();
+      
+      $cmodel = $container->getCModel('catalogs', 'Employees');
+      $odb    = $container->getODBManager();
+   
+      // Check attributes
+      if (empty($attrs['Employee']))
+      {
+         return array('Employee' => 'Required');
+      }
+      elseif (null === ($res = $cmodel->countEntities($attrs['Employee'])))
+      {
+         throw new Exception('DataBase error');
+      }
+      elseif ($res == 0)
+      {
+         return array('Employee' => 'Unknow employee');
+      }
+      
+      $employee = $attrs['Employee'];
+      
+      if (empty($attrs['StartDate']))
+      {
+         $start = time();
+      }
+      else
+      {
+         if (($start = strtotime($attrs['StartDate'])) === -1)
+         {
+            return array('StartDate' => 'Date must be in the format YYYY-MM-DD');
+         }
+      }
+      
+      $attrs['StartDate'] = date('Y-m-d', $start);
+      
+      // Check previous event
+      $query = "SELECT MAX(`Period`), `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee` = ".$employee." AND `Period` <= '".date('Y-m-d', $start)."'";
+      
+      if (null === ($res = $odb->loadAssoc($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      elseif (empty($res))
+      {
+         return array('StartDate' => 'Employee did not worked in this period');
+      }
+      elseif ($res['RegisteredEvent'] == 'Firing')
+      {
+         return array('StartDate' => 'Employee was firing in this period');
+      }
+      
+      // Check next events
+      $query = "SELECT `Period`, `RegisteredEvent`, `_rec_type`, `_rec_id` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee` = ".$employee." AND `Period` > '".date('Y-m-d', $start)."' ".
+               "ORDER BY `_rec_type` ASC";
+      
+      if (!($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      if ($odb->getNumRows($res))
+      {
+         $docs = array();
+         $msg  = 'You must unposted the following documents:<br/>';
+         
+         while ($row = $odb->fetchAssoc($res))
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+         
+         foreach ($docs as $_type => $ids)
+         {
+            $ids = array_unique($ids);
+            $links = $container->getCModel('documents', $_type)->retrieveLinkData($ids);
+            foreach ($links as $link)
+            {
+               $msg .= $link['text'].'<br/>';
+            }
+         }
+      }
+      
+      // Cneck Variance Records
+      $query = "SELECT `DateFrom`, `DateTo`, `VarianceKind`, `_rec_type`, `_rec_id` ".
+               "FROM information_registry.ScheduleVarianceRecords ".
+               "WHERE `Employee` = ".$employee." AND (`DateFrom` >= '".date('Y-m-d', $start)."' OR `DateTo` > '".date('Y-m-d', $start)."') ".
+               "ORDER BY `_rec_type` ASC";
+      
+      if (!($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      if ($odb->getNumRows($res))
+      {
+         $docs = array();
+         
+         if (!isset($msg)) $msg = 'You must unposted the following documents:<br/>';
+         
+         while ($row = $odb->fetchAssoc($res))
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+         
+         foreach ($docs as $_type => $ids)
+         {
+            $ids = array_unique($ids);
+            $links = $container->getCModel('documents', $_type)->retrieveLinkData($ids);
+            foreach ($links as $link)
+            {
+               $msg .= $link['text'].'<br/>';
+            }
+         }
+      }
+      
+      if (isset($msg)) return array('StartDate' => $msg);
+      
+      // Retrieve total vacation days for current Employee
+      $cmodel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
+      $total  = $cmodel->getTotals(date('Y-m-d', $start), array('criteria' => array('Employee' => $employee)));
+      
+      // Calculate
+      if (!isset($total[0]))
+      {
+         return array('StartDate' => 'Vacation days are not charged. Perhaps you didn\'t posted a document PeriodicClosing');
+      }
+      
+      $total = $total[0];
+      
+      if ($total['VacationDays'] <= 0)
+      {
+         return array('StartDate' => 'Has no vacation days');
+      }
+
+      $vacatDays = 60*60*24*$total['VacationDays'];
+
+      if (empty($attrs['EndDate']))
+      {
+         $attrs['EndDate'] = date('Y-m-d', $start + $vacatDays);
+         
+         return array();
+      }
+
+      if (($end = strtotime($attrs['EndDate'])) === -1)
+      {
+         return array('EndDate' => 'Date must be in the format YYYY-MM-DD');
+      }
+      elseif ($end <= $start)
+      {
+         return array('EndDate' => 'EndDate must be larger the StartDate');
+      }
+      elseif ($end - $start > $vacatDays)
+      {
+         return array('EndDate' => 'The employee has '.$total['VacationDays'].
+            ' vacation days. EndDate should not exceed '.date('Y-m-d', $start + $vacatDays)
+         );
+      }
+   }
+}

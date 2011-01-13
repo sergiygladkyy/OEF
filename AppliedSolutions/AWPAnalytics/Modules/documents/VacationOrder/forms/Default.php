@@ -79,7 +79,7 @@ function fill(& $event)
       throw new Exception('You have not specified department');
    }
    
-   $date = '2011-01-20';//date('Y-m-d');
+   $date = date('Y-m-d');
    
    // Retrieve employees
    
@@ -158,156 +158,30 @@ function calculate(& $event)
    $subject  = $event->getSubject();
    $kind     = $subject->getKind();
    $type     = $subject->getType();
-   $formData = $event['formData']['aeform'][$kind][$type];
-   $empData  =& $formData['tabulars']['Employees'];
-   
-   $container = Container::getInstance();
-   
-   $emplIDS = array();
-   $eCModel = $container->getCModel('catalogs', 'Employees');
-   $odb     = $container->getODBManager();
-   
+   $empData  = $event['formData']['aeform'][$kind][$type]['tabulars']['Employees'];
+   $emplIDS  = array();
+
+   // Check tabular items
    foreach ($empData as $index => $row)
    {
-      // Check tabular attributes
       $result['items'][$index] = $row;
       
-      $attrs =& $result['items'][$index];
-      
-      if (empty($attrs['Employee']))
+      if (empty($row['Employee']))
       {
          $result['errors'][$index]['Employee'] = 'Required';
-         continue;
       }
-      elseif (null === ($res = $eCModel->countEntities($attrs['Employee'])))
-      {
-         throw new Exception('DataBase error');
-      }
-      elseif ($res == 0)
-      {
-         $result['errors'][$index]['Employee'] = 'Unknow employee';
-         continue;
-      }
-      
-      if (isset($emplIDS[$attrs['Employee']]))
+      elseif (isset($emplIDS[$row['Employee']]))
       {
          unset($result['items'][$index]);
-         continue;
-      }
-      
-      $employee = $attrs['Employee'];
-      $emplIDS[$employee] = $index;
-      
-      if (empty($attrs['StartDate']))
-      {
-         $start = mktime(0,0,0,01,20,2011);//time();
       }
       else
       {
-         if (($start = strtotime($attrs['StartDate'])) === -1)
+         $emplIDS[$row['Employee']] = $index;
+      
+         if ($errors = MVacation::checkVacationItem($result['items'][$index]))
          {
-            $result['errors'][$index]['StartDate'] = 'Date must be in the format YYYY-MM-DD';
-            continue;
+            $result['errors'][$index] = $errors;
          }
-      }
-      
-      $attrs['StartDate'] = date('Y-m-d', $start);
-      
-      // Check previous event
-      $query = "SELECT `Employee`, MAX(`Period`), `RegisteredEvent` ".
-               "FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee` = ".$employee." AND `Period` <= '".date('Y-m-d', $start)."'";
-      
-      if (null === ($res = $odb->loadAssoc($query)))
-      {
-         throw new Exception('DataBase error');
-      }
-      elseif (empty($res))
-      {
-         $result['errors'][$index]['StartDate'] = 'Employee did not worked in this period';
-         continue;
-      }
-      elseif ($res['RegisteredEvent'] == 'Firing')
-      {
-         $result['errors'][$index]['StartDate'] = 'Employee was firing in this period';
-         continue;
-      }
-      
-      // Check next events
-      $query = "SELECT `Employee`, `Period`, `RegisteredEvent`, `_rec_type`, `_rec_id` ".
-               "FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee` = ".$employee." AND `Period` > '".date('Y-m-d', $start)."' ".
-               "ORDER BY `_rec_type` ASC";
-      
-      if (!($res = $odb->executeQuery($query)))
-      {
-         throw new Exception('DataBase error');
-      }
-      
-      if ($odb->getNumRows($res))
-      {
-         $docs = array();
-         $msg  = 'You must unposted the following documents:<br/>';
-         
-         while ($row = $odb->fetchAssoc($res))
-         {
-            $docs[$row['_rec_type']][] = $row['_rec_id'];
-         }
-         
-         foreach ($docs as $_type => $ids)
-         {
-            $ids = array_unique($ids);
-            $links = $container->getCModel('documents', $_type)->retrieveLinkData($ids);
-            foreach ($links as $link)
-            {
-               $msg .= $link['text'].'<br/>';
-            }
-         }
-         
-         $result['errors'][$index]['StartDate'] = $msg;
-         continue;
-      }
-      
-      // Retrieve total vacation days for current Employee
-      $cmodel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
-      $total  = $cmodel->getTotals(date('Y-m-d', $start), array('criteria' => array('Employee' => $employee)));
-      
-      // Calculate
-      if (!isset($total[0]))
-      {
-         $result['errors'][$index]['StartDate'] = 'Vacation days are not charged. Perhaps you didn\'t posted a document PeriodicClosing';
-         continue;
-      }
-      
-      $total = $total[0];
-      
-      if ($total['VacationDays'] <= 0)
-      {
-         $result['errors'][$index]['StartDate']  = 'Has no vacation days';
-         continue;
-      }
-
-      $vacatDays = 60*60*24*$total['VacationDays'];
-
-      if (empty($attrs['EndDate']))
-      {
-         $attrs['EndDate'] = date('Y-m-d', $start + $vacatDays);
-         continue;
-      }
-
-      if (($end = strtotime($attrs['EndDate'])) === -1)
-      {
-         $result['errors'][$index]['EndDate'] = 'Date must be in the format YYYY-MM-DD';
-      }
-      elseif ($end <= $start)
-      {
-         $result['errors'][$index]['EndDate'] = 'EndDate must be larger the StartDate';
-      }
-      elseif ($end - $start > $vacatDays)
-      {
-         $result['errors'][$index]['EndDate'] = 'The employee has '.$total['VacationDays'].
-            ' vacation days. EndDate should not exceed '.date('Y-m-d', $start + $vacatDays)
-         ;
       }
    }
    
