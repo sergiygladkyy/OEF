@@ -640,7 +640,11 @@ function insertId(uid, id, i)
 function displayErrors(prefix, errors)
 {
 	if (jQuery('.' + prefix + '_errors').size() == 0) return false;
-	
+	if (typeof errors == "undefined") return false;
+	if (typeof errors != "object") {
+		errors = [errors];
+	}
+		
 	jQuery('.' + prefix + '_errors').each(function (index) { 
 		this.innerHTML = '<li>' + errors.join('</li>\n<li>') + '</li>';
 	});
@@ -927,7 +931,7 @@ function oeEventDispatcher()
 					{
 						msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 					}
-					displayMessage(uid.replace(/\./g, '_'), "At processing form event there were some errors:" + msg + ".", false);
+					displayMessage(uid.replace(/\./g, '_'), msg + ".", false);
 				}
 				else
 				{
