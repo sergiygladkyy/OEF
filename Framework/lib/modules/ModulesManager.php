@@ -31,12 +31,15 @@ class ModulesManager
       );
    
    protected static
+      $object_types = array('catalogs', 'documents'),
       $instance     = null,
       $modules_dir  = null,
       $cache_dir    = null,
       $template_dir = null;
    
-   protected $map = array();
+   protected
+      $container = null, 
+      $map = array();
    
    /**
     * Get this object
@@ -363,7 +366,7 @@ class ModulesManager
             {
                return false;
             }
-            
+         
             $classname = ucfirst($kind).ucfirst($type).ucfirst($module_type).ucfirst($module_name);
             
             foreach ($events as $event)
@@ -373,6 +376,24 @@ class ModulesManager
                   $event_id = ($module_type == 'forms') ? $module_type.'.'.$module_name : $module_type;
                   
                   $code .= "\$dispatcher->connect('".$kind.'.'.$type.'.'.$event_id.'.'.$event."', array('".$classname."', '".$event."'));\n\n";
+               }
+            }
+            
+            // Add tabular events
+            if (in_array($kind, self::$object_types))
+            {
+               $CManager = $this->container->getConfigManager();
+      
+               $tabulars = $CManager->getInternalConfiguration($kind.'.tabulars.tabulars', $type);
+               
+               foreach ($tabulars as $ttype)
+               {
+                  $func = 'onBeforeAdding'.$ttype.'Record';
+                  
+                  if (in_array($func, $matches[1]))
+                  {
+                     $code .= "\$dispatcher->connect('".$kind.'.'.$type.'.tabulars.'.$ttype.".model.onBeforeAddingRecord', array('".$classname."', '".$func."'));\n\n";
+                  }
                }
             }
             
