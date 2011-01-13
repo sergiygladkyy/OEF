@@ -10,7 +10,7 @@
    var required = []; 
    var kind     = '';
    var type     = puid.type;
-   var item     = data.item;
+   var item     = data.item is map ? data.item : {};
    var select   = data.select;
    var tabulars = data.tabulars;
 }}
@@ -119,15 +119,68 @@
     </eval:foreach>
       <tr>
         <td class="ae_submit" colspan="2">
-          {{
-             var fClick = "javascript: appInactive(); ";
-             let fClick = fClick.."if (confirm('Tabular section Employees will be cleared. Continue?')) { ";
-             let fClick = fClick.." jQuery('#oe_fill_by_department').css('display','block'); }";
-             let fClick = fClick.."else { appActive(); }";
-             var cClick = "javascript: notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', "..json.emit({action: 'Calculate'})..")";
-          }}
-          <input type="button" value="Fill by Department" onclick="{{ fClick }}" />
-          <input type="button" value="Calculate" onclick="{{ cClick }}" />
+          <eval:if test="tabulars.Employees.status == True && #tabulars.Employees.result.list == 0">
+            <style type="text/css">
+              #oe_fill_by_department {
+                position: fixed;
+	            width: 160px;
+	            top: 50%;
+	            left: 50%;
+	            margin: -11% 0 0 -90px;
+	            background-color: #F7F7F7;
+	            padding: 6px 10px;
+	            z-index: 1000;
+	            border-radius: 5px;
+	            -moz-border-radius: 8px;
+	          }
+	          #oe_fill_by_department .oe_label {
+	            color: #555555;
+	          }
+	          #oe_fill_by_department .oe_select {
+	            padding: 10px 0 13px 0;
+	          }
+	          #oe_fill_by_department select {
+	            width: 160px;
+	          }
+	          #oe_fill_by_department .oe_buttons {
+	            text-align: center;
+	          }
+            </style>
+            <div id="oe_fill_by_department" style="display: none;">
+              <div class="oe_label">Choise department:</div>
+              <div class="oe_select">
+                <pre class="script">
+                  var name   = name_prefix..'[department]';
+                  var params = {select: select['department'], required: true, precision: {}};
+                  
+                  var template   = root..'/EditFormFields';
+                  var content    = wiki.template(template, ['reference', name, item['department'], params, type, template, prefix]);
+                  
+                  if (string.contains(content, 'href="'..template..'"')) {
+                    let content = 'Template not found';
+                  }
+                  
+                  content;
+                </pre>
+              </div>
+              <div class="oe_buttons">
+                {{
+                   var fClick = "javascript: jQuery('#oe_fill_by_department').css('display','none'); ";
+                   let fClick = fClick.."notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {'action': 'Fill'});";
+                }}
+                <input type="button" value="Fill" onclick="{{ fClick }}" />&nbsp;
+                <input type="button" value="Cancel" onclick="jQuery('#oe_fill_by_department').css('display','none'); appActive();" />
+              </div>
+            </div>
+            {{
+               let fClick = "javascript: appInactive(); ";
+               let fClick = fClick.."if (confirm('Tabular section Employees will be cleared. Continue?')) { ";
+               let fClick = fClick.." jQuery('#oe_fill_by_department').css('display','block'); }";
+               let fClick = fClick.."else { appActive(); }";
+            }}
+            <input type="button" value="Fill by Department" onclick="{{ fClick }}" />
+          </eval:if>
+          <input type="button" value="Calculate" onclick="{{ 'javascript: notifyFormEvent(\''..uid..'\', \'Default\', \'onFormUpdateRequest\', {\'action\': \'Calculate\'});' }}" />
           {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt;&nbsp; }}
           {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt; }}
         </td>
@@ -135,57 +188,5 @@
     </tbody>
     </table>
   </form>
-  <style type="text/css">
-    #oe_fill_by_department {
-      position: fixed;
-	  width: 160px;
-	  top: 50%;
-	  left: 50%;
-	  margin: -11% 0 0 -90px;
-	  background-color: #F7F7F7;
-	  padding: 6px 10px;
-	  z-index: 1000;
-	  border-radius: 5px;
-	  -moz-border-radius: 8px;
-	}
-	#oe_fill_by_department .oe_label {
-	  color: #555555;
-	}
-	#oe_fill_by_department .oe_select {
-	  padding: 10px 0 13px 0;
-	}
-	#oe_fill_by_department select {
-	  width: 160px;
-	}
-	#oe_fill_by_department .oe_buttons {
-	  text-align: center;
-	}
-  </style>
-  <div id="oe_fill_by_department" style="display: none;">
-    <div class="oe_label">Choise department:<div/>
-    <div class="oe_select">
-      <pre class="script">
-        var name   = name_prefix..'[department]';
-        var params = {select: select['department'], required: true, precision: {}};
-        
-        var template   = root..'/EditFormFields';
-        var content    = wiki.template(template, ['reference', name, item['department'], params, type, template, prefix]);
-        
-        if (string.contains(content, 'href="'..template..'"')) {
-          let content = 'Template not found';
-        }
-        
-        content;
-      </pre>
-    </div>
-    <div class="oe_buttons">
-      {{
-         let fClick = "javascript: jQuery('#oe_fill_by_department').css('display','none'); ";
-         let fClick = fClick.."notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', "..json.emit({action: 'Fill'})..");";
-      }}
-      <input type="button" value="Fill" onclick="{{ fClick }}" />&nbsp;
-      <input type="button" value="Cancel" onclick="jQuery('#oe_fill_by_department').css('display','none'); appActive();" />
-    </div>
-  </div>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
 </eval:else>

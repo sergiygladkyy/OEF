@@ -310,9 +310,14 @@ $_dictionary = array(
       
       // Document VacationOrder
       'VacationOrder' => array(
+         'recorder_for' => array(
+            'information_registry.ScheduleVarianceRecords',
+            'AccumulationRegisters.EmployeeVacationDays'
+         ),
+         
          'fields' => array(
-            'Manager' => array(
-               'reference' => 'catalogs.Employees',
+            'Responsible' => array(
+               'reference' => 'catalogs.SystemUsers',
                'precision' => array(
                   'required' => true
                )
@@ -322,12 +327,6 @@ $_dictionary = array(
          'tabular_sections' => array(
             'Employees' => array(
                'fields' => array(
-                  'NaturalPerson' => array(
-                     'reference' => 'catalogs.NaturalPersons',
-                     'precision' => array(
-                        'required' => true
-                     )
-                  ),
                   'Employee' => array(
                      'reference' => 'catalogs.Employees',
                      'precision' => array(
@@ -355,6 +354,14 @@ $_dictionary = array(
                )
             )
          )
+      ),
+      
+      // Document PeriodicClosing
+      'PeriodicClosing' => array(
+         'recorder_for' => array(
+            'AccumulationRegisters.EmployeeVacationDays'
+         )
+         // Only system attributes
       ),
       
       // Document ProjectRegistration
@@ -644,6 +651,50 @@ $_dictionary = array(
          )
       ),
       
+      // Schedule Variance Records
+      'ScheduleVarianceRecords' => array(
+         'fields' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DateFrom' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DateTo' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'VarianceKind' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('Vacation', 'Sick', 'Other')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'Vacation', 2 => 'Sick', 3 => 'Other'),
+                  'required' => true
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'VacationOrder'
+         )
+      ),
+      
    /*   'ProjectTimeRecords' => array(
          'dimensions' => array(
             'Project' => array(
@@ -827,6 +878,47 @@ $_dictionary = array(
          )
       )*/
    ),
+   
+   
+   
+   //////////////////////////////////
+   // Accumulation Registers Section
+   //////////////////////////////////
+   'AccumulationRegisters' => array(
+      'EmployeeVacationDays'  => array(
+         'register_type' => 'Balances',
+         
+         'dimensions' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         //'periodical' - Always second
+         
+         'fields' => array(
+            'VacationDays' => array(
+               'type' => 'int',
+               'sql'  => array(
+                  'type' => "SMALLINT UNSIGNED NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'min' => 0
+               )
+            )
+         ),
+         
+         'recorders' => array(
+             'VacationOrder',
+             'PeriodicClosing'
+         )
+      )
+   ),
+   
+   
    
    ///////////////////
    // Reports Section
