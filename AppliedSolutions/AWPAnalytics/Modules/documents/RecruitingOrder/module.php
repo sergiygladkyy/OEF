@@ -235,15 +235,54 @@ function onUnpost($event)
       'key'        => 'Employee'
    );
    
-   if (null === ($employess = $persModel->getEntities(null, $options)) || isset($employess['errors']))
+   if (null === ($employees = $persModel->getEntities(null, $options)) || isset($employees['errors']))
    {
       throw new Exception('DataBase error');
    }
    
-   if (!empty($employess))
+   if (!empty($employees))
    {
+      $ids = array();
+      $msg = '';
+      
+      // Check information_registry.StaffHistoricalRecords information_registry.StaffEmploymentPeriods
+      foreach ($employees as $id => $row)
+      {
+         $ids[] = $id;
+         
+         $links = MEmployees::getListMovements($row['StartDate'], $id);
+         
+         if (!empty($links))
+         {
+            foreach ($links as $link)
+            {
+               $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
+            }
+         }
+      }
+      
+      // Check information_registry.ScheduleVarianceRecords
+      foreach ($employees as $id => $row)
+      {
+         $links = MVacation::getListVacationOrder($row['StartDate'], $id);
+         
+         if (!empty($links))
+         {
+            foreach ($links as $link)
+            {
+               $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
+            }
+         }
+      }
+      
+      if ($msg)
+      {
+         throw new Exception('You must unposted the following documents:<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">'.$msg.'</ul>');
+      }
+      
+      // Update catalog Employees
       $odb   = $container->getODBManager();
-      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 0 WHERE `_id` IN (".implode(',', array_keys($employess)).")";
+      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 0 WHERE `_id` IN (".implode(',', $ids).")";
       
       if (null === $odb->executeQuery($query))
       {
@@ -251,6 +290,7 @@ function onUnpost($event)
       }
    }
 
+   // Unpost document
    $pRes = $persModel->delete(true, $options);
    $hRes = $histModel->delete(true, $options);
    

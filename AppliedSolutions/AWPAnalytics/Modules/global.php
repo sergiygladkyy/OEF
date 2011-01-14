@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Utility global functions
+ * 
+ * @author alexander.yemelianov
+ */
 class MGlobal
 {
    public static function dateToTimeStamp($date, $day = 0)
@@ -61,6 +66,12 @@ class MGlobal
 
 
 
+
+/**
+ * Vacation global functions
+ * 
+ * @author alexander.yemelianov
+ */
 class MVacation
 {
    /**
@@ -231,5 +242,144 @@ class MVacation
             ' vacation days. EndDate should not exceed '.date('Y-m-d', $start + $vacatDays)
          );
       }
+   }
+   
+   /**
+    *  
+    * @param string $from
+    * @return array 
+    */
+   public static function getListVacationOrder($from, $employees = array())
+   {
+      $links = array();
+      
+      $container  = Container::getInstance();
+      $attributes = array();
+      $criterion  = array();
+      
+      if (!empty($employees))
+      {
+         if (!is_array($employees)) $employees = array($employees);
+         
+         $values['Employee'] = implode(',', $employees);
+         
+         $attributes[] = "Employee";
+         $criterion[]  = "`Employee` IN (%%Employee%%)";
+      }
+      
+      $values['DateTo'] = $from;
+      
+      $attributes[] = "DateTo";
+      $criterion[]  = "`DateTo` > %%DateTo%%";
+      
+      $options = array(
+         'attributes' => $attributes,
+         'criterion'  => implode(' AND ', $criterion),
+      );
+      
+      $cmodel = $container->getCModel('information_registry', 'ScheduleVarianceRecords');
+      $result = $cmodel->getEntities($values, $options);
+      
+      if ($result === null)
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (isset($result['errors']))
+      {
+         throw new Exception(implode('<br>', $result['errors']));
+      }
+      
+      if (!empty($result))
+      {
+         $docs = array();
+         
+         foreach ($result as $row)
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+          
+         foreach ($docs as $_type => $ids)
+         {
+            $ids   = array_unique($ids);
+            $links = array_merge($links, $container->getCModel('documents', $_type)->retrieveLinkData($ids));            
+         }
+      }
+      
+      return $links;
+   }
+}
+
+
+/**
+ * Employees global functions
+ * 
+ * @author alexander.yemelianov
+ */
+class MEmployees
+{
+   /**
+    *  
+    * @param string $from
+    * @return array 
+    */
+   public static function getListMovements($from, $employees = array())
+   {
+      $links = array();
+      
+      $container  = Container::getInstance();
+      $attributes = array();
+      $criterion  = array();
+      
+      if (!empty($employees))
+      {
+         if (!is_array($employees)) $employees = array($employees);
+         
+         $values['Employee'] = implode(',', $employees);
+         
+         $attributes[] = "Employee";
+         $criterion[]  = "`Employee` IN (%%Employee%%)";
+      }
+      
+      $values['Period'] = $from;
+      
+      $attributes[] = "Period";
+      $criterion[]  = "`Period` > %%Period%%";
+      
+      $options = array(
+         'attributes' => $attributes,
+         'criterion'  => implode(' AND ', $criterion),
+      );
+      
+      $cmodel = $container->getCModel('information_registry', 'StaffHistoricalRecords');
+      $result = $cmodel->getEntities($values, $options);
+      
+      if ($result === null)
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (isset($result['errors']))
+      {
+         throw new Exception(implode('<br>', $result['errors']));
+      }
+      
+      if (!empty($result))
+      {
+         $docs = array();
+         
+         foreach ($result as $row)
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+          
+         foreach ($docs as $_type => $ids)
+         {
+            $ids   = array_unique($ids);
+            $links = array_merge($links, $container->getCModel('documents', $_type)->retrieveLinkData($ids));            
+         }
+      }
+      
+      return $links;
    }
 }
