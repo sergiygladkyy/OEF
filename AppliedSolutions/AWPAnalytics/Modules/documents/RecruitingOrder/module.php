@@ -242,43 +242,25 @@ function onUnpost($event)
    
    if (!empty($employees))
    {
-      $ids = array();
-      $msg = '';
+      $ids   = array();
+      $links = array();
       
-      // Check information_registry.StaffHistoricalRecords information_registry.StaffEmploymentPeriods
+      // Check related documents
       foreach ($employees as $id => $row)
       {
          $ids[] = $id;
          
-         $links = MEmployees::getListMovements($row['StartDate'], $id);
+         // Check RecruitingOrder and DismissalOrder
+         $links = array_merge_recursive($links, MEmployees::getListMovements($row['StartDate'], $id));
          
-         if (!empty($links))
-         {
-            foreach ($links as $link)
-            {
-               $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
-            }
-         }
-      }
-      
-      // Check information_registry.ScheduleVarianceRecords
-      foreach ($employees as $id => $row)
-      {
-         $links = MVacation::getListVacationOrder($row['StartDate'], $id);
+         // Check VacationOrder
+         $links = array_merge_recursive($links, MVacation::getListVacationOrder($row['StartDate'], $id));
          
-         if (!empty($links))
-         {
-            foreach ($links as $link)
-            {
-               $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
-            }
-         }
+         // Check PeriodicClosing
+         $links = array_merge_recursive($links, MPeriodicClosing::getListMovements($row['StartDate'], $id));
       }
-      
-      if ($msg)
-      {
-         throw new Exception('You must unposted the following documents:<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">'.$msg.'</ul>');
-      }
+   
+      if (!empty($links)) MGlobal::returnMessageByLinks($links);
       
       // Update catalog Employees
       $odb   = $container->getODBManager();

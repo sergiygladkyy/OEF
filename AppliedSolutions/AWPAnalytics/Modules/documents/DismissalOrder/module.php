@@ -108,6 +108,16 @@ function onPost($event)
       throw new Exception(implode('<br>', $errors));
    }
    
+   // Check VacationOrder
+   $links = array();
+   
+   foreach ($records as $employee => $values)
+   {
+      $links = array_merge_recursive($links, MVacation::getListVacationOrder(date('Y-m-d', $values['DismissalDate']), $employee));
+   }
+   
+   if (!empty($links)) MGlobal::returnMessageByLinks($links);
+     
    // Initialize IRs
    $persModel = $container->getModel('information_registry', 'StaffEmploymentPeriods');
    $histModel = $container->getModel('information_registry', 'StaffHistoricalRecords');
@@ -187,15 +197,33 @@ function onUnpost($event)
       'key'        => 'Employee'
    );
    
-   if (null === ($employess = $persModel->getEntities(null, $options)) || isset($employess['errors']))
+   if (null === ($employees = $persModel->getEntities(null, $options)) || isset($employees['errors']))
    {
       throw new Exception('DataBase error');
    }
    
-   if (!empty($employess))
+   if (!empty($employees))
    {
+      $ids   = array();
+      $links = array();
+      
+      // Check related documents
+      foreach ($employees as $id => $row)
+      {
+         $ids[] = $id;
+         
+         // Check RecruitingOrder and DismissalOrder
+         $links = array_merge_recursive($links, MEmployees::getListMovements($row['EndDate'], $id));
+         
+         // Check PeriodicClosing
+         $links = array_merge_recursive($links, MPeriodicClosing::getListMovements($row['EndDate'], $id));
+      }
+   
+      if (!empty($links)) MGlobal::returnMessageByLinks($links);
+      
+      // Update catalog Employees
       $odb   = $container->getODBManager();
-      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 1 WHERE `_id` IN (".implode(',', array_keys($employess)).")";
+      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 1 WHERE `_id` IN (".implode(',', $ids).")";
       
       if (null === $odb->executeQuery($query))
       {
@@ -210,4 +238,3 @@ function onUnpost($event)
    
    $event->setReturnValue($return);
 }
-?>

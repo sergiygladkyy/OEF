@@ -62,6 +62,65 @@ class MGlobal
 
       return strftime($format, $mt);
    }
+   
+   /**
+    * Get document links
+    * 
+    * [
+    *   $docs = array(
+    *      <type> => array(id_1, id_2, .., id_N)
+    *   )
+    * ]
+    * 
+    * @param array $docs
+    * @return array or null
+    */
+   public static function getDocumentLinks(array $docs)
+   {
+      $links = array();
+      
+      $container  = Container::getInstance();
+      
+      foreach ($docs as $type => $ids)
+      {
+         $ids = array_unique($ids);
+
+         if (null === ($res = $container->getCModel('documents', $type)->retrieveLinkData($ids)))
+         {
+            return null;
+         }
+         
+         $links[$type] = empty($links[$type]) ? $res : array_merge($links[$type], $res);
+      }
+      
+      return $links;
+   }
+   
+   /**
+    *
+    * @param array& $links
+    * @return void
+    */
+   public static function returnMessageByLinks($links)
+   {
+      $msg = 'You must unposted the following documents:<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">';
+
+      $prosessed = array();
+
+      foreach ($links as $doc_type => $_links)
+      {
+         foreach ($_links as $link)
+         {
+            if (isset($prosessed[$doc_type][$link['value']])) continue;
+
+            $prosessed[$doc_type][$link['value']] = true;
+
+            $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
+         }
+      }
+
+      throw new Exception($msg.'</ul>');
+   }
 }
 
 
@@ -270,7 +329,7 @@ class MVacation
       $values['DateTo'] = $from;
       
       $attributes[] = "DateTo";
-      $criterion[]  = "`DateTo` > %%DateTo%%";
+      $criterion[]  = "`DateTo` > %%DateTo%% GROUP BY `_rec_type`, `_rec_id`";
       
       $options = array(
          'attributes' => $attributes,
@@ -299,10 +358,9 @@ class MVacation
             $docs[$row['_rec_type']][] = $row['_rec_id'];
          }
           
-         foreach ($docs as $_type => $ids)
+         if (null === ($links = MGlobal::getDocumentLinks($docs)))
          {
-            $ids   = array_unique($ids);
-            $links = array_merge($links, $container->getCModel('documents', $_type)->retrieveLinkData($ids));            
+            throw new Exception('Database error');
          }
       }
       
@@ -321,6 +379,7 @@ class MEmployees
    /**
     *  
     * @param string $from
+    * @param mixed  $employees
     * @return array 
     */
    public static function getListMovements($from, $employees = array())
@@ -344,7 +403,7 @@ class MEmployees
       $values['Period'] = $from;
       
       $attributes[] = "Period";
-      $criterion[]  = "`Period` > %%Period%%";
+      $criterion[]  = "`Period` > %%Period%% GROUP BY `_rec_type`, `_rec_id`";
       
       $options = array(
          'attributes' => $attributes,
@@ -372,11 +431,82 @@ class MEmployees
          {
             $docs[$row['_rec_type']][] = $row['_rec_id'];
          }
-          
-         foreach ($docs as $_type => $ids)
+         
+         if (null === ($links = MGlobal::getDocumentLinks($docs)))
          {
-            $ids   = array_unique($ids);
-            $links = array_merge($links, $container->getCModel('documents', $_type)->retrieveLinkData($ids));            
+            throw new Exception('Database error');
+         }
+      }
+      
+      return $links;
+   }
+}
+
+
+
+
+/**
+ * PeriodicClosing global functions
+ * 
+ * @author alexander.yemelianov
+ */
+class MPeriodicClosing
+{
+   /**
+    *  
+    * @param string $from
+    * @param mixed  $employees
+    * @return array 
+    */
+   public static function getListMovements($from, $employees = array())
+   {
+      $links = array();
+      
+      $container  = Container::getInstance();
+      $values     = array('Period' => $from);
+      $attributes = array('%recorder_type', 'Period');
+      $criterion  = array("%recorder_type = 'PeriodicClosing' AND `Period` >= %%Period%%");
+      
+      if (!empty($employees))
+      {
+         if (!is_array($employees)) $employees = array($employees);
+         
+         $values['Employee'] = implode(',', $employees);
+         
+         $attributes[] = "Employee";
+         $criterion[]  = "`Employee` IN (%%Employee%%)";
+      }
+      
+      $options = array(
+         'attributes' => $attributes,
+         'criterion'  => implode(' AND ', $criterion).' GROUP BY `_rec_type`, `_rec_id`',
+      );
+      
+      $cmodel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
+      $result = $cmodel->getEntities($values, $options);
+      
+      if ($result === null)
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (isset($result['errors']))
+      {
+         throw new Exception(implode('<br>', $result['errors']));
+      }
+      
+      if (!empty($result))
+      {
+         $docs = array();
+         
+         foreach ($result as $row)
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+         
+         if (null === ($links = MGlobal::getDocumentLinks($docs)))
+         {
+            throw new Exception('Database error');
          }
       }
       
