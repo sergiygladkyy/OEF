@@ -66,7 +66,7 @@ class CatalogsModel extends BaseObjectsModel
       // Check permissions
       if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.View'))
       {
-         return array();
+         return null;
       }
       
       // Execute method
@@ -80,7 +80,7 @@ class CatalogsModel extends BaseObjectsModel
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);
       
-      if (is_null($res)) return array();
+      if (is_null($res)) return null;
       
       $list = array();
       

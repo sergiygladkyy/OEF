@@ -239,7 +239,7 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
     * 
     * @param mixed $ids
     * @param array $options
-    * @return array
+    * @return array or null
     */
    abstract public function retrieveLinkData($ids, array $options = array());
    

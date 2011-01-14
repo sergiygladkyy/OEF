@@ -69,7 +69,7 @@ abstract class BaseEntitiesModel extends BaseModel
     * 
     * @param mixed $values - array or value
     * @param array $options
-    * @return boolean
+    * @return boolean or null
     */
    public function hasEntities($values, array $options = array())
    {
@@ -84,7 +84,7 @@ abstract class BaseEntitiesModel extends BaseModel
       $query = "SELECT count(*) AS cnt FROM `".$db_map['table']."` ".$params['criteria'];
       $res   = $db->loadAssoc($query);
       
-      return (!$res || !$res['cnt']) ? false : true;
+      return (is_null($res) ? null : ($res['cnt'] ? true : false));
    }
    
    /**
