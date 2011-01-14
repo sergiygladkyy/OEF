@@ -532,7 +532,7 @@ function executePost(kind, type, id, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Post there were some errors:" + msg + ".", false);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_post_flag .ae_field_not_posted');
@@ -583,7 +583,7 @@ function executeClearPosting(kind, type, id, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Clear posting there were some errors:" + msg + ".", false);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_post_flag .ae_field_posted');

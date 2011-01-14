@@ -377,7 +377,7 @@ function executePostListItem(kind, type, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Post there were some errors:" + msg + ".", false);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_list_block .ae_current').find('.ae_not_posted');
@@ -426,7 +426,7 @@ function executeClearPostingListItem(kind, type, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Clear posting there were some errors:" + msg + ".", false);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_list_block .ae_current').find('.ae_posted');
