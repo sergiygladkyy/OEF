@@ -267,7 +267,8 @@ $_dictionary = array(
       'DismissalOrder' => array(
          'recorder_for' => array(
             'information_registry.StaffEmploymentPeriods',
-            'information_registry.StaffHistoricalRecords'
+            'information_registry.StaffHistoricalRecords',
+            'AccumulationRegisters.EmployeeVacationDays'
          ),
          
          'fields' => array(
@@ -903,7 +904,7 @@ $_dictionary = array(
             'VacationDays' => array(
                'type' => 'int',
                'sql'  => array(
-                  'type' => "SMALLINT UNSIGNED NOT NULL default 0"
+                  'type' => "SMALLINT NOT NULL default 0"
                ),
                'precision' => array(
                   'min' => 0
@@ -913,7 +914,8 @@ $_dictionary = array(
          
          'recorders' => array(
              'VacationOrder',
-             'PeriodicClosing'
+             'PeriodicClosing',
+             'DismissalOrder'
          )
       )
    ),
