@@ -177,7 +177,7 @@ class MVacation
       $attrs['StartDate'] = date('Y-m-d', $start);
       
       // Check previous event
-      $query = "SELECT MAX(`Period`), `RegisteredEvent` ".
+      $query = "SELECT MAX(`Period`), `Schedule`, `RegisteredEvent` ".
                "FROM information_registry.StaffHistoricalRecords ".
                "WHERE `Employee` = ".$employee." AND `Period` <= '".date('Y-m-d', $start)."'";
       
@@ -193,6 +193,8 @@ class MVacation
       {
          return array('StartDate' => 'Employee was firing in this period');
       }
+      
+      $schedule = $res['Schedule']; 
       
       // Check next events
       $query = "SELECT `Period`, `RegisteredEvent`, `_rec_type`, `_rec_id` ".
@@ -278,11 +280,13 @@ class MVacation
          return array('StartDate' => 'Has no vacation days');
       }
 
+      $maxEnd = self::getEndDate($schedule, date('Y-m-d', $start), $total['VacationDays']);
+      
       $vacatDays = 60*60*24*$total['VacationDays'];
 
       if (empty($attrs['EndDate']))
       {
-         $attrs['EndDate'] = date('Y-m-d', $start + $vacatDays);
+         $attrs['EndDate'] = date('Y-m-d', $maxEnd);
          
          return array();
       }
@@ -295,12 +299,187 @@ class MVacation
       {
          return array('EndDate' => 'EndDate must be larger the StartDate');
       }
-      elseif ($end - $start > $vacatDays)
+      elseif ($end > $maxEnd)
       {
          return array('EndDate' => 'The employee has '.$total['VacationDays'].
-            ' vacation days. EndDate should not exceed '.date('Y-m-d', $start + $vacatDays)
+            ' vacation days excluding weekends and holidays. EndDate should not exceed '.date('Y-m-d', $maxEnd)
          );
       }
+   }
+   
+   /**
+    * Get end date
+    * 
+    * @param int $schedule - id
+    * @param string $start - start date
+    * @param int $days     - number of days
+    * @return int - timestamp
+    */
+   public static function getEndDate($schedule, $start, $days)
+   {
+      $container = Container::getInstance();
+      
+      if (($start = strtotime($start)) === -1)
+      {
+         throw new Exception('Date must be in the format YYYY-MM-DD');
+      }
+      
+      $cmodel = $container->getCModel('information_registry', 'BaseCalendar');
+      $smodel = $container->getCModel('information_registry', 'Schedules');
+      
+      $copt = array('attributes' => array('Date'));
+      
+      while ($days > 0)
+      {
+         $date = date('Y-m-d', $start);
+         
+         // Check calendar
+         if (null === ($res = $cmodel->getEntities($date, $copt)) || isset($res['errors']))
+         {
+            throw new Exception('Database error');
+         }
+         
+         if (empty($res))
+         {
+            throw new Exception('Missing calendar on the '.$date);
+         }
+         
+         if ($res[0]['Working'] != 0)
+         {
+            // Check Schedule
+            $sopt = array('criterion' => "WHERE `Schedule`={$schedule} AND `Date`='".$date."'");
+      
+            if (null === ($res = $smodel->getEntities(null, $sopt)) || isset($res['errors']))
+            {
+               throw new Exception('Database error');
+            }
+            
+            if (empty($res))
+            {
+               throw new Exception('Missing schedule on the '.$date);
+            }
+             
+            if ($res[0]['Hours'] != 0)
+            {
+               $days--;
+            }
+         }
+         
+         $start += 24*60*60;
+      }
+      
+      return $start;
+   }
+
+   /**
+    * Get number of days
+    * 
+    * @param int $schedule - id
+    * @param string $start - start date
+    * @param string $end   - end date
+    * @return int
+    */
+   public static function getDays($schedule, $start, $end)
+   {
+      $days = 0;
+      
+      $container = Container::getInstance();
+      
+      if (($start = strtotime($start)) === -1)
+      {
+         throw new Exception('Date must be in the format YYYY-MM-DD');
+      }
+      
+      if (($end = strtotime($end)) === -1)
+      {
+         throw new Exception('Date must be in the format YYYY-MM-DD');
+      }
+      
+      if ($start >= $end)
+      {
+         throw new Exception('EndDate must be larger the StartDate');
+      }
+      
+      $cmodel = $container->getCModel('information_registry', 'BaseCalendar');
+      $smodel = $container->getCModel('information_registry', 'Schedules');
+      
+      $copt = array('attributes' => array('Date'));
+      
+      while ($start < $end)
+      {
+         $date = date('Y-m-d', $start);
+         
+         // Check calendar
+         if (null === ($res = $cmodel->getEntities($date, $copt)) || isset($res['errors']))
+         {
+            throw new Exception('Database error');
+         }
+         
+         if (empty($res))
+         {
+            throw new Exception('Missing calendar on the '.$date);
+         }
+         
+         if ($res[0]['Working'] != 0)
+         {
+            // Check Schedule
+            $sopt = array('criterion' => "WHERE `Schedule`={$schedule} AND `Date`='".$date."'");
+      
+            if (null === ($res = $smodel->getEntities(null, $sopt)) || isset($res['errors']))
+            {
+               throw new Exception('Database error');
+            }
+            
+            if (empty($res))
+            {
+               throw new Exception('Missing schedule on the '.$date);
+            }
+             
+            if ($res[0]['Hours'] != 0)
+            {
+               $days++;
+            }
+         }
+         
+         $start += 24*60*60;
+      }
+      
+      return $days;
+   }
+   
+   /**
+    * Get number of days
+    * 
+    * @param int $employee - id
+    * @param string $start - start date
+    * @param string $end   - end date
+    * @return int
+    */
+   public static function getDaysByEmployee($employee, $start, $end)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Get previous event
+      $query = "SELECT MAX(`Period`), `Schedule`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee` = ".$employee." AND `Period` <= '".$start."'";
+      
+      if (null === ($res = $odb->loadAssoc($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      elseif (empty($res))
+      {
+         throw new Exception('Employee did not worked in this period');
+      }
+      elseif ($res['RegisteredEvent'] == 'Firing')
+      {
+         throw new Exception('Employee was firing in this period');
+      }
+      
+      $schedule = $res['Schedule'];
+
+      return self::getDays($schedule, $start, $end);
    }
    
    /**

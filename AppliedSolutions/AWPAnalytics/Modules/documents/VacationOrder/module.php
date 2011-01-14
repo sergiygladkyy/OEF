@@ -41,7 +41,7 @@ function onPost($event)
    
    $varModel = $container->getModel('information_registry', 'ScheduleVarianceRecords');
    $vacModel = $container->getModel('AccumulationRegisters', 'EmployeeVacationDays');
-
+   
    if (!$varModel->setRecorder($type, $id) || !$vacModel->setRecorder($type, $id))
    {
       throw new Exception('Invalid recorder');
@@ -76,7 +76,7 @@ function onPost($event)
       
       if (!$from || $from > $start) $from = $start;
       
-      $vacationDays = floor(($end - $start)/(24*60*60));
+      $vacationDays = MVacation::getDaysByEmployee($row['Employee'], date('Y-m-d', $start), date('Y-m-d', $end));
       
       // ScheduleVarianceRecords
       if (!$IR->setAttribute('Employee', $row['Employee']))  $err[] = 'Invalid value for attribute Employee';
