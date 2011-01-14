@@ -71,23 +71,12 @@ function onPost($event)
       {
          if (is_null($fDate) || $fDate > $end)
          {
-            $days[$employee] = $row['YearlyVacationDays']/12;
-         }
-         else
-         {
-            $days[$employee] = floor($row['YearlyVacationDays']/12*((int) date('d', $fDate) - 1)/((int) date('d', $end)));
+            $days[$employee] = floor($row['YearlyVacationDays']/12);
          }
       }
-      else
+      elseif (is_null($fDate) || $fDate > $end)
       {
-         if (is_null($fDate) || $fDate > $end)
-         {
-            $days[$employee] = floor($row['YearlyVacationDays']/12*((int) date('d', $end) - (int) date('d', $hDate) + 1)/((int) date('d', $end)));
-         }
-         else
-         {
-            $days[$employee] = floor($row['YearlyVacationDays']/12*((int) date('d', $fDate) - (int) date('d', $hDate))/((int) date('d', $end)));
-         }
+         $days[$employee] = floor($row['YearlyVacationDays']/12*((int) date('d', $end) - (int) date('d', $hDate) + 1)/((int) date('d', $end)));
       }
    }
    

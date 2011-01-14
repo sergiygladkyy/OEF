@@ -240,31 +240,11 @@ function onUnpost($event)
       throw new Exception('DataBase error');
    }
    
+   // Update catalog Employees
    if (!empty($employees))
    {
-      $ids   = array();
-      $links = array();
-      
-      // Check related documents
-      foreach ($employees as $id => $row)
-      {
-         $ids[] = $id;
-         
-         // Check RecruitingOrder and DismissalOrder
-         $links = array_merge_recursive($links, MEmployees::getListMovements($row['StartDate'], $id));
-         
-         // Check VacationOrder
-         $links = array_merge_recursive($links, MVacation::getListVacationOrder($row['StartDate'], $id));
-         
-         // Check PeriodicClosing
-         $links = array_merge_recursive($links, MPeriodicClosing::getListMovements($row['StartDate'], $id));
-      }
-   
-      if (!empty($links)) MGlobal::returnMessageByLinks($links);
-      
-      // Update catalog Employees
       $odb   = $container->getODBManager();
-      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 0 WHERE `_id` IN (".implode(',', $ids).")";
+      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 0 WHERE `_id` IN (".implode(',', array_keys($employees)).")";
       
       if (null === $odb->executeQuery($query))
       {

@@ -121,12 +121,20 @@ function onPost($event)
    // Initialize IRs
    $persModel = $container->getModel('information_registry', 'StaffEmploymentPeriods');
    $histModel = $container->getModel('information_registry', 'StaffHistoricalRecords');
+   $vacModel  = $container->getModel('AccumulationRegisters', 'EmployeeVacationDays');
+   $vacCModel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
    $errors = array();
    
-   if (!$histModel->setRecorder($type, $id) || !$persModel->setRecorder($type, $id))
+   if (!$histModel->setRecorder($type, $id) || 
+       !$persModel->setRecorder($type, $id) ||
+       !$vacModel ->setRecorder($type, $id)
+   )
    {
       throw new Exception('Invalid recorder');
    }
+   
+   $vacModel->setOperation('-');
+   $vacModel->setOption('auto_update_total', true);
    
    // Update NowEmployed flag for Employees
    $query = "UPDATE catalogs.Employees SET `NowEmployed` = 0 WHERE `_id` IN (".implode(',', $emplIDS).")";
@@ -140,10 +148,35 @@ function onPost($event)
    foreach ($records as $employee => $values)
    {
       $err = array();
-      $pIR = clone $persModel;
-      $hIR = clone $histModel;
       
       $values['DismissalDate'] = date('Y-m-d', $values['DismissalDate']);
+      
+      $total = $vacCModel->getTotals($values['DismissalDate'], array('criteria' => array('Employee' => $employee)));
+      
+      if (isset($total[0]))
+      {
+         $total  = $total[0]['VacationDays'];
+         $period = $values['DismissalDate'].' 00:00:00';
+         
+         $AR = clone $vacModel;
+         
+         // EmployeeVacationDays
+         if (!$AR->setAttribute('Employee',     $employee)) $err[] = 'Invalid value for attribute Employee';
+         if (!$AR->setAttribute('Period',       $period))   $err[] = 'Invalid value for attribute Period';
+         if (!$AR->setAttribute('VacationDays', $total))    $err[] = 'Invalid value for attribute VacationDays';
+         
+         if (!$err)
+         {
+            if ($err = $AR->save())
+            {
+               throw new Exception('Can\'t add record in EmployeeVacationDays');
+            }
+         }
+         else throw new Exception('Invalid attributes for EmployeeVacationDays');
+      }
+      
+      $pIR = clone $persModel;
+      $hIR = clone $histModel;
       
       // StaffEmploymentPeriods
       if (!$pIR->setAttribute('Employee',  $employee))              $err[] = 'Invalid value for attribute Employee';
@@ -190,6 +223,7 @@ function onUnpost($event)
    
    $persModel = $container->getCModel('information_registry', 'StaffEmploymentPeriods');
    $histModel = $container->getCModel('information_registry', 'StaffHistoricalRecords');
+   $vacModel  = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
    
    $options = array(
       'attributes' => array('%recorder_type', '%recorder_id'),
@@ -204,26 +238,8 @@ function onUnpost($event)
    
    if (!empty($employees))
    {
-      $ids   = array();
-      $links = array();
-      
-      // Check related documents
-      foreach ($employees as $id => $row)
-      {
-         $ids[] = $id;
-         
-         // Check RecruitingOrder and DismissalOrder
-         $links = array_merge_recursive($links, MEmployees::getListMovements($row['EndDate'], $id));
-         
-         // Check PeriodicClosing
-         $links = array_merge_recursive($links, MPeriodicClosing::getListMovements($row['EndDate'], $id));
-      }
-   
-      if (!empty($links)) MGlobal::returnMessageByLinks($links);
-      
-      // Update catalog Employees
       $odb   = $container->getODBManager();
-      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 1 WHERE `_id` IN (".implode(',', $ids).")";
+      $query = "UPDATE catalogs.Employees SET `NowEmployed` = 1 WHERE `_id` IN (".implode(',', array_keys($employees)).")";
       
       if (null === $odb->executeQuery($query))
       {
@@ -233,8 +249,9 @@ function onUnpost($event)
 
    $pRes = $persModel->delete(true, $options);
    $hRes = $histModel->delete(true, $options);
+   $vRes = $vacModel ->delete(true, $options);
    
-   $return = (empty($pRes) && empty($hRes)) ? true : false;
+   $return = (empty($pRes) && empty($hRes) && empty($vRes)) ? true : false;
    
    $event->setReturnValue($return);
 }
