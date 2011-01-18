@@ -7,7 +7,8 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
-   var required = []; 
+   var required   = [];
+   var references = [];
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -30,8 +31,9 @@
       var name_prefix = 'aeform['..kind..']['..type..']';
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields   = entities.getInternalConfiguration(kind..'.fields', type);
-      let required = entities.getInternalConfiguration(kind..'.required', type);
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let required   = entities.getInternalConfiguration(kind..'.required', type);
+      let references = entities.getInternalConfiguration(kind..'.references', type);
       
       var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
       if (item._id > 0) {
@@ -78,7 +80,11 @@
           <pre class="script">
             var name   = name_prefix..'[attributes]['..field..']';
             var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field]};
-          
+            
+            if (references[field]) {
+              let params ..= {reference: references[field]};
+            }
+            
             var template   = root..'/EditFormFields';
             var content    = wiki.template(template, [field_type[field], name, item[field], params, type, template, prefix]);
       

@@ -2,6 +2,7 @@
 var ae_index = {};
 var ae_name_prefix = {};
 var ae_template = {};
+var pageAPI = '';
 
 var custom_edit_form_options = {
 	options: {},
@@ -50,6 +51,13 @@ jQuery(document).ready(function() {
     	submitObjectForm(this, object_edit_form_options);
     	
     	return false;
+    });
+    
+    jQuery('.oef_dynamic_update').each(function(index) {
+    	jQuery(this).change(function(event) {
+    	    var dynamicUpdate = new oefDynamicUpdate();
+    	    dynamicUpdate.processEvent(event);
+    	});
     });
     
     jQuery('.ae_command').each(function(index) {
@@ -426,6 +434,12 @@ function addTabularSectionItem(uid, prefix)
 	content = content.replace(/%%i%%/g, ae_index[uid]);
 	content = content.replace(/%%script%%/g, 'script');
 	jQuery('#' + prefix + '_edit_block').append(content);
+	jQuery('#' + prefix + '_' + ae_index[uid] + '_item .oef_dynamic_update').each(function(index) {
+		jQuery(this).change(function(event) {
+    	    var dynamicUpdate = new oefDynamicUpdate();
+    	    dynamicUpdate.processEvent(event);
+    	});
+    });
 	
 	return ae_index[uid];
 }
@@ -1284,4 +1298,270 @@ function oeEventDispatcher()
 		
 		return ret;
 	};
+}
+
+
+
+/************************************ Dynamic update ****************************************/
+
+function oefDynamicUpdate()
+{
+	var tagID = 'oef_dynamic_upadate_edit_form';
+	var node  = {};
+	var kind;
+	var type;
+	var active = false;
+	
+	var submitOptions = {
+		options: {},
+		async: false,
+		url: '/Special:OEController',
+		dataType:  'json',
+		beforeSubmit: prepareRequest,
+		success: function (data, status) { processDynamicUpdateResponse(data, status, this.options); },
+		data: {action: 'save', form: 'ObjectForm'}
+    };
+	
+	/**
+	 * Process event
+	 * 
+	 * @param object event
+	 * @return boolean
+	 */
+	this.processEvent = function(event)
+	{
+		if (!event)
+		{
+			if (!window.event) return false;
+			
+			event = window.event; 
+			
+			node = window.event.srcElement;
+	    }
+	    else node = event.currentTarget;
+	    
+	    if (event.stopPropagation)
+		{
+			event.stopPropagation();
+		}
+		else event.cancelBubble = true;
+	    
+	    if (node.nodeName != 'SELECT') return false;
+	    
+	    var i = node.selectedIndex;
+	    
+		if (node.options[i].value != 'new') return true;
+		
+		kind = jQuery(node).attr('rkind');
+		type = jQuery(node).attr('rtype');
+		
+		appInactive();
+	    appDisplayLoader(true);
+	    
+		this.displayEditForm(kind, type);
+		
+		appDisplayLoader(false);
+	};
+	
+	/**
+	 * Display edit form
+	 * 
+	 * @param string kind - entity kind
+	 * @param string type - entity type
+	 * @return boolean
+	 */
+	this.displayEditForm = function(kind, type)
+	{
+		var query = 'uid=' + kind + '.' + type + '&actions=displayEditForm';
+		
+		var listener = this.Listener;
+		
+		var x = jQuery.ajax({
+			url: pageAPI + '/contents?dream.out.format=xml' + (query.length == 0 ? '' : '&' + query),
+		    async: false,
+			type: 'GET',
+			cache: false,
+			dataType: 'xml',
+			success: function (data, status)
+			{
+				var body = jQuery(data).find('body')[0];
+				body = jQuery(body).text();
+				
+				if (!document.getElementById(tagID))
+				{
+					jQuery('body').append('<div id="'+ tagID +'"></div>');
+				}
+				
+				jQuery('#' + tagID).html(body);
+				jQuery('#' + tagID + ' .ae_command[command=save]').attr('command', 'cancel').attr('value', 'Cancel');
+				jQuery('#' + tagID + ' .ae_command').each(function(index) {
+			    	jQuery(this).click(function() { 
+			    		listener(this);
+			    	});
+			    });
+			},
+		    error: function (XMLHttpRequest, textStatus, errorThrown)
+		    {
+				appActive();
+				alert(textStatus);
+		    }
+		});
+	};
+	
+	/**
+	 * Listener to edit form
+	 * 
+	 * @param object element
+	 * @return
+	 */
+	this.Listener = function(element)
+    {
+    	var method;
+    	var options = submitOptions;
+    	var form    = jQuery(element).parents('form');
+    	var command = jQuery(element).attr('command');
+    	
+    	if (jQuery(form).hasClass('ae_object_edit_form')) {
+    		method = 'submitObjectForm';
+    	}
+    	else if (jQuery(form).hasClass('oe_custom_edit_form')) {
+    		method = 'submitForm';
+    		options.data.form = 'CustomForm';
+    	}
+    	else {
+    		method = 'submitForm';
+    	}
+    	
+    	switch(command)
+    	{
+    		case 'save_and_close':
+    			options.options.close = true;
+    		break;
+    		
+    		case 'cancel':
+    			removeEditForm();
+				
+    			jQuery(node).find('option[value="0"]').attr('selected', true);
+				
+				active = true;
+    		break;
+    		
+    		default:
+    			options.options.close = true;
+    	}
+    	
+    	try {
+    		eval(method + '(form, options)');
+    	}
+    	catch(e) { ; }
+    	
+        if (!active) appInactive();
+    };
+    
+    /**
+	 * Process dynamic update response
+	 * 
+	 * @param object data
+	 * @param string status
+	 * @param object options
+	 * @return
+	 */
+	function processDynamicUpdateResponse(data, status, options)
+	{
+		var state = true;
+		
+		for(var main_kind in data)
+		{
+			for(var main_type in data[main_kind])
+			{
+				var m_data = data[main_kind][main_type];
+				var msg = '';
+				
+				/* Check object result */
+				
+				if(m_data['status'] != true) // Print main errors
+				{
+					for(var field in m_data['errors'])
+					{
+						if (!displayErrors(main_kind + '_' + main_type + '_' + field, m_data['errors'][field])) {
+							msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + m_data['errors'][field];
+						}
+					}
+				}
+				
+				/* Check tabular result */
+				
+				if (options.close == true) options.close = m_data['status'];
+				
+				if (m_data['tabulars'])
+				{
+					state = processTabularResponce(main_kind + '_' + main_type + '_tabulars', m_data['tabulars'], options);
+				}
+				
+				/* Check close flag */
+				
+				if (options.close == true && state == true) // Close window
+				{
+					var id = m_data['result']['_id'];
+					
+					if (main_kind == 'catalogs')
+					{
+						var text = jQuery('#' + tagID + ' input[name="'+ ae_name_prefix[main_kind + '_' + main_type] + '[Description]"]').attr('value');
+					}
+					else
+					{
+						var text = main_type + ' ' + jQuery('#' + tagID + ' input[name="'+ ae_name_prefix[main_kind + '_' + main_type] + '[Date]"]').attr('value');
+					}
+					
+					removeEditForm();
+					
+					updateListOfOption(text, id);
+					
+					active = true;
+					
+					return true;
+				}
+				else if (m_data['result']['_id']) // Insert main ID
+				{
+					insertId(main_kind + '_' + main_type, m_data['result']['_id']);
+					var header = document.getElementById(main_kind + '_' + main_type + '_header');
+					if (header)	{
+						header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
+					}
+					jQuery('#'+ main_kind + '_' + main_type + '_item input[type=submit]').attr('value', 'Update');
+					if (jQuery('.' + prefix + '_actions')) {
+						var prefix = main_kind + '_' + main_type;
+						jQuery('.' + prefix + '_actions').css('display', 'block');
+					    jQuery('#' + prefix + '_post_flag').css('display', '');
+					}
+				}
+				
+				// Print main message
+				displayMessage(main_kind + '_' + main_type,  msg.length > 0 ? msg : m_data['result']['msg'], m_data['status']);
+			}
+		}
+	}
+	
+	/**
+	 * Remove edit form
+	 * 
+	 * @return void
+	 */
+	function removeEditForm()
+	{
+		jQuery('#' + tagID).remove();
+	}
+	
+	/**
+	 * Update all list with current kind and type
+	 * 
+	 * @param string text  - text for OPTION
+	 * @param string value - value for OPTION
+	 * @return void
+	 */
+	function updateListOfOption(text, value)
+	{
+		jQuery('select.oef_' + kind + '_' + type).append('<option value="' + value + '">' +  text + '</option>');
+		jQuery(node).find('option[value="' + value + '"]').attr('selected', true);
+	}
 }

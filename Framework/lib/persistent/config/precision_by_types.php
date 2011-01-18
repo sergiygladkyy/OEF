@@ -32,5 +32,9 @@ $_precision_by_types = array(
    'regexp' => array(
       'allowed' => array('string', 'text', 'password'),
       'type'    => 'string'
+   ),
+   'dynamic_update' => array(
+      'allowed' => array('reference'),
+      'type'    => 'bool'
    )
 );

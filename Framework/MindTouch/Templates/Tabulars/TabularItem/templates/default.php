@@ -31,6 +31,10 @@
         <pre class="script">
           var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field], attrs: {id: _prefix..'_field'}};
           
+          if (references[field]) {
+            let params ..= {reference: references[field]};
+          }
+          
           var template = root..'/EditFormFields';
           var content  = wiki.template(template, [field_type[field], name, item[field], params, type, template, prefix]);
       

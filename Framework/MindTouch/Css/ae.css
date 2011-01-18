@@ -150,6 +150,7 @@ span.ae_pagination {
    margin: 4px 0 3px 0;
 }
 
+
 /************************************** MT messages ******************************************/
 
 .oef_content div.systemmsg {
@@ -183,4 +184,41 @@ span.ae_pagination {
 .oef_content div.systemmsg ul li {
     list-style-type: none !important;
     margin-left: 5px !important;
+}
+
+
+/************************************** Dynamic update ***************************************/
+
+.oef_edit_form_field_add_new {
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+#oef_dynamic_upadate_edit_form {
+	position: fixed;
+	width: 450px;
+	overflow: auto;
+	top: 20%;
+	left: 50%;
+	margin: 0 0 0 -210px;
+	background-color: #F7F7F7;
+	padding: 6px;
+	z-index: 1000;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.oef_content td {
+    border-right: 1px solid #AAAAAA;
+    color: #4F6B72;
+    font-family: Verdana,Arial,Sans-Serif;
+    font-size: 12px;
+    line-height: 1.6em !important;
+    margin: 0;
+    padding: 6px 8px;
+    vertical-align: top;
+}
+
+#oef_dynamic_upadate_edit_form td.ae_editform_field_name {
+    width: 41% !important;
 }

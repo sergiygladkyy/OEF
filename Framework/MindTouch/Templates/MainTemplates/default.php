@@ -75,7 +75,11 @@
          &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
        &lt;/head&gt;
        &lt;body&gt;&lt;/body&gt;
-       &lt;tail&gt;&lt;/tail&gt;
+       &lt;tail&gt;
+         &lt;script type="text/javascript"&gt;"
+           pageAPI = '"..page.api.."';
+         "&lt;/script&gt;
+       &lt;/tail&gt;
      &lt;/html&gt;
   }}
 </eval:elseif>
@@ -102,7 +106,11 @@
            &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
-         &lt;tail&gt;&lt;/tail&gt;
+         &lt;tail&gt;
+           &lt;script type="text/javascript"&gt;"
+             pageAPI = '"..page.api.."';
+           "&lt;/script&gt;
+         &lt;/tail&gt;
        &lt;/html&gt;
     }}
   </eval:if>

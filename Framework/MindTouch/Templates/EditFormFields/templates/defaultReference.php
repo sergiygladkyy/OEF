@@ -2,30 +2,36 @@
     var name    = args[0];
     var value   = args[1];
     var params  = args[2];
-    let options = params.select ?? {};
+    var options = params.select ?? {};
     var attrs   = params.attrs ?? {};
-    var attributes = '';
-    var content = '';
+    var reference  = params.reference ?? {};
+    var precision  = params.precision ?? {};
+    var select  = '';
+    var content = '&lt;option value="0"&gt;&nbsp;&lt;/option&gt;';
     
-    foreach (var name in  map.Keys(attrs)) {
-       let attributes = attributes..'" '..name..'="'..attrs[name];
+    if (#attrs.class != 0) {
+      let attrs ..= {class: attrs.class..' oef_'..reference.kind..'_'..reference.type};
     }
-  
-    if (#attributes != 0) {
-       let name = name..attributes;
+    else {
+      let attrs ..= {class: 'oef_'..reference.kind..'_'..reference.type};
     }
-
-    let content = '&lt;select name="'..name..'"&gt;';
-    if (params.required != True) {
-       let content = content..'&lt;option value="0"&gt;--&lt;/option&gt;';
+    
+    if (precision.dynamic_update == True && #reference.kind != 0 && reference.type !=0)
+    {
+       let attrs ..= {class: attrs.class..' oef_dynamic_update'};
+       let attrs ..= {kind: reference.kind, type: reference.type};
+       let content ..= '&lt;option class="oef_edit_form_field_add_new" value="new"&gt;add new&lt;/option&gt;';
     }
+    
     foreach (var param in options) {
-       let content = content..'&lt;option value="'..param.value..'"';
+       let content ..= '&lt;option value="'..param.value..'"';
        if (param.value == value) {
-          let content = content..' selected="selected"';
+          let content ..= ' selected="selected"';
        }
-       let content = content..'&gt;'..param.text..'&lt;/option&gt;';
+       let content ..= '&gt;'..param.text..'&lt;/option&gt;';
     }
     
-    web.html(content);
+    &lt;select id=(attrs.id) name=(name) class=(attrs.class) rkind=(reference.kind) rtype=(reference.type)&gt;
+      web.html(content);
+    &lt;/&gt;;
 }}
