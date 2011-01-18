@@ -57,6 +57,7 @@ abstract class ObjectsController extends BaseController
          
          $result['item'] = $item->toArray($options);
       }
+      else $result['item'] = array_merge($result['item'], $item->toArray($options));
       
       $model  = $this->container->getCModel($this->kind, $this->type, $options);
       $select = $model->retrieveSelectDataForRelated(array(), $options);
