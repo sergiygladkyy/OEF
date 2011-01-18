@@ -1,6 +1,6 @@
 <?php
 
-class Constants
+class SystemConstants
 {
    const ADMIN_ROLE = 'Admin';
 }

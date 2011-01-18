@@ -1,6 +1,6 @@
 <?php
 
-require_once('lib/persistent/config/Constants.php');
+require_once('lib/persistent/config/SystemConstants.php');
 
 class PersistentLayer
 {
@@ -171,17 +171,7 @@ class PersistentLayer
    {
       $errors   = array();
       $valid    = array();
-      $sections = array(
-         'catalogs',
-         'documents',
-         'information_registry',
-         'AccumulationRegisters',
-         'reports',
-         'data_processors',
-         'web_services',
-         'AccessRights',
-         'Roles'
-      );
+      $sections = $this->getAllowedKinds();
       
       foreach ($sections as $kind)
       {
@@ -1092,6 +1082,24 @@ class PersistentLayer
       return $errors;
    }
    
+   /**
+    * Check Constants configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkConstantsConfig(array& $config)
+   {
+      if ($errors = $this->checkFieldsConfig('Constants', $config))
+      {
+         $config = array();
+      }
+      
+      return $errors;
+   }
+   
+   
+   
    
    
    /**
@@ -1659,7 +1667,18 @@ class PersistentLayer
     */
    protected function getAllowedKinds()
    {
-      return array('catalogs', 'documents', 'information_registry', 'AccumulationRegisters', 'reports', 'data_processors', 'web_services');
+      return array(
+         'catalogs',
+         'documents',
+         'information_registry',
+         'AccumulationRegisters',
+         'reports',
+         'data_processors',
+         'web_services',
+         'AccessRights',
+         'Roles',
+         'Constants'
+      );
    }
    
    /**
@@ -1669,7 +1688,7 @@ class PersistentLayer
     */
    protected function getNotStorage()
    {
-      return array('reports', 'data_processors', 'web_services');
+      return array('reports', 'data_processors', 'web_services', 'AccessRights', 'Roles');
    }
    
    /**
@@ -1871,6 +1890,7 @@ class PersistentLayer
       $result['other']['relations']   = $this->generateRelationsMap($result, $options);
       
       // save internal configuration (and generate configuration map)
+      $map['Constants']               = $this->saveInternalConfiguration($result['Constants'],               'Constants/');
       $map['security']                = $this->saveInternalConfiguration($result['AccessRights'],            'security/');
       $map['information_registry']    = $this->saveInternalConfiguration($result['information_registry'],    'information_registry/');
       $map['AccumulationRegisters']   = $this->saveInternalConfiguration($result['AccumulationRegisters'],   'AccumulationRegisters/');
@@ -2069,6 +2089,17 @@ class PersistentLayer
       if (!isset($result['errors']))
       {
          $internal['AccessRights'] = $result;
+      }
+      else $errors = array_merge($errors, $result['errors']);
+      
+      
+      /* Constants */
+      
+      $result = $this->generateConstantsInternalConfiguration($dictionary['Constants'], $options);
+      
+      if (!isset($result['errors']))
+      {
+         $internal['Constants'] = $result;
       }
       else $errors = array_merge($errors, $result['errors']);
       
@@ -2732,6 +2763,25 @@ class PersistentLayer
       return empty($errors) ? $result : array('errors' => $errors);
    }
    
+   /**
+    * Generate Constants internal configuration
+    * 
+    * @param array& $dict
+    * @param array& $options
+    * @return array - 'errors' => $errors or list <confName> => array()
+    */
+   protected function generateConstantsInternalConfiguration(array& $dict, array& $options = array())
+   {
+      $result = $this->generateFieldsInternalConfiguration($dict, 'Constants', $options);
+      
+      if (isset($res['errors'])) return array('errors' => $res['errors']);
+      
+      $result['model']      = array('modelclass' => 'ConstantModel');
+      $result['controller'] = array('classname'  => 'Constants');
+      
+      return $result;
+   }
+   
    
    
    
@@ -2830,6 +2880,7 @@ class PersistentLayer
       $aRegType    =& $configuration['AccumulationRegisters']['register_type'];
       $aRecorders  =& $configuration['AccumulationRegisters']['recorders'];
       $documents   =& $configuration['documents']['documents'];
+      $constants   =& $configuration['Constants'];
       
       
       if (!empty($options['dbprefix']))  $dbprefix = $options['dbprefix'];
@@ -2930,6 +2981,14 @@ class PersistentLayer
          $db_map['documents'][$document]['tabulars'] = $t_map;
       }
       
+      /* Constants */
+      
+      if (!empty($constants))
+      {
+         $db_map['Constants']['table'] = $dbprefix.'Constants';
+         $db_map['Constants']['pkey']  = '_id';
+      }
+      
       return $db_map;
    }
    
@@ -3002,18 +3061,12 @@ class PersistentLayer
       $dbcharset = empty($db_conf['dbcharset']) ? 'utf8' : $db_conf['dbcharset'];
       
       $query = array();
+      $kinds = array_diff($this->getAllowedKinds(), $this->getNotStorage());
       
-      // Catalog
-      $query = $this->generateSQLCreate('catalogs', $CManager, $dbcharset, $options);
-      
-      // Information registry
-      $query = array_merge($query, $this->generateSQLCreate('information_registry', $CManager, $dbcharset, $options));
-      
-      // Accumulation Registers
-      $query = array_merge($query, $this->generateSQLCreate('AccumulationRegisters', $CManager, $dbcharset, $options));
-      
-      // Documents
-      $query = array_merge($query, $this->generateSQLCreate('documents', $CManager, $dbcharset, $options));
+      foreach ($kinds as $kind)
+      {
+         $query = array_merge($query, $this->generateSQLCreate($kind, $CManager, $dbcharset, $options));
+      }
       
       return $query;
    }
@@ -3032,6 +3085,10 @@ class PersistentLayer
       if ($kind == 'AccumulationRegisters')
       {
          return $this->generateAccumulationRegistersSQLCreate($CManager, $dbcharset, $options);
+      }
+      elseif ($kind == 'Constants')
+      {
+         return $this->generateConstantsSQLCreate($CManager, $dbcharset, $options);
       }
       
       $db_map    = $CManager->getInternalConfiguration('db_map', null, $options);
@@ -3225,6 +3282,42 @@ class PersistentLayer
       return $query;
    }
    
+   /**
+    * Generate Constants CREATE SQL-query to create entities tables
+    * 
+    * @param object $CManager
+    * @param string $dbcharset
+    * @param array& $options
+    * @return array
+    */
+   protected function generateConstantsSQLCreate($CManager, $dbcharset, array& $options = array())
+   {
+      $kind      = 'Constants';
+      $db_map    = $CManager->getInternalConfiguration('db_map', $kind, $options);
+      $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
+      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
+
+      $query  = array();
+
+      $table = $db_map['table'];
+      $pKey  = $db_map['pkey'];
+
+      $q  = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (';
+      $q .= '`'.$pKey.'` int(11) NOT NULL AUTO_INCREMENT';
+
+      foreach ($fields as $field)
+      {
+         $q .= ', `'.$field.'` '.(isset($field_sql[$field]) ? $field_sql[$field] : 'int(11) NOT NULL');
+      }
+
+      $q .= ', PRIMARY KEY (`'.$pKey.'`)';
+
+      $query[$table] = $q.') ENGINE=InnoDB DEFAULT CHARSET='.$dbcharset.' COLLATE='.$dbcharset.'_general_ci AUTO_INCREMENT=1';
+
+      return $query;
+   }
+   
+   
    
    
    /**
@@ -3259,7 +3352,7 @@ class PersistentLayer
                continue;
             }
             
-            if (!$have_admin) $have_admin = in_array(Constants::ADMIN_ROLE, $conf['roles']);
+            if (!$have_admin) $have_admin = in_array(SystemConstants::ADMIN_ROLE, $conf['roles']);
             
             $result['users'][] = $login;
             $result['attributes'][$login]['roles'] = $conf['roles'];
@@ -3268,7 +3361,7 @@ class PersistentLayer
 
          if (!$have_admin) 
          {
-            $errors[] = 'Not specified admanistrator (user with role "'.Constants::ADMIN_ROLE.'")';
+            $errors[] = 'Not specified admanistrator (user with role "'.SystemConstants::ADMIN_ROLE.'")';
             
             return $errors;
          }
@@ -3542,8 +3635,14 @@ class PersistentLayer
       $tables  = array();
       $db_map  = $CManager->getInternalConfiguration('db_map', null, $options);
       
-      foreach ($db_map as $map)
+      foreach ($db_map as $kind => $map)
       {
+         if ($kind == 'Constants')
+         {
+            $tables[] = $map['table'];
+            continue;
+         }
+         
          foreach ($map as $config)
          {
             $tables[] = $config['table'];

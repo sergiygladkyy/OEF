@@ -166,7 +166,7 @@ class MTUser extends BaseUser
       $this->attributes    = $attributes;
       $this->roles         = $roles;
       $this->authenticated = $authenticated;
-      $this->isAdmin       = in_array(Constants::ADMIN_ROLE, $this->roles);
+      $this->isAdmin       = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
    }
 
    /**

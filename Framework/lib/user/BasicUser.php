@@ -42,7 +42,7 @@ class BasicUser extends BaseUser
             if (!empty($authRecords))
             {
                $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
-               $this->isAdmin = in_array(Constants::ADMIN_ROLE, $this->roles);
+               $this->isAdmin = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
             }
          }
          else $this->logout();
@@ -89,7 +89,7 @@ class BasicUser extends BaseUser
       $this->attributes['username'] = $user->getAttribute('Description');
       
       $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
-      $this->isAdmin = in_array(Constants::ADMIN_ROLE, $this->roles);
+      $this->isAdmin = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
       
       $this->authenticated = true;
       //$this->shutdown();

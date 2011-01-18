@@ -1,6 +1,6 @@
 <?php
 
-require_once('lib/persistent/config/Constants.php');
+require_once('lib/persistent/config/SystemConstants.php');
 
 abstract class BaseUser
 {
