@@ -9,6 +9,7 @@ require_once($base.'lib/utility/Utility.php');
 require_once($base.'lib/container/Container.php');
 require_once($base.'lib/report/Mockup.php');
 require_once($base.'lib/report/TabularDoc.php');
+require_once($base.'lib/controller/Constants/Constants.php');
 
 if (!isset($container_options)) $container_options = array();
 
@@ -34,3 +35,4 @@ $modules->loadModules('information_registry');
 $modules->loadModules('reports');
 $modules->loadModules('data_processors');
 $modules->loadModules('web_services');
+$modules->loadModules('Constants');

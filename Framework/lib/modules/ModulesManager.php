@@ -94,7 +94,13 @@ class ModulesManager
    {
       if (!is_array($kinds)) $kinds = array($kinds);
       
-      $this->map = $this->createEntitiesModules($kinds, $options);
+      if (false !== ($key = array_search('Constants', $kinds)))
+      {
+         $this->map = $this->createConstantsModule($options);
+         unset($kinds[$key]);
+      }
+      
+      $this->map = array_merge_recursive($this->map, $this->createEntitiesModules($kinds, $options));
       
       if (false !== ($key = array_search('web_services', $kinds)))
       {
@@ -257,6 +263,39 @@ class ModulesManager
    }
    
    /**
+    * Create empty constants module
+    * 
+    * @throws Exception
+    * @param array& $options
+    * @return array - modules map
+    */
+   protected function createConstantsModule(array& $options = array())
+   {
+      $CManager = $this->container->getConfigManager($options);
+      
+      $kind = 'Constants';
+      $type = $kind;
+      $map  = array();
+      $dir  = self::$modules_dir.$kind.'/';
+      
+      if (!is_dir($dir))
+      {
+         if (!mkdir($dir, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$dir.'"');
+      }
+
+      $file = $dir.'module.php';
+
+      if (!file_exists($file))
+      {
+         file_put_contents($file, '');
+      }
+       
+      $map[$kind][$type]['model']['module'] = $file;
+
+      return $map;
+   }
+   
+   /**
     * Remove all modules with templates
     * 
     * @param array& $options
@@ -298,6 +337,16 @@ class ModulesManager
       $errors = array();
       
       if (!isset($this->map[$kind])) throw new Exception(__METHOD__.': Unknow kind "'.$kind.'"');
+      
+      if ($kind == 'Constants')
+      {
+         if (!$this->loadConstantModule())
+         {
+            $errors[] = 'Constants module not loaded';
+         }
+         
+         return $errors;
+      }
       
       foreach ($this->map[$kind] as $type => $modules)
       {
@@ -524,5 +573,104 @@ CONTENT;
       }
       
       return "<?php\n".$content.'?>';
+   }
+   
+   
+   /**
+    * Load Constants module
+    * 
+    * @return array - errors
+    */
+   protected function loadConstantModule(array $options = array())
+   {
+      $kind = 'Constants';
+      $type = $kind;
+      $module_type = 'model';
+      $module_name = 'module';
+      
+      // Check cache
+      $cache = self::$cache_dir.$kind.'/'.$module_type.'/';
+      $fname = $cache.$module_name.'.php';
+      
+      if (file_exists($fname))
+      {
+         require_once($fname);
+         return true;
+      }
+      
+      $CManager = $this->container->getConfigManager($options);
+      
+      $fields = $CManager->getInternalConfiguration($kind.'.fields');
+      $events = array();
+      
+      foreach ($fields as $field)
+      {
+         $events[] = 'onUpdate'.$field;
+      }
+      
+      // Check module template
+      if (empty($this->map[$kind][$type][$module_type][$module_name])) return false;
+      
+      $file = $this->map[$kind][$type][$module_type][$module_name];
+      
+      if (!file_exists($file)) return false;
+      
+      // Generate module
+      $code = '';
+      if ($content = file_get_contents($file))
+      {
+         $pattern[] = '/^[\s]*<\?[\S]*[\s]*/i';
+         $pattern[] = '/[\s]*\?>[\s]*$/i';
+         $content = preg_replace($pattern, array('', ''), $content);
+         
+         $pattern = '/(?<=[\s\n]|)function[\s]+([A-Za-z_][A-Za-z0-9_]*)(?=[\s]*?\([^)]*\)[\s\n]*{)/s';
+         $res = preg_match_all($pattern, $content, $matches);
+         
+         if ($res)
+         {
+            if (!($content = preg_replace('/(?<=[\s\n]|)function(?=[\s]+[A-Za-z_][A-Za-z0-9_]*[\s]*?\([^)]*\)[\s\n]*{)/s', 'public static function', $content)))
+            {
+               return false;
+            }
+         
+            $classname = ucfirst($kind).ucfirst($type).ucfirst($module_type).ucfirst($module_name);
+            
+            foreach ($events as $event)
+            {
+               if (in_array($event, $matches[1]))
+               {
+                  $event_id = ($module_type == 'forms') ? $module_type.'.'.$module_name : $module_type;
+                  
+                  $code .= "\$dispatcher->connect('".$kind.'.'.$event_id.'.'.$event."', array('".$classname."', '".$event."'));\n\n";
+               }
+            }
+            
+            if (!empty($code))
+            {
+               $code = "<?php\n\n\$dispatcher = Container::getInstance()->getEventDispatcher();\n\n".$code;
+            }
+            else $code = "<?php\n\n";
+            
+            $code .= "class ".$classname."\n{\n   ";
+            //$code .= "protected static \$templates_dir = '".self::$template_dir.$kind.'/'.$type."/';\n   \n   ";
+            $code .= str_replace("\n", "\n   ", $content)."\n}";
+         }
+         elseif ($res === false)
+         {
+            return false;
+         }
+      }
+      
+      // Save in cache 
+      if (!is_dir($cache))
+      {
+         if (!mkdir($cache, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$cache.'"');
+      }
+      
+      file_put_contents($fname, $code);
+      
+      require_once($fname);
+      
+      return true;
    }
 }

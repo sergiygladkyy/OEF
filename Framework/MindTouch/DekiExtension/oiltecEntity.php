@@ -90,6 +90,7 @@
         require_once('lib/utility/Loader.php');
         require_once('lib/utility/Utility.php');
         require_once('lib/container/Container.php');
+        require_once('lib/controller/Constants/Constants.php');
         
         $container = Container::createInstance($container_options);
         

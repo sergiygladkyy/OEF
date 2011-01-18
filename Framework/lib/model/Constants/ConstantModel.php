@@ -48,6 +48,30 @@ class ConstantModel extends BaseEntityModel
    
    /**
     * (non-PHPdoc)
+    * @see BaseEntityModel#save($options)
+    */
+   public function save(array& $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->isAdmin())
+      { 
+         return array('Access denied');
+      }
+      
+      // Execute method
+      try {
+         return parent::save($options);
+      }
+      catch (Exception $e)
+      {
+         $errors = unserialize($e->getMessage());                
+         
+         return is_array($errors) ? $errors : array($errors);
+      }
+   }
+   
+   /**
+    * (non-PHPdoc)
     * @see ext/OEF/Framework/lib/model/base/BaseEntityModel#generateInsertQuery($attributes, $options)
     */
    protected function generateInsertQuery(array& $attributes, array& $options = array())
@@ -86,12 +110,35 @@ class ConstantModel extends BaseEntityModel
    protected function generateUpdateQuery(array& $attributes, array& $options = array())
    {
       $fields = array();
+      $errors = array();
       
       // Attributes
       foreach ($attributes as $field => $value)
       {
          $fields[] = "`".$field."`=".$this->getValueForSQL($field, $value);
+         
+         $event = $this->container->getEvent($this, $this->kind.'.model.onUpdate'.$field);
+         $event->setReturnValue(false);
+         try
+         {
+            $this->container->getEventDispatcher()->notify($event);
+            
+            if (!$event->getReturnValue())
+            {
+               $errors[$field] = 'Module error';
+            }
+            else
+            {
+               $fields[] = "`".$field."`=".$this->getValueForSQL($field, $value);
+            }
+         }
+         catch (Exception $e)
+         {
+            $errors[$field] = $e->getMessage();
+         }
       }
+      
+      if ($errors) throw new Exception(serialize($errors));
       
       $db_map =& $this->conf['db_map'];
       $query  =  "UPDATE `".$db_map['table']."` SET ".implode(", ", $fields)." WHERE `".$db_map['pkey']."`=".$this->id;
@@ -149,7 +196,6 @@ class ConstantModel extends BaseEntityModel
    /************************** For control access rights **************************************/
    
    
-   
    /**
     * (non-PHPdoc)
     * @see BaseEntityModel#delete($options)
@@ -164,21 +210,5 @@ class ConstantModel extends BaseEntityModel
       
       // Execute method
       return parent::delete($options);
-   }
-   
-   /**
-    * (non-PHPdoc)
-    * @see BaseEntityModel#save($options)
-    */
-   public function save(array& $options = array())
-   {
-      // Check permissions
-      if (defined('IS_SECURE') && !$this->container->getUser()->isAdmin())
-      { 
-         return array('Access denied');
-      }
-      
-      // Execute method
-      return parent::save($options);
    }
 }

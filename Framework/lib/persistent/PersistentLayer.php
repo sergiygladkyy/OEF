@@ -3538,7 +3538,8 @@ class PersistentLayer
             'information_registry',
             'reports', 
             'data_processors',
-            'web_services'
+            'web_services',
+            'Constants'
          ),
          $options
       );
