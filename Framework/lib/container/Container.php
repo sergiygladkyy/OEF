@@ -236,6 +236,10 @@ class Container
          {
             $model = new $conf['modelclass']($kind, $type, $options);
          }
+         elseif ($kind == 'Constants')
+         {
+            $model = new $conf['modelclass']($options);
+         }
          else $model = new $conf['modelclass']($type, $options);
          
          if (!is_a($model, 'BaseNotStorageEntityModel'))
@@ -318,12 +322,17 @@ class Container
          {
             $controller = call_user_func(array($classname, 'getInstance'), $kind, $type, $options);
          }
+         elseif ($kind == 'Constants')
+         {
+            $controller = call_user_func(array($classname, 'getInstance'), $options);
+         }
          else $controller = call_user_func(array($classname, 'getInstance'), $type, $options);
          
          if (!is_a($controller, 'BaseController') && 
              !is_a($controller, 'ReportsController') &&
              !is_a($controller, 'DataProcessorsController') &&
-             !is_a($controller, 'WebServicesController')
+             !is_a($controller, 'WebServicesController') &&
+             !is_a($controller, 'Constants')
          )
          {
             throw new Exception(__METHOD__.': not supported controller class "'.$classname.'"');

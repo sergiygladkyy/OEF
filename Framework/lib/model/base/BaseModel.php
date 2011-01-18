@@ -59,7 +59,7 @@ abstract class BaseModel
     * @param string $type - entity type
     * @return boolean
     */
-   protected static function setup($kind, $type)
+   protected static function setup($kind, $type = null)
    {
       $confname = self::getConfigurationName($kind, $type);
       
@@ -69,12 +69,15 @@ abstract class BaseModel
       
       $pkind = Utility::parseKindString($kind);
       
-      // has entity with this type ?
-      if (!in_array($type, $CManager->getInternalConfigurationByKind($kind.'.'.$pkind['kind'])))
+      if ($type !== null)
       {
-         throw new Exception(__METHOD__.': "'.ucfirst($kind).'" with name "'.$type.'" not exists.');
+         // has entity with this type ?
+         if (!in_array($type, $CManager->getInternalConfigurationByKind($kind.'.'.$pkind['kind'])))
+         {
+            throw new Exception(__METHOD__.': "'.ucfirst($kind).'" with name "'.$type.'" not exists.');
+         }
       }
-
+      
       // retrieve db_map
       if (!self::$db_map)
       {
@@ -93,12 +96,14 @@ abstract class BaseModel
       // retrieve internal db_map
       if (isset($pkind['main_kind']))
       {
-         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['main_kind']][$pkind['main_type']][$pkind['kind']][$type];
+         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['main_kind']][$pkind['main_type']][$pkind['kind']];
       }
       else
       {
-         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['kind']][$type];
+         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['kind']];
       }
+      
+      if ($type !== null) self::$config[$confname]['db_map'] =& self::$config[$confname]['db_map'][$type];
       
       return true;
    }
@@ -121,7 +126,7 @@ abstract class BaseModel
     * @param string $kind - entity kind
     * @param string $type - entity type
     * @param int $id - entity id
-    * @return boolean
+    * @return boolean or null
     */
    protected static function hasEntity($kind, $type, $id, array $options = array())
    {
@@ -142,7 +147,6 @@ abstract class BaseModel
       $db  = Container::getInstance()->getDBManager();
       $res = $db->loadAssoc($query);
       
-      return (!$res || !$res['cnt']) ? false : true;
+      return (is_null($res) ? null : ($res['cnt'] ? true : false));
    }
-
 }

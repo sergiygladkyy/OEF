@@ -39,6 +39,16 @@ jQuery(document).ready(function() {
        success: function (data, status) { processObjectResponse(data, status, this.options); },
        data: {action: 'save', form: 'ObjectForm'}
     };
+    
+    var constants_edit_form_options = {
+    	options: {},
+    	async: false,
+    	url: '/Special:OEController',
+    	dataType:  'json',
+    	beforeSubmit: prepareRequest,
+    	success: function (data, status) { processResponse(data, status, this.options); },
+    	data: {action: 'save', form: 'ConstantsForm'}
+    };
 
     jQuery('.ae_edit_form').submit(function() {
     	hideFieldErrors('ae_editform_field');
@@ -49,6 +59,12 @@ jQuery(document).ready(function() {
     
     jQuery('.ae_object_edit_form').submit(function() {
     	submitObjectForm(this, object_edit_form_options);
+    	
+    	return false;
+    });
+    
+    jQuery('.ae_constants_edit_form').submit(function() {
+    	submitObjectForm(this, constants_edit_form_options);
     	
     	return false;
     });
@@ -82,6 +98,10 @@ jQuery(document).ready(function() {
     	if (jQuery(form).hasClass('ae_object_edit_form')) {
     		method  = 'submitObjectForm';
     		options = object_edit_form_options;
+    	}
+    	else if (jQuery(form).hasClass('ae_constants_edit_form')) {
+    		method  = 'submitForm';
+    		options = constants_edit_form_options;
     	}
     	else if (jQuery(form).hasClass('oe_custom_edit_form')) {
     		method  = 'submitForm';
@@ -171,6 +191,12 @@ function prepareRequest(formData, jqForm, options)
  */
 function processResponse(data, status, options)
 {
+	if (data.status == false)
+	{
+		alert(data['errors']['global']);
+		return;
+	}
+	
 	for(var kind in data)
 	{
 		for(var type in data[kind])
@@ -246,6 +272,12 @@ function processResponse(data, status, options)
  */
 function processObjectResponse(data, status, options)
 {
+	if (data.status == false)
+	{
+		alert(data['errors']['global']);
+		return;
+	}
+	
 	var state = true;
 	
 	for(var main_kind in data)

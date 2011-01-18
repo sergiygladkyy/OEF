@@ -20,6 +20,7 @@
           "displayItemForm(uid:str, id:num, params:map):map" => 'displayItemForm',
           "displayReportForm(uid:str, params:map):map" => 'displayReportForm',
           "displayImportForm(uid:str, params:map):map" => 'displayImportForm',
+          "displayConstantsForm(params:map):map" => 'displayConstantsForm',
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
@@ -373,6 +374,46 @@
      if (!method_exists($controller, 'displayImportForm')) return array('status' => false, 'errors' => array('Not supported operation'));
      
      return $controller->displayImportForm($options);
+  }
+  
+  /**
+   * Retrieve data for ConstantsForm
+   * 
+   * @param array $params
+   * @return array
+   */
+  function displayConstantsForm($params = array())
+  {
+     // Initialize OEF
+     $errors = initialize();
+     
+     if (!is_array($params)) $params = array();
+     
+     if (!empty($errors)) return array('status' => false, 'errors' => $errors);
+
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->isAdmin())
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
+     $options  = empty($params['options'])  ? array() : $params['options'];
+     
+     $controller = Container::getInstance()->getController('Constants', null, $options);
+
+     if (!method_exists($controller, 'displayEditForm')) return array('status' => false, 'errors' => array('Not supported operation'));
+     
+     return $controller->displayEditForm($options);
   }
   
   
