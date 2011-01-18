@@ -399,6 +399,47 @@ class SpecialOEController extends SpecialPagePlugin
       return $controller->processCustomForm($name, Utility::escapeRecursive($values));
    }
    
+   /**
+    * Process constants form
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param array $params
+    * @return array
+    */
+   protected function updateConstants()
+   {
+      // Check form data
+      if (empty($_POST['aeform']) || empty($_POST['aeform']['Constants']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $values = $_POST['aeform']['Constants'];
+      
+      if (empty($values['attributes']) || !is_array($values['attributes']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $values = $values['attributes'];
+      
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->isAdmin())
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Access denied'),
+            'errors' => array()
+         );
+      }
+      
+      // Update Constants
+      $controller = $this->container->getController('Constants', null);
+      
+      return $controller->update(Utility::escaper($values));
+   }
+   
    
    
    

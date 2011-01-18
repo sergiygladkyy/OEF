@@ -46,8 +46,8 @@ jQuery(document).ready(function() {
     	url: '/Special:OEController',
     	dataType:  'json',
     	beforeSubmit: prepareRequest,
-    	success: function (data, status) { processResponse(data, status, this.options); },
-    	data: {action: 'save', form: 'ConstantsForm'}
+    	success: function (data, status) { processConstantsResponse(data, status, this.options); },
+    	data: {action: 'updateConstants'}
     };
 
     jQuery('.ae_edit_form').submit(function() {
@@ -183,10 +183,81 @@ function prepareRequest(formData, jqForm, options)
 }
 
 /**
+ * Process response for ConstantsEditForm
+ *  
+ * @param result
+ * @param status
+ * @param options
+ * @return
+ */
+function processConstantsResponse(result, status, options)
+{
+	var msg = '';
+	var prefix = 'Constants';
+	
+	if (!result['status'])
+	{
+		for(var field in result['errors'])
+		{
+			if (!displayErrors(prefix + '_' + field, result['errors'][field])) {
+				msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + result['errors'][field];
+			}
+		}
+		
+		if (result['result'] && result['result']['msg']) {
+			if (msg) {
+				msg = result['result']['msg'] + msg;
+			}
+			else msg = result['result']['msg'];
+		}
+	}
+	
+	/* Check close flag */
+	
+	if (options.close == true && result['status'] == true) // Close window
+	{
+		window.self.close();
+		
+		if (window.opener && window.opener.length)
+		{
+			if (window.opener.childClose)
+			{
+				window.opener.childClose({
+					prefix:  prefix,
+					message: (msg.length > 0 ? msg : result['result']['msg']),
+					type:     result['status']
+				});
+			}
+			
+			window.opener.focus();
+		}
+		
+		return;
+	}
+	
+	if (result['result']['_id']) // Insert main ID
+	{
+		insertId(prefix, result['result']['_id']);
+		var header = document.getElementById(prefix + '_header');
+		if (header)	{
+			header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
+		}
+		jQuery('#'+ prefix + '_item input[type=submit]').attr('value', 'Update');
+		if (jQuery('.' + prefix + '_actions').size() != 0) {
+			jQuery('.' + prefix + '_actions').css('display', 'block');
+		}
+	}
+	
+	// Print main message
+	displayMessage(prefix, msg.length > 0 ? msg : result['result']['msg'], result['status']);
+}
+
+/**
  * Process responce to simple form
  * 
  * @param data
  * @param status
+ * @param options
  * @return
  */
 function processResponse(data, status, options)
@@ -252,8 +323,8 @@ function processResponse(data, status, options)
 					header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
 				}
 				jQuery('#'+ kind + '_' + type + '_item input[type=submit]').attr('value', 'Update');
-				if (jQuery('.' + prefix + '_actions')) {
-					var prefix = kind + '_' + type;
+				var prefix = kind + '_' + type;
+				if (jQuery('.' + prefix + '_actions').size() != 0) {
 					jQuery('.' + prefix + '_actions').css('display', 'block');
 				}
 			}
@@ -338,8 +409,8 @@ function processObjectResponse(data, status, options)
 					header.innerHTML = header.innerHTML.replace(/New/g, 'Edit');
 				}
 				jQuery('#'+ main_kind + '_' + main_type + '_item input[type=submit]').attr('value', 'Update');
-				if (jQuery('.' + prefix + '_actions')) {
-					var prefix = main_kind + '_' + main_type;
+				var prefix = main_kind + '_' + main_type;
+				if (jQuery('.' + prefix + '_actions').size() != 0) {
 					jQuery('.' + prefix + '_actions').css('display', 'block');
 				    jQuery('#' + prefix + '_post_flag').css('display', '');
 				}
