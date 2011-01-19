@@ -118,7 +118,7 @@ class ConstantModel extends BaseEntityModel
          $fields[] = "`".$field."`=".$this->getValueForSQL($field, $value);
          
          $event = $this->container->getEvent($this, $this->kind.'.model.onUpdate'.$field);
-         $event->setReturnValue(false);
+         $event->setReturnValue(true);
          try
          {
             $this->container->getEventDispatcher()->notify($event);

@@ -120,7 +120,7 @@ class Constants
     * @param string $name
     * @return mixed
     */
-   public function get($name)
+   public static function get($name)
    {
       if (self::$constants === null)
       {
