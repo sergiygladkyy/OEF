@@ -73,8 +73,6 @@ class Constants
     */
    public function update(array $values, array $options = array())
    {
-      unset($values['_id']);
-      
       $return = $this->processFrom($values, $options);
       
       if ($return['status'])

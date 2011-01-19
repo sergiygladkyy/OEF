@@ -189,6 +189,32 @@ class ConstantModel extends BaseEntityModel
       return $result;
    }
    
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/model/base/BaseEntityModel#prepareToImport($values, $options)
+    */
+   protected function prepareToImport(array& $values, array& $options = array())
+   {
+      $errors = array();
+      $pkey   = $this->conf['db_map']['pkey'];
+      
+      if (!empty($values[$pkey]))
+      {
+         unset($values[$pkey]);
+      }
+      
+      if (!$this->load()) // New
+      {
+         $this->id         = null;
+         $this->isNew      = true;
+         $this->isDeleted  = false;
+         $this->attributes = null;
+         $this->isModified = false;
+         $this->modified   = array();
+      }
+      
+      return $errors;
+   }
    
    
    
