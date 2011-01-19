@@ -22,6 +22,7 @@ $_templates_map = array(
    'Template:Entities/Documents/ListForm/default' => '/Documents/ListForm/templates/default.php',
    
    'Template:Entities/EditFormFields' => '/EditFormFields/EditFormFields.php',
+   'Template:Entities/EditFormFields/defaultBool'      => '/EditFormFields/templates/defaultBool.php',
    'Template:Entities/EditFormFields/defaultDate'      => '/EditFormFields/templates/defaultDate.php',
    'Template:Entities/EditFormFields/defaultDatetime'  => '/EditFormFields/templates/defaultDatetime.php',
    'Template:Entities/EditFormFields/defaultEnum'      => '/EditFormFields/templates/defaultEnum.php',
@@ -36,6 +37,7 @@ $_templates_map = array(
    'Template:Entities/Information_registry/ListForm/default' => '/Information_registry/templates/default.php',
    
    'Template:Entities/ItemFormFields' => '/ItemFormFields/ItemFormFields.php',
+   'Template:Entities/ItemFormFields/defaultBool'      => '/ItemFormFields/templates/defaultBool.php',
    'Template:Entities/ItemFormFields/defaultDate'      => '/ItemFormFields/templates/defaultDate.php',
    'Template:Entities/ItemFormFields/defaultDatetime'  => '/ItemFormFields/templates/defaultDatetime.php',
    'Template:Entities/ItemFormFields/defaultEnum'      => '/ItemFormFields/templates/defaultEnum.php',
@@ -45,6 +47,7 @@ $_templates_map = array(
    'Template:Entities/ItemFormFields/defaultString'    => '/ItemFormFields/templates/defaultString.php',
    
    'Template:Entities/ListFormFields' => '/ListFormFields/ListFormFields.php',
+   'Template:Entities/ListFormFields/defaultBool'      => '/ListFormFields/templates/defaultBool.php',
    'Template:Entities/ListFormFields/defaultDate'      => '/ListFormFields/templates/defaultDate.php',
    'Template:Entities/ListFormFields/defaultDatetime'  => '/ListFormFields/templates/defaultDatetime.php',
    'Template:Entities/ListFormFields/defaultEnum'      => '/ListFormFields/templates/defaultEnum.php',
@@ -71,5 +74,7 @@ $_templates_map = array(
    'Template:Entities/Tabulars/TabularItem' => '/Tabulars/TabularItem/TabularItem.php',
    'Template:Entities/Tabulars/TabularItem/default' => '/Tabulars/TabularItem/templates/default.php',
    
-   'Template:Entities/CustomForm' => '/CustomForm/CustomForm.php'
+   'Template:Entities/CustomForm' => '/CustomForm/CustomForm.php',
+   
+   'Template:Entities/Constants/EditForm' => '/Constants/EditForm.php'
 );
