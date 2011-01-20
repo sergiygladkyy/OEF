@@ -456,21 +456,21 @@ function processTabularResponce(kind, data, options)
 			{
 				insertId(kind + '_' + type, m_data['result']['_id'], i);
 			}
+			
+			/* Print main message */
+			
+			if (flag) {
+				displayMessage(kind + '_' + type, 'Tabular section updated succesfully', flag);
+			}
+			else {
+				displayMessage(kind + '_' + type, 'At updating Tabular section there were some errors', flag);
+			}
 		}
 	}
 	
 	/* Check close flag */
 	
 	if (flag && options.close) return flag;
-	
-	/* Print main message */
-	
-	if (flag) {
-		displayMessage(kind + '_' + type, 'Tabular section updated succesfully', flag);
-	}
-	else {
-		displayMessage(kind + '_' + type, 'At updating Tabular section there were some errors', flag);
-	}
 	
 	return flag;
 }
@@ -805,6 +805,16 @@ function displayMessage(prefix, message, type)
 }
 
 /**
+ * Hide all messages
+ * 
+ * @return void
+ */
+function hideMessages()
+{
+	jQuery('.systemmsg').css('display', 'none');
+}
+
+/**
  * Change attribute "checked" in <input type="checkbox" ..>
  * @param _class
  * @param parent
@@ -986,6 +996,7 @@ function notifyFormEvent(uid, formName, eventName, params)
 {
 	var dispatcher = new oeEventDispatcher();
 	
+	hideMessages();
 	appInactive();
 	appAddLoader();
 	
@@ -1327,9 +1338,7 @@ function oeEventDispatcher()
 				break;
 				
 			case 'SELECT':
-				var i = element.selectedIndex;
-			    
-				element.options[i].setAttribute('current', 'true'); // For Dynamic Update
+				jQuery(element).find('*[current="true"]').removeAttr('current');
 				
 				for (i = 0; i < element.length; i++)
 				{
@@ -1337,6 +1346,7 @@ function oeEventDispatcher()
 					
 					if (option.value == value)
 					{
+						option.setAttribute('current', 'true'); // For Dynamic Update
 						element.selectedIndex = i;
 						break;
 					}
@@ -1448,6 +1458,8 @@ function oefDynamicUpdate()
 	    
 		if (node.options[i].value != 'new')
 		{
+			jQuery(node).find('*[current="true"]').removeAttr('current');
+			
 			node.options[i].setAttribute('current', 'true');
 			
 			return true;
@@ -1458,6 +1470,7 @@ function oefDynamicUpdate()
 		kind = jQuery(node).attr('rkind');
 		type = jQuery(node).attr('rtype');
 		
+		hideMessages();
 		appInactive();
 	    appDisplayLoader(true);
 	    
