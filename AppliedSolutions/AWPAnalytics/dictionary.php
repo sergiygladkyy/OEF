@@ -362,35 +362,35 @@ $_dictionary = array(
          'recorder_for' => array(
             'AccumulationRegisters.EmployeeVacationDays'
          )
-         // Only system attributes
       ),
       
       // Document ProjectRegistration
       'ProjectRegistration' => array(
-         /*'recorder_for' => array(
-            'information_registry.ProjectRegistrationRecords'
-         ),*/
+         'recorder_for' => array(
+            'information_registry.ProjectRegistrationRecords',
+            'information_registry.SubprojectRegistrationRecords',
+            'information_registry.MilestoneRecords'
+         ),
          
          'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true,
+                  'dynamic_update' => true
+               )
+            ),
+            'ProjectDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true,
+                  'dynamic_update' => true
+               )
+            ),
             'ProjectManager' => array(
                'reference' => 'catalogs.Employees',
                'precision' => array(
                   'required' => true
-               )
-            ),
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
-               'precision' => array(
-                  'required' => true
-               )
-            ),
-            'BudgetNOK' => array(
-               'type' => 'float',
-               'sql'  => array(
-                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-               ),
-               'precision' => array(
-                  'min' => 0
                )
             ),
             'BudgetHRS' => array(
@@ -399,19 +399,110 @@ $_dictionary = array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                ),
                'precision' => array(
+                  'required' => true,
                   'min' => 0
+               )
+            ),
+            'BudgetNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'StartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
                )
             ),
             'DeliveryDate' => array(
                'type' => 'date',
                'sql'  => array(
                   'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
                )
             ),
             'Customer' => array(
                'reference' => 'catalogs.Counteragents',
                'precision' => array(
+                  'required' => true,
+                  'dynamic_update' => true
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            'Subprojects' => array(
+               'fields' => array(
+                  'SubProject' => array(
+                     'reference' => 'catalogs.SubProjects',
+                     'precision' => array(
+                        'required' => true,
+                        'dynamic_update' => true
+                     )
+                  )
+               )
+            ),
+            'Milestones' => array(
+               'fields' => array(
+                  'MileStoneName' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'MileStoneDeadline' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
+               )
+            )
+         )
+      ),
+      
+      // Document ProjectClosure
+      'ProjectClosure' => array(
+         'recorder_for' => array(
+            'information_registry.ProjectClosureRecords'
+         ),
+         
+         'fields' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
                   'required' => true
+               )
+            ),
+            'ClosureDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ClosureComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
                )
             )
          )
@@ -696,6 +787,174 @@ $_dictionary = array(
          )
       ),
       
+      // Project Registration Records
+      'ProjectRegistrationRecords' => array(
+         'dimensions' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'ProjectDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ProjectManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'BudgetHRS' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'BudgetNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'StartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DeliveryDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'ProjectRegistration'
+         )
+      ),
+      
+      // Subproject Registration Records
+      'SubprojectRegistrationRecords' => array(
+         'dimensions' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'SubProject' => array(
+               'reference' => 'catalogs.SubProjects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'ProjectRegistration'
+         )
+      ),
+      
+      // Milestone Records
+      'MilestoneRecords' => array(
+         'dimensions' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'MileStoneName' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'MileStoneDeadline' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'ProjectRegistration'
+         )
+      ),
+      
+      // Project Closure Records
+      'ProjectClosureRecords' => array(
+         'dimensions' => array(
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'ClosureDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Comment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'ProjectClosure'
+         )
+      )
+      
    /*   'ProjectTimeRecords' => array(
          'dimensions' => array(
             'Project' => array(
@@ -794,46 +1053,6 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(256) NOT NULL default ''"
-               )
-            )
-         )
-      ),
-      
-      'ProjectRegistrationRecords' => array(
-         'dimensions' => array(
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
-               'precision' => array(
-                  'required' => true
-               )
-            )
-         ),
-         
-         'periodical' => 'day', // [ second | day | month | quarter | year ]
-         
-         'fields' => array(
-            'BudgetNOK' => array(
-               'type' => 'float',
-               'sql'  => array(
-                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-               ),
-               'precision' => array(
-                  'min' => 0
-               )
-            ),
-            'BudgetHRS' => array(
-               'type' => 'float',
-               'sql'  => array(
-                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-               ),
-               'precision' => array(
-                  'min' => 0
-               )
-            ),
-            'Deadline' => array(
-               'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
                )
             )
          )
@@ -1131,6 +1350,28 @@ $_dictionary = array(
          'password' => 'User_1',
          'roles'    => array('OEF_ROLE_3')
       )
+   ),
+   
+   
+   
+   /////////////////////
+   // Constants Section
+   /////////////////////
+   'Constants' => array(
+      'PmPosition' => array(
+         'reference' => 'catalogs.OrganizationalPositions',
+         'precision' => array(
+            'required' => true
+         )
+      ),
+      'BudgetHRS' => array(
+         'type' => 'float',
+         'sql'  => array(
+            'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+         ),
+         'precision' => array(
+            'min' => 0
+         )
+      )
    )
 );
-
