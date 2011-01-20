@@ -12,17 +12,38 @@ function onFormUpdateRequest($event)
    $kind      = $subject->getKind();
    $type      = $subject->getType();
    $formData  = $event['formData'];
-   //$formName = $event['formName'];
-   //$parameters = $event['parameters'];
-   $formData  = $formData['aeform'][$kind][$type]['attributes'];
+  //$formName = $event['formName'];
+//$parameters = $event['parameters'];
+   $attrs    =& $formData['aeform'][$kind][$type]['attributes'];
+   $tabulars =& $formData['aeform'][$kind][$type]['tabulars'];
+   
    $container = Container::getInstance();
    
-   if (empty($formData['Project']))
+   // Clean tabular sections
+   if (!empty($attrs['_id']))
+   {
+      $cmodel = $container->getCModel($kind.'.'.$type.'.tabulars', 'Subprojects');
+      
+      if ($cmodel->delete($attrs['_id'], array('attributes' => 'Owner')))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $cmodel = $container->getCModel($kind.'.'.$type.'.tabulars', 'Milestones');
+      
+      if ($cmodel->delete($attrs['_id'], array('attributes' => 'Owner')))
+      {
+         throw new Exception('Database error');
+      }
+   }
+   
+   // Retrieve update data
+   if (empty($attrs['Project']))
    {
       throw new Exception('Unknow Project');
    }
    
-   $project = $formData['Project'];
+   $project = $attrs['Project'];
    $cmodel  = $container->getCModel('catalogs', 'SubProjects');
    
    if (null === ($res = $cmodel->getEntities($project, array('attributes' => 'Project'))))

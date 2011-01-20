@@ -1,6 +1,81 @@
 <?php 
 
 /**
+ * Called after standart validation, before saving tabular Subprojects item
+ * 
+ * @param object $event
+ * @return void
+ */
+function onBeforeAddingSubprojectsRecord($event)
+{
+   $model  = $event->getSubject();
+   $attrs  = $model->toArray();
+   $errors = array(); 
+   
+   $doc = Container::getInstance()->getModel('documents', 'ProjectRegistration');
+   $doc->load($attrs['Owner']);
+   
+   $sub = Container::getInstance()->getModel('catalogs', 'SubProjects');
+   $sub->load($attrs['SubProject']);
+   
+   if ($doc->getAttribute('Project') != $sub->getAttribute('Project'))
+   {
+      $errors['SubProject'] = 'Invalid SubProject';
+   }
+   
+   $event->setReturnValue($errors);
+}
+
+/**
+ * Called after standart validation, before saving tabular Milestones item
+ * 
+ * @param object $event
+ * @return void
+ */
+function onBeforeAddingMilestonesRecord($event)
+{
+   $model  = $event->getSubject();
+   $attrs  = $model->toArray();
+   $errors = array();
+    
+   $cmodel = Container::getInstance()->getCModel('documents.ProjectRegistration.tabulars', 'Milestones');
+
+   $criterion = "WHERE `Owner` = ".$attrs['Owner']." AND `MileStoneName` = '".$attrs['MileStoneName']."'";
+   
+   if (null === ($mils = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
+   {
+      throw new Exception('Database error');
+   }
+   
+   if (!empty($mils))
+   {
+      $errors['MileStoneName'] = 'Duplicate';
+   }
+   
+   $doc = Container::getInstance()->getModel('documents', 'ProjectRegistration');
+   $doc->load($attrs['Owner']);
+   
+   if (($mts = strtotime($attrs['MileStoneDeadline'])) === -1)
+   {
+      $errors['MileStoneDeadline'] = 'Invalid date format';
+   }
+   elseif ($mts > strtotime($doc->getAttribute('DeliveryDate')))
+   {
+      $errors['MileStoneDeadline'] = 'Should not exceed project DeliveryDate';
+   }
+   
+   /*if ($errors)
+   {
+      if ($cmodel->delete($attrs['Owner'], array('attributes' => 'Owner')))
+      {
+         throw new Exception('Database error');
+      }
+   }*/
+   
+   $event->setReturnValue($errors);
+}
+
+/**
  * Post document
  * 
  * @param object $event
@@ -10,38 +85,83 @@ function onPost($event)
 {
    $document  = $event->getSubject();
    $container = Container::getInstance();
+   $kind = $document->getKind();
    $type = $document->getType();
    $id   = $document->getId();
    
-   $tsCModel = $container->getCModel($document->getKind().'.'.$type.'.tabulars', 'Records');
-   $result   = $tsCModel->getEntities($id, array('attributes' => array('Owner')));
+   // Retrieve SubProjects
+   $cmodel = $container->getCModel($kind.'.'.$type.'.tabulars', 'Subprojects');
    
-   if (is_null($result) || isset($result['errors']))
+   if (null === ($subs = $cmodel->getEntities($id, array('attributes' => 'Owner'))) || isset($result['errors']))
    {
-      $event->setReturnValue(false);
-      return;
+      throw new Exception('Database error');
+   }
+
+   // Retrieve Milestones
+   $cmodel = $container->getCModel($kind.'.'.$type.'.tabulars', 'Milestones');
+   
+   if (null === ($mils = $cmodel->getEntities($id, array('attributes' => 'Owner', 'key' => '_id'))) || isset($result['errors']))
+   {
+      throw new Exception('Database error');
    }
    
-   $irModel   = $container->getModel('information_registry', 'ProjectRegistrationRecords');
-   $return = true;
-   $date = $document->getAttribute('Date');
-   $date = date('Y-m-d H:i:s', MGlobal::dateToTimeStamp($date));
+   $pReg = $container->getModel('information_registry', 'ProjectRegistrationRecords');
+   $sReg = $container->getModel('information_registry', 'SubprojectRegistrationRecords');
+   $mReg = $container->getModel('information_registry', 'MilestoneRecords');
+
+   if (!$pReg->setRecorder($type, $id) || !$sReg->setRecorder($type, $id) || !$mReg->setRecorder($type, $id))
+   {
+      throw new Exception('Invalid recorder');
+   }
    
+   // Post document
    $errors = array();
    
-   // Post document     
-   foreach ($result as $values)
+   // ProjectRegistrationRecords
+   $err  = array();
+   $vals = $document->toArray();
+   
+   if (!$pReg->setAttribute('Project',           $vals['Project']))           $err[] = 'Invalid value for Project';
+   if (!$pReg->setAttribute('ProjectDepartment', $vals['ProjectDepartment'])) $err[] = 'Invalid value for ProjectDepartment';
+   if (!$pReg->setAttribute('ProjectManager',    $vals['ProjectManager']))    $err[] = 'Invalid value for ProjectManager';
+   if (!$pReg->setAttribute('BudgetHRS',         $vals['BudgetHRS']))         $err[] = 'Invalid value for BudgetHRS';
+   if (!$pReg->setAttribute('BudgetNOK',         $vals['BudgetNOK']))         $err[] = 'Invalid value for BudgetNOK';
+   if (!$pReg->setAttribute('StartDate',         $vals['StartDate']))         $err[] = 'Invalid value for StartDate';
+   if (!$pReg->setAttribute('DeliveryDate',      $vals['DeliveryDate']))      $err[] = 'Invalid value for DeliveryDate';
+   if (!$pReg->setAttribute('Customer',          $vals['Customer']))          $err[] = 'Invalid value for Customer';
+   
+   if (!$err)
    {
-      $cnt++;
+      if ($err = $pReg->save()) $err = array('Row not added');
+   }
+   
+   if ($err) throw new Exception(implode('<br>', $err));
+   
+   // SubprojectRegistrationRecords
+   foreach ($subs as $values)
+   {
       $err = array();
-      $ir  = clone $irModel;
+      $ir  = clone $sReg;
       
-      if (!$ir->setRecorder($type, $id))                         $err[] = 'Invalid recorder';
-      if (!$ir->setAttribute('Project', $values['Project']))     $err[] = 'Invalid value for "Project"';
-      if (!$ir->setAttribute('Period', $date))                   $err[] = 'Invalid value for "Period"';
-      if (!$ir->setAttribute('BudgetNOK', $values['BudgetNOK'])) $err[] = 'Invalid value for "BudgetNOK"';
-      if (!$ir->setAttribute('BudgetHRS', $values['BudgetHRS'])) $err[] = 'Invalid value for "BudgetHRS"';
-      if (!$ir->setAttribute('Deadline', $values['Deadline']))   $err[] = 'Invalid value for "Deadline"';
+      if (!$ir->setAttribute('Project',    $vals['Project']))      $err[] = 'Invalid value for Project';
+      if (!$ir->setAttribute('SubProject', $values['SubProject'])) $err[] = 'Invalid value for SubProject';
+      
+      if (!$err)
+      {
+         if ($err = $ir->save()) $errors[] = 'Row not added';
+      }
+      else $errors = array_merge($errors, $err);
+   }
+   
+   // MilestoneRecords
+   foreach ($mils as $values)
+   {
+      $err = array();
+      $ir  = clone $mReg;
+      
+      if (!$ir->setAttribute('Project',          $vals['Project']))             $err[] = 'Invalid value for Project';
+      if (!$ir->setAttribute('MileStoneName',    $values['MileStoneName']))     $err[] = 'Invalid value for MileStoneName';
+      if (!$ir->setAttribute('MileStoneDeadline',$values['MileStoneDeadline'])) $err[] = 'Invalid value for MileStoneDeadline';
       
       if (!$err)
       {
@@ -52,7 +172,7 @@ function onPost($event)
    
    if ($errors) throw new Exception(implode('<br>', $errors));
    
-   $event->setReturnValue($return);
+   $event->setReturnValue(true);
 }
 
 /**
@@ -66,16 +186,21 @@ function onUnpost($event)
    $document  = $event->getSubject();
    $container = Container::getInstance();
    
-   $irCModel = $container->getCModel('information_registry', 'ProjectRegistrationRecords');
+   $pModel = $container->getCModel('information_registry', 'ProjectRegistrationRecords');
+   $sModel = $container->getCModel('information_registry', 'SubprojectRegistrationRecords');
+   $mModel = $container->getCModel('information_registry', 'MilestoneRecords');
    
    $options = array(
       'attributes' => array('%recorder_type', '%recorder_id'),
       'criterion'  => "`%recorder_type`='".$document->getType()."' AND `%recorder_id`=".$document->getId()
    );
    
-   $result = $irCModel->delete(true, $options);
-   $return = empty($result) ? true : false;
+   
+   $pRes = $pModel->delete(true, $options);
+   $sRes = $sModel->delete(true, $options);
+   $mRes = $mModel->delete(true, $options);
+   
+   $return = (empty($pRes) && empty($sRes) && empty($mRes)) ? true : false;
    
    $event->setReturnValue($return);
 }
-?>
