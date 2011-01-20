@@ -2173,6 +2173,7 @@ class PersistentLayer
          'field_prec' => array(),
          'references' => array(),
          'required'   => array(),
+         'dynamic'    => array(),
          'model'      => array(),
          'controller' => array(),
          'forms'      => array(),
@@ -2266,6 +2267,7 @@ class PersistentLayer
             $result['field_prec'][$type] = $res['field_prec'];
             $result['references'][$type] = $res['references'];
             $result['required'][$type]   = $res['required'];
+            $result['dynamic'][$type]    = $res['dynamic'];
          }
          else $errors = array_merge($errors, $res['errors']);
          
@@ -2350,6 +2352,7 @@ class PersistentLayer
          'field_prec' => array(),
          'references' => array(),
          'required'   => array(),
+         'dynamic'    => array(),
          'recorders'  => array(),
          'model'      => array(),
          'controller' => array(),
@@ -2421,6 +2424,7 @@ class PersistentLayer
             $result['field_prec'][$registry] = $res['field_prec'];
             $result['references'][$registry] = $res['references'];
             $result['required'][$registry]   = $res['required'];
+            $result['dynamic'][$registry]    = $res['dynamic'];
          }
          else $errors = array_merge($errors, $res['errors']);
          
@@ -2479,6 +2483,7 @@ class PersistentLayer
          'field_prec' => array(),
          'references' => array(),
          'required'   => array(),
+         'dynamic'    => array(),
          'model'      => array(),
          'controller' => array()
       );
@@ -2511,6 +2516,7 @@ class PersistentLayer
             $result['field_prec'][$type][$tabular] = $res['field_prec'];
             $result['references'][$type][$tabular] = $res['references'];
             $result['required'][$type][$tabular]   = $res['required'];
+            $result['dynamic'][$type][$tabular]    = $res['dynamic'];
          }
          else $errors = array_merge($errors, $res['errors']);
          
@@ -2805,7 +2811,8 @@ class PersistentLayer
          'field_type' => array(),
          'field_prec' => array(),
          'references' => array(),
-         'required'   => array()
+         'required'   => array(),
+         'dynamic'    => array()
       );
       
       foreach ($fields_dictionary as $name => $params)
@@ -2848,12 +2855,21 @@ class PersistentLayer
          
          if (isset($params['precision']))
          {
+            // Required
             if (isset($params['precision']['required']))
             {
                if ($params['precision']['required']) $result['required'][] = $name;
                unset($params['precision']['required']); 
             }
             
+            // Dynamic update
+            if (isset($params['precision']['dynamic_update']))
+            {
+               if ($params['precision']['dynamic_update']) $result['dynamic'][] = $name;
+               unset($params['precision']['dynamic_update']); 
+            }
+            
+            // Other
             if (!empty($params['precision'])) $result['field_prec'][$name] = $params['precision'];
          }
       }

@@ -9,6 +9,7 @@
    var field_prec = {};
    var references = {}; 
    var required   = {};
+   var dynamic    = {};
    var kind   = '';
    var type   = puid.type;
    var _list  = data.list;
@@ -37,6 +38,7 @@
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
+      let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
             
       var class = string.replace(kind, '.', '_')..'_'..type;
   }}
@@ -74,6 +76,7 @@
            field_prec: field_prec,
            references: references,
            required: required,
+           dynamic:  dynamic,
            name_prefix: name_prefix,
            numb: i
          };
@@ -119,6 +122,7 @@
        field_prec: field_prec,
        references: references,
        required: required,
+       dynamic:  dynamic,
        name_prefix: name_prefix,
        numb: '%%i%%'
      };

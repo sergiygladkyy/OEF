@@ -824,8 +824,10 @@ function checkAll(_class, parent)
  */
 function markSelected()
 {
-  jQuery('form option').each( function(index) { jQuery(this).removeAttr('style'); } );
-  jQuery('form option:selected').each( function(index) { jQuery(this).css('color', '#801020'); } );
+	jQuery('form option').each( function(index) { jQuery(this).removeAttr('style'); } );
+	jQuery('form option:selected').each( function(index) {
+		jQuery(this).css('color', '#801020').attr('current', 'true'); 
+	});
 }
 
 /*
@@ -1325,6 +1327,10 @@ function oeEventDispatcher()
 				break;
 				
 			case 'SELECT':
+				var i = element.selectedIndex;
+			    
+				element.options[i].setAttribute('current', 'true'); // For Dynamic Update
+				
 				for (i = 0; i < element.length; i++)
 				{
 					var option = element.options[i];
@@ -1433,27 +1439,21 @@ function oefDynamicUpdate()
 	 */
 	this.processEvent = function(event)
 	{
-		if (!event)
-		{
-			if (!window.event) return false;
-			
-			event = window.event; 
-			
-			node = window.event.srcElement;
-	    }
-	    else node = event.currentTarget;
-	    
-	    if (event.stopPropagation)
-		{
-			event.stopPropagation();
-		}
-		else event.cancelBubble = true;
-	    
+		event = event || window.event;
+		node  = event.target || event.srcElement;
+		
 	    if (node.nodeName != 'SELECT') return false;
 	    
 	    var i = node.selectedIndex;
 	    
-		if (node.options[i].value != 'new') return true;
+		if (node.options[i].value != 'new')
+		{
+			node.options[i].setAttribute('current', 'true');
+			
+			return true;
+		}
+		
+		event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
 		
 		kind = jQuery(node).attr('rkind');
 		type = jQuery(node).attr('rtype');
@@ -1543,8 +1543,15 @@ function oefDynamicUpdate()
     		
     		case 'cancel':
     			removeEditForm();
-				
-    			jQuery(node).find('option[value="0"]').attr('selected', true);
+    			
+    			if (jQuery(node).find('option[current="true"]').size() != 0)
+    			{
+    				jQuery(node).find('option[current="true"]').attr('selected', true);
+    			}
+    			else
+    			{
+    				jQuery(node).find('option[value="0"]').attr('selected', true);
+    			}
 				
 				active = true;
     		break;
@@ -1666,5 +1673,6 @@ function oefDynamicUpdate()
 	{
 		jQuery('select.oef_' + kind + '_' + type).append('<option value="' + value + '">' +  text + '</option>');
 		jQuery(node).find('option[value="' + value + '"]').attr('selected', true);
+		jQuery(node).change();
 	}
 }

@@ -8,6 +8,7 @@
    var field_type = {};
    var field_prec = {};
    var required   = [];
+   var dynamic    = {};
    var references = [];
    var kind     = '';
    var type     = puid.type;
@@ -33,6 +34,7 @@
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
+      let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       
       var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
@@ -79,7 +81,12 @@
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           <pre class="script">
             var name   = name_prefix..'[attributes]['..field..']';
-            var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field]};
+            var params = {
+               select:    select[field],
+               required:  list.contains(required, field),
+               dynamic:   list.contains(dynamic, field),
+               precision: field_prec[field]
+            };
             
             if (references[field]) {
               let params ..= {reference: references[field]};

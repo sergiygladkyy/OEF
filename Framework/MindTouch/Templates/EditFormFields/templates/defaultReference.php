@@ -6,6 +6,7 @@
     var attrs   = params.attrs ?? {};
     var reference  = params.reference ?? {};
     var precision  = params.precision ?? {};
+    var dynamic = params.dynamic ?? false;
     var select  = '';
     var content = '&lt;option value="0"&gt;&nbsp;&lt;/option&gt;';
     
@@ -16,7 +17,7 @@
       let attrs ..= {class: 'oef_'..reference.kind..'_'..reference.type};
     }
     
-    if (precision.dynamic_update == True && #reference.kind != 0 && reference.type !=0)
+    if (dynamic == True && #reference.kind != 0 && reference.type !=0)
     {
        let attrs ..= {class: attrs.class..' oef_dynamic_update'};
        let attrs ..= {kind: reference.kind, type: reference.type};
@@ -26,7 +27,7 @@
     foreach (var param in options) {
        let content ..= '&lt;option value="'..param.value..'"';
        if (param.value == value) {
-          let content ..= ' selected="selected"';
+          let content ..= ' selected="selected" current="true"';
        }
        let content ..= '&gt;'..param.text..'&lt;/option&gt;';
     }

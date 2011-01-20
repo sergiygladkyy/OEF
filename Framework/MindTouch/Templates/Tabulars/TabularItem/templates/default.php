@@ -14,6 +14,7 @@
     var field_prec  = data.field_prec;
     var references  = data.references;
     var required    = data.required;
+    var dynamic     = data.dynamic;
     var name_prefix = data.name_prefix ?? 'aeform['..kind..']';
     var i = data.numb;
 }}
@@ -29,8 +30,14 @@
       <td class="tabular_col">
         <ul class="{{ class..'_'..i..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
         <pre class="script">
-          var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field], attrs: {id: _prefix..'_field'}};
-          
+          var params = {
+             select:    select[field],
+             required:  list.contains(required, field),
+             dynamic:   list.contains(dynamic, field),
+             precision: field_prec[field],
+             attrs: {id: _prefix..'_field'}
+          };
+            
           if (references[field]) {
             let params ..= {reference: references[field]};
           }
