@@ -1358,19 +1358,16 @@ $_dictionary = array(
    // Constants Section
    /////////////////////
    'Constants' => array(
-      'PmPosition' => array(
+      'ProjectManagerPosition' => array(
          'reference' => 'catalogs.OrganizationalPositions',
          'precision' => array(
             'required' => true
          )
       ),
-      'BudgetHRS' => array(
-         'type' => 'float',
-         'sql'  => array(
-            'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
-         ),
+      'DivisionalChiefPosition' => array(
+         'reference' => 'catalogs.OrganizationalPositions',
          'precision' => array(
-            'min' => 0
+            'required' => true
          )
       )
    )
