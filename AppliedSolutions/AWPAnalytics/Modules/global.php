@@ -880,11 +880,13 @@ class MProjects
     * @param $date
     * @return unknown_type
     */
-   public static function isClose($project, $date)
+   public static function isClose($project, $date = null)
    {
       $cmodel = Container::getInstance()->getCModel('information_registry', 'ProjectClosureRecords');
       
-      $criterion = "WHERE `Project`=".(int) $project." AND `ClosureDate` <= '".$date."'";
+      $criterion = "WHERE `Project`=".(int) $project;
+      
+      if ($date) $critrion .= " AND `ClosureDate` <= '".$date."'";
       
       if (null === ($result = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
       {
