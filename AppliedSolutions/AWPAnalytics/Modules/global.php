@@ -545,6 +545,34 @@ class MVacation
       
       return $links;
    }
+   
+   /**
+    * Has Vacation in this period ?
+    * 
+    * @param int $employee
+    * @param date $from
+    * @param date $to
+    * @return array - errors
+    */
+   public static function checkByPeriod($employee, $from, $to)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
+               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` < '".$to."' OR `DateTo` >'".$from."')";
+      
+      if (null === ($row = $odb->loadAssocList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (!empty($row))
+      {
+         return array('Employee has vacation days in this period');
+      }
+      
+      return array();
+   }
 }
 
 
@@ -619,6 +647,103 @@ class MEmployees
       
       return $links;
    }
+   
+   /**
+    * Return list of now works employees for select box
+    * 
+    * @return array
+    */
+   public static function getNowWorksForSelect()
+   {
+      $container = Container::getInstance();
+       
+      $odb   = $container->getODBManager();
+       
+      $query = "SELECT empl._id AS `value`, empl.Description AS `text` ".
+               "FROM catalogs.Employees AS `empl` ".
+               "WHERE empl.NowEmployed = 1 ".
+               "ORDER BY empl.Description";
+       
+      if (null === ($empls = $odb->loadAssocList($query, array('key' => 'value'))))
+      {
+         throw new Exception($odb->getError(). ' Database error');
+      }
+      
+      return $empls;
+   }
+   
+   /**
+    * Worked in this period ?
+    * 
+    * @param int $employee
+    * @param string $from
+    * @param string $to
+    * @return array - errors
+    */
+   public static function checkByPeriod($employee, $from, $to)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT `Period`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$from."' ".
+               "GROUP BY `Period` ASC";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (empty($row))
+      {
+         return array('Unknow Employee');
+      }
+      
+      if ($row['RegisteredEvent'] == 'Firing')
+      {
+         return array('Employee fired');
+      }
+      
+      $query = "SELECT `Period`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` > '".$from."' AND `Period` <= '".$to."' AND `RegisteredEvent` = 'Firing' ".
+               "GROUP BY `Period` DESC";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (!empty($row))
+      {
+         return array('Employee have been fired '.print_r($row, true));
+      }
+      
+      return array();
+   }
+   
+   /**
+    * Get department
+    * 
+    * @param int $employee
+    * @param string $date
+    * @return int or null
+    */
+   public static function getDepartment($employee, $date)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT MAX(`Period`), `OrganizationalUnit` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$date."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return empty($row) ? null : $row['OrganizationalUnit'];
+   }
 }
 
 
@@ -691,4 +816,95 @@ class MPeriodicClosing
       
       return $links;
    }
+}
+
+
+
+/**
+ * Projects functions
+ * 
+ * @author alexander.yemelianov
+ */
+class MProjects
+{
+   /**
+    * Return list of registered projects for select box
+    * 
+    * @return array
+    */
+   public static function getRegisteredProjectsForSelect()
+   {
+      $container = Container::getInstance();
+      
+      $odb   = $container->getODBManager();
+      $query = "SELECT ir.Project AS `value`, pr.Description AS `text` ".
+               "FROM catalogs.Projects AS `pr`, information_registry.ProjectRegistrationRecords AS `ir` ".
+               "WHERE ir.Project = pr._id ".
+               "ORDER BY pr.Description";
+      
+      if (null === ($projects = $odb->loadAssocList($query, array('key' => 'value'))))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $projects;
+   }
+   
+   /**
+    * Return list of registered subprojects for select box
+    * 
+    * @param int $project
+    * @return array
+    */
+   public static function getRegisteredSubProjectForSelect($project)
+   {
+      $container = Container::getInstance();
+      
+      $odb   = $container->getODBManager();
+      $query = "SELECT ir.SubProject AS `value`, sub.Description AS `text` ".
+               "FROM catalogs.SubProjects AS `sub`, information_registry.SubprojectRegistrationRecords AS `ir` ".
+               "WHERE sub.Project = ".(int) $project." AND sub._id = ir.SubProject ".
+               "ORDER BY sub.Description";
+      
+      if (null === ($subprojects = $odb->loadAssocList($query, array('key' => 'value'))))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $subprojects;
+   }
+   
+   /**
+    * 
+    * @param $project
+    * @param $date
+    * @return unknown_type
+    */
+   public static function isClose($project, $date)
+   {
+      $cmodel = Container::getInstance()->getCModel('information_registry', 'ProjectClosureRecords');
+      
+      $criterion = "WHERE `Project`=".(int) $project." AND `ClosureDate` <= '".$date."'";
+      
+      if (null === ($result = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if (empty($result)) return array();
+      
+      $docs = array();
+
+      foreach ($result as $row)
+      {
+         $docs[$row['_rec_type']][] = $row['_rec_id'];
+      }
+       
+      if (null === ($links = MGlobal::getDocumentLinks($docs)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $links;
+   } 
 }

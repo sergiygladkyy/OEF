@@ -8,7 +8,7 @@
     var precision  = params.precision ?? {};
     var dynamic = params.dynamic ?? false;
     var select  = '';
-    var content = '&lt;option value="0"&gt;&nbsp;&lt;/option&gt;';
+    var content = '&lt;option value="0"&gt;&amp;nbsp;&lt;/option&gt;';
     
     if (#attrs.class != 0) {
       let attrs ..= {class: attrs.class..' oef_'..reference.kind..'_'..reference.type};

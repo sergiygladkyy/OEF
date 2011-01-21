@@ -23,7 +23,7 @@ abstract class ObjectsController extends BaseController
       $tabdef = array();
       
       // Default values
-      $default = $this->getDefaultValuesForEditForm();
+      $default = $this->getDefaultValuesForEditForm('Default', array('id' => $id));
       
       if ($default['status'])
       {
@@ -102,16 +102,16 @@ abstract class ObjectsController extends BaseController
             if (!empty($tabdef[$type]))
             {
                $tabulars[$type]['result']['list'] = (isset($tabdef[$type]['list']) && is_array($tabdef[$type]['list'])) ? $tabdef[$type]['list'] : array();
-               
-               if (isset($tabdef[$type]['select']) && is_array($tabdef[$type]['select']))
-               {
-                  $tabulars[$type]['result']['select'] = $tabdef[$type]['select'];
-               }
             }
             else
             {
                $tabulars[$type]['result']['list'] = array();
             }
+         }
+         
+         if (!empty($tabdef[$type]) && isset($tabdef[$type]['select']) && is_array($tabdef[$type]['select']))
+         {
+            $tabulars[$type]['result']['select'] = $tabdef[$type]['select'];
          }
          
          $tmodel = $this->container->getCModel($this->kind.'.'.$this->type.'.tabulars', $type, $options);

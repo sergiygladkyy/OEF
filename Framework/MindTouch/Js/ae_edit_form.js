@@ -733,10 +733,12 @@ function insertId(uid, id, i)
 {
 	var name   = ae_name_prefix[uid];
 	var tag_id = uid;
+	
 	if (i) {
 		name   += '['+ i +']';
 		tag_id += '_' + i;
 	}
+	
 	name   += '[_id]';
 	tag_id += '_item';
 	var input = document.createElement("input");
@@ -745,6 +747,8 @@ function insertId(uid, id, i)
 	input.setAttribute('value', id);
     var item = document.getElementById(tag_id);
     item.appendChild(input);
+    
+    jQuery('#' + tag_id).find('input[name="'+ ae_name_prefix[uid] +'[ids][]"]').attr('value', id);
 }
 
 /**
@@ -1175,6 +1179,12 @@ function oeEventDispatcher()
 						{
 							msg[i++] = '\n   - ' + kind + ' ' + type + ' tabular ' + ttype;
 						}
+						else if (cdata[type]['tabulars'][ttype]['select'])
+						{
+							cdata[type]['tabulars'][ttype]['items'] = {};
+							
+							msg[i++] = '\n   - ' + kind + ' ' + type + ' tabular ' + ttype;
+						}
 					}
 				}
 			}
@@ -1214,6 +1224,12 @@ function oeEventDispatcher()
 							for (var ttype in cdata[type]['tabulars'])
 							{
 								res = true;
+								
+								// Update selectboxes
+								if (cdata[type]['tabulars'][ttype]['select'])
+								{
+									this.updateTabularSelectBoxes(kind + '_' + type + '_tabulars', ttype, cdata[type]['tabulars'][ttype]['select']);
+								}
 								
 								// Update entity tabular section attributes
 								if (cdata[type]['tabulars'][ttype]['items'])
@@ -1265,6 +1281,60 @@ function oeEventDispatcher()
 			if (typeof element != 'object') continue;
 			
 			this.setElementValue(element, value);
+		}
+		
+		return true;
+	};
+	
+	/**
+	 * Update select boxes in tabular section
+	 * 
+	 * @param string kind - tabular kind
+	 * @param string type - tabular type 
+	 * @param array vals  - list of new options 
+	 * @return boolean
+	 */
+	this.updateTabularSelectBoxes = function(kind, type, vals)
+	{
+		var prefix  = kind + '_' + type;
+		
+		if (!ae_template[prefix]) return false;
+		
+		for (var attribute in vals)
+		{
+			var options = '<option value="0">&nbsp;</option>';
+			
+			for (var i in vals[attribute])
+			{
+				var text  = vals[attribute][i]['text'];
+				var value = vals[attribute][i]['value'];
+				
+				options += '<option value="'+ value +'">'+ text +'</option>';
+			}
+			
+			var code = 'ae_template[prefix].match(/id="'+ prefix +'_%%i%%_'+ attribute +'_field[^<]*/g);';
+			var begs = eval(code);
+			
+			if (begs != null)
+			{
+				begs.sort();
+				
+				var previous = ''; 
+				
+				for (var i in begs)
+				{
+					if (previous == begs[i]) continue;
+					
+					patt = begs[i];
+					patt = patt.replace(/\//g, '\\/');
+					patt = patt.replace(/\[/g, '\\[');
+					patt = patt.replace(/\]/g, '\\]');
+					
+					eval('ae_template[prefix] = ae_template[prefix].replace(/'+ patt +'([^<]*)(.*)(?=<\\/select)/g, begs[i] + options);');
+					
+					previous = begs[i];
+				}
+			}
 		}
 		
 		return true;
