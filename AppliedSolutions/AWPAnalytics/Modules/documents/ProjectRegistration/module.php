@@ -16,12 +16,18 @@ function onBeforeAddingSubprojectsRecord($event)
    $doc->load($attrs['Owner']);
    
    $sub = Container::getInstance()->getModel('catalogs', 'SubProjects');
-   $sub->load($attrs['SubProject']);
-   
-   if ($doc->getAttribute('Project') != $sub->getAttribute('Project'))
+   if ($sub->load($attrs['SubProject']))
    {
-      $errors['SubProject'] = 'Invalid SubProject';
+      $d = $doc->toArray();
+      
+      if ($d['Project'] != $sub->getAttribute('Project')->getId())
+      {
+         $errors['SubProject'] = 'Invalid SubProject';
+      }
    }
+   else $errors['SubProject'] = 'Unknow SubProject';
+   
+   
    
    $event->setReturnValue($errors);
 }
