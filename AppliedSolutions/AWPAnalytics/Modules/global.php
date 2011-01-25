@@ -64,6 +64,35 @@ class MGlobal
    }
    
    /**
+    * 
+    * @param string $date
+    * @return int
+    */
+   public static function getFirstWeekDay($date)
+   {
+      if (($ts = strtotime($date)) === -1)
+      {
+         throw new Exception('Invalid date format');
+      }
+
+      $ts  = mktime(0,0,0,date('m', $ts), date('d', $ts), date('Y', $ts));
+      $day = date('w', $ts);
+      
+      if ($day != 1)
+      {
+         if ($day == 0)
+         {
+            $day = 6;
+         }
+         else $day--;
+
+         $ts -= $day*24*60*60;
+      }
+      
+      return $ts;
+   }
+   
+   /**
     * Get document links
     * 
     * [
@@ -908,5 +937,48 @@ class MProjects
       }
       
       return $links;
-   } 
+   }
+   
+   /**
+    * Get project by employee
+    * 
+    * @param int    $employee
+    * @param string $from
+    * @param string $to
+    * @param bool   $notClosed
+    * @return array
+    */
+   public static function getEmployeeProjects($employee, $from, $to, $notClosed = true)
+   {
+      $container = Container::getInstance();
+      
+      $proj = '';
+      $odb  = $container->getODBManager();
+      
+      if ($notClosed)
+      {
+         $query = "SELECT `Project` FROM information_registry.ProjectClosureRecords ".
+                  "WHERE `ClosureDate` <= '".date('Y-m-d')."'";
+         
+         if (null === ($closed = $odb->loadAssocList($query, array('key' => 'Project'))))
+         {
+            throw new Exception('Database error');
+         }
+         elseif (!empty($closed))
+         {
+            $proj = " AND `Project` NOT IN (".implode(',', array_keys($closed)).") ";
+         }
+      }
+      
+      $query = "SELECT `Project`, `Date`, `Hours`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
+               "FROM information_registry.ProjectAssignmentRecords ".
+               "WHERE `Employee` = ".(int) $employee.$proj." AND `Date` >= '".$from."' AND `Date` <= '".$to."'";
+      
+      if (null === ($projects = $odb->loadAssocList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $projects;
+   }
 }

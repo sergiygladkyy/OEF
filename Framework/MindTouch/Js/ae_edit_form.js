@@ -3,6 +3,7 @@ var ae_index = {};
 var ae_name_prefix = {};
 var ae_template = {};
 var pageAPI = '';
+var processFormCommand = null;
 
 var custom_edit_form_options = {
 	options: {},
@@ -10,7 +11,7 @@ var custom_edit_form_options = {
     url: '/Special:OEController',
     dataType:  'json',
     beforeSubmit: prepareRequest,
-    success: function (data, status) { processResponse(data, status, this.options); },
+    success: function (data, status) { processObjectResponse(data, status, this.options); },
     data: {action: 'save', form: 'CustomForm'}
 };
 
@@ -118,6 +119,16 @@ jQuery(document).ready(function() {
     			options.options.close = true;
     		break;
     		
+    		case 'cancel':
+    			window.self.close();
+    			
+    			if (window.opener && window.opener.length)
+    			{
+    				window.opener.focus();
+    			}
+    			return;
+    		break;
+    		
     		default:
     			options.options.close = false;
     	}
@@ -127,6 +138,8 @@ jQuery(document).ready(function() {
     	}
     	catch(e) { ; }
     }
+    
+    processFormCommand = commandForm;
 });
 
 
@@ -367,6 +380,13 @@ function processObjectResponse(data, status, options)
 					if (!displayErrors(main_kind + '_' + main_type + '_' + field, m_data['errors'][field])) {
 						msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + m_data['errors'][field];
 					}
+				}
+				
+				if (m_data['result'] && m_data['result']['msg']) {
+					if (msg) {
+						msg = m_data['result']['msg'] + msg;
+					}
+					else msg = m_data['result']['msg'];
 				}
 			}
 			

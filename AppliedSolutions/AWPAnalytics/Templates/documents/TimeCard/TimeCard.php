@@ -1,0 +1,253 @@
+<?php
+   $class = $kind.'_'.$type;
+   $aprefix = $attr_prefix.'[attributes][attributes]';
+   $tprefix = $attr_prefix.'[attributes][tabulars][TimeRecords]';
+?>
+
+<form method="post" action="#" class="oe_custom_edit_form" id="<?php echo $class.'_item' ?>">
+  <input type="hidden" name="<?php echo $attr_prefix.'[name]' ?>" value="<?php echo $name ?>" />
+  <?php if (!empty($attrs['_id'])): ?>
+  <input type="hidden" name="<?php echo $aprefix.'[_id]' ?>" value="<?php echo $attrs['_id'] ?>" />
+  <?php endif; ?>
+  <table>
+  <tbody>
+    <tr>
+      <td colspan="4"><h3>Time Card</h3></td>
+    </tr>
+    <tr>
+      <td class="oe_period oe_attribute">Period:</td>
+      <td class="oe_week oe_attribute">
+        <ul class="<?php echo $class.'_Period_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
+        <select name="<?php echo $attr_prefix.'[attributes][week]' ?>" onChange="onChange(this);">
+          <option value="0" selected>&nbsp;</option>
+          <?php foreach ($periods as $opt): ?>
+            <?php if ($period == $opt['value']): ?>
+          <option value="<?php echo $opt['value'] ?>" selected><?php echo $opt['text'] ?></option>
+            <?php else: ?>
+          <option value="<?php echo $opt['value'] ?>"><?php echo $opt['text'] ?></option>
+            <?php endif;?>
+          <?php endforeach; ?>
+        </select>
+      </td>
+      <td class="oe_user oe_attribute">User:</td>
+      <td class="oe_employee oe_attribute">
+        <ul class="<?php echo $class.'_Employee_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
+        <select name="<?php echo $aprefix.'[Employee]' ?>" onChange="onChange(this);">
+          <option value="0" selected>&nbsp;</option>
+          <?php foreach ($employees as $opt): ?>
+            <?php if ($employee == $opt['value']): ?>
+          <option value="<?php echo $opt['value'] ?>" selected><?php echo $opt['text'] ?></option>
+            <?php else: ?>
+          <option value="<?php echo $opt['value'] ?>"><?php echo $opt['text'] ?></option>
+            <?php endif;?>
+          <?php endforeach; ?>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4">
+        <div class="oe_time_card" style="width: 702px;">
+          <table>
+          <tr>
+            <th>Project</th>
+            <th>SubProject</th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thr</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+          </tr>
+          <?php $i = 0 ?>
+          <?php foreach ($card as $project => $_card): ?>
+            <?php foreach ($_card as $subproject => $vals): ?>
+          <tr>
+            <td class="oe_project">
+              <ul class="<?php echo $class.'_tabulars_TimeRecords_'.$i.'_Project_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
+              <?php echo $links['Project'][$project]['text'] ?>
+            </td>
+            <td>
+              <ul class="<?php echo $class.'_tabulars_TimeRecords_'.$i.'_SubProject_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
+              <?php echo $links['SubProject'][$subproject]['text'] ?>
+            </td>
+              <?php for ($j = 0; $j < 7; $j++): ?>
+                <?php $cprefix = $tprefix.'['.(7*$i + $j).']' ?>
+            <td class="oe_hours" id="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_item' ?>">
+              <ul class="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_Hours_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
+              <span class="oe_text"><?php printf("%01.2f", $vals[$j]['Hours']) ?></span>
+              <input class="oe_value" type="text" name="<?php echo $cprefix.'[Hours]' ?>" value="<?php printf("%01.2f", $vals[$j]['Hours']) ?>" style="display: none;">
+                <?php if (isset($vals[$j]['_id'])): ?>
+              <input type="hidden" name="<?php echo $cprefix.'[_id]' ?>" value="<?php echo $vals[$j]['_id'] ?>" />
+                <?php endif; ?>
+              <input type="hidden" name="<?php echo $cprefix.'[Project]' ?>" value="<?php echo $project ?>" />
+              <input type="hidden" name="<?php echo $cprefix.'[SubProject]' ?>" value="<?php echo $subproject ?>" />
+            </td>
+              <?php endfor; ?>
+          </tr>
+              <?php $i++ ?>
+            <?php endforeach; ?>
+          <?php endforeach; ?>
+          </table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="oe_submit" colspan="4">
+        <input type="button" value="Close" class="ae_command" command="cancel" />&nbsp;
+        <input type="button" value="Save" class="ae_command" command="save" />
+      </td>
+    </tr>
+  </tbody>
+  </table>
+</form>
+
+<script type="text/javascript">
+	jQuery('<?php echo '#'.$class.'_item .oe_hours' ?>').click(function(event)
+	{
+		event.stopPropagation ? event.stopPropagation() : event.cancelBubble = true;
+		
+		var element = event.target || event.srcElement;
+		
+		if (element.nodeName != 'TD') element = element.parentNode; 
+		
+		jQuery(element).find('.oe_text').css('display', 'none');
+		jQuery(element).find('.oe_value').css('display', 'block').focus();
+	}
+	).find('.oe_value').blur(function(event)
+	{
+		event.stopPropagation ? event.stopPropagation() : event.cancelBubble = true;
+		
+		var element = jQuery(event.target || event.srcElement).parent().get(0);
+		var input   = jQuery(element).find('.oe_value').css('display', 'none').get(0);
+		
+		jQuery(element).find('.oe_text').text(input.value).css('display', 'block');
+	});
+
+	function onChange(element)
+	{
+		appInactive();
+		
+		var params = {};
+		
+     <?php if (!empty($attrs['_id'])): ?>
+		if (!confirm('TimeCard will be cleared. Continue?'))
+		{
+			jQuery(element).find('option[current=true]').attr('selected', 'selected');
+			appActive();
+			return;
+		}
+
+		params.document = <?php echo $attrs['_id'] ?>;
+     <?php endif; ?>
+
+		appDisplayLoader(true);
+     
+		if (element.getAttribute('name') == 'aeform[documents][TimeCard][attributes][week]')
+		{
+			params.Period = element.options[element.selectedIndex].value;
+			params.Employee = jQuery('<?php echo '#'.$class.'_item .oe_employee' ?>').
+				find('select option:selected').attr('value');
+		}
+		else
+		{
+			params.Employee = element.options[element.selectedIndex].value;
+			params.Period   = jQuery('<?php echo '#'.$class.'_item .oe_week' ?>').
+				find('select option:selected').attr('value');
+		}
+		
+		displayCustomForm('documents.TimeCard', 'TimeCard', params, 'oef_custom_time_card_form');
+
+		jQuery('<?php echo '#'.$class.'_item .ae_command' ?>').each(function(index) {
+	    	jQuery(this).click(function() { 
+	    		processFormCommand(this);
+	    	});
+	    });
+	    
+		appActive();
+	}
+</script>
+
+<style type="text/css">
+   .oe_time_card {
+      min-width: 430px;
+      overflow: auto;
+      margin: 0 0 10px 0;
+   }
+   
+   .oe_time_card td
+   {
+      vertical-align: bottom;
+   }
+   
+   .oe_time_card td.oe_hours, .oe_time_card th {
+      text-align: center;
+   }
+   
+   .oe_time_card .oe_hours {
+      cursor: pointer;
+      padding: 6px 4px !important;
+   }
+   
+   .oe_hours {
+      width: 46px !important;
+      height: 27px !important;
+   }
+   
+   .oe_hours input {
+      width: 40px !important;
+      height: 13px !important;
+   }
+   
+   .oe_project {
+      width: 150px !important;
+   }
+   
+   td.oe_attribute
+   {
+      padding-bottom: 15px !important;
+      vertical-align: bottom;
+   }
+   
+   td.oe_period
+   {
+      border-right:  0 none !important;
+      padding-right: 0 !important;
+      width: 45px !important;
+   }
+   
+   td.oe_week 
+   {
+      padding-right: 100px !important;
+      border-right: 0 none !important;
+      width: 223px;
+   }
+   
+   .oe_week select
+   {
+      width: 223px;
+   }
+   
+   td.oe_user 
+   {
+      border-right:  0 none !important;
+      padding-right: 0 !important;
+      width: 34px !important;
+   }
+   
+   .oe_employee select
+   {
+      width: 165px !important;
+   }
+   
+   td.oe_submit
+   {
+      text-align: right;
+      padding: 15px 21px 23px 0; 
+   }
+   
+   #<?php echo $class.'_item' ?> ul.ae_editform_field_errors
+   {
+      margin-bottom: 3px !important;
+   }
+</style>
