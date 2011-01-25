@@ -572,6 +572,89 @@ $_dictionary = array(
                )
             )
          )
+      ),
+      
+      // Document TimeCard
+      'TimeCard' => array(
+         'recorder_for' => array(
+            'information_registry.TimeReportingRecords',
+            'AccumulationRegisters.EmployeeHoursReported'
+         ),
+         
+         'fields' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'StartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'EndDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+         ),
+         
+         'tabular_sections' => array(
+            'TimeRecords' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'reference' => 'catalogs.Projects',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'SubProject' => array(
+                     'reference' => 'catalogs.SubProjects'
+                  ),
+                  'Date' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Hours' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'min' => 0
+                     )
+                  ),
+                  'Comment' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  )
+               )
+            )
+         ),
+         
+         'Forms' => array(
+            'TimeCard'
+         ),
+         
+         'Templates' => array(
+            'TimeCard'
+         )
       )
    ),
    
@@ -1035,41 +1118,41 @@ $_dictionary = array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
             )
+         ),
+         
+         'recorders' => array(
+            'ProjectAssignment'
          )
-      )
+      ),
       
-   /*   'ProjectTimeRecords' => array(
+      // Time Reporting Records
+      'TimeReportingRecords' => array(
          'dimensions' => array(
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
-               'precision' => array(
-                  'required' => true
-               )
-            ),
-            'SubProject' => array(
-               'reference' => 'catalogs.SubProjects',
-               /*'precision' => array(
-                  'required' => true
-               )*/
-/*            ),
             'Employee' => array(
                'reference' => 'catalogs.Employees',
                'precision' => array(
                   'required' => true
                )
             ),
-         ),
-         
-         //'periodical' => 'day', // [ second | day | month | quarter | year ]
-         
-         'fields' => array(
-            'BusinessArea' => array(
-               'reference' => 'catalogs.BusinessAreas',
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
                'precision' => array(
                   'required' => true
                )
             ),
-            'HoursSpent' => array(
+            'Date' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'Hours' => array(
                'type' => 'float',
                'sql'  => array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
@@ -1078,70 +1161,33 @@ $_dictionary = array(
                   'min' => 0
                )
             ),
-            'Date' => array(
-               'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               ),
+            'SubProject' => array(
+               'reference' => 'catalogs.SubProjects'
+            ),
+            'ProjectDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
                'precision' => array(
                   'required' => true
+               )
+            ),
+            'EmployeeDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Comment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
                )
             )
          ),
          
          'recorders' => array(
-             'ProjectTimeRecorder'
+            'TimeCard'
          )
-      ),
-      
-      'RejectedImportRecords' => array(
-         'fields' => array(
-            'Project' => array(
-               'reference' => 'catalogs.Projects'
-            ),
-            'SubProject' => array(
-               'reference' => 'catalogs.SubProjects'
-            ),
-            'Employee' => array(
-               'reference' => 'catalogs.Employees'
-            ),
-            'BusinessArea' => array(
-               'reference' => 'catalogs.BusinessAreas'
-            ),
-            'HoursSpent' => array(
-               'type' => 'string',
-               'sql'  => array(
-                  'type' => "varchar(128) NOT NULL default ''"
-               )
-            ),
-            'DocumentType' => array(
-               'type' => 'string',
-               'sql'  => array(
-                  'type' => "varchar(128) NOT NULL default ''"
-               )
-            ),
-            'DocumentNumber' => array(
-               'type' => 'int',
-               'sql'  => array(
-                  'type' => "INT(11) NOT NULL default 0"
-               )
-            ),
-            'Date' => array(
-               'type' => 'date',
-               'sql'  => array(
-                  'type' => "DATE NOT NULL default '0000-00-00'"
-               )
-            ),
-            'RejectReason' => array(
-               'type' => 'string',
-               'sql'  => array(
-                  'type' => "varchar(256) NOT NULL default ''"
-               )
-            )
-         )
-      ),
-      
-      */
+      )
    ),
    
    
@@ -1180,6 +1226,63 @@ $_dictionary = array(
              'VacationOrder',
              'PeriodicClosing',
              'DismissalOrder'
+         )
+      ),
+      
+      // Employee Hours Reported
+      'EmployeeHoursReported' => array(
+         'register_type' => 'Balances',
+      
+         'dimensions' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'Hours' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'OvertimeHours' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'ExtraHours' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'TimeCard'
          )
       )
    ),
