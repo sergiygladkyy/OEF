@@ -32,8 +32,13 @@ ul.ae_editform_field_errors, ul.ae_errors {
 	overflow: auto;
 }
 
-.ae_object_edit_form input[type=text]  { width: 140px; }
-.ae_object_edit_form select { width: 144px; }
+.ae_edit_form input[type=text], .ae_object_edit_form input[type=text] {
+	width: 140px;
+}
+
+.ae_edit_form select, .ae_object_edit_form select {
+	width: 144px;
+}
 
 .ae_posted {
 	background: url("/skins/common/icons/accept.png") no-repeat scroll left center transparent;

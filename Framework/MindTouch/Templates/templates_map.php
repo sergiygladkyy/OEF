@@ -1,12 +1,12 @@
 <?php
 $_templates_map = array(
    'Template:Entities/Catalogs' => null,
-   'Template:Entities/Catalogs/EditForm' => '/Catalogs/EditForm/EditForm.php',
+   'Template:Entities/Catalogs/EditForm'         => '/Catalogs/EditForm/EditForm.php',
    'Template:Entities/Catalogs/EditForm/default' => '/Catalogs/EditForm/templates/default.php',
    'Template:Entities/Catalogs/EditForm/custom'  => '/Catalogs/EditForm/templates/custom.php',
-   'Template:Entities/Catalogs/ItemForm' => '/Catalogs/ItemForm/ItemForm.php',
+   'Template:Entities/Catalogs/ItemForm'         => '/Catalogs/ItemForm/ItemForm.php',
    'Template:Entities/Catalogs/ItemForm/default' => '/Catalogs/ItemForm/templates/default.php',
-   'Template:Entities/Catalogs/ListForm' => '/Catalogs/ListForm/ListForm.php',
+   'Template:Entities/Catalogs/ListForm'         => '/Catalogs/ListForm/ListForm.php',
    'Template:Entities/Catalogs/ListForm/default' => '/Catalogs/ListForm/templates/default.php',
    
    'Template:Entities/Data_processors' => null,
@@ -14,11 +14,11 @@ $_templates_map = array(
    'Template:Entities/Data_processors/ImportForm/default' => '/Data_processors/ImportForm/templates/default.php',
    
    'Template:Entities/Documents' => null,
-   'Template:Entities/Documents/EditForm' => '/Documents/EditForm/EditForm.php',
+   'Template:Entities/Documents/EditForm'         => '/Documents/EditForm/EditForm.php',
    'Template:Entities/Documents/EditForm/default' => '/Documents/EditForm/templates/default.php',
-   'Template:Entities/Documents/ItemForm' => '/Documents/ItemForm/ItemForm.php',
+   'Template:Entities/Documents/ItemForm'         => '/Documents/ItemForm/ItemForm.php',
    'Template:Entities/Documents/ItemForm/default' => '/Documents/ItemForm/templates/default.php',
-   'Template:Entities/Documents/ListForm' => '/Documents/ListForm/ListForm.php',
+   'Template:Entities/Documents/ListForm'         => '/Documents/ListForm/ListForm.php',
    'Template:Entities/Documents/ListForm/default' => '/Documents/ListForm/templates/default.php',
    
    'Template:Entities/EditFormFields' => '/EditFormFields/EditFormFields.php',
@@ -33,8 +33,13 @@ $_templates_map = array(
    'Template:Entities/EditFormFields/defaultString'    => '/EditFormFields/templates/defaultString.php',
    
    'Template:Entities/Information_registry' => null,
-   'Template:Entities/Information_registry/ListForm' => '/Information_registry/ListForm.php',
-   'Template:Entities/Information_registry/ListForm/default' => '/Information_registry/templates/default.php',
+   'Template:Entities/Information_registry/EditForm'         => '/Information_registry/EditForm/EditForm.php',
+   'Template:Entities/Information_registry/EditForm/default' => '/Information_registry/EditForm/templates/default.php',
+   'Template:Entities/Information_registry/EditForm/custom'  => '/Information_registry/EditForm/templates/custom.php',
+   'Template:Entities/Information_registry/ItemForm'         => '/Information_registry/ItemForm/ItemForm.php',
+   'Template:Entities/Information_registry/ItemForm/default' => '/Information_registry/ItemForm/templates/default.php',
+   'Template:Entities/Information_registry/ListForm'         => '/Information_registry/ListForm/ListForm.php',
+   'Template:Entities/Information_registry/ListForm/default' => '/Information_registry/ListForm/templates/default.php',
    
    'Template:Entities/ItemFormFields' => '/ItemFormFields/ItemFormFields.php',
    'Template:Entities/ItemFormFields/defaultBool'      => '/ItemFormFields/templates/defaultBool.php',
@@ -67,11 +72,11 @@ $_templates_map = array(
    'Template:Entities/Reports/ReportForm/default' => '/Reports/ReportForm/templates/default.php',
    
    'Template:Entities/Tabulars' => null,
-   'Template:Entities/Tabulars/EditForm' => '/Tabulars/EditForm/EditForm.php',
-   'Template:Entities/Tabulars/EditForm/default' => '/Tabulars/EditForm/templates/default.php',
-   'Template:Entities/Tabulars/ItemForm' => '/Tabulars/ItemForm/ItemForm.php',
-   'Template:Entities/Tabulars/ItemForm/default' => '/Tabulars/ItemForm/templates/default.php',
-   'Template:Entities/Tabulars/TabularItem' => '/Tabulars/TabularItem/TabularItem.php',
+   'Template:Entities/Tabulars/EditForm'            => '/Tabulars/EditForm/EditForm.php',
+   'Template:Entities/Tabulars/EditForm/default'    => '/Tabulars/EditForm/templates/default.php',
+   'Template:Entities/Tabulars/ItemForm'            => '/Tabulars/ItemForm/ItemForm.php',
+   'Template:Entities/Tabulars/ItemForm/default'    => '/Tabulars/ItemForm/templates/default.php',
+   'Template:Entities/Tabulars/TabularItem'         => '/Tabulars/TabularItem/TabularItem.php',
    'Template:Entities/Tabulars/TabularItem/default' => '/Tabulars/TabularItem/templates/default.php',
    
    'Template:Entities/CustomForm' => '/CustomForm/CustomForm.php',

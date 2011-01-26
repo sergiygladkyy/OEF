@@ -271,24 +271,40 @@ function executeDeleteListItem(kind, type, prefix, show_deleted)
 		{
 			ret = data['status'];	
 			
+			var msg = '';
+			
 			if(!data['status'])
 			{
-				var msg = '';
 				for(var index in data['errors'])
 				{
 					msg += index + ': ' + data['errors'][index]+"\n";
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Mark for deletion there were some errors\n" + msg, false);
+				
+				if (kind != 'catalogs' && kind != 'documents') {
+					msg = "At deleted there were some errors\n" + msg;
+				}
+				else {
+					msg = "At Mark for deletion there were some errors\n" + msg;
+				}
 			}
-			else {
+			else
+			{
+				if (kind != 'catalogs' && kind != 'documents') {
+					msg = 'Deleted successfully';
+				}
+				else {
+					msg = 'Mark for deletion succesfully';
+				}
+				
 				if (show_deleted != true){
 					jQuery('#' + prefix + '_list_block .ae_current').remove();
 				}
 				else {
 					jQuery('#' + prefix + '_list_block .ae_current').addClass('ae_deleted_col');
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Mark for deletion succesfully', true);
 			}
+			
+			displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, data['status']);
 		}
 	});
 	

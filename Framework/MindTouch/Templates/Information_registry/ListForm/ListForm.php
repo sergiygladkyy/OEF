@@ -11,7 +11,7 @@
 }}
   <eval:if test="current is nil">
     <ul class="ae_errors">
-      <li class="ae_error">Not set basepath to ListForm template</li>
+      <li class="ae_error">Not set basepath to EditForm template</li>
     </ul>
   </eval:if>
   <eval:elseif test="root is nil">
