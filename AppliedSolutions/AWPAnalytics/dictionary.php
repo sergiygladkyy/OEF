@@ -1187,6 +1187,24 @@ $_dictionary = array(
          'recorders' => array(
             'TimeCard'
          )
+      ),
+      
+      // Divisional Chiefs
+      'DivisionalChiefs' => array(
+         'dimensions' => array(
+            'OrganizationalUnit' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DivisionalChief' => array(
+               'reference' => 'catalogs.OrganizationalPositions',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
       )
    ),
    
