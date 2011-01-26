@@ -4,6 +4,8 @@
    var data   = args[2];
    var root   = args[3] ?? 'Template:Entities';
    var prefix = args[4] ?? 'default';
+   var class  = puid.kind..'_'..puid.type;
+   var item   = data.item is map ? data.item : {};
 }}
 <eval:if test="puid is nil">
   <ul class="ae_errors">
@@ -17,6 +19,10 @@
         <li>&nbsp;</li>
       </ul>
     </div>
+  </div>
+  <div class="{{ class..'_actions ae_editform_actions' }}" style="{{ item._id &gt; 0 ? 'display: block;' : 'display: none;' }}">
+    <a href="#" onclick="{{ 'javascript:post(\''..puid.kind..'\', \''..puid.type..'\', '..item._id..', \''..class..'\'); return false;' }}">Post</a>&nbsp;|
+    <a href="#" onclick="{{ 'javascript:clearPosting(\''..puid.kind..'\', \''..puid.type..'\', '..item._id..', \''..class..'\'); return false;' }}">Clear posting</a>
   </div>
   {{
      var item = data.item is map ? data.item : {};

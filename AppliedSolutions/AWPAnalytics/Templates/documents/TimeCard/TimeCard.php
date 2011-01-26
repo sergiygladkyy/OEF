@@ -14,6 +14,15 @@
     <tr>
       <td colspan="4"><h3>Time Card</h3></td>
     </tr>
+    <tr id="<?php echo $class.'_post_flag' ?>" style="<?php echo $attrs['_id'] > 0 ? '' : 'display: none;' ?>">
+      <td class="<?php echo $class.'_name ae_editform_field_name oe_period' ?>">Posted:</td>
+      <td class="<?php echo $class.'_value ae_editform_field_value' ?>" colspan="3">
+        <div class="<?php echo $attrs['_post'] > 0 ? 'ae_field_posted' : 'ae_field_not_posted' ?>">
+          <span class="ae_field_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: block;' : 'display: none;' ?>">This document is posted. You must clear posting before saving.</span>
+          <span class="ae_field_not_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: none;' : 'display: block;' ?>">This document is not posted.</span>
+        </div>
+      </td>
+    </tr>
     <tr>
       <td class="oe_period oe_attribute">Period:</td>
       <td class="oe_week oe_attribute">
@@ -213,12 +222,12 @@
    {
       border-right:  0 none !important;
       padding-right: 0 !important;
-      width: 45px !important;
+      width: 50px !important;
    }
    
    td.oe_week 
    {
-      padding-right: 100px !important;
+      padding-right: 95px !important;
       border-right: 0 none !important;
       width: 223px;
    }
@@ -249,5 +258,10 @@
    #<?php echo $class.'_item' ?> ul.ae_editform_field_errors
    {
       margin-bottom: 3px !important;
+   }
+   
+   #<?php echo $class.'_post_flag' ?> td
+   {
+      padding-bottom: 9px;
    }
 </style>

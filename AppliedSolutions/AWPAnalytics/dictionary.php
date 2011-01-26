@@ -1255,7 +1255,6 @@ $_dictionary = array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                ),
                'precision' => array(
-                  'required' => true,
                   'min' => 0
                )
             ),
@@ -1265,7 +1264,6 @@ $_dictionary = array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                ),
                'precision' => array(
-                  'required' => true,
                   'min' => 0
                )
             ),
@@ -1275,7 +1273,6 @@ $_dictionary = array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                ),
                'precision' => array(
-                  'required' => true,
                   'min' => 0
                )
             )
