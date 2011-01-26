@@ -588,7 +588,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` < '".$to."' OR `DateTo` >'".$from."')";
+               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' AND `DateTo` OR `DateTo` >'".$from."')";
       
       if (null === ($row = $odb->loadAssocList($query)))
       {
@@ -745,7 +745,7 @@ class MEmployees
       
       if (!empty($row))
       {
-         return array('Employee have been fired '.print_r($row, true));
+         return array('Employee have been fired');
       }
       
       return array();

@@ -109,13 +109,13 @@ function onPost($event)
    
    if (empty($result))
    {
-      $event->setReturnValue($return);
+      $event->setReturnValue(true);
       return;
    }
    
    $model = $container->getCModel('information_registry', 'ProjectRegistrationRecords');
    
-   if (null === ($res = $model->getEntities($doc['Project'], array('attributes' => 'Project'))) || isset($schedule['errors']))
+   if (null === ($res = $model->getEntities($doc['Project'], array('attributes' => 'Project'))) || isset($res['errors']))
    {
       throw new Exception('Database error');
    }
@@ -173,7 +173,7 @@ function onPost($event)
       
       if (null === ($schedule = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($schedule['errors']))
       {
-         throw new Exception('Database error '.$criterion);
+         throw new Exception('Database error');
       }
       elseif (empty($schedule))
       {
