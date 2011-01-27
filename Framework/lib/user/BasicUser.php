@@ -37,11 +37,11 @@ class BasicUser extends BaseUser
       {
          if (isset($this->attributes['_id']))
          {
-            $authRecords = $this->loadAuthRecords($this->attributes['_id']);
+            $params = $this->loadParameters($this->attributes['_id']);
             
-            if (!empty($authRecords))
+            if (!empty($params))
             {
-               $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
+               $this->roles   = (isset($params['roles']) && is_array($params['roles'])) ? $params['roles'] : array();
                $this->isAdmin = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
             }
          }
@@ -75,20 +75,24 @@ class BasicUser extends BaseUser
       }
       
       $container = Container::getInstance();
-      $user = $container->getModel('catalogs', 'SystemUsers');
+      $db    = $container->getDBManager();
+      $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map', 'catalogs');
+      $table = $dbmap['SystemUsers']['table'];
       
-      if (!$user->loadByCode($login)) return false;
+      $query = "SELECT * FROM `".$table."` WHERE `User`='".$login."' AND `AuthType`='Basic'";
       
-      $userId      = $user->getId();
-      $authRecords = $this->loadAuthRecords($userId);
+      if (null === ($user = $db->loadAssoc($query)) || empty($user)) return false;
       
-      if (empty($authRecords) || $authRecords['password'] != $password) return false;
+      $userId = $user['_id'];
+      $params = unserialize($user['Attributes']);
+      
+      if (empty($params) || $params['password'] != $password) return false;
       
       $this->attributes['_id']      = $userId;
       $this->attributes['login']    = $login;
-      $this->attributes['username'] = $user->getAttribute('Description');
+      $this->attributes['username'] = $user['Description'];
       
-      $this->roles   = (isset($authRecords['roles']) && is_array($authRecords['roles'])) ? $authRecords['roles'] : array();
+      $this->roles   = (isset($params['roles']) && is_array($params['roles'])) ? $params['roles'] : array();
       $this->isAdmin = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
       
       $this->authenticated = true;
@@ -117,23 +121,26 @@ class BasicUser extends BaseUser
    }
    
    /**
-    * Load AuthenticationRecords
+    * Load user parameters
     * 
     * @param int $userId
     * @return array or null
     */
-   protected function loadAuthRecords($userId)
+   protected function loadParameters($userId)
    {
-      $container   = Container::getInstance();
-      $authRecords = $container->getCModel('information_registry', 'AuthenticationRecords');
-      $criterion   = 'WHERE User='.(int) $userId." AND AuthType='Basic'";
+      $container = Container::getInstance();
+      $db    = $container->getDBManager();
+      $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map', 'catalogs');
+      $table = $dbmap['SystemUsers']['table'];
       
-      if (null === ($res = $authRecords->getEntities(null, array('criterion' => $criterion))))
+      $query = "SELECT `Attributes` FROM `".$table."` WHERE User='".(int) $userId." AND AuthType='Basic'";
+         
+      if (null === ($res = $db->loadAssoc($query)))
       {
          return null;
       }
       
-      return empty($res) ? array() : unserialize($res[0]['Attributes']);
+      return empty($res) ? array() : unserialize($res['Attributes']);
    }
    
    /**
