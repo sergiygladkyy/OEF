@@ -119,19 +119,17 @@ class PersistentLayer
    protected function addSystemEntities(array& $dict, array& $options = array())
    {
       $dict['catalogs']['SystemUsers'] = array(
-         'fields' => array( // Only system fields: Code - login, Description - UserName
+         'fields' => array(
             'Code' => array(
                'precision' => array(
-                  'max_length' => 128
+                  'max_length' => 8
                )
-            )
-         )  
-      );
-      
-      $dict['information_registry']['AuthenticationRecords'] = array(
-         'dimensions' => array(
+            ),
             'User' => array(
-               'reference' => 'catalogs.SystemUsers',
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(128) NOT NULL default ''"
+               ),
                'precision' => array(
                   'required' => true
                )
@@ -145,18 +143,21 @@ class PersistentLayer
                   'in' => array(1 => 'MTAuth', 2 => 'Basic', 3 => 'LDAP'),
                   'required' => true
                )
-            )
-         ),
-         'fields' => array(
+            ),
             'Attributes' => array(
                'type' => 'string',
                'sql'  => array(
-                  'type' => "varchar(256) NOT NULL default ''"
+                  'type' => "varchar(512) NOT NULL default ''"
                )
             )
+         ),
+         
+         'model' => array(
+            'modelclass'  => 'SystemUserModel',
+            'cmodelclass' => 'CatalogsModel'
          )
       );
-       
+      
       return $dict;
    }
    
@@ -3339,8 +3340,8 @@ class PersistentLayer
    /**
     * Add system users
     * 
-    * @param array& $dict
-    * @param array $allowed
+    * @param array& $dict   - dictionary
+    * @param array $allowed - allowed roles
     * @param array& $options
     * @return array - errors
     */
@@ -3384,20 +3385,22 @@ class PersistentLayer
          elseif (!empty($errors)) return $errors;
 
          // Add records
-         $SystemUsers = $container->getModel('catalogs', 'SystemUsers');
-         $AuthRecords = $container->getModel('information_registry', 'AuthenticationRecords');
-         $arecCModel  = $container->getCModel('information_registry', 'AuthenticationRecords');
-         $m_opt       = array('replace' => true);
-         $authTypes   = array('MTAuth' => 1, 'Basic' => 2, 'LDAP' => 3);
-         $userIds     = array();
-         $recIds      = array();
+         $conf    = $this->getConfigManager($options)->getInternalConfigurationByKind('catalogs.model', 'SystemUsers', $options);
+         $m_opt   = array('replace' => true);
+         $userIds = array();
 
+         import('lib.model.catalogs.'.$conf['modelclass']);
+         
          foreach ($result['users'] as $login)
          {
             // Insert/Update SystemUsers
-            $user = clone $SystemUsers;
-            $err  = $user->fromArray(array('Code' => $login, 'Description' => ucfirst($login)), $m_opt);
-             
+            $user = new $conf['modelclass']();
+            $err  = $user->fromArray(array(
+               'User'       => $login,
+               'AuthType'   => 'Basic',
+               'Attributes' => serialize($result['attributes'][$login])
+            ), $m_opt);
+            
             if (!$err) $err = $user->save();
              
             if ($err)
@@ -3407,42 +3410,6 @@ class PersistentLayer
             }
              
             $userIds[] = $user->getId();
-             
-            // Insert/Update AuthenticationRecords
-            if (null === ($res = $arecCModel->getEntities($user->getId(), array('attributes' => array('User')))))
-            {
-               $errors[] = 'DB error';
-            }
-             
-            $in  = array();
-             
-            foreach ($res as $record)
-            {
-               $in[$record['AuthType']] = $record['_id'];
-            }
-             
-            foreach ($authTypes as $name => $index)
-            {
-               $arec  = clone $AuthRecords;
-               $attrs = array(
-               'User'       => $user->getId(),
-               'AuthType'   => $name,
-               'Attributes' => ''
-               );
-
-               if (isset($in[$name])) $attrs['_id']        = $in[$name];
-               if ($name == 'Basic')  $attrs['Attributes'] = serialize($result['attributes'][$login]);
-
-               $err = $arec->fromArray($attrs);
-
-               if (!$err) $err = $arec->save();
-
-               if (!$err)
-               {
-                  $recIds[] = $arec->getId();
-               }
-               else $errors = array_merge($errors, $err);
-            }
          }
       }
       
@@ -3451,21 +3418,10 @@ class PersistentLayer
       {
          $db    = $container->getDBManager();
          $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map');
-         $query = "DELETE FROM `".$dbmap['catalogs']['SystemUsers']['table']."`";
+         $query = "DELETE FROM `".$dbmap['catalogs']['SystemUsers']['table']."` WHERE `AuthType`='Basic'";
          if (!empty($userIds))
          {
-            $query .= " WHERE ".$dbmap['catalogs']['SystemUsers']['pkey']." NOT IN(".implode(", ",  $userIds).")";
-         }
-         
-         if (null === $db->executeQuery($query))
-         {
-            $errors[] = $db->getError();
-         }
-         
-         $query = "DELETE FROM `".$dbmap['information_registry']['AuthenticationRecords']['table']."`";
-         if (!empty($recIds))
-         {
-            $query .= "WHERE ".$dbmap['information_registry']['AuthenticationRecords']['pkey']." NOT IN(".implode(", ",  $recIds).")";
+            $query .= " AND ".$dbmap['catalogs']['SystemUsers']['pkey']." NOT IN(".implode(", ",  $userIds).")";
          }
          
          if (null === $db->executeQuery($query))

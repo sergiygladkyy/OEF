@@ -236,7 +236,7 @@ class Container
          {
             $model = new $conf['modelclass']($kind, $type, $options);
          }
-         elseif ($kind == 'Constants')
+         elseif ($kind == 'Constants' || ($kind == 'catalogs' && $type == 'SystemUsers'))
          {
             $model = new $conf['modelclass']($options);
          }

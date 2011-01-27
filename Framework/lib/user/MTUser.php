@@ -167,6 +167,32 @@ class MTUser extends BaseUser
       $this->roles         = $roles;
       $this->authenticated = $authenticated;
       $this->isAdmin       = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
+      
+      if ($authenticated)
+      {
+         $container = Container::getInstance();
+         $CManager  = $container->getConfigManager();
+         $db    = $container->getDBManager();
+         $dbmap = $CManager->getInternalConfiguration('db_map');
+         $table = $dbmap['catalogs']['SystemUsers']['table'];
+         
+         $query = "SELECT count(*) as 'cnt' FROM `".$table."` WHERE `User`='".$this->attributes['username']."' AND `AuthType`='MTAuth'";
+         
+         if (null !== ($row = $db->loadAssoc($query)) && $row['cnt'] == 0)
+         {
+            $user  = $container->getModel('catalogs', 'SystemUsers');
+            $query = "INSERT INTO `".$table."`(`Code`, `Description`, `User`, `AuthType`) VALUES(".
+                     "'".$user->getAttribute('Code')."', ".
+                     "'".$this->attributes['username']." (MTAuth)', ".
+                     "'".$this->attributes['username']."', ".
+                     "'MTAuth')"
+            ;
+            
+            unset($user);
+            
+            $db->executeQuery($query);
+         }
+      }
    }
 
    /**
