@@ -293,10 +293,15 @@ class TurnoversModel
       if (empty($dates)) return array();
       
       // Prepare dates
-      foreach ($dates as &$date)
+      $vdates = array();
+      
+      foreach ($dates as $date)
       {
          $date = date('Y-m', strtotime($date)).'-01 00:00:00';
+         $vdates[$date] = $date;
       }
+      
+      $dates =& $vdates;
       
       $db     = Container::getInstance()->getDBManager();
       $total  = array();
