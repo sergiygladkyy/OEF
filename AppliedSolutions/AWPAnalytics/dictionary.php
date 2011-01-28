@@ -1288,7 +1288,7 @@ $_dictionary = array(
       
       // Employee Hours Reported
       'EmployeeHoursReported' => array(
-         'register_type' => 'Balances',
+         'register_type' => 'Turnovers',
       
          'dimensions' => array(
             'Employee' => array(

@@ -78,7 +78,7 @@ function onPost($event)
    $arModel->setOperation('+');
    $arModel->setOption('auto_update_total', false);
    
-   $from = false;
+   $dates = array();
    
    // Post document
    $errors = array();
@@ -189,9 +189,8 @@ function onPost($event)
       else throw new Exception('Invalid attributes for TimeReportingRecords');
       
       // EmployeeHoursReported
-      $date = strtotime($values['Date']);
-      
-      if (!$from || $from > $date) $from = $date;
+      $date    = strtotime($values['Date']);
+      $dates[] = $values['Date'];
       
       if ($hours == 0)
       {
@@ -224,7 +223,7 @@ function onPost($event)
    }
    
    // Calculate totals for EmployeeHoursReported
-   if ($from && $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported')->countTotals(date('Y-m-d H:i:s', $from)))
+   if (!empty($dates) && $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported')->countTotals($dates))
    {
       throw new Exception('Can\'t recount totals for EmployeeHoursReported');
    }
