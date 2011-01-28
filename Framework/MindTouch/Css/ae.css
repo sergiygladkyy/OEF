@@ -62,6 +62,9 @@ ul.ae_editform_field_errors, ul.ae_errors {
 .ae_constants_edit_form input[type=text]  { width: 140px; }
 .ae_constants_edit_form select { width: 144px; }
 
+.oe_custom_edit_form input[type=text]  { width: 140px; }
+.oe_custom_edit_form select { width: 144px; }
+
 .ae_report_form input[type=text]  { width: 140px; }
 .ae_report_form select { width: 144px; }
 .ae_report {

@@ -80,6 +80,14 @@ $_dictionary = array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
             )
+         ),
+         
+         'Forms' => array(
+            'LoginRecords'
+         ),
+         
+         'Templates' => array(
+            'LoginRecords'
          )
       ),
       
@@ -1200,6 +1208,37 @@ $_dictionary = array(
             ),
             'DivisionalChief' => array(
                'reference' => 'catalogs.OrganizationalPositions',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         )
+      ),
+      
+      // LoginRecords
+      'LoginRecords' => array(
+         'dimensions' => array(
+            'NaturalPerson' => array(
+               'reference' => 'catalogs.NaturalPersons',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AuthType' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('MTAuth', 'Basic', 'LDAP')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'MTAuth', 2 => 'Basic', 3 => 'LDAP'),
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'SystemUser' => array(
+               'reference' => 'catalogs.SystemUsers',
                'precision' => array(
                   'required' => true
                )
