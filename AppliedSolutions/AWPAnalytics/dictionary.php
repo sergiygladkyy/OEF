@@ -1454,12 +1454,12 @@ $_dictionary = array(
          )
       )
    ),
-   
+   */
    ////////////////
    // Web services
    ////////////////
    'web_services' => array(
-      'Pm' => array(
+      /*'Pm' => array(
          'actions' => array(
             'getProjectList' => array(
                'fields' => array()
@@ -1498,9 +1498,21 @@ $_dictionary = array(
                )
             )
          )
+      ),*/
+      
+      'Personal' => array(
+         'actions' => array(
+            'getEmployeeHours' => array(
+               'fields' => array(
+                  'Period' => array(
+                     'type' => 'string'
+                  )
+               )
+            )
+         )
       )
    ),
-   */
+   
    
    ////////////
    // Security

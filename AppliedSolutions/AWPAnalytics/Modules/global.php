@@ -64,6 +64,123 @@ class MGlobal
    }
    
    /**
+    * Return date period by string
+    * 
+    * [
+    *   DATETIME:
+    *     - Now
+    *   
+    *   DATE:
+    *     - Today
+    *     - Tomorrow
+    *     - Yesterday
+    * 
+    *     - This Week
+    *     - Next Week
+    *     - Last Week
+    * 
+    *     - This Month
+    *     - Next Month
+    *     - Last Month
+    * 
+    *     - This Quarter
+    *     - Next Quarter
+    *     - Last Quarter
+    * 
+    *     - 1Q, 2Q, 3Q, 4Q (current year)
+    * 
+    *     - This Year
+    *     - Next Year
+    *     - Last Year
+    * ]
+    * 
+    * @param string $name - period name
+    * @return array or null - 
+    *    array(
+    *       0 => '<from>',
+    *       1 => '<to>',
+    *       'from' => '<from>',
+    *       'to'   => '<to>'
+    *    )
+    */
+   public static function parseDatePeriodString($name)
+   {
+      if ($name{1} != 'Q')
+      {
+         $pname = explode(' ', $name);
+         
+         list($year, $month, $day) = explode('-', date('Y-m-d'));
+         
+         if (!isset($pname[1]))
+         {
+            switch ($name)
+            {
+               case 'Now':
+                  $from = $to = date('Y-m-d H:i:s');
+                  break;
+
+               case 'Today':
+                  $from = $to = date('Y-m-d');
+                  break;
+
+               case 'Tomorrow':
+                  $from = $to = date('Y-m-d', mktime(0,0,0, $month, $day+1, $year));
+                  break;
+
+               case 'Yesterday':
+                  $from = $to = date('Y-m-d', mktime(0,0,0, $month, $day-1, $year));
+                  break;
+
+               default:
+                  return null;
+            }
+         }
+         else
+         {
+            $shift = $pname[0] == 'Last' ? -1 : ($pname[0] == 'Next' ? 1 : 0);
+
+            switch ($pname[1])
+            {
+               case 'Week':
+                  $d = date('w');
+                  $d = ($d == 0) ? 6 : $d - 1;
+                  
+                  $start = $day + $shift*7 + $d;
+                  
+                  $from = date('Y-m-d', mktime(0,0,0, $month, $start, $year));
+                  $to   = date('Y-m-d', mktime(0,0,0, $month, $start+7, $year));
+                  break;
+                  
+               case 'Month':
+                  $from = date('Y-m-d', mktime(0,0,0, $month+$shift, 1, $year));
+                  $to   = date('Y-m-d', mktime(0,0,0, $month+$shift+1, 1, $year));
+                  break;
+                  
+               case 'Quarter':
+                  $from = date('Y-m-d', mktime(0,0,0, $month+$shift, 1, $year));
+                  $to   = date('Y-m-d', mktime(0,0,0, $month+$shift+1, 1, $year));
+                  break;
+                  
+               case 'Year':
+                  $from = date('Y-m-d', mktime(0,0,0, 1,1, $year+$shift));
+                  $to   = date('Y-m-d', mktime(0,0,0, 1,1, $year+$shift+1));
+                  break;
+            }
+         }
+      }
+      else
+      {
+         $year = date('Y');
+         $end  = 3 * ((int) $name{0});
+
+         $from = date('Y-m-d', mktime(0,0,0, $end - 2, 1, $year));
+         $to   = date('Y-m-d', mktime(0,0,0, $end + 1, 1, $year));
+      }
+      
+      return array(0 => $from, 1 => $to, 'from' => $from, 'to' => $to);
+   }
+   
+   /**
     * 
     * @param string $date
     * @return int
@@ -588,7 +705,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' AND `DateTo` OR `DateTo` >'".$from."')";
+               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' OR `DateTo` >'".$from."')";
       
       if (null === ($row = $odb->loadAssocList($query)))
       {
@@ -601,6 +718,49 @@ class MVacation
       }
       
       return array();
+   }
+   
+   /**
+    * Get list of days
+    * 
+    * @param int $employee - employee id
+    * @param string $from  - date from
+    * @param string $to    - date to
+    * @return array
+    */
+   public static function getScheduleVarianceDays($employee, $from, $to)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
+               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' OR `DateTo` >'".$from."')";
+      
+      if (!($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $result = array();
+      $from = strtotime($from);
+      $to   = strtotime($to);
+      $day  = 24*60*60;
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         $df = strtotime($row['DateFrom']);
+         $dt = strtotime($row['DateTo']);
+         
+         if ($df < $from) $df = $from;
+         if ($dt > $to)   $dt = $to;
+         
+         while ($df < $dt)
+         {
+            $result[date('Y-m-d', $df)] = $row['VarianceKind'];
+            $df += $day;
+         }
+      }
+      
+      return $result;
    }
 }
 
@@ -772,6 +932,123 @@ class MEmployees
       }
       
       return empty($row) ? null : $row['OrganizationalUnit'];
+   }
+   
+   /**
+    * Return id (link) to current Employee
+    * 
+    * @return int
+    */
+   public static function retrieveCurrentEmployee()
+   {
+      $container = Container::getInstance();
+      
+      $user = $container->getUser();
+      
+      if (!$user->isAuthenticated()) return 0;
+      
+      $odb   = $container->getODBManager();
+      $query = "SELECT `e`.`_id` ".
+               "FROM catalogs.Employees as `e`, information_registry.LoginRecords AS `lr` ".
+               "WHERE `lr`.`SystemUser` = ".$user->getId()." AND `lr`.`NaturalPerson` = `e`.`NaturalPerson`";
+      
+      if (null === ($res = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $res ? $res['_id'] : 0;
+   }
+   
+   /**
+    * Get list of Employee Schedules by period 
+    * 
+    * @param int $employee
+    * @param string $from
+    * @param string $to
+    * @return array
+    */
+   public static function retrieveSchedulesByPeriod($employee, $from, $to)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Retrieve last record
+      $query = "SELECT MAX(`Period`), `Schedule`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$from."'";
+      
+      if (null === ($first = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      // Retrieve records in period
+      $query = "SELECT * FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` > '".$from."' AND `Period` < '".$to."' ".
+               "ORDER BY `Period` ASC";
+      
+      if (null === ($rows = $odb->loadAssocList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      // Claculate
+      $result = array();
+      $prev = false;
+      $ind  = array();
+      
+      if ($first && $first['RegisteredEvent'] != 'Firing')
+      {
+         $ind[$first['Schedule']] = 0;
+         $result[$first['Schedule']][$ind[$first['Schedule']]] = array('from' => $from, 'to' => $to);
+         $prev = $first['Schedule'];
+      }
+      
+      if (empty($rows)) return $result;
+      
+      foreach($rows as $row)
+      {
+         if ($row['RegisteredEvent'] == 'Firing')
+         {
+            if ($prev)
+            {
+               $result[$prev][$ind[$prev]]['to'] = $row['Period'];
+               $ind[$prev]++;
+               $prev = false;
+            }
+            
+            continue;
+         }
+         
+         if ($prev == $row['Schedule']) continue;
+         
+         if (!isset($result[$row['Schedule']]))
+         {
+            if ($prev)
+            {
+               $result[$prev][$ind[$prev]]['to'] = $row['Period'];
+               $ind[$prev]++;
+            }
+            
+            $ind[$row['Schedule']] = 0;
+            $result[$row['Schedule']][$ind[$row['Schedule']]] = array('from' => $row['Period'], 'to' => $to);
+            $prev = $row['Schedule'];
+         }
+         else
+         {
+            if ($prev)
+            { 
+               $result[$prev][$ind[$prev]]['to'] = $row['Period'];
+               $ind[$prev]++;
+            }
+            
+            $ind[$row['Schedule']]++;
+            $result[$row['Schedule']][$ind[$row['Schedule']]] = array('from' => $row['Period'], 'to' => $to);
+            $prev = $row['Schedule'];
+         }
+      }
+      
+      return $result;
    }
 }
 
@@ -980,5 +1257,46 @@ class MProjects
       }
       
       return $projects;
+   }
+}
+
+
+
+/**
+ * Schedule function
+ * 
+ * @author alexander.yemelianov
+ */
+class MSchedules
+{
+   /**
+    * Get Schedule hours by date
+    * 
+    * @param int $id - schedule id
+    * @param string $from - date from
+    * @param string $to   - date to
+    * @return array
+    */
+   public static function getSchedule($id, $from, $to)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT * FROM information_registry.Schedules ".
+               "WHERE `Schedule` = ".(int) $id." AND `Date` >='".$from."' AND `Date` <'".$to."'".
+               "ORDER BY `Date`";
+      
+      if (!($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $result = array();
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         $result[$row['Date']] = $row['Hours'];
+      }
+      
+      return $result;
    }
 }
