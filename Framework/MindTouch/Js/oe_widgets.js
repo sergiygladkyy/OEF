@@ -70,9 +70,24 @@ function oeWidgets(loader, viewer)
      */
     this.drawWidget = function(parameters)
     {
+    	var tag_id  = parameters['tag_id'];
+    	
+    	if (this.errors)
+    	{
+    		var errors = '<ul class="oe_widget_errors">';
+    		
+    		for (var i in  this.errors)
+    		{
+    			errors += '<li>' + this.errors[i]+ '</li>';
+    		}
+    		
+    		jQuery('#' + tag_id).html(errors + '</ul>');
+    		
+    		return false;
+    	}
+    	
     	var method  = 'draw' + parameters['widget'];
     	var view    =  this.Viewer;
-    	var tag_id  = parameters['tag_id'];
     	var options = parameters['options'];
     	
     	if (typeof view[method] != 'function')
