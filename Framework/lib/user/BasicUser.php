@@ -51,13 +51,31 @@ class BasicUser extends BaseUser
    }
    
    /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/user/BaseUser#getAuthType()
+    */
+   public function getAuthType()
+   {
+      return 'Basic';
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/user/BaseUser#getId()
+    */
+   public function getId()
+   {
+      return isset($this->attributes['_id']) ? $this->attributes['_id'] : 0;
+   }
+   
+   /**
     * Get user name
     * 
     * @return string
     */
    public function getUsername()
    {
-      return $this->attributes['username'];
+      return isset($this->attributes['username']) ? $this->attributes['username'] : '';
    }
    
    /**

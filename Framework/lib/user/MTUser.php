@@ -168,6 +168,8 @@ class MTUser extends BaseUser
       $this->authenticated = $authenticated;
       $this->isAdmin       = in_array(SystemConstants::ADMIN_ROLE, $this->roles);
       
+      $userID = 0;
+      
       if ($authenticated)
       {
          $container = Container::getInstance();
@@ -176,9 +178,13 @@ class MTUser extends BaseUser
          $dbmap = $CManager->getInternalConfiguration('db_map');
          $table = $dbmap['catalogs']['SystemUsers']['table'];
          
-         $query = "SELECT count(*) as 'cnt' FROM `".$table."` WHERE `User`='".$this->attributes['username']."' AND `AuthType`='MTAuth'";
+         $query = "SELECT `_id` FROM `".$table."` WHERE `User`='".$this->attributes['username']."' AND `AuthType`='MTAuth'";
          
-         if (null !== ($row = $db->loadAssoc($query)) && $row['cnt'] == 0)
+         if (null === ($row = $db->loadAssoc($query)))
+         {
+            ;//@todo Not processed Database error
+         }
+         elseif (!$row)
          {
             $user  = $container->getModel('catalogs', 'SystemUsers');
             $query = "INSERT INTO `".$table."`(`Code`, `Description`, `User`, `AuthType`) VALUES(".
@@ -190,11 +196,35 @@ class MTUser extends BaseUser
             
             unset($user);
             
-            $db->executeQuery($query);
+            if ($db->executeQuery($query))
+            {
+               $userID = $db->getInsertId();
+            }
          }
+         else $userID = $row['_id'];
       }
+      
+      $this->attributes['_id'] = $userID;
    }
-
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/user/BaseUser#getAuthType()
+    */
+   public function getAuthType()
+   {
+      return 'MTAuth';
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/user/BaseUser#getId()
+    */
+   public function getId()
+   {
+      return isset($this->attributes['_id']) ? $this->attributes['_id'] : 0;
+   }
+   
    /**
     * (non-PHPdoc)
     * @see ext/OEF/Framework/lib/user/BaseUser#getUsername()

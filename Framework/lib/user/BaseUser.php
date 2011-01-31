@@ -150,4 +150,18 @@ abstract class BaseUser
     * @return string
     */
    abstract public function getUsername();
+   
+   /**
+    * Get auth type
+    * 
+    * @return string
+    */
+   abstract public function getAuthType();
+   
+   /**
+    * Get user id
+    * 
+    * @return int
+    */
+   abstract public function getId();
  }
