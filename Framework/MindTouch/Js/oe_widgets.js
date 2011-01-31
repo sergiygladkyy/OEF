@@ -10,6 +10,7 @@ function oeWidgets(loader, viewer)
     this.Loader = (typeof loader == "object") && (loader instanceof oeLoader) ? loader : null;
     this.Viewer = (typeof viewer == "object") && (viewer instanceof oeWidgetsView) ? viewer : null;
     this.data   = null;
+    this.errors = null;
     
     /**
      * Show widget
@@ -56,7 +57,8 @@ function oeWidgets(loader, viewer)
     	
     	if (this.Loader.status == '200')
     	{
-    		this.data = this.Loader.getData();
+    		this.data   = this.Loader.getData();
+    		this.errors = this.Loader.getErrors();
     	}
     	
     	return this.data;
@@ -128,13 +130,13 @@ function oeLoader(parameters)
 		{
 			this.status = status;
 		    this.data   = data['result'];
-		    this.errors = data['errors'];
+		    this.errors = data['status'] ? null : data['errors'];
 		}
 		else
 		{
 			loader.status = status;
 			loader.data   = data['result'];
-			loader.errors = data['errors'];
+			loader.errors = data['status'] ? null : data['errors'];
 		}
 	};
 	
@@ -174,7 +176,7 @@ function oeLoader(parameters)
 		var loader = this;
 		
 		jQuery.ajax({
-			url: uri,status: 'zxc',
+			url: uri,
 		    async: false,
 			type: 'GET',
 			cache: false,
@@ -207,6 +209,16 @@ function oeLoader(parameters)
 	this.getData = function()
 	{
 		return this.data;
+	};
+	
+	/**
+	 * Get errors
+	 * 
+	 * @return object
+	 */
+	this.getErrors = function()
+	{
+		return this.errors;
 	};
 }
 
