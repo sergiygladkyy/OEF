@@ -37,7 +37,7 @@ class WebServicesRouter extends Router
       for ($i++; $i < $count; $i++)
       {
          $attr = explode('=', $params[$i]);
-         $this->parameters[$attr[0]] = isset($attr[1]) ? $attr[1] : true;
+         $this->parameters[$attr[0]] = isset($attr[1]) ? rawurldecode($attr[1]) : true;
       }
       
       return $this->parameters;
