@@ -127,9 +127,10 @@ function onPost($event)
    $department = $res[0]['ProjectDepartment'];
    
    $cmodel  = $container->getCModel('information_registry', 'Schedules');
-   $irModel = $container->getModel('information_registry', 'ProjectAssignmentRecords');
+   $arModel = $container->getModel('information_registry', 'ProjectAssignmentRecords');
+   $apModel = $container->getModel('information_registry', 'ProjectAssignmentPeriods');
 
-   if (!$irModel->setRecorder($type, $id))
+   if (!$arModel->setRecorder($type, $id) || !$apModel->setRecorder($type, $id))
    {
       throw new Exception('Invalid recorder');
    }
@@ -180,24 +181,46 @@ function onPost($event)
          continue;
       }
       
+      // ProjectAssignmentPeriods
+      $err = array();
+      $ap  = clone $apModel;
+      
+      if (!$ap->setAttribute('Employee', $values['Employee']))     $err[] = 'Invalid value for Employee';
+      if (!$ap->setAttribute('Project',  $doc['Project']))         $err[] = 'Invalid value for Project';
+      if (!$ap->setAttribute('DateFrom', $values['StartDate']))    $err[] = 'Invalid value for DateFrom';
+      if (!$ap->setAttribute('DateTo',   $values['EndDate']))      $err[] = 'Invalid value for DateTo';
+      if (!$ap->setAttribute('SubProject', $values['SubProject'])) $err[] = 'Invalid value for SubProject';
+      if (!$ap->setAttribute('ProjectDepartment',  $department))   $err[] = 'Invalid value for ProjectDepartment';
+      if (!$ap->setAttribute('EmployeeDepartment', $edep))         $err[] = 'Invalid value for EmployeeDepartment';
+      if (!$ap->setAttribute('Comment', $values['Comment']))       $err[] = 'Invalid value for Comment';
+
+      if (!$err)
+      {
+         if ($err = $ap->save()) $errors[] = 'Row not added';
+      }
+      else $errors = array_merge($errors, $err);
+      
+      // ProjectAssignmentRecords
+      $err = array();
+      
       foreach ($schedule as $row)
       {
          if ($row['Hours'] == 0) continue;
          
-         $ir = clone $irModel;
+         $ar = clone $arModel;
 
-         if (!$ir->setAttribute('Employee', $values['Employee']))     $err[] = 'Invalid value for Employee';
-         if (!$ir->setAttribute('Project',  $doc['Project']))         $err[] = 'Invalid value for Project';
-         if (!$ir->setAttribute('Date',     $row['Date']))            $err[] = 'Invalid value for Period';
-         if (!$ir->setAttribute('Hours',    $values['HoursPerDay']))  $err[] = 'Invalid value for Hours';
-         if (!$ir->setAttribute('SubProject', $values['SubProject'])) $err[] = 'Invalid value for SubProject';
-         if (!$ir->setAttribute('ProjectDepartment',  $department))   $err[] = 'Invalid value for ProjectDepartment';
-         if (!$ir->setAttribute('EmployeeDepartment', $edep))         $err[] = 'Invalid value for EmployeeDepartment';
-         if (!$ir->setAttribute('Comment', $values['Comment']))       $err[] = 'Invalid value for Comment';
+         if (!$ar->setAttribute('Employee', $values['Employee']))     $err[] = 'Invalid value for Employee';
+         if (!$ar->setAttribute('Project',  $doc['Project']))         $err[] = 'Invalid value for Project';
+         if (!$ar->setAttribute('Date',     $row['Date']))            $err[] = 'Invalid value for Period';
+         if (!$ar->setAttribute('Hours',    $values['HoursPerDay']))  $err[] = 'Invalid value for Hours';
+         if (!$ar->setAttribute('SubProject', $values['SubProject'])) $err[] = 'Invalid value for SubProject';
+         if (!$ar->setAttribute('ProjectDepartment',  $department))   $err[] = 'Invalid value for ProjectDepartment';
+         if (!$ar->setAttribute('EmployeeDepartment', $edep))         $err[] = 'Invalid value for EmployeeDepartment';
+         if (!$ar->setAttribute('Comment', $values['Comment']))       $err[] = 'Invalid value for Comment';
 
          if (!$err)
          {
-            if ($err = $ir->save()) $errors[] = 'Row not added';
+            if ($err = $ar->save()) $errors[] = 'Row not added';
          }
          else $errors = array_merge($errors, $err);
       }
@@ -219,16 +242,18 @@ function onUnpost($event)
    $document  = $event->getSubject();
    $container = Container::getInstance();
    
-   $aModel = $container->getCModel('information_registry', 'ProjectAssignmentRecords');
+   $arModel = $container->getCModel('information_registry', 'ProjectAssignmentRecords');
+   $apModel = $container->getCModel('information_registry', 'ProjectAssignmentPeriods');
    
    $options = array(
       'attributes' => array('%recorder_type', '%recorder_id'),
       'criterion'  => "`%recorder_type`='".$document->getType()."' AND `%recorder_id`=".$document->getId()
    );
    
-   $aRes = $aModel->delete(true, $options);
+   $arRes = $arModel->delete(true, $options);
+   $apRes = $apModel->delete(true, $options);
    
-   $return = empty($aRes) ? true : false;
+   $return = (empty($arRes) && empty($apRes)) ? true : false;
    
    $event->setReturnValue($return);
 }
