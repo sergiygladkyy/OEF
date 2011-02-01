@@ -1508,6 +1508,8 @@ $_dictionary = array(
                      'type' => 'string'
                   )
                )
+            ),
+            'getEmployeeVacationDays' => array(
             )
          )
       )

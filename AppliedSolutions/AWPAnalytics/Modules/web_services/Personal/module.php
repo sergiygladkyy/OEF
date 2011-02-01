@@ -2,7 +2,7 @@
 /**
  * Web-service action "getEmployeeHours"
  * 
- * @param string $attributes
+ * @param array $attributes
  * @return array
  */
 function getEmployeeHours(array $attributes)
@@ -74,6 +74,59 @@ function getEmployeeHours(array $attributes)
          }
       }
    }
+   
+   return $result;
+}
+
+/**
+ * Web-service action "getEmployeeVacationDays"
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getEmployeeVacationDays(array $attributes)
+{
+   $result = array(
+      'daysEligible'  => 0,
+      'daysAccounted' => 0,
+      'daysSpent'     => 0,
+      'nextMondayVacationEnds' => ''
+   );
+   
+   if (0 === ($employee = MEmployees::retrieveCurrentEmployee()))
+   {
+      throw new Exception('Unknow employee');
+   }
+   
+   $ts   = time();
+   $date = date('Y-m-d', $ts);
+   
+   // Retrieve altogether
+   $hist = MEmployees::getLastHiringRecord($employee, $date);
+   
+   if (empty($hist)) throw new Exception('Employee not hiring');
+   
+   $result['daysEligible'] = $hist['YearlyVacationDays'];
+   
+   // Retrieve actual
+   $container = Container::getInstance();
+   
+   $cmodel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
+   $prev   = $cmodel->getTotals(date('Y', $ts).'-01-01', array('criteria' => array('Employee' => $employee)));
+   $total  = $cmodel->getTotals($date, array('criteria' => array('Employee' => $employee)));
+   $accum  = $cmodel->getTotals(array(date('Y', $ts).'-01-01', $date), array('operation' => '+', 'criteria' => array('Employee' => $employee)));
+   
+   $result['daysAccounted'] = $prev[0]['VacationDays'] + $accum[0]['VacationDays'];
+   $result['daysSpent']     = $result['daysAccounted'] - $total[0]['VacationDays'];
+   
+   // Retrieve endDate
+   $day = date('w', $ts);
+   $day = $day == 0 ? 6 : $day - 1;
+   
+   $start = mktime(0,0,0, date('m', $ts), date('d', $ts) + 7 - $day, date('Y'));
+   $end   = MVacation::getEndDate($hist['Schedule'], date('Y-m-d', $start), $total[0]['VacationDays']);
+   
+   $result['nextMondayVacationEnds'] = date('Y-m-d', $end);
    
    return $result;
 }

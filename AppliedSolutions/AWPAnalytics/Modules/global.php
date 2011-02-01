@@ -1050,6 +1050,30 @@ class MEmployees
       
       return $result;
    }
+   
+   /**
+    * Get last Hiring record 
+    * 
+    * @param int $employee
+    * @param string $date
+    * @return array
+    */
+   public static function getLastHiringRecord($employee, $date)
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Retrieve last record
+      $query = "SELECT MAX(`Period`) AS `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `InternalHourlyRate`, `YearlyVacationDays`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `RegisteredEvent` = 'Hiring' AND `Period` <= '".$date."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $row ? $row : array();
+   }
 }
 
 
