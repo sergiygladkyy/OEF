@@ -286,6 +286,126 @@ function oeWidgetsView()
 	};
 	
 	/**
+	 * Data Table
+	 *
+	 * @param array data
+	 * @return void
+	 */
+	function createDataTable(data)
+        {
+
+            if (!data || !data['fields'])
+		{
+			//jQuery('#' + tag_id).html('<span>Data is empty</span>');
+			return "";
+		}
+		var list   = data['list']  ? data['list']  : [];
+		var links  = data['links'] ? data['links'] : [];
+		var fields = data['fields'];
+		var numb_f = 0;
+		var html   = "<table>\n<thead>\n\t<tr>";
+
+		for (var key in fields)
+		{
+			html += "\n\t\t<th>" + fields[key] + "</th>";
+			numb_f++;
+		}
+
+		html += '\n\t</tr>\n</thead>\n<tbody>';
+
+		for (var key in list)
+		{
+			var row = list[key];
+
+			html += "\n\t<tr>";
+
+			for (var i = 0; i < numb_f; i++)
+			{
+				var name = fields[i];
+				var text = row[i];
+
+				if (links[name] && links[name][text])
+				{
+					text = links[name][text]['text'];
+				}
+
+				html += "\n\t\t<td>" + text + "</td>";
+			}
+
+			html += "\n\t</tr>";
+		}
+
+		html += '\n</tbody>\n</table>';
+                return html;
+        }
+        /**
+         * Data Table with no border
+         *
+         */
+         function createDataTableWithNoBorder(data)
+         {
+             if (!data )
+             {
+                    //jQuery('#' + tag_id).html('<span>Data is empty</span>');
+                    return "";
+             }
+             var list   = data['list']  ? data['list']  : [];
+             var html   = "<table>\n";
+             
+             for (var key in list)
+		{
+                    var row = list[key];
+
+                    html += "\n\t<tr>";
+
+                    for (var key2 in row)
+                    {
+                            var value = row[key2];
+                            html += "<td>\n";
+                            if (value['label'] != undefined)
+                            {
+                                html += value['label'];
+                            }
+                            html +="\n\t</td>";
+                            html += "<td>\n";
+                            if( value['value']!= undefined)
+                            {
+                                html += value['value'];
+                            }
+                            html +="\n\t</td>";
+                    }
+
+                    html += "\n\t</tr>";
+             }
+             html += '\n</table>';
+             return html;  
+         }
+         /**
+	 * Project Overview
+	 * 
+	 * @param string tag_id
+	 * @param array data
+	 * @param array options
+	 * @return void
+	 */
+         this.drawProjectOverview = function(tag_id, data, options)
+         {
+             
+             if (!data /*|| !data['fields']*/)
+             {
+                    jQuery('#' + tag_id).html('<span>Data is empty</span>');
+                    return;
+             }
+
+             var html = createDataTableWithNoBorder(data['ProjectOverview']);
+             html += "<hr>";
+             html += createDataTable(data['Employees']);
+             html += createDataTable(data['Milestones']);
+             jQuery('#' + tag_id).html(html);
+             
+         }
+	
+	/**
 	 * Column Chart
 	 * 
 	 * @param string tag_id
@@ -333,7 +453,7 @@ function oeWidgetsView()
 		});
 	};
         /**
-	 * Column Chart
+	 * Speedometer
 	 * 
 	 * @param string tag_id
 	 * @param array data
@@ -406,6 +526,92 @@ function oeWidgetsView()
               });
               /*var html   = "<div id='chart1_div'></div><div id='chart2_div'></div><div id='chart3_div'></div>";
               jQuery('#' + tag_id).html(html);*/
+        }
+        /**
+		 * Employee Vacation Days
+		 *
+		 * @param string tag_id
+		 * @param array data
+		 * @param array options
+		 * @return void
+		 */
+        this.drawEmployeeVacationDays = function(tag_id, data, options)
+        {
+              if (!data )
+              {
+                   jQuery('#' + tag_id).html('<span>Data is empty</span>');
+                  return;
+              }
+              var all = data['daysEligible']  ? data['daysEligible']  : 24;
+              var actual = data['daysAccounted']  ? data['daysAccounted']  : 0;
+              var spent = data['daysSpent']  ? data['daysSpent']  : 0;
+              var vacationDate = data['nextMondayVacationEnds'] ? data['nextMondayVacationEnds'] : "undefined " ;
+              //var difference = all - actual;
+              var leftColor = 'FF9900';
+              var rightColor = '000000';
+              var gradient = '000000,';
+              var coef = all/24;
+              for(var i=0;i<25;i++)
+              {
+                  if(i>0)
+                    gradient+='|';
+                  if(i*coef>actual)
+                      gradient+=rightColor;
+                  else
+                      gradient+=leftColor;
+              }
+              google.load('visualization', '1', {packages:['imagechart']});
+              google.setOnLoadCallback(function ()
+              {
+                  var dataTable = new google.visualization.DataTable();
+                  dataTable.addRows(1);
+
+                  dataTable.addColumn('number');
+                  dataTable.setValue(0, 0, spent);
+
+                  var vis = new google.visualization.ImageChart(document.getElementById('chart'));
+                  var options = {
+                     chxl: '0:|0|' + all,
+                     chxp: '0,0,' + all,
+                     chxr: '0,0,' + all,
+                     chxs: '',
+                     chxtc: '',
+                     chxt: 'y',
+                     chs: '200x100',
+                     cht: 'gm',
+                     chco: gradient,//'000000,FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|FF9900|000000|000000|000000|000000|000000|000000|000000|000000|000000|000000|000000|000000|000000',
+                     chds: '0,' + all,
+                     chd: 't:' + spent,
+                   //   chdl: '',
+                     chl: spent,
+                     chma: '5'
+                    };
+                   vis.draw(dataTable, options);
+
+                   
+                   
+              })
+              google.load('visualization', '1', {packages:['table']});
+              google.setOnLoadCallback(function ()
+              {
+                   var data = new google.visualization.DataTable();
+                   data.addColumn('string', 'Name');
+                   data.addColumn('string', 'Value');
+
+                   data.addRows(4);
+                   data.setCell(0, 0, 'All time ');
+                   data.setCell(0, 1,"" + all);
+                   data.setCell(1, 0, 'Actual');
+                   data.setCell(1, 1, "" + actual);
+                   data.setCell(2, 0, 'Spent');
+                   data.setCell(2, 1, "" + spent);
+                   data.setCell(3, 0, 'Next monday vacation ends');
+                   data.setCell(3, 1, vacationDate);
+
+                   var table = new google.visualization.Table(document.getElementById('table_chart'));
+                   table.draw(data, {showRowNumber: true});
+              })
+              
         }
 }
 
