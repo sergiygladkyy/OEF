@@ -519,7 +519,8 @@ $_dictionary = array(
       // Document ProjectAssignment
       'ProjectAssignment' => array(
          'recorder_for' => array(
-            'information_registry.ProjectAssignmentRecords'
+            'information_registry.ProjectAssignmentRecords',
+            'information_registry.ProjectAssignmentPeriods'
          ),
          
          'fields' => array(
@@ -1103,6 +1104,70 @@ $_dictionary = array(
                'precision' => array(
                   'required' => true,
                   'min' => 0
+               )
+            ),
+            'SubProject' => array(
+               'reference' => 'catalogs.SubProjects'
+            ),
+            'ProjectDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'EmployeeDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Comment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            )
+         ),
+         
+         'recorders' => array(
+            'ProjectAssignment'
+         )
+      ),
+      
+      // Project Assignment Periods
+      'ProjectAssignmentPeriods' => array(
+         'dimensions' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'fields' => array(
+            'DateFrom' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DateTo' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
                )
             ),
             'SubProject' => array(
