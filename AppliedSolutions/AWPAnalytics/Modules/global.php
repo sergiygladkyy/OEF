@@ -1282,6 +1282,75 @@ class MProjects
       
       return $projects;
    }
+   
+   /**
+    * Get list of employees assignment to project
+    * 
+    * @param int $project
+    * @param string $date
+    * @return array
+    */
+   public static function getAssignmentEmployees($project, $date)
+   {
+      $container = Container::getInstance();
+      
+      $odb   = $container->getODBManager();
+      $query = "SELECT `Employee`, `DateFrom`, `DateTo`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
+               "FROM information_registry.ProjectAssignmentPeriods ".
+               "WHERE `Project` = ".(int) $project." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
+      
+      if (null === ($employees = $odb->loadAssocList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $employees;
+   }
+   
+   /**
+    * Get list of project milestones
+    * 
+    * @param int $project
+    * @return array
+    */
+   public static function getMilestones($project)
+   {
+      $odb   = Container::getInstance()->getODBManager();
+      $query = "SELECT MileStoneName, MileStoneDeadline FROM information_registry.MilestoneRecords ".
+               "WHERE `Project` = ".$project;
+       
+      if (null === ($result = $odb->loadRowList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $result;
+   }
+   
+   /**
+    * Get Employee HoursAllocated
+    * 
+    * @param int $project
+    * @param array $employees
+    * @return array
+    */
+   public static function getHoursAllocated($project, array $employees)
+   {
+      if (empty($employees)) return array();
+      
+      $odb   = Container::getInstance()->getODBManager();
+      $query = "SELECT `Employee`, SUM(`Hours`) AS `HoursAllocated` ".
+               "FROM information_registry.ProjectAssignmentRecords ".
+               "WHERE `Project` = ".$project." AND `Employee` IN(".implode(',', $employees).") ".
+               "GROUP BY `Employee`";
+      
+      if (null === ($result = $odb->loadAssocList($query, array('key' => 'Employee'))))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $result;
+   }
 }
 
 

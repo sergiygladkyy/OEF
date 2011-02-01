@@ -1524,35 +1524,12 @@ $_dictionary = array(
    // Web services
    ////////////////
    'web_services' => array(
-      /*'Pm' => array(
+      'Pm' => array(
          'actions' => array(
-            'getProjectList' => array(
-               'fields' => array()
-            ),
-            'getProjectMembers' => array(
+            'getProjectOverview' => array(
                'fields' => array(
                   'Project' => array(
-                     'reference' => 'catalogs.Projects',
-                     'precision' => array(
-                        'required' => true
-                     )
-                  ),
-                  'Date' => array(
-                     'type' => 'date'
-                  )
-               )
-            ),
-            'getUserProjects' => array(
-               'fields' => array(
-                  'Date' => array(
-                     'type' => 'date'
-                  )
-               )
-            ),
-            'getProjectCost' => array(
-               'fields' => array(
-                  'Project' => array(
-                     'reference' => 'catalogs.Projects',
+                     'type' => 'string',
                      'precision' => array(
                         'required' => true
                      )
@@ -1563,7 +1540,7 @@ $_dictionary = array(
                )
             )
          )
-      ),*/
+      ),
       
       'Personal' => array(
          'actions' => array(
