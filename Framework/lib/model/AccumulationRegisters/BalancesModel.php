@@ -46,6 +46,10 @@ class BalancesModel
       {
          return $this->getActualTotal($options);
       }
+      elseif (!is_string($date))
+      {
+         return $this->getTotalsByPeriod($date, $options);
+      }
       
       $pfield = $this->conf['periodical']['field'];
       $_date  = explode('-', date('Y-m', strtotime($date)));
@@ -435,5 +439,127 @@ class BalancesModel
       }
 
       return $total;
+   }
+   
+   /**
+    * Get totals by period
+    * 
+    * @param mixed $date
+    * @param array $options
+    * @return array
+    */
+   public function getTotalsByPeriod($date, array $options = array())
+   {
+      if (empty($date))
+      {
+         return array();
+      }
+      
+      $pfield = $this->conf['periodical']['field'];
+      
+      // Get custom period
+      if (is_string($date))
+      {
+         $from = $date;
+         $to   = false;        
+      }
+      elseif (!is_array($date))
+      {
+         throw new Exception('Invalid date');
+      }
+      else
+      {
+         $from = empty($date[0]) ? (empty($date['from']) ? false : $date['from']) : $date[0];
+         $to   = empty($date[1]) ? (empty($date['to'])   ? false : $date['to'])   : $date[1];
+      }
+      
+      // Get criterion
+      if (!empty($options['criteria']) && is_array($options['criteria']))
+      {
+         $criterion = $this->retrieveCriteriaQuery($options['criteria']);
+      }
+      else $criterion = '';
+      
+      if ($from) $criterion .= ($criterion ? ' AND ' : '')."`Period` >= '".$from."'";
+      if ($to)   $criterion .= ($criterion ? ' AND ' : '')."`Period` < '".$to."'";
+      
+      $op = (isset($options['operation']) && !($options['operation'] == true || $options['operation'] == '+')) ? 0 : 1;
+      
+      // Comming
+      $db = Container::getInstance()->getDBManager();
+      
+      if (!empty($this->conf['dimensions']))
+      {
+         $select = '`'.implode('`,`', $this->conf['dimensions']).'`';
+         $group  = ' GROUP BY `'.implode('`,`', $this->conf['dimensions']).'`';
+      }
+      else
+      {
+         $select = '';
+         $group  = '';
+      }
+
+      foreach ($this->resources as $attribute)
+      {
+         $select .= ',SUM(`'.$attribute.'`) AS `'.$attribute.'`';
+      }
+      
+      if ($select{0} == ',') $select{0} = ' ';
+      
+      $query = 'SELECT '.$select.' FROM `'.$this->conf['db_map']['table'].'` '.
+               'WHERE `'.$this->conf['db_map']['active'].'`= 1 AND '.($criterion ? $criterion.' AND ' : '').$this->conf['db_map']['operation'].'='.$op;
+               $group;
+      
+      if (null === ($comming = $db->loadAssocList($query)))
+      {
+         return array();
+      }
+      
+      if (!$comming[0]['Employee']) $comming = array();
+      
+      if (isset($options['operation'])) return $comming;
+      
+      // Expense
+      $query = 'SELECT '.$select.',`'.$this->conf['db_map']['operation'].'` FROM `'.$this->conf['db_map']['table'].'` '.
+               'WHERE `'.$this->conf['db_map']['active'].'`= 1 AND '.($criterion ? $criterion.' AND ' : '').$this->conf['db_map']['operation'].'= 0';
+               $group;
+      
+      if (null === ($expense = $db->loadAssocList($query)))
+      {
+         return array();
+      }
+      
+      if (!$expense[0]['Employee']) $expense = array();
+      
+      // Calculate totals
+      $total  = array();
+      $dimstr = '';
+            
+      foreach ($this->conf['dimensions'] as $field)
+      {
+         $dimstr .= '",".$row[\''.$field.'\'].';
+      }
+      
+      $dimstr = '['.$dimstr."' ']";
+      $rows   = array_merge($comming, $expense);
+      
+      foreach ($rows as $row)
+      {
+         foreach ($this->resources as $field)
+         {
+            $op = (isset($row[$this->conf['db_map']['operation']])) ? '-' : '+';
+            
+            // Current
+            $exec = '$total'.$dimstr.'[\''.$field.'\']';
+            
+            eval('$isset = isset('.$exec.');');
+            
+            $exec .= $isset ? ($op.'='.$row[$field].';') : ('='.$op.$row[$field].';');
+            
+            eval($exec);
+         }
+      }
+      
+      return $total;   
    }
 }
