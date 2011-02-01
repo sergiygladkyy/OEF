@@ -333,7 +333,7 @@ function oeWidgetsView()
 		});
 	};
         /**
-	 * Column Chart
+	 * Speedometer
 	 * 
 	 * @param string tag_id
 	 * @param array data
@@ -407,6 +407,14 @@ function oeWidgetsView()
               /*var html   = "<div id='chart1_div'></div><div id='chart2_div'></div><div id='chart3_div'></div>";
               jQuery('#' + tag_id).html(html);*/
         }
+        /**
+		 * Employee Vacation Days
+		 *
+		 * @param string tag_id
+		 * @param array data
+		 * @param array options
+		 * @return void
+		 */
         this.drawEmployeeVacationDays = function(tag_id, data, options)
         {
               if (!data )
