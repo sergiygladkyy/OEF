@@ -233,3 +233,6 @@ span.ae_pagination {
 #oef_dynamic_upadate_edit_form td.ae_editform_field_name {
     width: 41% !important;
 }
+/************************************** Dynamic update ***************************************/
+table.oef_widget_table_no_border {border: 0 none !important;}
+.oef_widget_table_no_border td{border-right: 0 none !important;}
