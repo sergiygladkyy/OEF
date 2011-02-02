@@ -567,7 +567,7 @@ function oeWidgetsView()
                   dataTable.addRows(1);
 
                   dataTable.addColumn('number');
-                  dataTable.setValue(0, 0, spent);
+                  dataTable.setValue(0, 0, spent%2?spent:spent+1);;
 
                   var vis = new google.visualization.ImageChart(document.getElementById('chart'));
                   var options = {
