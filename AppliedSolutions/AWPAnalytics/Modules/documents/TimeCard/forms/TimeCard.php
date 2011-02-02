@@ -223,6 +223,8 @@ function onProcess($event)
       }
    }
    
+   $attrs['Date'] = date('Y-m-d H:i:s');
+   
    // Save document
    if (!$errors)
    {
