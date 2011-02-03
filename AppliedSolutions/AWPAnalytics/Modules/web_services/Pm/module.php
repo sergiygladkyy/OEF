@@ -179,7 +179,7 @@ function getProjectOverview(array $attributes)
 }
 
 /**
- * Web method ProjectOverview
+ * Web method ResourcesAvailable
  * 
  * @param array $attributes
  * @return array
@@ -461,6 +461,121 @@ function getResourcesAvailable(array $attributes)
    
    return $result;
 }
+
+/**
+ * Web method WorkingOnMyProjects
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getWorkingOnMyProjects(array $attributes)
+{
+   // Check attributes
+   $date     = empty($attributes['Date']) ? date('Y-m-d') : $attributes['Date'];
+   $employee = MEmployees::retrieveCurrentEmployee();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array('Name', 'Project', 'Hours Spent/Planned')
+   );
+   
+   if (empty($employee)) return $result;
+   
+   // Check employee
+   $hist = MEmployees::getLastHiringRecord($employee, $date);
+   
+   if (empty($hist))
+   {
+      throw new Exception('Unknow employee'); 
+   }
+   
+   if ($hist['OrganizationalPosition'] != Constants::get('ProjectManagerPosition'))
+   {
+      return $result;
+   }
+   
+   // Retrieve MyProjects from ProjectRegistrationRecords
+   $container = Container::getInstance();
+   
+   $odb   = $container->getODBManager();
+   $query = "SELECT * FROM information_registry.ProjectRegistrationRecords ".
+            "WHERE `ProjectManager` = ".$employee." AND `StartDate` <= '".$date."'";
+   
+   if (null === ($projects = $odb->loadAssocList($query, array('key' => 'Project'))))
+   {
+      throw new Exception('Database error');
+   }
+   
+   if (empty($projects)) return $result;
+   
+   // Check closure
+   $query = "SELECT `Project` FROM information_registry.ProjectClosureRecords ".
+            "WHERE `Project` IN (".implode(',', array_keys($projects)).") AND `ClosureDate` <= '".$date."'";
+   
+   if (null === ($closure = $odb->loadAssocList($query, array('key' => 'Project'))))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $projects = array_diff_key($projects, $closure);
+   
+   if (empty($projects)) return $result;
+   
+   $prIDS = array_keys($projects);
+   
+   // Employees and Hours
+   $query = "SELECT ap.`Project`, ap.`Employee`, SUM(ar.`Hours`) as `HoursAllocated`, SUM(tr.`Hours`) as `HoursSpent` ".
+            "FROM information_registry.ProjectAssignmentPeriods AS `ap` ".
+            "  INNER JOIN information_registry.ProjectAssignmentRecords AS `ar` ".
+            "    ON ap.`Project` IN (".implode(',', $prIDS).") AND ap.`DateFrom` <= '".$date."' AND ap.`DateTo` > '".$date."' ".
+            "      AND ap.`Project` = ar.`Project` AND ap.`Employee` = ar.`Employee` ".
+            "  LEFT JOIN information_registry.TimeReportingRecords AS `tr` ".
+            "    ON ar.`Project` = tr.`Project` AND ar.`Employee` = tr.`Employee` AND tr.`Date` <= '".$date."' ".
+            "GROUP BY ap.`Project`, ap.`Employee`";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $empIDS = array();
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      if ($row['HoursAllocated'] === null) $row['HoursAllocated'] = '-';
+      if ($row['HoursSpent'] === null)     $row['HoursSpent'] = '-';
+      if ($row['Employee'] > 0)
+      {
+         $empIDS[$row['Employee']] = $row['Employee'];
+      }
+      else $row['Employee'] = '-';
+      
+      $result['list'][] = array(
+         0 => $row['Employee'],
+         1 => $row['Project'],
+         2 => $row['HoursSpent'].'/'.$row['HoursAllocated']
+      );
+      
+   }
+
+   $result['links']['Project'] = $container->getCModel('catalogs', 'Projects')->retrieveLinkData($prIDS);
+   
+   if (!empty($empIDS))
+   {
+      $result['links']['Name'] = $container->getCModel('catalogs', 'Employees')->retrieveLinkData($empIDS);
+   }
+   
+   return $result;
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -1548,6 +1548,13 @@ $_dictionary = array(
                      'type' => 'string'
                   )
                )
+            ),
+            'getWorkingOnMyProjects' => array(
+               'fields' => array(
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
             )
          )
       ),
