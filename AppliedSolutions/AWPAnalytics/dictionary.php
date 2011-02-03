@@ -1538,6 +1538,16 @@ $_dictionary = array(
                      'type' => 'date'
                   )
                )
+            ),
+            'getResourcesAvailable' => array(
+               'fields' => array(
+                  'Period' => array(
+                     'type' => 'string'
+                  ),
+                  'Department' => array(
+                     'type' => 'string'
+                  )
+               )
             )
          )
       ),
