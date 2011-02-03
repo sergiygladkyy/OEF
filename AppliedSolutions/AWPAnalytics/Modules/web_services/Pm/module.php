@@ -86,27 +86,14 @@ function getProjectOverview(array $attributes)
    $result['Milestones']['list'] = MProjects::getMilestones($project);
    
    // Assignment Employees
-   $model = $container->getCModel('information_registry', 'ProjectAssignmentPeriods');
-   $crit  = "WHERE `Project` = ".$project." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
-   
-   if (null === ($aRows = $model->getEntities(null, array('criterion' => $crit, 'key' => 'Employee'))))
-   {
-      throw new Exception('Database error');
-   }
+   $aRows = MProjects::getAssignmentEmployees($project, $date, array('key' => 'Employee'));
    
    if (empty($aRows)) return $result;
    
    $empIDS = array_keys($aRows);
    
    // InternalRate
-   $model = $container->getCModel('information_registry', 'StaffHistoricalRecords');
-   $crit  = "WHERE `Employee` IN (".implode(',', $empIDS).") AND `Period` <= '".$date."' AND `RegisteredEvent` <> 'Firing'";
-   $crit .= "GROUP BY `Employee`, `Period`";
-   
-   if (null === ($hRows = $model->getEntities(null, array('criterion' => $crit, 'key' => 'Employee'))))
-   {
-      throw new Exception('Database error');
-   }
+   $hRows  = MEmployees::getLastNotFiringRecord($empIDS, $date, array('key' => 'Employee'));
    
    // Allocated Hours
    $aHours = MProjects::getHoursAllocated($project, $empIDS);
@@ -543,8 +530,8 @@ function getWorkingOnMyProjects(array $attributes)
    
    while ($row = $odb->fetchAssoc($res))
    {
-      if ($row['HoursAllocated'] === null) $row['HoursAllocated'] = '-';
-      if ($row['HoursSpent'] === null)     $row['HoursSpent'] = '-';
+      if ($row['HoursAllocated'] === null) $row['HoursAllocated'] = '0';
+      if ($row['HoursSpent'] === null)     $row['HoursSpent'] = '0';
       if ($row['Employee'] > 0)
       {
          $empIDS[$row['Employee']] = $row['Employee'];
@@ -565,6 +552,131 @@ function getWorkingOnMyProjects(array $attributes)
    {
       $result['links']['Name'] = $container->getCModel('catalogs', 'Employees')->retrieveLinkData($empIDS);
    }
+   
+   return $result;
+}
+
+/**
+ * Web method ResourcesSpentVsBudgeted
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getResourcesSpentVsBudgeted(array $attributes)
+{
+   // Check attributes
+   if (empty($attributes['Project']))
+   {
+      throw new Exception('Unknow project');
+   }
+   
+   $container = Container::getInstance();
+   $model     = $container->getModel('catalogs', 'Projects');
+   
+   if (!$model->loadByCode($attributes['Project']))
+   {
+      throw new Exception('Unknow project');
+   }
+   
+   $project = $model->getId();
+   $date    = empty($attributes['Date']) ? date('Y-m-d') : $attributes['Date'];
+   $kind    = (empty($attributes['ResourceKind']) || !in_array($attributes['ResourceKind'], array('NOK', 'HRS'))) ? 'HRS' : $attributes['ResourceKind'];
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         'Date'      => array('type' => 'string'),
+         'Budgeted'  => array('type' => 'number'),
+         'Allocated' => array('type' => 'number'),
+         'Spent'     => array('type' => 'number'))
+   );
+   
+   // Retrieve ProjectRegistrationRecords
+   $odb   = $container->getODBManager();
+   $query = "SELECT * FROM information_registry.ProjectRegistrationRecords ".
+            "WHERE `Project` = ".$project;
+   
+   if (null === ($precords = $odb->loadAssoc($query)))
+   {
+      throw new Exception('Database error');
+   }
+   elseif (empty($precords))
+   {
+      throw new Exception('Project not registered');
+   }
+   
+   // Hours SPENT
+   $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
+   $sRows = $model->getTotals($date, array('Project' => $project));
+   $spent = 0;
+   
+   $result['list'][0][0] = MGlobal::getFormattedDate($date, '%d.%m.%Y');
+   
+   if ($kind != 'NOK')
+   {
+      // Allocated Hours
+      $aHours = MProjects::getHoursAllocated($project);
+      
+      foreach ($sRows as $row)
+      {
+         $spent += $row['Hours'];
+      }
+      
+      // Result
+      $result['list'][0][1] = $precords['BudgetHRS'];
+      $result['list'][0][2] = isset($aHours['HoursAllocated']) ? $aHours['HoursAllocated'] : 0;
+      $result['list'][0][3] = $spent;
+      
+      return $result;
+   }
+   
+   $result['list'][0][1] = $precords['BudgetNOK'];
+   
+   // Assignment Employees
+   $aRows = MProjects::getAssignmentEmployees($project, $date, array('key' => 'Employee'));
+   
+   if (empty($aRows)) return $result;
+   
+   $empIDS = array_keys($aRows);
+   
+   // InternalRate
+   $hRows  = MEmployees::getLastNotFiringRecord($empIDS, $date, array('key' => 'Employee'));
+   
+   // Allocated Hours
+   $aHours = MProjects::getHoursAllocated($project, $empIDS);
+   
+   // Calculate
+   foreach ($sRows as $row)
+   {
+      if (!isset($hRows[$row['Employee']]))
+      {
+         throw new Exception('Unknow InternalHourlyRate');
+      }
+      
+      $spent += $hRows[$row['Employee']]['InternalHourlyRate']*$row['Hours'];
+   }
+   
+   $PV = 0;
+   
+   foreach ($aRows as $row)
+   {
+      if (!isset($aHours[$row['Employee']]))
+      {
+         throw new Exception('Unknow Hours Allocated');
+      }
+      
+      if (!isset($hRows[$row['Employee']]))
+      {
+         throw new Exception('Unknow InternalHourlyRate');
+      }
+      
+      $PV += $hRows[$row['Employee']]['InternalHourlyRate']*$aHours[$row['Employee']]['HoursAllocated'];
+   }
+   
+   // Result
+   $result['list'][0][2] = $PV;
+   $result['list'][0][3] = $spent;
    
    return $result;
 }

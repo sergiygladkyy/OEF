@@ -1555,6 +1555,22 @@ $_dictionary = array(
                      'type' => 'date'
                   )
                )
+            ),
+            'getResourcesSpentVsBudgeted' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'type' => 'string',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
+                  ),
+                  'ResourceKind' => array(
+                     'type' => 'string'
+                  )
+               )
             )
          )
       ),

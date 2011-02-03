@@ -1074,6 +1074,37 @@ class MEmployees
       
       return $row ? $row : array();
    }
+   
+   /**
+    * Get last Not Firing record 
+    * 
+    * @param mixed $employees
+    * @param string $date
+    * @return array
+    */
+   public static function getLastNotFiringRecord($employees, $date, array $options = array())
+   {
+      $model = Container::getInstance()->getCModel('information_registry', 'StaffHistoricalRecords');
+      
+      if (is_array($employees))
+      {
+         $options['criterion'] = "WHERE `Employee` IN (".implode(',', $employees).")";
+      }
+      else
+      {
+         $options['criterion'] = "WHERE `Employee` = ".$employees;
+      }
+      
+      $options['criterion'] .= " AND `Period` <= '".$date."' AND `RegisteredEvent` <> 'Firing' ";
+      $options['criterion'] .= "GROUP BY `Employee`, `Period`";
+      
+      if (null === ($hRows = $model->getEntities(null, $options)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $hRows;
+   }
 }
 
 
@@ -1290,7 +1321,7 @@ class MProjects
     * @param string $date
     * @return array
     */
-   public static function getAssignmentEmployees($project, $date)
+   public static function getAssignmentEmployees($project, $date, array $options = array())
    {
       $container = Container::getInstance();
       
@@ -1299,7 +1330,7 @@ class MProjects
                "FROM information_registry.ProjectAssignmentPeriods ".
                "WHERE `Project` = ".(int) $project." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
       
-      if (null === ($employees = $odb->loadAssocList($query)))
+      if (null === ($employees = $odb->loadAssocList($query, $options)))
       {
          throw new Exception('Database error');
       }
@@ -1334,19 +1365,32 @@ class MProjects
     * @param array $employees
     * @return array
     */
-   public static function getHoursAllocated($project, array $employees)
+   public static function getHoursAllocated($project, array $employees = array())
    {
-      if (empty($employees)) return array();
+      $odb = Container::getInstance()->getODBManager();
       
-      $odb   = Container::getInstance()->getODBManager();
-      $query = "SELECT `Employee`, SUM(`Hours`) AS `HoursAllocated` ".
-               "FROM information_registry.ProjectAssignmentRecords ".
-               "WHERE `Project` = ".$project." AND `Employee` IN(".implode(',', $employees).") ".
-               "GROUP BY `Employee`";
-      
-      if (null === ($result = $odb->loadAssocList($query, array('key' => 'Employee'))))
+      if (empty($employees))
       {
-         throw new Exception('Database error');
+         $query = "SELECT SUM(`Hours`) AS `HoursAllocated` ".
+                  "FROM information_registry.ProjectAssignmentRecords ".
+                  "WHERE `Project` = ".$project;
+         
+         if (null === ($result = $odb->loadAssoc($query)))
+         {
+            throw new Exception('Database error');
+         }
+      }
+      else
+      {
+         $query = "SELECT `Employee`, SUM(`Hours`) AS `HoursAllocated` ".
+                  "FROM information_registry.ProjectAssignmentRecords ".
+                  "WHERE `Project` = ".$project." AND `Employee` IN(".implode(',', $employees).") ".
+                  "GROUP BY `Employee`";
+         
+         if (null === ($result = $odb->loadAssocList($query, array('key' => 'Employee'))))
+         {
+            throw new Exception('Database error');
+         }
       }
       
       return $result;
