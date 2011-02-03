@@ -143,6 +143,24 @@
 	        }
          });
          
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Pm',
+		       'method':   'ProjectMilestones',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Project': '00000001'
+		       }
+	        },
+	        'view': {
+		       'widget':  'Grid',
+		       'tag_id':  'oef_project_milestones',
+		       'options': {}
+	        }
+         });
+         
        "&lt;/script&gt;
      &lt;/tail&gt;
    &lt;/html&gt;
@@ -175,4 +193,7 @@
   
   <h3 style="clear:both">ResourcesSpentVsBudgeted NOK</h3>
   <div id="oef_resources_spent_vs_budgeted_nok">&nbsp;</div>
+  
+  <h3 style="clear:both">Project delivery dates</h3>
+  <div id="oef_project_milestones">&nbsp;</div>
 </div>

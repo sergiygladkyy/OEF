@@ -267,7 +267,7 @@ function oeWidgetsView()
 			for (var i = 0; i < numb_f; i++)
 			{
 				var name = fields[i];
-				var text = row[name];
+				var text = row[i];
 				
 				if (links[name] && links[name][text])
 				{
