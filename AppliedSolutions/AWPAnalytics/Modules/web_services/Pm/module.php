@@ -681,6 +681,42 @@ function getResourcesSpentVsBudgeted(array $attributes)
    return $result;
 }
 
+/**
+ * Web method ProjectMilestones
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getProjectMilestones(array $attributes)
+{
+   // Check attributes
+   if (empty($attributes['Project']))
+   {
+      throw new Exception('Unknow project');
+   }
+   
+   $container = Container::getInstance();
+   $model     = $container->getModel('catalogs', 'Projects');
+   
+   if (!$model->loadByCode($attributes['Project']))
+   {
+      throw new Exception('Unknow project');
+   }
+   
+   $project = $model->getId();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array('Milestone', 'Deadline')
+   );
+   
+   // Retrieve MilestoneRecords
+   $result['list'] = MProjects::getMilestones($project);
+   
+   return $result;
+}
+
 
 
 

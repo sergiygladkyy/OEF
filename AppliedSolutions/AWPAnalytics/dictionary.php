@@ -1571,6 +1571,16 @@ $_dictionary = array(
                      'type' => 'string'
                   )
                )
+            ),
+            'getProjectMilestones' => array(
+               'fields' => array(
+                  'Project' => array(
+                     'type' => 'string',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
+               )
             )
          )
       ),
