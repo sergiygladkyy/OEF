@@ -19,7 +19,9 @@ function onBeforeAddingResourcesRecord($event)
    
    $cmodel = $container->getCModel('documents.ProjectAssignment.tabulars', 'Resources');
 
-   $criterion = "WHERE `Owner` = ".$attrs['Owner']." AND `Employee` = '".$attrs['Employee']."'";
+   $criterion  = "WHERE `Owner` = ".$attrs['Owner']." AND `Employee` = '".$attrs['Employee']."'";
+   
+   if (!empty($attrs['_id'])) $criterion .= " AND `_id` <> ".$attrs['_id'];
    
    if (null === ($res = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
    {
