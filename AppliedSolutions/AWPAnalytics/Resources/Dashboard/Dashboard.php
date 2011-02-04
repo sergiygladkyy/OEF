@@ -161,6 +161,78 @@
 	        }
          });
          
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Pm',
+		       'method':   'ProjectsOngoing',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Department': '00001'
+		       }
+	        },
+	        'view': {
+		       'widget':  'Grid',
+		       'tag_id':  'oef_projects_ongoing',
+		       'options': {}
+	        }
+         });
+         
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Pm',
+		       'method':   'WorkingOnProjectsInMyDepartment',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Department': '00001'
+		       }
+	        },
+	        'view': {
+		       'widget':  'Grid',
+		       'tag_id':  'oef_working_on_projects_in_my_department',
+		       'options': {}
+	        }
+         });
+         
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Pm',
+		       'method':   'DepartmentHoursSpent',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Department': '00001'
+		       }
+	        },
+	        'view': {
+		       'widget':  'List',
+		       'tag_id':  'oef_department_hours_spent',
+		       'options': {}
+	        }
+         });
+         
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Pm',
+		       'method':   'ResourcesWorkload',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Department': '00001'
+		       }
+	        },
+	        'view': {
+		       'widget':  'Grid',
+		       'tag_id':  'oef_resources_workload',
+		       'options': {}
+	        }
+         });
+         
        "&lt;/script&gt;
      &lt;/tail&gt;
    &lt;/html&gt;
@@ -182,18 +254,30 @@
   <h3 style="clear:both">Project Overview</h3>
   <div id="oef_project_overview">&nbsp;</div>
   
-  <h3 style="clear:both">ResourcesAvailable</h3>
+  <h3 style="clear:both">Resources Available</h3>
   <div id="oef_resources_available">&nbsp;</div>
   
-  <h3 style="clear:both">WorkingOnMyProjects</h3>
+  <h3 style="clear:both">Working On My Projects</h3>
   <div id="oef_working_on_my_projects">&nbsp;</div>
   
-  <h3 style="clear:both">ResourcesSpentVsBudgeted HRS</h3>
+  <h3 style="clear:both">Resources Spent Vs Budgeted HRS</h3>
   <div id="oef_resources_spent_vs_budgeted_hrs">&nbsp;</div>
   
-  <h3 style="clear:both">ResourcesSpentVsBudgeted NOK</h3>
+  <h3 style="clear:both">Resources Spent Vs Budgeted NOK</h3>
   <div id="oef_resources_spent_vs_budgeted_nok">&nbsp;</div>
   
   <h3 style="clear:both">Project delivery dates</h3>
   <div id="oef_project_milestones">&nbsp;</div>
+  
+  <h3 style="clear:both">Projects Ongoing</h3>
+  <div id="oef_projects_ongoing">&nbsp;</div>
+  
+  <h3 style="clear:both">Working On Projects In My Department</h3>
+  <div id="oef_working_on_projects_in_my_department">&nbsp;</div>
+  
+  <h3 style="clear:both">Department Hours Spent</h3>
+  <div id="oef_department_hours_spent">&nbsp;</div>
+  
+  <h3 style="clear:both">Resources Workload</h3>
+  <div id="oef_resources_workload">&nbsp;</div>
 </div>

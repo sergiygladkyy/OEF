@@ -116,8 +116,12 @@ function getEmployeeVacationDays(array $attributes)
    $total  = $cmodel->getTotals($date, array('criteria' => array('Employee' => $employee)));
    $accum  = $cmodel->getTotals(array(date('Y', $ts).'-01-01', $date), array('operation' => '+', 'criteria' => array('Employee' => $employee)));
    
-   $result['daysAccounted'] = $prev[0]['VacationDays'] + $accum[0]['VacationDays'];
-   $result['daysSpent']     = $result['daysAccounted'] - $total[0]['VacationDays'];
+   $pvd = isset($prev[0]['VacationDays'])  ? $prev[0]['VacationDays']  : 0;
+   $avd = isset($accum[0]['VacationDays']) ? $accum[0]['VacationDays'] : 0;
+   $tvd = isset($total[0]['VacationDays']) ? $total[0]['VacationDays'] : 0;
+   
+   $result['daysAccounted'] = $pvd + $avd;
+   $result['daysSpent']     = $result['daysAccounted'] - $tvd;
    
    // Retrieve endDate
    $day = date('w', $ts);

@@ -1617,6 +1617,16 @@ $_dictionary = array(
                      'type' => 'date'
                   )
                )
+            ),
+            'getResourcesWorkload' => array(
+               'fields' => array(
+                  'Department' => array(
+                     'type' => 'string'
+                  ),
+                  'Period' => array(
+                     'type' => 'date'
+                  )
+               )
             )
          )
       ),

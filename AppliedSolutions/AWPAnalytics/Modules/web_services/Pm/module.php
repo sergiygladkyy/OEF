@@ -173,24 +173,11 @@ function getProjectOverview(array $attributes)
  */
 function getResourcesAvailable(array $attributes)
 {
-   $container  = Container::getInstance();
-   $period     = empty($attributes['Period']) ? 'Next Month' : $attributes['Period'];
-   $department = 0;
-   
-   $result = array(
-      'list'   => array(),
-      'links'  => array(),
-      'fields' => array(
-         0 => 'Employee',
-         1 => 'Position',
-         2 => 'Hours available'
-      )
-   );
-   
-   // Check attributes
+   $period = empty($attributes['Period']) ? 'Next Month' : $attributes['Period'];
+    
    if (!empty($attributes['Department']))
    {
-      $model = $container->getModel('catalogs', 'OrganizationalUnits');
+      $model = Container::getInstance()->getModel('catalogs', 'OrganizationalUnits');
 
       if (!$model->loadByCode($attributes['Department']))
       {
@@ -199,254 +186,14 @@ function getResourcesAvailable(array $attributes)
       
       $department = $model->getId();
    }
+   else $department = 0;
    
    if (null === ($period = MGlobal::parseDatePeriodString($period)))
    {
       throw new Exception('Invalid period');
    }
    
-   // Allocated Hours
-   $odb   = Container::getInstance()->getODBManager();
-   $query = "SELECT `Employee`, SUM(`Hours`) AS `HoursAllocated` ".
-            "FROM information_registry.ProjectAssignmentRecords ".
-            "WHERE `Date`>= '".$period['from']."' AND `Date` < '".$period['to']."' ".
-            ($department > 0 ? 'AND `EmployeeDepartment` = '.$department.' ' : '').
-            "GROUP BY `Employee`";
-   
-   if (null === ($aHours = $odb->loadAssocList($query, array('key' => 'Employee'))))
-   {
-      throw new Exception('Database error');
-   }
-   
-   // Get working periods
-   $query = "SELECT `Employee`, MAX(`Period`) AS `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `RegisteredEvent` ".
-            "FROM information_registry.StaffHistoricalRecords ".
-            "WHERE `Period` < '".$period['from']."' ".
-            ($department > 0 ? 'AND `OrganizationalUnit` = '.$department.' ' : '').
-            "GROUP BY `Employee` ASC";
-   
-   if (null === ($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-   
-   $hRecs  = array();
-   $inds   = array();
-   $schedIDS = array();
-   $emplIDS  = array();
-   
-   while ($row = $odb->fetchAssoc($res))
-   {
-      if ($row['RegisteredEvent'] == 'Firing') continue;
-      
-      $inds[$row['Employee']] = 0;
-      $hRecs[$row['Employee']][0] = $row;
-      $hRecs[$row['Employee']][0]['_from'] = $period['from'];
-      
-      $schedIDS[$row['Schedule']] = $row['Schedule'];
-      $emplIDS[$row['Employee']]  = $row['Employee'];
-   }
-   
-   $query = "SELECT `Employee`, `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `RegisteredEvent` ".
-            "FROM information_registry.StaffHistoricalRecords ".
-            "WHERE `Period` >= '".$period['from']."' AND `Period` < '".$period['to']."' ".
-            ($department > 0 ? 'AND `OrganizationalUnit` = '.$department.' ' : '').
-            "ORDER BY `Employee` ASC";
-   
-   if (null === ($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-
-   while ($row = $odb->fetchAssoc($res))
-   {
-      if (isset($hRecs[$row['Employee']]))
-      {
-         if ($row['RegisteredEvent'] == 'Firing')
-         {
-            $hRecs[$row['Employee']][$inds[$row['Employee']]]['_to'] = $row['Period'];
-            $inds[$row['Employee']]++;
-            
-            continue;
-         }
-         else
-         {
-            if (isset($hRecs[$row['Employee']][$inds[$row['Employee']]]))
-            {
-               throw new Exception('Employee already Hiring');
-            }
-            
-            $hRecs[$row['Employee']][$inds[$row['Employee']]] = $row;
-            $hRecs[$row['Employee']][$inds[$row['Employee']]]['_from'] = $row['Period'];
-         }
-      }
-      else
-      {
-         if ($row['RegisteredEvent'] == 'Firing') throw new Exception('Before Firing employee must be Hiring');
-         
-         $inds[$row['Employee']] = 0;
-         $hRecs[$row['Employee']][0] = $row;
-         $hRecs[$row['Employee']][0]['_from'] = $row['Period'];
-         
-         $emplIDS[$row['Employee']] = $row['Employee'];
-      }
-      
-      $schedIDS[$row['Schedule']] = $row['Schedule'];
-   }
-   
-   // Get SchedulesRecords
-   $query = "SELECT * FROM information_registry.Schedules ".
-            "WHERE `Schedule` IN (".implode(',', $schedIDS).") AND `Date` >= '".$period['from']."' AND `Date` < '".$period['to']."' ".
-            "ORDER BY `Schedule` ASC, `Date` ASC";
-   
-   if (null === ($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-   
-   unset($schedIDS);
-   
-   $scheds = array();
-   
-   while ($row = $odb->fetchAssoc($res))
-   {
-      $scheds[$row['Schedule']][strtotime($row['Date'])] = $row['Hours'];
-   }
-   
-   // Get ScheduleVarianceRecords
-   $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-            "WHERE `Employee` IN (".implode(',', $emplIDS).") AND `DateFrom` < '".$period['to']."' AND `DateTo` >= '".$period['from']."' ".
-            "ORDER BY `Employee` ASC, `DateFrom` ASC";
-   
-   if (null === ($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-   
-   $variance = array();
-   $inds     = array();
-   $pfrom = strtotime($period['from']);
-   $pto   = strtotime($period['to']);
-   
-   while ($row = $odb->fetchAssoc($res))
-   {
-      $row['_from'] = strtotime($row['DateFrom']);
-      $row['_to']   = strtotime($row['DateTo']);
-      
-      if ($pfrom > $row['_from']) $row['_from'] = $pfrom;
-      if ($pto   < $row['_to'])   $row['_to']   = $pto;
-      
-      if (isset($variance[$row['Employee']]))
-      {
-         $inds[$row['Employee']]++;
-         $variance[$row['Employee']][$inds[$row['Employee']]] = $row;
-      }
-      else
-      {
-         $inds[$row['Employee']] = 0;
-         $variance[$row['Employee']][0] = $row;
-      }
-   }
-   
-   // Calculate total hours
-   $scache = array();
-   $posIDS = array();
-   
-   foreach ($hRecs as $employee => $hists)
-   {
-      $hours = 0;
-      
-      foreach ($hists as $i => $row)
-      {
-         // Hours by period
-         if (!isset($row['_to'])) $row['_to'] = $period['to'];
-         
-         $_from = strtotime($row['_from']);
-         $_to   = strtotime($row['_to']);
-         
-         $cacheKey = $row['_from'].$row['_to'];
-         
-         if (!isset($scache[$row['Schedule']][$cacheKey]))
-         {
-            $scache[$row['Schedule']][$cacheKey] = self::calculateHoursByPeriod($scheds[$row['Schedule']], $_from, $_to);
-         }
-          
-         $hours += $scache[$row['Schedule']][$cacheKey];
-         
-         // Without variance
-         if (empty($variance[$employee])) continue;
-          
-         $exec  = true;
-         
-         while ($exec)
-         {
-            $vi = key($variance[$employee]);
-
-            if ($variance[$employee][$vi]['_from'] >= $_from)
-            {
-               if ($variance[$employee][$vi]['_to'] <= $_to)
-               {
-                  $cacheKey = $variance[$employee][$vi]['DateFrom'].$variance[$employee][$vi]['DateTo'];
-                   
-                  if (!isset($scache[$row['Schedule']][$cacheKey]))
-                  {
-                     $scache[$row['Schedule']][$cacheKey] = self::calculateHoursByPeriod(
-                        $scheds[$row['Schedule']],
-                        $variance[$employee][$vi]['_from'],
-                        $variance[$employee][$vi]['_to']
-                     );
-                  }
-                   
-                  $hours -= $scache[$row['Schedule']][$cacheKey];
-                   
-                  unset($variance[$employee][$vi]);
-                  
-                  if (empty($variance[$employee]))
-                  {
-                     unset($variance[$employee]);
-                     
-                     $exec = false;
-                  }
-               }
-               elseif ($variance[$employee][$vi]['_from'] <= $_to)
-               {
-                  throw new Exception('Invalid Schedule Variance Record');
-               }
-               else $exec = false;
-            }
-            else throw new Exception('Invalid Schedule Variance Record');
-         }
-      }
-      
-      $av = isset($aHours[$employee]) ? $hours - $aHours[$employee]['HoursAllocated'] : $hours;
-      
-      if ($av <= 0)
-      {
-         unset($emplIDS[$employee]);
-         continue;
-      }
-      
-      $result['list'][] = array(
-         0 => $employee,
-         1 => $hists[$i]['OrganizationalPosition'],
-         2 => $av.'/'.$hours
-      );
-      
-      $posIDS[$hists[$i]['OrganizationalPosition']] = $hists[$i]['OrganizationalPosition'];
-   }
-   
-   unset($scache);
-   unset($scheds);
-   unset($variance);
-   unset($hRecs);
-   
-   if (!empty($emplIDS))
-   {
-      $result['links']['Employee'] = $container->getCModel('catalogs', 'Employees')->retrieveLinkData($emplIDS);
-      $result['links']['Position'] = $container->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS);
-   }
-   
-   return $result;
+   return self::ResourcesAvailableHours($period, $department, array('filter_full_loaded'));
 }
 
 /**
@@ -908,9 +655,9 @@ function getDepartmentHoursSpent(array $attributes)
    
    $result = array(
       'list' => array(
-         0 => array('label' => 'Total Hours:',       'value' => 0),
-         1 => array('label' => 'Includes Overtime:', 'value' => 0),
-         2 => array('label' => 'Includes Extra:',    'value' => 0)
+         0 => array(0 => array('label' => 'Total Hours:',       'value' => 0)),
+         1 => array(0 => array('label' => 'Includes Overtime:', 'value' => 0)),
+         2 => array(0 => array('label' => 'Includes Extra:',    'value' => 0))
       )
    );
    
@@ -958,12 +705,59 @@ function getDepartmentHoursSpent(array $attributes)
       $extra += $row['ExtraHours'];
    }
    
-   $result['list'][0]['value'] = $hours;
-   $result['list'][1]['value'] = $overt;
-   $result['list'][2]['value'] = $extra;
+   $result['list'][0][0]['value'] = $hours;
+   $result['list'][1][0]['value'] = $overt;
+   $result['list'][2][0]['value'] = $extra;
    
    return $result;
 }
+
+/**
+ * Web method ResourcesWorkload
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getResourcesWorkload(array $attributes)
+{
+   $period = empty($attributes['Period']) ? 'This Week' : $attributes['Period'];
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         0 => 'Employee',
+         1 => 'Position',
+         2 => 'Hours available'
+      )
+   );
+   
+   if (null === ($period = MGlobal::parseDatePeriodString($period)))
+   {
+      throw new Exception('Invalid period');
+   }
+   
+   if (!empty($attributes['Department']))
+   {
+      $model = Container::getInstance()->getModel('catalogs', 'OrganizationalUnits');
+
+      if (!$model->loadByCode($attributes['Department']))
+      {
+         throw new Exception('Unknow department');
+      }
+      
+      $department = $model->getId();
+   }
+   else
+   {
+      if (0 == ($department = MEmployees::retrieveCurrentDepartment()))
+      {
+         return $result;
+      }
+   }
+   
+   return self::ResourcesAvailableHours($period, $department, array('allocated' => true));
+} 
 
 
 
@@ -1000,6 +794,274 @@ function calculateHoursByPeriod(array& $schedule, $from, $to)
       }
       
       $current += 86400;
+   }
+   
+   return $result;
+}
+
+/**
+ * Get result for AvailableHours Grid widgets
+ * 
+ * @param array $period
+ * @param int   $department
+ * @param array $options
+ * @return array
+ */
+function ResourcesAvailableHours(array $period, $department = 0, array $options = array())
+{
+   $container = Container::getInstance();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         0 => 'Employee',
+         1 => 'Position',
+         2 => 'Hours available'
+      )
+   );
+   
+   // Allocated Hours
+   $odb   = $container->getODBManager();
+   $query = "SELECT `Employee`, SUM(`Hours`) AS `HoursAllocated` ".
+            "FROM information_registry.ProjectAssignmentRecords ".
+            "WHERE `Date`>= '".$period['from']."' AND `Date` < '".$period['to']."' ".
+            ($department > 0 ? 'AND `EmployeeDepartment` = '.$department.' ' : '').
+            "GROUP BY `Employee`";
+   
+   if (null === ($aHours = $odb->loadAssocList($query, array('key' => 'Employee'))))
+   {
+      throw new Exception('Database error');
+   }
+   
+   // Get working periods
+   $query = "SELECT `Employee`, MAX(`Period`) AS `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `RegisteredEvent` ".
+            "FROM information_registry.StaffHistoricalRecords ".
+            "WHERE `Period` < '".$period['from']."' ".
+            ($department > 0 ? 'AND `OrganizationalUnit` = '.$department.' ' : '').
+            "GROUP BY `Employee` ASC";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $hRecs  = array();
+   $inds   = array();
+   $schedIDS = array();
+   $emplIDS  = array();
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      if ($row['RegisteredEvent'] == 'Firing') continue;
+      
+      $inds[$row['Employee']] = 0;
+      $hRecs[$row['Employee']][0] = $row;
+      $hRecs[$row['Employee']][0]['_from'] = $period['from'];
+      
+      $schedIDS[$row['Schedule']] = $row['Schedule'];
+      $emplIDS[$row['Employee']]  = $row['Employee'];
+   }
+   
+   $query = "SELECT `Employee`, `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `RegisteredEvent` ".
+            "FROM information_registry.StaffHistoricalRecords ".
+            "WHERE `Period` >= '".$period['from']."' AND `Period` < '".$period['to']."' ".
+            ($department > 0 ? 'AND `OrganizationalUnit` = '.$department.' ' : '').
+            "ORDER BY `Employee` ASC";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+
+   while ($row = $odb->fetchAssoc($res))
+   {
+      if (isset($hRecs[$row['Employee']]))
+      {
+         if ($row['RegisteredEvent'] == 'Firing')
+         {
+            $hRecs[$row['Employee']][$inds[$row['Employee']]]['_to'] = $row['Period'];
+            $inds[$row['Employee']]++;
+            
+            continue;
+         }
+         else
+         {
+            if (isset($hRecs[$row['Employee']][$inds[$row['Employee']]]))
+            {
+               throw new Exception('Employee already Hiring');
+            }
+            
+            $hRecs[$row['Employee']][$inds[$row['Employee']]] = $row;
+            $hRecs[$row['Employee']][$inds[$row['Employee']]]['_from'] = $row['Period'];
+         }
+      }
+      else
+      {
+         if ($row['RegisteredEvent'] == 'Firing') throw new Exception('Before Firing employee must be Hiring');
+         
+         $inds[$row['Employee']] = 0;
+         $hRecs[$row['Employee']][0] = $row;
+         $hRecs[$row['Employee']][0]['_from'] = $row['Period'];
+         
+         $emplIDS[$row['Employee']] = $row['Employee'];
+      }
+      
+      $schedIDS[$row['Schedule']] = $row['Schedule'];
+   }
+   
+   // Get SchedulesRecords
+   $query = "SELECT * FROM information_registry.Schedules ".
+            "WHERE `Schedule` IN (".implode(',', $schedIDS).") AND `Date` >= '".$period['from']."' AND `Date` < '".$period['to']."' ".
+            "ORDER BY `Schedule` ASC, `Date` ASC";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   unset($schedIDS);
+   
+   $scheds = array();
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      $scheds[$row['Schedule']][strtotime($row['Date'])] = $row['Hours'];
+   }
+   
+   // Get ScheduleVarianceRecords
+   $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
+            "WHERE `Employee` IN (".implode(',', $emplIDS).") AND `DateFrom` < '".$period['to']."' AND `DateTo` >= '".$period['from']."' ".
+            "ORDER BY `Employee` ASC, `DateFrom` ASC";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $variance = array();
+   $inds     = array();
+   $pfrom = strtotime($period['from']);
+   $pto   = strtotime($period['to']);
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      $row['_from'] = strtotime($row['DateFrom']);
+      $row['_to']   = strtotime($row['DateTo']);
+      
+      if ($pfrom > $row['_from']) $row['_from'] = $pfrom;
+      if ($pto   < $row['_to'])   $row['_to']   = $pto;
+      
+      if (isset($variance[$row['Employee']]))
+      {
+         $inds[$row['Employee']]++;
+         $variance[$row['Employee']][$inds[$row['Employee']]] = $row;
+      }
+      else
+      {
+         $inds[$row['Employee']] = 0;
+         $variance[$row['Employee']][0] = $row;
+      }
+   }
+   
+   // Calculate total hours
+   $scache = array();
+   $posIDS = array();
+   
+   $allocated = !empty($options['allocated']); 
+   
+   foreach ($hRecs as $employee => $hists)
+   {
+      $hours = 0;
+      
+      foreach ($hists as $i => $row)
+      {
+         // Hours by period
+         if (!isset($row['_to'])) $row['_to'] = $period['to'];
+         
+         $_from = strtotime($row['_from']);
+         $_to   = strtotime($row['_to']);
+         
+         $cacheKey = $row['_from'].$row['_to'];
+         
+         if (!isset($scache[$row['Schedule']][$cacheKey]))
+         {
+            $scache[$row['Schedule']][$cacheKey] = self::calculateHoursByPeriod($scheds[$row['Schedule']], $_from, $_to);
+         }
+          
+         $hours += $scache[$row['Schedule']][$cacheKey];
+         
+         // Without variance
+         if (empty($variance[$employee])) continue;
+          
+         $exec  = true;
+         
+         while ($exec)
+         {
+            $vi = key($variance[$employee]);
+
+            if ($variance[$employee][$vi]['_from'] >= $_from)
+            {
+               if ($variance[$employee][$vi]['_to'] <= $_to)
+               {
+                  $cacheKey = $variance[$employee][$vi]['DateFrom'].$variance[$employee][$vi]['DateTo'];
+                   
+                  if (!isset($scache[$row['Schedule']][$cacheKey]))
+                  {
+                     $scache[$row['Schedule']][$cacheKey] = self::calculateHoursByPeriod(
+                        $scheds[$row['Schedule']],
+                        $variance[$employee][$vi]['_from'],
+                        $variance[$employee][$vi]['_to']
+                     );
+                  }
+                   
+                  $hours -= $scache[$row['Schedule']][$cacheKey];
+                   
+                  unset($variance[$employee][$vi]);
+                  
+                  if (empty($variance[$employee]))
+                  {
+                     unset($variance[$employee]);
+                     
+                     $exec = false;
+                  }
+               }
+               elseif ($variance[$employee][$vi]['_from'] <= $_to)
+               {
+                  throw new Exception('Invalid Schedule Variance Record');
+               }
+               else $exec = false;
+            }
+            else throw new Exception('Invalid Schedule Variance Record');
+         }
+      }
+      
+      $ah = isset($aHours[$employee]) ? $aHours[$employee]['HoursAllocated'] : 0;
+      
+      if (empty($options['filter_full_loaded']) && $ah >= $hours)
+      {
+         unset($emplIDS[$employee]);
+         continue;
+      }
+      
+      $result['list'][] = array(
+         0 => $employee,
+         1 => $hists[$i]['OrganizationalPosition'],
+         2 => ($allocated ? $ah : $hours - $ah).'/'.$hours
+      );
+      
+      $posIDS[$hists[$i]['OrganizationalPosition']] = $hists[$i]['OrganizationalPosition'];
+   }
+   
+   unset($scache);
+   unset($scheds);
+   unset($variance);
+   unset($hRecs);
+   
+   if (!empty($emplIDS))
+   {
+      $result['links']['Employee'] = $container->getCModel('catalogs', 'Employees')->retrieveLinkData($emplIDS);
+      $result['links']['Position'] = $container->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS);
    }
    
    return $result;
