@@ -380,7 +380,7 @@ function oeWidgetsView()
              html += '\n</table>';
              return html;  
          }
-         /**
+     /**
 	 * Project Overview
 	 * 
 	 * @param string tag_id
@@ -404,7 +404,24 @@ function oeWidgetsView()
              jQuery('#' + tag_id).html(html);
              
          }
-	
+	/**
+	 * Draw List
+	 * 
+	 * @param string tag_id
+	 * @param array data
+	 * @param array options
+	 * @return void
+	 */
+	 this.drawList = function(tag_id, data, options)
+	 {
+	 	 if (!data )
+         {
+                    jQuery('#' + tag_id).html('<span>Data is empty</span>');
+                    return;
+         }
+         var html = createDataTableWithNoBorder(data);
+         jQuery('#' + tag_id).html(html);
+	 }
 	/**
 	 * Column Chart
 	 * 
