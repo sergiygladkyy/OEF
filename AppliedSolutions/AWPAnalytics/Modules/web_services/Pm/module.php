@@ -194,7 +194,7 @@ function getResourcesAvailable(array $attributes)
 
       if (!$model->loadByCode($attributes['Department']))
       {
-         throw new Exception('Unknow project');
+         throw new Exception('Unknow department');
       }
       
       $department = $model->getId();
@@ -713,6 +713,254 @@ function getProjectMilestones(array $attributes)
    
    // Retrieve MilestoneRecords
    $result['list'] = MProjects::getMilestones($project);
+   
+   return $result;
+}
+
+/**
+ * Web method ProjectsOngoing
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getProjectsOngoing(array $attributes)
+{
+   $container  = Container::getInstance();
+   $department = 0;
+   
+   // Check attributes
+   if (!empty($attributes['Department']))
+   {
+      $model = $container->getModel('catalogs', 'OrganizationalUnits');
+
+      if (!$model->loadByCode($attributes['Department']))
+      {
+         throw new Exception('Unknow department');
+      }
+      
+      $department = $model->getId();
+   }
+   
+   $date   = empty($attributes['Date']) ? date('Y-m-d') : $attributes['Date'];
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         0 => 'Project',
+         1 => 'Start Date',
+         2 => 'Delivery'
+      )
+   );
+   
+   // ProjectRegistrationRecords
+   $odb   = $container->getODBManager();
+   $query = "SELECT * FROM information_registry.ProjectRegistrationRecords ".
+            "WHERE ".($department ? '`ProjectDepartment` = '.$department.' AND ' : '')."`StartDate` >= '".$date."' ".
+            "ORDER BY `StartDate` ASC";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $ids = array();
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      $result['list'][$row['Project']] = array($row['Project'], $row['StartDate'], $row['DeliveryDate']);
+      
+      $ids[$row['Project']] = $row['Project'];
+   }
+   
+   if (empty($ids)) return $result;
+   
+   // ProjectClosureRecords
+   $query = "SELECT * FROM information_registry.ProjectClosureRecords ".
+            "WHERE `ClosureDate` <= '".$date."' AND `Project` IN (".implode(',', $ids).") ";
+   
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      unset(
+         $result['list'][$row['Project']],
+         $ids[$row['Project']]
+      );
+   }
+   
+   if (!empty($ids))
+   {
+      $result['links']['Project'] = $container->getCModel('catalogs', 'Projects')->retrieveLinkData($ids);
+   }
+   
+   return $result;
+}
+
+/**
+ * Web method WorkingOnProjectsInMyDepartment
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getWorkingOnProjectsInMyDepartment(array $attributes)
+{
+   $container  = Container::getInstance();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array(
+         0 => 'Employee',
+         1 => 'Position',
+         2 => 'Project'
+      )
+   );
+   
+   // Check attributes
+   if (!empty($attributes['Department']))
+   {
+      $model = $container->getModel('catalogs', 'OrganizationalUnits');
+
+      if (!$model->loadByCode($attributes['Department']))
+      {
+         throw new Exception('Unknow department');
+      }
+      
+      $department = $model->getId();
+   }
+   else
+   {
+      if (0 == ($department = MEmployees::retrieveCurrentDepartment()))
+      {
+         return $result;
+      }
+   }
+   
+   $date = empty($attributes['Date']) ? date('Y-m-d') : $attributes['Date'];
+   
+   // ProjectAssignmentPeriods
+   $odb   = $container->getODBManager();
+   $query = "SELECT `Employee`, `Project` ".
+            "FROM information_registry.ProjectAssignmentPeriods ".
+            "WHERE `ProjectDepartment` = ".$department." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
+      
+   if (null === ($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+   
+   $assign = array();
+   $empIDS = array();
+   $proIDS = array();
+   
+   while ($row = $odb->fetchAssoc($res))
+   {
+      if (isset($assign[$row['Employee']]))
+      {
+         $assign[$row['Employee']][] = $row['Project'];
+      }
+      else $assign[$row['Employee']][0] = $row['Project'];
+      
+      $empIDS[$row['Employee']] = $row['Employee'];
+      $proIDS[$row['Project']]  = $row['Project'];
+   }
+   
+   if (empty($empIDS)) return $result;
+   
+   // Position
+   $hRows  = MEmployees::getLastNotFiringRecord($empIDS, $date, array('key' => 'Employee')); 
+   $posIDS = array();
+   
+   foreach ($empIDS as $employee)
+   {
+      if (isset($hRows[$employee]))
+      {
+         $pos = $hRows[$employee]['OrganizationalPosition'];
+         $posIDS[$pos] = $pos;
+      }
+      else $pos = '-';
+      
+      foreach ($assign[$employee] as $project)
+      {
+         $result['list'][] = array($employee, $pos, $project);
+      }
+   }
+   
+   $result['links']['Employee'] = $container->getCModel('catalogs', 'Employees')->retrieveLinkData($empIDS);
+   $result['links']['Position'] = $container->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS);
+   $result['links']['Project']  = $container->getCModel('catalogs', 'Projects')->retrieveLinkData($proIDS);
+   
+   return $result;
+}
+
+/**
+ * Web method DepartmentHoursSpent
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getDepartmentHoursSpent(array $attributes)
+{
+   $container  = Container::getInstance();
+   
+   $result = array(
+      'list' => array(
+         0 => array('label' => 'Total Hours:',       'value' => 0),
+         1 => array('label' => 'Includes Overtime:', 'value' => 0),
+         2 => array('label' => 'Includes Extra:',    'value' => 0)
+      )
+   );
+   
+   // Check attributes
+   if (empty($attributes['Period']))
+   {
+      $period = null;
+   }
+   elseif (null === ($period = MGlobal::parseDatePeriodString($attributes['Period'])))
+   {
+      throw new Exception('Invalid period');
+   }
+   
+   if (!empty($attributes['Department']))
+   {
+      $model = $container->getModel('catalogs', 'OrganizationalUnits');
+
+      if (!$model->loadByCode($attributes['Department']))
+      {
+         throw new Exception('Unknow department');
+      }
+      
+      $department = $model->getId();
+   }
+   else
+   {
+      if (0 == ($department = MEmployees::retrieveCurrentDepartment()))
+      {
+         return $result;
+      }
+   }
+   
+   // Get total
+   $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
+   $total = $model->getTotals($period, array('criteria' => array('EmployeeDepartment' => $department)));
+   
+   $hours = 0;
+   $overt = 0;
+   $extra = 0;
+   
+   foreach ($total as $row)
+   {
+      $hours += $row['Hours'];
+      $overt += $row['OvertimeHours'];
+      $extra += $row['ExtraHours'];
+   }
+   
+   $result['list'][0]['value'] = $hours;
+   $result['list'][1]['value'] = $overt;
+   $result['list'][2]['value'] = $extra;
    
    return $result;
 }

@@ -961,6 +961,42 @@ class MEmployees
    }
    
    /**
+    * Return id (link) to current Department
+    * 
+    * @return int
+    */
+   public static function retrieveCurrentDepartment()
+   {
+      if (0 == ($employee = self::retrieveCurrentEmployee()))
+      {
+         return 0;
+      }
+      
+      $odb   = Container::getInstance()->getODBManager();
+      $query = "SELECT MAX(`Period`) AS `Period`, `OrganizationalUnit`, `OrganizationalPosition`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".$employee;
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if ($row['RegisteredEvent'] == 'Firing') return 0;
+      
+      $query = "SELECT `DivisionalChief` ".
+               "FROM information_registry.DivisionalChiefs ".
+               "WHERE `OrganizationalUnit`=".$row['OrganizationalUnit'];
+      
+      if (null === ($chief = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return (!empty($chief) && $chief['DivisionalChief'] == $row['OrganizationalPosition']) ? $row['OrganizationalUnit'] : 0;
+   }
+   
+   /**
     * Get list of Employee Schedules by period 
     * 
     * @param int $employee
@@ -1247,7 +1283,7 @@ class MProjects
       
       $criterion = "WHERE `Project`=".(int) $project;
       
-      if ($date) $critrion .= " AND `ClosureDate` <= '".$date."'";
+      if ($date) $criterion .= " AND `ClosureDate` <= '".$date."'";
       
       if (null === ($result = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
       {
@@ -1317,18 +1353,22 @@ class MProjects
    /**
     * Get list of employees assignment to project
     * 
-    * @param int $project
+    * @param mixed $project
     * @param string $date
     * @return array
     */
-   public static function getAssignmentEmployees($project, $date, array $options = array())
+   public static function getAssignmentEmployees($projects, $date, array $options = array())
    {
+      if (empty($projects)) return array();
+      
+      if (!is_array($projects)) $projects = array($projects);
+      
       $container = Container::getInstance();
       
       $odb   = $container->getODBManager();
       $query = "SELECT `Employee`, `DateFrom`, `DateTo`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
                "FROM information_registry.ProjectAssignmentPeriods ".
-               "WHERE `Project` = ".(int) $project." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
+               "WHERE `Project` IN (".implode(',', $projects).") AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
       
       if (null === ($employees = $odb->loadAssocList($query, $options)))
       {
