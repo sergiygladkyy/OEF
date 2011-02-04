@@ -51,7 +51,7 @@ class TurnoversModel
     */
    public function getTotals($date = null, array $options = array())
    {
-      if (empty($date)) return array();
+      //if (empty($date)) return array();
       
       $pfield = $this->conf['periodical']['field'];
       
@@ -90,82 +90,81 @@ class TurnoversModel
       
       
       // Get custom period
-      if (!is_array($date)) throw new Exception('Invalid date');
+      $where = '';
       
-      if (!empty($date[0]))
+      if (!empty($date))
       {
-         if (-1 === ($from = strtotime($date[0])))
+         if (!is_array($date)) throw new Exception('Invalid date');
+         
+         if (!empty($date[0]))
          {
-            return array();
+            if (-1 === ($from = strtotime($date[0])))
+            {
+               return array();
+            }
          }
-      }
-      elseif (!empty($date['from']))
-      {
-         if (-1 === ($from = strtotime($date['from'])))
+         elseif (!empty($date['from']))
          {
-            return array();
+            if (-1 === ($from = strtotime($date['from'])))
+            {
+               return array();
+            }
          }
-      }
-       
-      if (!empty($date[1]))
-      {
-         if (-1 === ($to = strtotime($date[1])))
+          
+         if (!empty($date[1]))
          {
-            return array();
+            if (-1 === ($to = strtotime($date[1])))
+            {
+               return array();
+            }
          }
-      }
-      elseif (!empty($date['to']))
-      {
-         if (-1 === ($to = strtotime($date['to'])))
+         elseif (!empty($date['to']))
          {
-            return array();
+            if (-1 === ($to = strtotime($date['to'])))
+            {
+               return array();
+            }
          }
-      }
 
-      if (!isset($from))
-      {
-         $_date = explode('-', date('Y-m', $to));
-         $from  = $_date[0].'-'.$_date[1].'-01 00:00:00';
-         
-         $firstPeriod = $from;
-         
-         if (date('d H:i:s', $to) == '01 00:00:00')
+         if (isset($to))
          {
-            $to = date('Y-m-d H:i:s', $to);
-            $lastPeriod = $to;
+            if (date('d H:i:s', $to) == '01 00:00:00')
+            {
+               $lastPeriod = $to = date('Y-m-d H:i:s', $to);
+            }
+            else
+            {
+               $_date = explode('-', date('Y-m', $to));
+               $to    = date('Y-m-d H:i:s', $to);
+               $lastPeriod = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
+            }
+             
+            $where = "`".$pfield."`<'".$lastPeriod."'";
          }
          else
          {
-            $to = date('Y-m-d H:i:s', $to);
-            $lastPeriod = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
+            $lastPeriod = $to = false;
          }
-      }
-      elseif (!isset($to))
-      {
-         $_date = explode('-', date('Y-m', $from));
-         $from  = date('Y-m-d H:i:s', $from);
-         $to    = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
-         
-         $firstPeriod = $_date[0].'-'.$_date[1].'-01 00:00:00'; 
-         $lastPeriod  = $to;
+
+         if (isset($from))
+         {
+            $firstPeriod = date('Y-m', $from).'-01 00:00:00';
+            $from = date('Y-m-d H:i:s', $from);
+             
+            $where = ($where ? ' AND ' : '')."`".$pfield."`>='".$firstPeriod."'";
+         }
+         else
+         {
+            $firstPeriod = $from = false;
+         }
       }
       else
       {
-         $firstPeriod = date('Y-m', $from).'-01 00:00:00';
-         $from = date('Y-m-d H:i:s', $from);
-         
-         if (date('d H:i:s', $to) == '01 00:00:00')
-         {
-            $to = date('Y-m-d H:i:s', $to);
-            $lastPeriod = $to;
-         }
-         else
-         {
-            $_date = explode('-', date('Y-m', $to));
-            $to    = date('Y-m-d H:i:s', $to);
-            $lastPeriod = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
-         }
+         $firstPeriod = $from = false;
+         $lastPeriod  = $to   = false;
       }
+      
+      if ($criterion) $where = ($where ? ' AND ' : '').$criterion;
       
       // Count total
       $total  = array();
@@ -186,10 +185,9 @@ class TurnoversModel
       }
       
       $query = 'SELECT '.implode(',', $resources).($dimsql ? ','.implode(',', $dimsql) : '').' '.
-               'FROM `'.$this->conf['db_map']['total']['table'].'` '.
-               'WHERE `'.$pfield."`>='".$firstPeriod."' AND `".$pfield."`<'".$lastPeriod."'".
-               ($criterion ? ' AND '.$criterion : '').' '.
-               ($dimsql ? 'GROUP BY '.implode(',', $dimsql) : '');
+               'FROM `'.$this->conf['db_map']['total']['table'].'`'.
+               ($where  ? ' WHERE '.$where : '').
+               ($dimsql ? ' GROUP BY '.implode(',', $dimsql) : '');
       
       if (null === ($total = $db->loadAssocList($query)))
       {

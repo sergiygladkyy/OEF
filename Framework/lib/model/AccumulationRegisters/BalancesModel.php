@@ -334,6 +334,7 @@ class BalancesModel
       
       // Update total table
       $values = '';
+      $r_num  = count($this->resources);
       
       foreach ($total as $date => $data)
       {
@@ -341,20 +342,28 @@ class BalancesModel
          {
             $tmp  = ",('".$date."'".$dim;
             $exec = true;
+            $ncnt = 0;
             
             while ($exec)
             {
-               if (false === ($cuurent = each($resources)))
+               if (false === ($current = each($resources)))
                {
-                  $values .= $tmp.")";
-                  $exec    = false;
+                  if ($r_num > $ncnt)
+                  {
+                     $values .= $tmp.")";
+                  }
+                  
+                  $exec = false;
                }
-               
-               if ($cuurent['value'] != 0) 
+               else
                {
-                  $tmp .= ",".$cuurent['value'];
-               }
-               else $exec = false;
+                  $tmp .= ",".$current['value'];
+                  
+                  if ($current['value'] == 0) 
+                  {
+                     $ncnt++;
+                  }
+               } 
             }
          }
       }
