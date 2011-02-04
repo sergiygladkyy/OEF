@@ -1367,6 +1367,12 @@ $_dictionary = array(
                'precision' => array(
                   'required' => true
                )
+            ),
+            'EmployeeDepartment' => array(
+               'reference' => 'catalogs.OrganizationalUnits',
+               'precision' => array(
+                  'required' => true
+               )
             )
          ),
          
@@ -1579,6 +1585,36 @@ $_dictionary = array(
                      'precision' => array(
                         'required' => true
                      )
+                  )
+               )
+            ),
+            'getProjectsOngoing' => array(
+               'fields' => array(
+                  'Department' => array(
+                     'type' => 'string'
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
+            ),
+            'getWorkingOnProjectsInMyDepartment' => array(
+               'fields' => array(
+                  'Department' => array(
+                     'type' => 'string'
+                  ),
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
+            ),
+            'getDepartmentHoursSpent' => array(
+               'fields' => array(
+                  'Department' => array(
+                     'type' => 'string'
+                  ),
+                  'Period' => array(
+                     'type' => 'date'
                   )
                )
             )

@@ -207,6 +207,7 @@ function onPost($event)
       
       if (!$ar->setAttribute('Employee', $employee))                $err[] = 'Invalid value for Employee';
       if (!$ar->setAttribute('Project',  $values['Project']))       $err[] = 'Invalid value for Project';
+      if (!$ar->setAttribute('EmployeeDepartment', $edep))          $err[] = 'Invalid value for EmployeeDepartment';
       if (!$ar->setAttribute('Period', date('Y-m-d H:i:s', $date))) $err[] = 'Invalid value for attribute Period';
       if (!$ar->setAttribute('Hours',    $values['Hours']))         $err[] = 'Invalid value for Hours';
       if (!$ar->setAttribute('OvertimeHours', $owertime))           $err[] = 'Invalid value for OvertimeHours';
