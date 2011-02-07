@@ -219,9 +219,9 @@ abstract class ObjectsController extends BaseController
       if ($errors)
       { 
          $status = false;
-         $result['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" not restored';
+         $result['msg'] = 'Not restored';
       }
-      else $result['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" restored succesfully';
+      else $result['msg'] = 'Restored succesfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
