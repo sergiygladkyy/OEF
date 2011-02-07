@@ -193,7 +193,7 @@ function getResourcesAvailable(array $attributes)
       throw new Exception('Invalid period');
    }
    
-   return self::ResourcesAvailableHours($period, $department, array('filter_full_loaded'));
+   return self::ResourcesAvailableHours($period, $department, array('filter_full_loaded' => true));
 }
 
 /**
@@ -502,7 +502,7 @@ function getProjectsOngoing(array $attributes)
    // ProjectRegistrationRecords
    $odb   = $container->getODBManager();
    $query = "SELECT * FROM information_registry.ProjectRegistrationRecords ".
-            "WHERE ".($department ? '`ProjectDepartment` = '.$department.' AND ' : '')."`StartDate` >= '".$date."' ".
+            "WHERE ".($department ? '`ProjectDepartment` = '.$department.' AND ' : '')."`StartDate` <= '".$date."' ".
             "ORDER BY `StartDate` ASC";
    
    if (null === ($res = $odb->executeQuery($query)))
@@ -1038,7 +1038,7 @@ function ResourcesAvailableHours(array $period, $department = 0, array $options 
       
       $ah = isset($aHours[$employee]) ? $aHours[$employee]['HoursAllocated'] : 0;
       
-      if (empty($options['filter_full_loaded']) && $ah >= $hours)
+      if (!empty($options['filter_full_loaded']) && $ah >= $hours)
       {
          unset($emplIDS[$employee]);
          continue;

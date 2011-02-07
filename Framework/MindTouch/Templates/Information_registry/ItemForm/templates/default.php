@@ -10,7 +10,11 @@
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
+
+   var tmpList = string.Split(uid,'.');
+   var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
 }}
+<h3>{{header;}}</h3>
 <eval:if test="puid is nil">
   <ul class="ae_errors">
     <li class="ae_error">Unknow entity</li>

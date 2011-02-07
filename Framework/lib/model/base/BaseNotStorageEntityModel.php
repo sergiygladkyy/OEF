@@ -347,9 +347,15 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onBeforeAddingRecord');
       $event->setReturnValue(array());
       
-      $this->container->getEventDispatcher()->notify($event);
-      
-      $errors = $event->getReturnValue();
+      try {
+         $this->container->getEventDispatcher()->notify($event);
+         
+         $errors = $event->getReturnValue();
+      }
+      catch (Exception $e)
+      {
+         $errors = $e->getMessage();
+      }
       
       if (!empty($errors)) $errors = is_array($errors) ? $errors : array($errors);
       
