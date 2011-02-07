@@ -157,7 +157,7 @@ function getEmployeeProjects(array $attributes)
    
    $projects = MProjects::getEmployeeProjects($employee, $date, $date, true, array('key' => 'Project'));
    
-   if (empty($projects)) return $date;
+   if (empty($projects)) return $result;
    
    $proIDS    = array_keys($projects);
    $container = Container::getInstance();
@@ -180,7 +180,7 @@ function getEmployeeProjects(array $attributes)
    $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
    $sRows = $model->getTotals(array(date('Y-m', strtotime($date)).'-01 00:00:00', $date), array('criteria' => array('Project' => $proIDS, 'Employee' => $employee)));
    $spent = array();
-    
+   
    foreach ($sRows as $row)
    {
       if (isset($spent[$row['Project']]))

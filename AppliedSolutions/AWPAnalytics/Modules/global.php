@@ -1393,9 +1393,9 @@ class MProjects
          }
       }
       
-      $query = "SELECT `Project`, `Date`, `Hours`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
-               "FROM information_registry.ProjectAssignmentRecords ".
-               "WHERE `Employee` = ".(int) $employee.$proj." AND `Date` >= '".$from."' AND `Date` <= '".$to."'";
+      $query = "SELECT `Project`, `DateFrom`, `DateTo`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
+               "FROM information_registry.ProjectAssignmentPeriods ".
+               "WHERE `Employee` = ".(int) $employee.$proj." AND `DateFrom` <= '".$to."' AND `DateTo` >= '".$from."'";
       
       if (null === ($projects = $odb->loadAssocList($query, $options)))
       {
