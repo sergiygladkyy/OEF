@@ -166,9 +166,9 @@ abstract class BaseController
       if ($errors)
       { 
          $status = false;
-         $result['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" not deleted';
+         $result['msg'] = 'Not deleted';
       }
-      else $result['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" deleted succesfully';
+      else $result['msg'] = 'Deleted succesfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
@@ -187,11 +187,11 @@ abstract class BaseController
 
       if ($return['status'])
       {
-         $return['result']['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" created succesfully';
+         $return['result']['msg'] = 'Created succesfully';
       }
       else
       {
-         $return['result']['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" not created';
+         $return['result']['msg'] = 'Not created';
       }
       
       return $return;
@@ -211,11 +211,11 @@ abstract class BaseController
       
       if ($return['status'])
       { 
-         $return['result']['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" updated succesfully';
+         $return['result']['msg'] = 'Updated succesfully';
       }
       else
       {
-         $return['result']['msg'] = '"'.ucfirst($this->kind).'.'.$this->type.'" not updated';
+         $return['result']['msg'] = 'Not updated';
       }
       
       return $return;
@@ -428,7 +428,7 @@ abstract class BaseController
     * @param array& $options
     * @return array
     */
-   protected function getDefaultValuesForEditForm($formName = 'Default', array& $options = array())
+   protected function getDefaultValuesForEditForm($formName = 'Default', array $options = array())
    {
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$formName.'.onBeforeOpening');
       $event->setReturnValue(null);
