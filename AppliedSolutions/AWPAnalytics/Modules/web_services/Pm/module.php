@@ -100,7 +100,7 @@ function getProjectOverview(array $attributes)
    
    // Hours SPENT
    $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
-   $sRows = $model->getTotals($date, array('Project' => $project, 'Employee' => $empIDS));
+   $sRows = $model->getTotals($date, array('criteria' => array('Project' => $project, 'Employee' => $empIDS)));
    
    
    // Calculate project parameters
@@ -355,7 +355,7 @@ function getResourcesSpentVsBudgeted(array $attributes)
    
    // Hours SPENT
    $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
-   $sRows = $model->getTotals($date, array('Project' => $project));
+   $sRows = $model->getTotals($date, array('criteria' => array('Project' => $project)));
    $spent = 0;
    
    $result['list'][0][0] = MGlobal::getFormattedDate($date, '%d.%m.%Y');

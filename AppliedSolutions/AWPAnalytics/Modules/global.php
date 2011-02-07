@@ -1141,6 +1141,44 @@ class MEmployees
       
       return $hRows;
    }
+   
+   /**
+    * Get Employee HoursAllocated
+    * 
+    * @param int   $employee
+    * @param array $projects
+    * @return array
+    */
+   public static function getHoursAllocated($employee, array $projects = array())
+   {
+      $odb = Container::getInstance()->getODBManager();
+      
+      if (empty($projects))
+      {
+         $query = "SELECT SUM(`Hours`) AS `HoursAllocated` ".
+                  "FROM information_registry.ProjectAssignmentRecords ".
+                  "WHERE `Employee` = ".$employee;
+         
+         if (null === ($result = $odb->loadAssoc($query)))
+         {
+            throw new Exception('Database error');
+         }
+      }
+      else
+      {
+         $query = "SELECT `Project`, SUM(`Hours`) AS `HoursAllocated` ".
+                  "FROM information_registry.ProjectAssignmentRecords ".
+                  "WHERE `Employee` = ".$employee." AND `Project` IN(".implode(',', $projects).") ".
+                  "GROUP BY `Project`";
+         
+         if (null === ($result = $odb->loadAssocList($query, array('key' => 'Project'))))
+         {
+            throw new Exception('Database error');
+         }
+      }
+      
+      return $result;
+   }
 }
 
 
@@ -1316,7 +1354,7 @@ class MProjects
     * @param bool   $notClosed
     * @return array
     */
-   public static function getEmployeeProjects($employee, $from, $to, $notClosed = true)
+   public static function getEmployeeProjects($employee, $from, $to, $notClosed = true, array $options = array())
    {
       $container = Container::getInstance();
       
@@ -1342,7 +1380,7 @@ class MProjects
                "FROM information_registry.ProjectAssignmentRecords ".
                "WHERE `Employee` = ".(int) $employee.$proj." AND `Date` >= '".$from."' AND `Date` <= '".$to."'";
       
-      if (null === ($projects = $odb->loadAssocList($query)))
+      if (null === ($projects = $odb->loadAssocList($query, $options)))
       {
          throw new Exception('Database error');
       }
