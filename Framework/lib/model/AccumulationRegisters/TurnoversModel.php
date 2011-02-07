@@ -151,7 +151,7 @@ class TurnoversModel
             $firstPeriod = date('Y-m', $from).'-01 00:00:00';
             $from = date('Y-m-d H:i:s', $from);
              
-            $where = ($where ? ' AND ' : '')."`".$pfield."`>='".$firstPeriod."'";
+            $where .= ($where ? ' AND ' : '')."`".$pfield."`>='".$firstPeriod."'";
          }
          else
          {
@@ -164,7 +164,7 @@ class TurnoversModel
          $lastPeriod  = $to   = false;
       }
       
-      if ($criterion) $where = ($where ? ' AND ' : '').$criterion;
+      if ($criterion) $where .= ($where ? ' AND ' : '').$criterion;
       
       // Count total
       $total  = array();
@@ -433,11 +433,16 @@ class TurnoversModel
       {
          if (!isset($criteria[$field])) continue;
          
+         if (!is_array($criteria[$field]))
+         {
+            $criteria[$field] = array($criteria[$field]);
+         }
+         
          if (isset(self::$numeric_types[$types[$field]]))
          {
-            $criterion[] = '`'.$field.'`='.$criteria[$field];
+            $criterion[] = '`'.$field.'` IN ('.implode(',', $criteria[$field]).')';
          }
-         else $criterion[] = '`'.$field."`='".$criteria[$field]."'";
+         else $criterion[] = '`'.$field."` IN ('".implode("','", $criteria[$field])."')";
       }
       
       return implode(' AND ', $criterion);
