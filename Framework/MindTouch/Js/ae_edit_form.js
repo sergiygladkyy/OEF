@@ -1087,7 +1087,7 @@ function oeEventDispatcher()
 					{
 						msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 					}
-					displayMessage(uid.replace(/\./g, '_'), msg + ".", false);
+					displayMessage(uid.replace(/\./g, '_'), msg, false);
 				}
 				else
 				{

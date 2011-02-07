@@ -356,25 +356,19 @@ class MVacation
       if ($odb->getNumRows($res))
       {
          $docs = array();
-         $msg  = 'You must unposted the following documents:<br/>';
          
          while ($row = $odb->fetchAssoc($res))
          {
             $docs[$row['_rec_type']][] = $row['_rec_id'];
          }
          
-         foreach ($docs as $_type => $ids)
+         if (null === ($links = MGlobal::getDocumentLinks($docs)))
          {
-            $ids = array_unique($ids);
-            $links = $container->getCModel('documents', $_type)->retrieveLinkData($ids);
-            foreach ($links as $link)
-            {
-               $msg .= $link['text'].'<br/>';
-            }
+            throw new Exception('Database error');
          }
       }
       
-      // Cneck Variance Records
+      // Check Variance Records
       $query = "SELECT `DateFrom`, `DateTo`, `VarianceKind`, `_rec_type`, `_rec_id` ".
                "FROM information_registry.ScheduleVarianceRecords ".
                "WHERE `Employee` = ".$employee." AND (`DateFrom` >= '".date('Y-m-d', $start)."' OR `DateTo` > '".date('Y-m-d', $start)."') ".
@@ -389,25 +383,20 @@ class MVacation
       {
          $docs = array();
          
-         if (!isset($msg)) $msg = 'You must unposted the following documents:<br/>';
-         
          while ($row = $odb->fetchAssoc($res))
          {
             $docs[$row['_rec_type']][] = $row['_rec_id'];
          }
          
-         foreach ($docs as $_type => $ids)
+         if (null === ($_links = MGlobal::getDocumentLinks($docs)))
          {
-            $ids = array_unique($ids);
-            $links = $container->getCModel('documents', $_type)->retrieveLinkData($ids);
-            foreach ($links as $link)
-            {
-               $msg .= $link['text'].'<br/>';
-            }
+            throw new Exception('Database error');
          }
+         
+         $links = is_array($links) ? array_merge($links, $_links) : $_links;
       }
       
-      if (isset($msg)) return array('StartDate' => $msg);
+      if (!empty($links)) MGlobal::returnMessageByLinks($links);
       
       // Retrieve total vacation days for current Employee
       $cmodel = $container->getCModel('AccumulationRegisters', 'EmployeeVacationDays');
@@ -450,6 +439,34 @@ class MVacation
          return array('EndDate' => 'The employee has '.$total['VacationDays'].
             ' vacation days excluding weekends and holidays. EndDate should not exceed '.date('Y-m-d', $maxEnd)
          );
+      }
+      
+      // Check Project Assignment Periods
+      $query = "SELECT `DateFrom`, `DateTo`, `_rec_type`, `_rec_id` ".
+               "FROM information_registry.ProjectAssignmentPeriods ".
+               "WHERE `Employee` = ".$employee." AND `DateFrom` < '".date('Y-m-d', $end)."' AND `DateTo` > '".$start."' ".
+               "ORDER BY `_rec_type` ASC";
+      
+      if (!($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      if ($odb->getNumRows($res))
+      {
+         $docs = array();
+         
+         while ($row = $odb->fetchAssoc($res))
+         {
+            $docs[$row['_rec_type']][] = $row['_rec_id'];
+         }
+         
+         if (null === ($links = MGlobal::getDocumentLinks($docs)))
+         {
+            throw new Exception('Database error');
+         }
+         
+         MGlobal::returnMessageByLinks($links);
       }
    }
    
