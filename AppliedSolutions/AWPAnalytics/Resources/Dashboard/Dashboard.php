@@ -233,6 +233,24 @@
 	        }
          });
          
+         Widgets.showWidget({
+	        'load': {
+		       'solution': 'AWPAnalytics',
+		       'service':  'Personal',
+		       'method':   'EmployeeProjects',
+		       'authMethod': 'MTAuth',
+		       'authtoken' : '"..user.authtoken.."',
+		       'attributes': {
+		          'Date': '2011-01-05'
+		       }
+	        },
+	        'view': {
+		       'widget':  'Grid',
+		       'tag_id':  'oef_personal_employee_projects',
+		       'options': {}
+	        }
+         });
+         
        "&lt;/script&gt;
      &lt;/tail&gt;
    &lt;/html&gt;
@@ -280,4 +298,7 @@
   
   <h3 style="clear:both">Resources Workload</h3>
   <div id="oef_resources_workload">&nbsp;</div>
+  
+  <h3 style="clear:both">Employee Projects</h3>
+  <div id="oef_personal_employee_projects">&nbsp;</div>
 </div>

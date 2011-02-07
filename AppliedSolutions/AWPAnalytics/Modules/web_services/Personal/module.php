@@ -134,4 +134,80 @@ function getEmployeeVacationDays(array $attributes)
    
    return $result;
 }
+
+/**
+ * Web-service action "getEmployeeProjects"
+ * 
+ * @param array $attributes
+ * @return array
+ */
+function getEmployeeProjects(array $attributes)
+{
+   // Check attributes
+   $date     = empty($attributes['Date']) ? date('Y-m-d') : $attributes['Date'];
+   $employee = MEmployees::retrieveCurrentEmployee();
+   
+   $result = array(
+      'list'   => array(),
+      'links'  => array(),
+      'fields' => array('Project', 'Nearest Ms', 'Hrs Allocated/Spent')
+   );
+   
+   if (empty($employee)) return $result;
+   
+   $projects = MProjects::getEmployeeProjects($employee, $date, $date, true, array('key' => 'Project'));
+   
+   if (empty($projects)) return $date;
+   
+   $proIDS    = array_keys($projects);
+   $container = Container::getInstance();
+   
+   $odb   = $container->getODBManager();
+   $query = "SELECT `Project`, MIN(`MileStoneDeadline`) AS `MileStoneDeadline` ".
+            "FROM information_registry.MilestoneRecords ".
+            "WHERE `Project` IN (".implode(',', $proIDS).") AND `MileStoneDeadline` >= '".$date."'".
+            "GROUP BY `Project`";
+   
+   if (null === ($ms = $odb->loadAssocList($query, array('key' => 'Project'))))
+   {
+      throw new Exception('Database error');
+   }
+   
+   // Allocated Hours
+   $aHours = MEmployees::getHoursAllocated($employee, $proIDS);
+   
+   // Hours SPENT
+   $model = $container->getCModel('AccumulationRegisters', 'EmployeeHoursReported');
+   $sRows = $model->getTotals(array(date('Y-m', strtotime($date)).'-01 00:00:00', $date), array('criteria' => array('Project' => $proIDS, 'Employee' => $employee)));
+   $spent = array();
+    
+   foreach ($sRows as $row)
+   {
+      if (isset($spent[$row['Project']]))
+      {
+         $spent[$row['Project']] += $row['Hours'];
+      }
+      else
+      {
+         $spent[$row['Project']] = $row['Hours'];
+      }
+   }
+   
+   // Result
+   foreach ($proIDS as $project)
+   {
+      $al = isset($aHours[$project]) ? $aHours[$project]['HoursAllocated'] : 0;
+      $sp = isset($spent[$project])  ? $spent[$project]  : 0;
+      
+      $result['list'][] = array(
+         0 => $project,
+         1 => (isset($ms[$project]) ? $ms[$project]['MileStoneDeadline'] : ''),
+         2 => $al.'/'.$sp
+      );
+   }
+   
+   $result['links']['Project'] = $container->getCModel('catalogs', 'Projects')->retrieveLinkData($proIDS);
+   
+   return $result;
+}
 ?>

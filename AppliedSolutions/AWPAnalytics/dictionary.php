@@ -1641,6 +1641,13 @@ $_dictionary = array(
                )
             ),
             'getEmployeeVacationDays' => array(
+            ),
+            'getEmployeeProjects' => array(
+               'fields' => array(
+                  'Date' => array(
+                     'type' => 'date'
+                  )
+               )
             )
          )
       )
