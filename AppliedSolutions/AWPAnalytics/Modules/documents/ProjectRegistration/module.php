@@ -48,6 +48,8 @@ function onBeforeAddingMilestonesRecord($event)
 
    $criterion = "WHERE `Owner` = ".$attrs['Owner']." AND `MileStoneName` = '".$attrs['MileStoneName']."'";
    
+   if (!empty($attrs['_id'])) $criterion .= " AND `_id` <> ".$attrs['_id'];
+   
    if (null === ($mils = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
    {
       throw new Exception('Database error');
