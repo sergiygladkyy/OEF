@@ -146,14 +146,17 @@ function onProcess($event)
    }
    
    // Delete records
-   $options = array(
-      'attributes' => array('%pkey'),
-      'criterion'  => "`NaturalPerson`=".$person." AND `%pkey` NOT IN (".implode(',', $ids).")"
-   );
-   
-   if ($cmodel->delete(true, $options))
+   if (!empty($ids))
    {
-      throw new Exception('Database error');
+      $options = array(
+         'attributes' => array('%pkey'),
+         'criterion'  => "`NaturalPerson`=".$person." AND `%pkey` NOT IN (".implode(',', $ids).")"
+      );
+       
+      if ($cmodel->delete(true, $options))
+      {
+         throw new Exception('Database error');
+      }
    }
    
    // Add records
