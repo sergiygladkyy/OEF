@@ -598,6 +598,7 @@ function deleteTabularSectionItems(uid, prefix)
  */
 function post(kind, type, id, prefix)
 {
+	hideMessages();
 	appInactive();
 	appAddLoader();
 	
@@ -618,6 +619,7 @@ function post(kind, type, id, prefix)
  */
 function clearPosting(kind, type, id, prefix)
 {
+	hideMessages();
 	appInactive();
 	appAddLoader();
 	
