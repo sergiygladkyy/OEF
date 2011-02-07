@@ -457,33 +457,28 @@ function processTabularResponce(kind, data, options)
 	
 	jQuery('.tabular_item:hidden').remove();
 	
-	for(var type in data)
+	var msg = '';
+	
+	for (var type in data)
 	{
-		for(var i in data[type])
+		for (var i in data[type])
 		{
 			var m_data = data[type][i];
 			
-			if(m_data['status'] != true) // Print main errors
+			if (m_data['status'] != true) // Print main errors
 			{
 				flag = false;
 				
-				for(var field in m_data['errors'])
+				for (var field in m_data['errors'])
 				{
-					displayErrors(kind + '_' + type + '_' + i + '_' + field, m_data['errors'][field]);
+					if (!displayErrors(kind + '_' + type + '_' + i + '_' + field, m_data['errors'][field])) {
+						msg += (msg.length > 0 ? "&nbsp;" : "&nbsp;") + m_data['errors'][field];
+					}
 				}
 			}
 			else if (m_data['result']['_id']) // Insert main ID
 			{
 				insertId(kind + '_' + type, m_data['result']['_id'], i);
-			}
-			
-			/* Print main message */
-			
-			if (flag) {
-				displayMessage(kind + '_' + type, 'Tabular section updated succesfully', flag);
-			}
-			else {
-				displayMessage(kind + '_' + type, 'At updating Tabular section there were some errors', flag);
 			}
 		}
 	}
@@ -491,6 +486,14 @@ function processTabularResponce(kind, data, options)
 	/* Check close flag */
 	
 	if (flag && options.close) return flag;
+	
+	/* Print main message */
+	
+	if (!msg) {
+		msg = flag ? 'Tabular section updated succesfully' : 'At updating Tabular section there were some errors';
+	}
+	
+	displayMessage(kind + '_' + type,  msg, flag);
 	
 	return flag;
 }
