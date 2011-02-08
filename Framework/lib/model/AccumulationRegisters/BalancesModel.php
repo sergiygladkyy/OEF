@@ -290,18 +290,15 @@ class BalancesModel
       
       
       // Count totals
-      $pdate = $lastActual;
-      $prev  = false;
+      $pdate = $lastActual ? $firstNotActual : null;
       
       while ($row = $db->fetchAssoc($res))
       {
          $_date = explode('-', date('Y-m', strtotime($row[$pfield])));
          $cdate = date('Y-m-d H:i:s', mktime(0,0,0, $_date[1]+1, 1, $_date[0]));
          
-         if ($prev && $prev != $cdate)
+         if ($pdate && $pdate != $cdate)
          {
-            $pdate = $prev;
-            
             $total[$cdate] = $total[$pdate];
          }
          
@@ -328,7 +325,7 @@ class BalancesModel
             eval($exec);
          }
 
-         $prev = $cdate;
+         $pdate = $cdate;
       }
       
       
