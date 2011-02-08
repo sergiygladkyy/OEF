@@ -114,7 +114,7 @@ function onPost($event)
    }
    
    // Calculate totals for EmployeeVacationDays
-   if ($container->getCModel('AccumulationRegisters', 'EmployeeVacationDays')->countTotals(date('Y-m-d H:i:s', $period)))
+   if ($container->getCModel('AccumulationRegisters', 'EmployeeVacationDays')->countTotals($period))
    {
       throw new Exception('Can\'t recount totals for EmployeeVacationDays');
    }
