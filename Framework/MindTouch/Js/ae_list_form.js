@@ -43,25 +43,6 @@ function editListItem(element, href, prefix, kind, type)
 		return false;
 	}
 	
-	if (jQuery('#' + prefix + '_list_block .ae_current').find('.ae_posted').size() != 0)
-	{
-		appInactive();
-		
-		if (confirm('This document is posted. You must clear posted before edit.\n\n Clear posted end open edit form?'))
-		{
-			appAddLoader();
-			res = executeClearPostingListItem(kind, type, prefix);
-		}
-		else
-		{
-			res = false;
-		}
-		
-		appActive();
-		
-		if (!res) return false;
-	}
-	
 	jQuery(element).attr('href', href + '&id=' + id);
 	
 	return res;

@@ -4,6 +4,7 @@ var ae_name_prefix = {};
 var ae_template = {};
 var pageAPI = '';
 var processFormCommand = null;
+var Context = new oefContext();
 
 var custom_edit_form_options = {
 	options: {},
@@ -83,6 +84,16 @@ jQuery(document).ready(function() {
     	});
     });
     
+    jQuery('.ae_edit_form, .ae_object_edit_form, .oe_custom_edit_form, .ae_constants_edit_form').
+    	change(function(event) {
+    		event = event || window.event;
+    		node  = event.target || event.srcElement;
+    		var id = jQuery(node).parents('form').attr('id');
+    		
+    		if (id) Context.setFormChangedFlag(id, true);
+    	}
+    );
+    
     /**
      * Submit by command
      * 
@@ -120,6 +131,13 @@ jQuery(document).ready(function() {
     		break;
     		
     		case 'cancel':
+    			var id = jQuery(form).attr('id');
+    			
+    			if (Context.getFormChangedFlag(id) && !confirm('By closing this form, you will lose the unsaved information. Continue?'))
+    			{
+    				return;
+    			}
+    			
     			window.self.close();
     			
     			if (window.opener && window.opener.length)
@@ -157,7 +175,11 @@ function submitObjectForm(form, options)
 {
 	appInactive();
 	
-	if (beforeSubmit(form)) jQuery(form).ajaxSubmit(options);
+	if (beforeSubmit(form))
+	{
+		jQuery(form).ajaxSubmit(options);
+	}
+	else Context.setLastStatus(false);
 	
 	appActive();
 }
@@ -208,8 +230,12 @@ function processConstantsResponse(result, status, options)
 	var msg = '';
 	var prefix = 'Constants';
 	
+	Context.setLastStatus(true);
+	
 	if (!result['status'])
 	{
+		Context.setLastStatus(false);
+		
 		for(var field in result['errors'])
 		{
 			if (!displayErrors(prefix + '_' + field, result['errors'][field])) {
@@ -275,8 +301,11 @@ function processConstantsResponse(result, status, options)
  */
 function processResponse(data, status, options)
 {
+	Context.setLastStatus(true);
+	
 	if (data.status == false)
 	{
+		Context.setLastStatus(false);
 		alert(data['errors']['global']);
 		return;
 	}
@@ -290,6 +319,8 @@ function processResponse(data, status, options)
 			
 			if (!result['status'])
 			{
+				Context.setLastStatus(false);
+				
 				for(var field in result['errors'])
 				{
 					if (!displayErrors(kind + '_' + type + '_' + field, result['errors'][field])) {
@@ -356,8 +387,11 @@ function processResponse(data, status, options)
  */
 function processObjectResponse(data, status, options)
 {
+	Context.setLastStatus(true);
+	
 	if (data.status == false)
 	{
+		Context.setLastStatus(false);
 		alert(data['errors']['global']);
 		return;
 	}
@@ -375,6 +409,8 @@ function processObjectResponse(data, status, options)
 			
 			if(m_data['status'] != true) // Print main errors
 			{
+				Context.setLastStatus(false);
+				
 				for(var field in m_data['errors'])
 				{
 					if (!displayErrors(main_kind + '_' + main_type + '_' + field, m_data['errors'][field])) {
@@ -482,6 +518,8 @@ function processTabularResponce(kind, data, options)
 			}
 		}
 	}
+	
+	if (!flag) Context.setLastStatus(false);
 	
 	/* Check close flag */
 	
@@ -605,8 +643,28 @@ function post(kind, type, id, prefix)
 	appInactive();
 	appAddLoader();
 	
+	if (Context.getFormChangedFlag(prefix + '_item'))
+	{
+		var button = jQuery('#' + prefix + '_item *[command=save]').get(0);
+		
+		if (button)
+		{
+			processFormCommand(button);
+			
+			if (!Context.getLastStatus()) return false;
+			
+			Context.setFormChangedFlag(prefix + '_item', false);
+			
+			hideMessages();
+			appInactive();
+			appAddLoader();
+		}
+	}
+	
 	var result = executePost(kind, type, id, prefix);
-
+	
+	if (!result) Context.setLastStatus(false);
+	
 	appActive();
 	
 	return result;
@@ -649,11 +707,12 @@ function clearPosting(kind, type, id, prefix)
  */
 function executePost(kind, type, id, prefix)
 {
-	var ret = true;
-	var id  = parseInt(id, 10);
+	var ret  = true;
+	var id   = parseInt(id, 10);
+	var pref = kind.replace(/\./g, '_') + '_' + type;
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Unknow element id', false);
+		displayMessage(pref, 'Unknow element id', false);
 		return false;
 	}
 	
@@ -674,7 +733,7 @@ function executePost(kind, type, id, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
+				displayMessage(pref, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_post_flag .ae_field_not_posted');
@@ -682,7 +741,8 @@ function executePost(kind, type, id, prefix)
 				jQuery(element).addClass('ae_field_posted');
 				jQuery(element).find('span.ae_field_posted_text').css('display', 'block');
 				jQuery(element).find('span.ae_field_not_posted_text').css('display', 'none');
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Post succesfully', true);
+				displayMessage(pref, 'Post succesfully', true);
+				disabledForm('#' + pref + '_item');
 			}
 	    }
 	});
@@ -700,11 +760,12 @@ function executePost(kind, type, id, prefix)
  */
 function executeClearPosting(kind, type, id, prefix)
 {
-	var ret = true;
-	var id  = parseInt(id, 10);
+	var ret  = true;
+	var id   = parseInt(id, 10);
+	var pref = kind.replace(/\./g, '_') + '_' + type;
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Unknow element id', false);
+		displayMessage(pref, 'Unknow element id', false);
 		return false;
 	}
 	
@@ -725,7 +786,7 @@ function executeClearPosting(kind, type, id, prefix)
 				{
 					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, false);
+				displayMessage(pref, msg, false);
 			}
 			else {
 				var element = jQuery('#' + prefix + '_post_flag .ae_field_posted');
@@ -733,7 +794,8 @@ function executeClearPosting(kind, type, id, prefix)
 				jQuery(element).addClass('ae_field_not_posted');
 				jQuery(element).find('span.ae_field_posted_text').css('display', 'none');
 				jQuery(element).find('span.ae_field_not_posted_text').css('display', 'block');
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Clear posting succesfully', true);
+				displayMessage(pref, 'Clear posting succesfully', true);
+				enabledForm('#' + pref + '_item');
 			}
 	    }
 	});
@@ -822,14 +884,28 @@ function displayMessage(prefix, message, type)
 	jQuery('.' + prefix + '_message ul').each(function (index) { 
 		this.innerHTML = '<li>' + message + '</li>';
 	});
-	if (type) {
-		jQuery('.' + prefix + '_message').removeClass('errormsg');
-		jQuery('.' + prefix + '_message').addClass('successmsg');
+	
+	switch (type)
+	{
+		// Success
+		case true:
+		case 1:
+			jQuery('.' + prefix + '_message').removeClass('warningmsg errormsg');
+			jQuery('.' + prefix + '_message').addClass('successmsg');
+		break;
+		
+		// Warning
+		case 2:
+			jQuery('.' + prefix + '_message').removeClass('successmsg errormsg');
+			jQuery('.' + prefix + '_message').addClass('warningmsg');
+		break;
+		
+		// Error
+		default:
+			jQuery('.' + prefix + '_message').removeClass('successmsg warningmsg');
+			jQuery('.' + prefix + '_message').addClass('errormsg');
 	}
-	else {
-		jQuery('.' + prefix + '_message').removeClass('successmsg');
-		jQuery('.' + prefix + '_message').addClass('errormsg');
-	}
+	
 	jQuery('.' + prefix + '_message').css('display', 'block');
 }
 
@@ -867,6 +943,34 @@ function markSelected()
 	jQuery('form option:selected').each( function(index) {
 		jQuery(this).css('color', '#801020').attr('current', 'true'); 
 	});
+}
+
+/**
+ * Disabled form
+ * 
+ * @param selector - css selector
+ * @return void
+ */
+function disabledForm(selector)
+{
+	jQuery(selector).find('input:not([command=cancel])').attr('disabled', true);
+	jQuery(selector).find('select').attr('disabled', true);
+	jQuery(selector).find('textarea').attr('disabled', true);
+	jQuery(selector).find('.oef_datetime_picker').css('opacity', '0.5');
+}
+
+/**
+ * Disabled form
+ * 
+ * @param selector - css selector
+ * @return void
+ */
+function enabledForm(selector)
+{
+	jQuery(selector).find('input').attr('disabled', false);
+	jQuery(selector).find('select').attr('disabled', false);
+	jQuery(selector).find('textarea').attr('disabled', false);
+	jQuery(selector).find('.oef_datetime_picker').css('opacity', '1');
 }
 
 /*
@@ -1783,4 +1887,32 @@ function oefDynamicUpdate()
 		jQuery(node).find('option[value="' + value + '"]').attr('selected', true);
 		jQuery(node).change();
 	}
+}
+
+function oefContext()
+{
+	this.lastStatus  = true;
+	this.formChanged = {};
+	
+	this.getLastStatus = function()
+	{
+		return this.lastStatus;
+	};
+	
+	this.setLastStatus = function(status)
+	{
+		this.lastStatus = status;
+	};
+	
+	this.setFormChangedFlag = function(form_id, value)
+	{
+		this.formChanged[form_id] = value;
+	};
+	
+	this.getFormChangedFlag = function(form_id)
+	{
+		if (this.formChanged[form_id]) return true;
+		
+		return false;
+	};
 }

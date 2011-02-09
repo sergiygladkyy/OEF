@@ -124,7 +124,8 @@
       <tr>
         <td class="ae_submit" colspan="2">
           {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt;&nbsp; }}
-          {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt; }}
+          {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt;&nbsp; }}
+          {{ &lt;input type="button" value="Close" class="ae_command" command="cancel" /&gt; }}
         </td>
       </tr>
     </tbody>

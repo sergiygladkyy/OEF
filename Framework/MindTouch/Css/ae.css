@@ -54,7 +54,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 	height: 18px;
 }
 
-.ae_field_posted_text { color: #DF0000; }
+.ae_field_posted_text { color: #009523; /*color: #DF0000;*/ }
 .ae_field_not_posted_text { color: #3366CC; }
 
 .ae_editform_actions { padding: 0px 0px 2px 2px; }
@@ -161,6 +161,11 @@ span.ae_pagination {
    margin: 4px 0 3px 0;
 }
 
+.oef_content input[disabled], .oef_content select[disabled] {
+	background-color: #F7F7F7 !important;
+	color: #999999 !important;
+	border: 1px solid #BBBBBB !important;
+}
 
 /************************************** MT messages ******************************************/
 
@@ -197,6 +202,20 @@ span.ae_pagination {
     margin-left: 5px !important;
 }
 
+.oef_content div.warningmsg {
+	background: #FFDD77;
+	border: 1px solid #DDAA44;
+}
+
+.oef_content div.warningmsg a {
+	color: #3355FF !important;
+	font:  14px/22px Verdana,Helvetica,Arial,Sans-Serif !important;
+}
+
+.oef_content div.warningmsg div.inner {
+	color: #304555;
+    background: url("/skins/common/icons/icon-32-error.gif") no-repeat scroll 4px 3px transparent;
+}
 
 /************************************** Dynamic update ***************************************/
 
@@ -233,6 +252,8 @@ span.ae_pagination {
 #oef_dynamic_upadate_edit_form td.ae_editform_field_name {
     width: 41% !important;
 }
+
 /************************************** Dynamic update ***************************************/
+
 table.oef_widget_table_no_border {border: 0 none !important;}
 .oef_widget_table_no_border td{border-right: 0 none !important;}

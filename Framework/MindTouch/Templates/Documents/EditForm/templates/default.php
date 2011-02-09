@@ -73,7 +73,7 @@
         <td class="{{ class..'_name ae_editform_field_name' }}">Posted:</td>
         <td class="{{ class..'_value ae_editform_field_value' }}">
           <div class="{{ item._post &gt; 0 ? 'ae_field_posted' : 'ae_field_not_posted' }}">
-            <span class="ae_field_posted_text" style="{{ item._post &gt; 0 ? 'display: block;' : 'display: none;' }}">This document is posted. You must clear posting before saving.</span>
+            <span class="ae_field_posted_text" style="{{ item._post &gt; 0 ? 'display: block;' : 'display: none;' }}">This document is posted.</span>
             <span class="ae_field_not_posted_text" style="{{ item._post &gt; 0 ? 'display: none;' : 'display: block;' }}">This document is not posted.</span>
           </div>
         </td>
@@ -137,11 +137,19 @@
       <tr>
         <td class="ae_submit" colspan="2">
           {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt;&nbsp; }}
-          {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt; }}
+          {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt;&nbsp; }}
+          {{ &lt;input type="button" value="Close" class="ae_command" command="cancel" /&gt; }}
         </td>
       </tr>
     </tbody>
     </table>
   </form>
-  {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
+  {{ &lt;script type="text/javascript"&gt;" ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';"&lt;/script&gt; }}
+  <eval:if test="item._post &gt; 0">
+    {{ &lt;script type="text/javascript"&gt;"
+         disabledForm('#"..class.."_item');
+         displayMessage('"..class.."', 'To edit the document you must &lt;a href=\"#\" onclick=\"javascript:clearPosting(\\\'"..kind.."\\\', \\\'"..type.."\\\', "..item._id..", \\\'"..class.."\\\'); return false;\"&gt;clear posting&lt;/a&gt;', 2);
+       "&lt;/script&gt;
+    }}
+  </eval:if>
 </eval:else>
