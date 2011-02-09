@@ -49,8 +49,8 @@ function onGenerate($event)
    
    if (empty($data))
    {
-      $data = '{}';
-      $generate = true;
+      $data  = '{}';
+      $isNew = true;
    }
    else $data = Utility::convertArrayToJSONString($data);
    

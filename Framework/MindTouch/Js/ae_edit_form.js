@@ -335,6 +335,7 @@ function processResponse(data, status, options)
 					else msg = result['result']['msg'];
 				}
 			}
+			else Context.setFormChangedFlag(kind + '_' + type + '_item', false);
 			
             /* Check close flag */
 			
@@ -475,6 +476,11 @@ function processObjectResponse(data, status, options)
 			
 			// Print main message
 			displayMessage(main_kind + '_' + main_type,  msg.length > 0 ? msg : m_data['result']['msg'], m_data['status']);
+			
+			if (m_data['status'] && state)
+			{
+				Context.setFormChangedFlag(main_kind + '_' + main_type + '_item', false);
+			}
 		}
 	}
 }

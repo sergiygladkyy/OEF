@@ -12,8 +12,8 @@
     </select>
   </div>
   <div id="schedule" class="oe_schedule"></div>
-<?php if ($generate): ?>
-  <div class="oe_schedule_options">
+<?php if (!empty($isNew)): ?>
+  <div class="oe_schedule_options" style="display: none;">
     <h3>Schedule settings</h3>
     <table>
       <tr>
@@ -29,7 +29,9 @@
       </tr>
     </table>
   </div>
-<?php endif;?>
+<?php endif; ?>
+
+<?php $formID = $kind.'_'.$type.'_item' ?>
 
   <script type="text/javascript">
     var schedule_options = {
@@ -45,21 +47,39 @@
     	schedule.displayForYear(<?php echo $year_cur ?>);
     }
 
+    function displayScheduleSettings(form_id)
+    {
+    	appInactive();
+    	
+    	jQuery('#' + form_id + ' .oe_schedule_options').css('display', 'block');
+    }
+
     function onChange(element)
     {
-  	    appInactive();
-        appAddLoader();
-
-  	    var sched = jQuery('<?php echo '#'.$kind.'_'.$type.'_item' ?>').find('input[name="<?php echo $attr_prefix."[attributes][_id]" ?>"]').attr('value');
+    	appInactive();
+    	appAddLoader();
+    	
+	    var sched = jQuery('#<?php echo $formID ?>').find('input[name="<?php echo $attr_prefix."[attributes][_id]" ?>"]').attr('value');
   	    
   	    displayCustomForm('<?php echo $params['uid'] ?>', '<?php echo $name ?>', {year: element.value, schedule: sched}, '<?php echo $params['tag_id'] ?>');
+
+  	    appActive();
     }
     
-  <?php if ($generate): ?>
-    appInactive();
+  <?php if (!empty($isNew)): ?>
+    jQuery(document).ready(function() {
+        displayMessage('<?php echo $kind.'_'.$type ?>', 'Schedule for this year not exists. In order to generate a schedule, click <a href="#" onclick="displayScheduleSettings(\'<?php echo $formID ?>\'); return false;">generate</a>', 2);
 
+        if (jQuery('#<?php echo $formID ?> input[name="dgenerate"]').size() == 0)
+        {
+            jQuery('#<?php echo $formID ?> .ae_submit').prepend('<input type="button" name="dgenerate" value="Generate" onclick="displayScheduleSettings(\'<?php echo $formID ?>\')" />');
+        }
+    });
+    
     function generateSchedule(element)
     {
+        appAddLoader();
+
         var form     = jQuery(element).parents('.oe_schedule_options').get(0);
         var settings = {};
 
@@ -75,7 +95,8 @@
         appActive();
     }
   <?php else: ?>
-    appActive();
+    hideMessages();
+    jQuery('#<?php echo $formID ?> input[name="dgenerate"]').remove();
     displaySchedule(schedule_options);
   <?php endif;?>
   </script>

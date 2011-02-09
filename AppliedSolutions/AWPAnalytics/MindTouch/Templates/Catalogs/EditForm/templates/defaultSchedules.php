@@ -13,6 +13,9 @@
    var item     = data.item;
    var select   = data.select;
    var tabulars = data.tabulars;
+
+   var tmpList = string.Split(uid,'.');
+   var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
 }}
 <eval:if test="puid is nil">
   <ul class="ae_errors">
@@ -20,6 +23,7 @@
   </ul>
 </eval:if>
 <eval:else>
+  <h3>{{header;}}</h3>
   {{
       if (#puid.main_kind != 0) {
          let kind = puid.main_kind..'.'..puid.main_type..'.'..puid.kind;
