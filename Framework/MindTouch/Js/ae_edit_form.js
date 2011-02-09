@@ -976,6 +976,7 @@ function disabledForm(selector)
 	jQuery(selector).find('input:not([command=cancel])').attr('disabled', true);
 	jQuery(selector).find('select').attr('disabled', true);
 	jQuery(selector).find('textarea').attr('disabled', true);
+	jQuery(selector).find('.tabulars_actions').attr('disabled', true);
 	jQuery(selector).find('.oef_datetime_picker').css('opacity', '0.5');
 }
 
@@ -990,6 +991,7 @@ function enabledForm(selector)
 	jQuery(selector).find('input').attr('disabled', false);
 	jQuery(selector).find('select').attr('disabled', false);
 	jQuery(selector).find('textarea').attr('disabled', false);
+	jQuery(selector).find('.tabulars_actions').attr('disabled', false);
 	jQuery(selector).find('.oef_datetime_picker').css('opacity', '1');
 }
 

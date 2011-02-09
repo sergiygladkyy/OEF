@@ -167,6 +167,13 @@ span.ae_pagination {
 	border: 1px solid #BBBBBB !important;
 }
 
+.oef_content a[disabled=true] {
+	color: #999999 !important;
+	cursor: default !important;
+	text-decoration: none;
+	outline-style: none !important;
+}
+
 /************************************** MT messages ******************************************/
 
 .oef_content div.systemmsg {

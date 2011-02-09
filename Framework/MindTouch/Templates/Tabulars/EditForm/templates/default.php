@@ -137,8 +137,8 @@
      var js_uid = string.replace(kind, '.', '_')..'_'..type;
   }}
   <eval:if test="flag == True">
-    <a href="#" onclick="{{ 'javascript:addTabularSectionItem(\''..js_uid..'\', \''..class..'\'); return false;' }}">Add</a>
-    {{ &lt;script type="text/javascript"&gt;" ae_index[\'"..js_uid.."\'] = "..i.."; ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."\'; ae_template[\'"..js_uid.."\'] = \'"..string.replace(string.escape(content), '/script', '/%%script%%').."\';"&lt;/script&gt; }}
+    <a class="tabulars_actions" href="#" onclick="{{ 'if (jQuery(this).attr(\'disabled\') != \'true\') { addTabularSectionItem(\''..js_uid..'\', \''..class..'\'); } return false;' }}">Add</a>
+    {{ &lt;script type="text/javascript"&gt;" ae_index['"..js_uid.."'] = "..i.."; ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."'; ae_template['"..js_uid.."'] = '"..string.replace(string.escape(content), '/script', '/%%script%%').."';"&lt;/script&gt; }}
   </eval:if>
-  <a href="#" onclick="{{ 'javascript:deleteTabularSectionItems(\''..js_uid..'\', \''..class..'\'); return false;' }}">Delete</a>
+  <a class="tabulars_actions" href="#" onclick="{{ 'if (!jQuery(this).attr(\'disabled\') != \'true\') { deleteTabularSectionItems(\''..js_uid..'\', \''..class..'\'); } return false;' }}">Delete</a>
 </eval:else>
