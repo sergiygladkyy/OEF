@@ -18,7 +18,7 @@
       <td class="<?php echo $class.'_name ae_editform_field_name oe_period' ?>">Posted:</td>
       <td class="<?php echo $class.'_value ae_editform_field_value' ?>" colspan="3">
         <div class="<?php echo $attrs['_post'] > 0 ? 'ae_field_posted' : 'ae_field_not_posted' ?>">
-          <span class="ae_field_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: block;' : 'display: none;' ?>">This document is posted. You must clear posting before saving.</span>
+          <span class="ae_field_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: block;' : 'display: none;' ?>">This document is posted.</span>
           <span class="ae_field_not_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: none;' : 'display: block;' ?>">This document is not posted.</span>
         </div>
       </td>

@@ -19,13 +19,13 @@
    var tmpList = string.Split(uid,'.');
    var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
 }}
-<h3>{{header;}}</h3>
 <eval:if test="puid is nil">
   <ul class="ae_errors">
     <li class="ae_error">Unknow entity</li>
   </ul>
 </eval:if>
 <eval:else>
+  <h3>{{header;}}</h3>
   {{
       if (#puid.main_kind != 0) {
          let kind = puid.main_kind..'.'..puid.main_type..'.'..puid.kind;
@@ -148,7 +148,8 @@
     {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..");"&lt;/script&gt; }}
   </eval:if>
   <eval:if test="item._post &gt; 0">
-    {{ &lt;script type="text/javascript"&gt;"
+    {{ 
+       &lt;script type="text/javascript"&gt;"
          disabledForm('#"..class.."_item');
          displayMessage('"..class.."', 'To edit the document you must &lt;a href=\"#\" onclick=\"javascript:clearPosting(\\\'"..kind.."\\\', \\\'"..type.."\\\', "..item._id..", \\\'"..class.."\\\'); return false;\"&gt;clear posting&lt;/a&gt;', 2);
        "&lt;/script&gt;
