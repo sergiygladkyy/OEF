@@ -62,8 +62,7 @@
     </div>
   </div>
   <div class="{{ class..'_actions ae_editform_actions' }}" style="{{ item._id &gt; 0 ? 'display: block;' : 'display: none;' }}">
-    <a href="#" onclick="{{ 'javascript:post(\''..kind..'\', \''..type..'\', '..item._id..', \''..class..'\'); return false;' }}">Post</a>&nbsp;|
-    <a href="#" onclick="{{ 'javascript:clearPosting(\''..kind..'\', \''..type..'\', '..item._id..', \''..class..'\'); return false;' }}">Clear posting</a>
+    &nbsp;
   </div>
   <form method="post" action="#" class="ae_object_edit_form" id="{{ class..'_item' }}">
     {{ web.html(hidden) }}
@@ -145,6 +144,9 @@
     </table>
   </form>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';"&lt;/script&gt; }}
+  <eval:if test="item._id &gt; 0">
+    {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..");"&lt;/script&gt; }}
+  </eval:if>
   <eval:if test="item._post &gt; 0">
     {{ &lt;script type="text/javascript"&gt;"
          disabledForm('#"..class.."_item');

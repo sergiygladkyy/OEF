@@ -467,6 +467,7 @@ function processObjectResponse(data, status, options)
 				jQuery('#'+ main_kind + '_' + main_type + '_item input[type=submit]').attr('value', 'Update');
 				var prefix = main_kind + '_' + main_type;
 				if (jQuery('.' + prefix + '_actions').size() != 0) {
+					generateActionsMenu('.' + prefix + '_actions', main_kind, main_type, m_data['result']['_id']);
 					jQuery('.' + prefix + '_actions').css('display', 'block');
 				    jQuery('#' + prefix + '_post_flag').css('display', '');
 				}
@@ -696,6 +697,25 @@ function clearPosting(kind, type, id, prefix)
 
 
 /************************************* Functions ******************************************/
+
+/**
+ * Generate ActionsMenu
+ * 
+ * @param selector - jQuery selector (menu container)
+ * @param kind     - entity kind
+ * @param type     - entity type
+ * @param itemID   - entity id
+ * @return void
+ */
+function generateActionsMenu(selector, kind, type, itemID)
+{
+	var prefix = kind.replace(/\./g, '_') + '_' + type;
+	
+	var menu = '<a href="#" onclick="javascript:post(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Post</a>';
+    menu += '&nbsp;|&nbsp;<a href="#" onclick="javascript:clearPosting(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Clear posting</a>';
+    
+    jQuery(selector).html(menu);
+}
 
 /**
  * Post Item
