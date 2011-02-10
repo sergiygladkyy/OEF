@@ -144,11 +144,39 @@
     </table>
   </form>
   {{ 
+     var delTabs = '';
+     
+     if (item._id &gt; 0)
+     {
+        foreach (var tabular in tab_s)
+        {
+           let delTabs ..= "checkAll('"..class..'_tabulars_'..tabular.."', {checked: true});";
+           let delTabs ..= "deleteTabularSectionItems('"..uid.."', '"..class..'_tabulars_'..tabular.."');";
+           let delTabs ..= "checkAll('"..class..'_tabulars_'..tabular.."', {checked: false});";
+        }
+     }
+     
      &lt;script type="text/javascript"&gt;"
-        ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';
-        jQuery(\'#"..class.."_item .oef_catalogs_Projects\').each(function(index) {
+        ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';
+        jQuery('#"..class.."_item .oef_catalogs_Projects').each(function(index) {
     	   jQuery(this).parent().change(function(event) {
-    	      notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {});
+    	      var status = false;
+    	      "..(item._id &gt; 0 ? 'if (confirm(\'Tabular setions will be cleared. Continue?\')) {'..delTabs : '').."
+    	      status = notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {});
+    	      "..(item._id &gt; 0 ? '}': '').."
+    	      if (!status)
+    	      {
+    	         event = event || window.event;
+		         var node = event.target || event.srcElement;
+		         
+    	         jQuery(node).find('*[current=\"true\"]').removeAttr('current');
+    	         jQuery(node).find('*[style]').each(function(i) {
+    	            if (jQuery(this).attr('style') != undefined)
+    	            {
+    	               jQuery(this).attr('selected', true).attr('current', 'true');
+    	            }
+    	         });
+    	      }
     	   });
         });
      "&lt;/script&gt;
