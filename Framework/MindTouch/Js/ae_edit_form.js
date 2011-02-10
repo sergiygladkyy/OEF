@@ -1151,7 +1151,7 @@ function displayCustomForm(uid, form, params, tag_id)
  * @param string formName  - form name
  * @param string eventName - event name
  * @param mixed  params    - json object (contents list of optional parameters)
- * @return void
+ * @return boolean
  */
 function notifyFormEvent(uid, formName, eventName, params)
 {
@@ -1161,9 +1161,11 @@ function notifyFormEvent(uid, formName, eventName, params)
 	appInactive();
 	appAddLoader();
 	
-	dispatcher.notify(uid, formName, eventName, params);
+	var status = dispatcher.notify(uid, formName, eventName, params);
 	
 	appActive();
+	
+	return status;
 }
 
 /**
@@ -1182,7 +1184,7 @@ function oeEventDispatcher()
 	 * @param string formName  - form name
 	 * @param string eventName - event name
 	 * @param mixed  params    - json object (contents list of optional parameters)
-	 * @return void
+	 * @return boolean
 	 */
 	this.notify = function(uid, formName, eventName, params)
 	{
@@ -1190,12 +1192,13 @@ function oeEventDispatcher()
 		this.event.name   = eventName;
 		this.event.params = params;
 		
+		var retval   = false;
 		var callback = this.getCallback(eventName);
 		
 		if (callback === null)
 		{
 			displayMessage(uid.replace(/\./g, '_'), "Unknow form event " + eventName, false);
-			return;
+			return false;
 		}
 		
 		var formData = jQuery('#' + uid.replace(/\./g, '_') + '_item').formSerialize();
@@ -1226,7 +1229,7 @@ function oeEventDispatcher()
 				}
 				else
 				{
-					callback.call(new oeEventDispatcher(), uid, data['result']);
+					retval = callback.call(new oeEventDispatcher(), uid, data['result']);
 				}
 		    },
 		    error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -1235,6 +1238,8 @@ function oeEventDispatcher()
 				;
 		    }
 		});
+		
+		return retval;
 	};
 	
 	/**
@@ -1299,7 +1304,7 @@ function oeEventDispatcher()
      *    
 	 * @param string uid - uid entity that generated the event
 	 * @param array data - response data
-	 * @return void
+	 * @return boolean
 	 */
 	this.processOnFormUpdateRequestResponse = function(uid, data)
 	{
@@ -1307,9 +1312,9 @@ function oeEventDispatcher()
 		if (data['type'] != 'array')
 		{
 			alert('Not supported response type');
-			return;
+			return false;
 		}
-		if (!data['data']) return;
+		if (!data['data']) return false;
 		
 		// Prepare update
 		var msg = new Array(), i = 0;
@@ -1413,7 +1418,13 @@ function oeEventDispatcher()
 				// Mark selected
 				markSelected();
 			}
+			else
+			{
+				return false;
+			}
 		}
+		
+		return true;
 	};
 	
 	/**
@@ -1465,8 +1476,11 @@ function oeEventDispatcher()
 			{
 				var text  = vals[attribute][i]['text'];
 				var value = vals[attribute][i]['value'];
-				
-				options += '<option value="'+ value +'">'+ text +'</option>';
+				if (value == 'new')
+				{
+					options += '<option value="new" class="oef_edit_form_field_add_new">add new</option>';
+				}
+				else options += '<option value="'+ value +'">'+ text +'</option>';
 			}
 			
 			var code = 'ae_template[prefix].match(/id="'+ prefix +'_%%i%%_'+ attribute +'_field[^<]*/g);';
@@ -1736,7 +1750,7 @@ function oefDynamicUpdate()
 				}
 				
 				jQuery('#' + tagID).html(body);
-				jQuery('#' + tagID + ' .ae_command[command=save]').attr('command', 'cancel').attr('value', 'Cancel');
+				jQuery('#' + tagID + ' .ae_command[command=save]').remove();
 				jQuery('#' + tagID + ' .ae_command').each(function(index) {
 			    	jQuery(this).click(function() { 
 			    		listener(this);
@@ -1781,7 +1795,7 @@ function oefDynamicUpdate()
     			options.options.close = true;
     		break;
     		
-    		case 'cancel':
+    		default: /*case 'cancel':*/
     			removeEditForm();
     			
     			if (jQuery(node).find('option[current="true"]').size() != 0)
@@ -1792,20 +1806,16 @@ function oefDynamicUpdate()
     			{
     				jQuery(node).find('option[value="0"]').attr('selected', true);
     			}
+    			
+    			appActive();
 				
-				active = true;
-    		break;
-    		
-    		default:
-    			options.options.close = true;
+    			return;
     	}
     	
     	try {
     		eval(method + '(form, options)');
     	}
     	catch(e) { ; }
-    	
-        if (!active) appInactive();
     };
     
     /**
@@ -1911,12 +1921,31 @@ function oefDynamicUpdate()
 	 */
 	function updateListOfOption(text, value)
 	{
-		jQuery('select.oef_' + kind + '_' + type).append('<option value="' + value + '">' +  text + '</option>');
+		var append = '<option value="' + value + '">' +  text + '</option>';
+		
+		if (node.getAttribute('name').match(/\[tabulars\]/g) != null)
+		{
+			var prefix = node.getAttribute('id').match(/.*(?=_[0-9]+_[\S]+_field)/g);
+			
+			if (prefix[0])
+			{
+				prefix = prefix[0];
+				ae_template[prefix] = ae_template[prefix].replace(/<\/select>/g, append + '</select>');
+			}
+		}
+		
+		jQuery('select.oef_' + kind + '_' + type).append(append);
 		jQuery(node).find('option[value="' + value + '"]').attr('selected', true);
 		jQuery(node).change();
 	}
 }
 
+
+
+/**
+ * 
+ * @return
+ */
 function oefContext()
 {
 	this.lastStatus  = true;
