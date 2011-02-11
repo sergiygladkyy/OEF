@@ -1417,8 +1417,18 @@ $_dictionary = array(
    ///////////////////
    // Reports Section
    ///////////////////
-/*   'reports' => array(
-      'ProjectManHours' => array(
+   'reports' => array(
+      'TimeCards' => array(
+         'fields' => array(
+            'Employee' => array(
+               'reference' => 'catalogs.Employees'
+            ), 
+            'Period' => array(
+               'type' => 'string'
+            )
+         )
+      )
+/*      'ProjectManHours' => array(
          'fields' => array(
             'Date' => array(
                'type' => 'date',
@@ -1523,9 +1533,9 @@ $_dictionary = array(
                )
             )
          )
-      )
+      )*/
    ),
-   */
+   
    ////////////////
    // Web services
    ////////////////
