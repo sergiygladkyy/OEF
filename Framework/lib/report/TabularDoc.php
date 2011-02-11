@@ -151,7 +151,7 @@ class TabularDoc extends Grid
     */
    public function show()
    {
-      $html = "<table border=\"1\">\n<tbody>";
+      $html = "<table class=\"oef_report\">\n<tbody>";
       
       foreach ($this->grid as $row => $cols)
       {

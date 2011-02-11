@@ -260,7 +260,26 @@ span.ae_pagination {
     width: 41% !important;
 }
 
-/************************************** Dynamic update ***************************************/
+
+/***************************************** Reports *******************************************/
+
+.oef_content table.oef_report, .oef_content tr.oef_report {
+	border: 0 none !important;
+}
+
+.oef_report td.oe_report_none_border, .oef_report .oe_report_none_border {
+	border-top:    0 none !important;
+	border-right:  0 none !important;
+	border-bottom: 0 none !important;
+	border-left:   0 none !important;
+}
+
+.oef_report td, .oef_report th {
+	border: 1px solid #AAAAAA;
+}
+
+
+/***************************************** Widgets *******************************************/
 
 table.oef_widget_table_no_border {border: 0 none !important;}
-.oef_widget_table_no_border td{border-right: 0 none !important;}
+.oef_widget_table_no_border td {border-right: 0 none !important;}

@@ -141,7 +141,7 @@ class ODBMysql extends DBMysql
                if (in_array($param[0], $alias)) break;
                if (!isset($dbmap[$param[0]][$param[1]]['table'])) return null;
 
-               $search[]  = $reference;
+               $search[]  = '/'.str_replace('.', '\.', $reference).'(?!\.)/i';
                $replace[] = '`'.$dbmap[$param[0]][$param[1]]['table'].'`';
 
                break;
@@ -150,7 +150,7 @@ class ODBMysql extends DBMysql
             case 3:
                if (!isset($dbmap[$param[0]][$param[1]]['table'])) return null;
 
-               $search[]  = $reference;
+               $search[]  = '/'.str_replace('.', '\.', $reference).'(?!\.)/i';
                $replace[] = '`'.$dbmap[$param[0]][$param[1]]['table'].'`.`'.$param[2].'`';
 
                break;
@@ -159,7 +159,7 @@ class ODBMysql extends DBMysql
             case 4:
                if (!isset($dbmap[$param[0]][$param[1]][$param[2]][$param[3]]['table'])) return null;
 
-               $search[]  = $reference;
+               $search[]  = '/'.str_replace('.', '\.', $reference).'(?!\.)/i';
                $replace[] = '`'.$dbmap[$param[0]][$param[1]][$param[2]][$param[3]]['table'].'`';
 
                break;
@@ -168,7 +168,7 @@ class ODBMysql extends DBMysql
             case 5:
                if (!isset($dbmap[$param[0]][$param[1]][$param[2]][$param[3]]['table'])) return null;
 
-               $search[]  = $reference;
+               $search[]  = '/'.str_replace('.', '\.', $reference).'(?!\.)/i';
                $replace[] = '`'.$dbmap[$param[0]][$param[1]][$param[2]][$param[3]]['table'].'`.`'.$param[4].'`';
 
                break;
@@ -177,8 +177,8 @@ class ODBMysql extends DBMysql
                return null;
          }
       }
-       
-      return str_replace($search, $replace, $query);
+      
+      return preg_replace($search, $replace, $query);
    }
    
    /**
