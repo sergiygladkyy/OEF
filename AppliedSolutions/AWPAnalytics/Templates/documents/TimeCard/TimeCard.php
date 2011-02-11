@@ -29,13 +29,17 @@
         <ul class="<?php echo $class.'_Period_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
         <select name="<?php echo $attr_prefix.'[attributes][week]' ?>" onChange="onChange(this);">
           <option value="0" selected>&nbsp;</option>
-          <?php foreach ($periods as $opt): ?>
-            <?php if ($period == $opt['value']): ?>
-          <option value="<?php echo $opt['value'] ?>" selected><?php echo $opt['text'] ?></option>
-            <?php else: ?>
-          <option value="<?php echo $opt['value'] ?>"><?php echo $opt['text'] ?></option>
-            <?php endif;?>
-          <?php endforeach; ?>
+          <?php
+            foreach ($periods as $opt)
+            {
+               $option = '<option value="'.$opt['value'].'"';
+               if ($period == $opt['value']) $option .= ' selected';
+               if ($opt['disabled'])         $option .= ' disabled';
+               $option .= '>'.$opt['text'].'</option>';
+               
+               echo $option;
+            }
+          ?>
         </select>
       </td>
       <td class="oe_user oe_attribute">User:</td>
@@ -119,6 +123,8 @@
 		var element = event.target || event.srcElement;
 		
 		if (element.nodeName != 'TD') element = element.parentNode; 
+
+		if (jQuery(element).find('.oe_value').attr('disabled')) return false;
 		
 		jQuery(element).find('.oe_text').css('display', 'none');
 		jQuery(element).find('.oe_value').css('display', 'block').focus();
@@ -140,13 +146,13 @@
 		var params = {};
 		
      <?php if (!empty($attrs['_id'])): ?>
-		if (!confirm('TimeCard will be cleared. Continue?'))
+        if (!confirm('TimeCard will be cleared. Continue?'))
 		{
 			jQuery(element).find('option[current=true]').attr('selected', 'selected');
 			appActive();
 			return;
 		}
-
+        params.cleared  = 1;
 		params.document = <?php echo $attrs['_id'] ?>;
      <?php endif; ?>
 

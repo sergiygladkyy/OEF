@@ -19,39 +19,6 @@ function onGenerate($event)
    $container = Container::getInstance();
    $document  = $container->getModel('documents', 'TimeCard');
    
-   // Get values for User
-   $employees = MEmployees::getNowWorksForSelect();
-   
-   // Get values for Period
-   $periods = array();
-   $ts      = time();
-   $ctime   = mktime(0,0,0,1,1,date('Y', $ts));
-   $day     = date('w', $ctime);
-   $msday   = 24*60*60;
-   $week    = 1;
-   
-   if ($day != 1)
-   {
-      if ($day == 0) $day = 7;
-      
-      $ctime += (8 - $day)*$msday;
-   }
-   
-   while ($ctime < $ts)
-   {
-      $from   = $ctime;
-      $ctime += 6 * $msday;
-      $to     = $ctime;
-      
-      $periods[] = array(
-         'value' => date('Y-m-d', $from).'|'.date('Y-m-d', $to),
-         'text'  => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)) 
-      );
-      
-      $week++;
-      $ctime += $msday;
-   }
-   
    // Retrieve attributes
    if (!empty($params['document']) && is_numeric($params['document']) && (int) $params['document'] > 0)
    {
@@ -65,31 +32,111 @@ function onGenerate($event)
    
    $attrs = $document->toArray();
    
-   if (!empty($params['Period']))
-   {
-      list($start) = explode('|', $params['Period']);
-      $cleared     = $id ? true : false;
-   }
-   elseif (!empty($attrs['StartDate']))
-   {
-      $start = $attrs['StartDate'];
-   }
-   else $start  = date('Y-m-d');
-   
-   $start  = MGlobal::getFirstWeekDay($start);
-   $end    = $start + 6*24*60*60;
-   $period = date('Y-m-d', $start).'|'.date('Y-m-d', $end);
-   
+   // Check parameters
    if (!empty($params['Employee']))
    {
-      $employee = $params['Employee'];
-      $cleared  = $id || $cleared ? true : false;
+      $employee = (int) $params['Employee'];
    }
    elseif (!empty($attrs['Employee']))
    {
       $employee = $attrs['Employee'];
    }
-   else $employee = 0;
+   else
+   {
+      $employee = MEmployees::retrieveCurrentEmployee();
+   }
+   
+   if (!empty($params['Period']))
+   {
+      list($start) = explode('|', $params['Period']);
+   }
+   elseif (!empty($attrs['StartDate']))
+   {
+      $start = $attrs['StartDate'];
+   }
+   else $start = date('Y-m-d');
+   
+   $start = MGlobal::getFirstWeekDay($start);
+
+   
+   // Get values for User
+   $employees = MEmployees::getNowWorksForSelect();
+   
+   if ($employee > 0 && !isset($employees[$employee]))
+   {
+      $model = $container->getModel('catalogs', 'Employees');
+      
+      if (!$model->load($employee))
+      {
+         throw new Exception('Employee not exists');
+      }
+      
+      $employees[$employee] = array('text' => $model->getAttribute('Description'), 'value' => $employee);
+   }
+   
+   // Get values for Period
+   $periods = array();
+   $ts      = time();
+   $ctime   = mktime(0,0,0,1,1,date('Y', $ts));
+   $day     = date('w', $ctime);
+   $msday   = 24*60*60;
+   $week    = 1;
+   $exists  = array();
+
+   if ($day != 1)
+   {
+      if ($day == 0) $day = 7;
+      
+      $ctime += (8 - $day)*$msday;
+   }
+   
+   if (!$id && $employee > 0)
+   {
+      $cmodel = $container->getCModel($kind, $type);
+      $criter = "WHERE `Employee` = ".$employee." AND `StartDate` >= '".date('Y-m-d', $ctime)."' AND `EndDate` <= '".date('Y-m-d', $ts)."'";
+      
+      if (null !== ($docs = $cmodel->getEntities(null, array('criterion' => $criter))) && !isset($docs['errors']))
+      {
+         foreach ($docs as $doc)
+         {
+            $exists[$doc['StartDate'].'|'.$doc['EndDate']] = true;
+         }
+      }
+   }
+   
+   while ($ctime < $ts)
+   {
+      $from   = $ctime;
+      $ctime += 6 * $msday;
+      $to     = $ctime;
+      
+      $value = date('Y-m-d', $from).'|'.date('Y-m-d', $to);
+      $disab = isset($exists[$value]);
+      
+      if ($start == $from && $disab) $start = null;
+      
+      $periods[] = array(
+         'value'    => $value,
+         'text'     => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)),
+         'disabled' => $disab 
+      );
+      
+      $week++;
+      $ctime += $msday;
+   }
+   
+   
+   // Generate TimeCard
+   if (!$start)
+   {
+      $period = 0;
+      include(self::$templates_dir.$name.'.php');
+      return;
+   }
+   
+   $end     = $start + 6*24*60*60;
+   $period  = date('Y-m-d', $start).'|'.date('Y-m-d', $end);
+   
    
    if ($employee)
    {
@@ -100,6 +147,7 @@ function onGenerate($event)
    if ($id)
    {
       $records = $container->getCModel('documents.TimeCard.tabulars', 'TimeRecords');
+      $cleared = empty($params['cleared']) ? false : (bool) $params['cleared'];
       
       if ($cleared)
       {
