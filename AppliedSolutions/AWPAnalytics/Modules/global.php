@@ -156,9 +156,10 @@ class MGlobal
                   $to   = date('Y-m-d', mktime(0,0,0, $month+$shift+1, 1, $year));
                   break;
                   
-               case 'Quarter':
-                  $from = date('Y-m-d', mktime(0,0,0, $month+$shift, 1, $year));
-                  $to   = date('Y-m-d', mktime(0,0,0, $month+$shift+1, 1, $year));
+              case 'Quarter':
+                  $beg  = $month - (($month-1)%3) + $shift*3;
+                  $from = date('Y-m-d', mktime(0,0,0, $beg, 1, $year));
+                  $to   = date('Y-m-d', mktime(0,0,0, $beg+3, 1, $year));
                   break;
                   
                case 'Year':
