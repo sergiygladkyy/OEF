@@ -214,7 +214,7 @@ class TurnoversModel
       {
          $query = 'SELECT '.implode(',', $resources).($dimsql ? ','.implode(',', $dimsql) : '').' '.
                   'FROM `'.$this->conf['db_map']['table'].'` '.
-                  'WHERE `'.$pfield."`>='".$to."' AND `".$pfield."`<='".$lastPeriod."' AND `".$this->conf['db_map']['active']."`=1".
+                  'WHERE `'.$pfield."`>='".$to."' AND `".$pfield."`<'".$lastPeriod."' AND `".$this->conf['db_map']['active']."`=1".
                   ($criterion ? ' AND '.$criterion : '').' '.
                   ($dimsql ? 'GROUP BY '.implode(',', $dimsql) : '');
          
