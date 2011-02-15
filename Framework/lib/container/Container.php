@@ -329,7 +329,6 @@ class Container
          else $controller = call_user_func(array($classname, 'getInstance'), $type, $options);
          
          if (!is_a($controller, 'BaseController') && 
-             !is_a($controller, 'ReportsController') &&
              !is_a($controller, 'DataProcessorsController') &&
              !is_a($controller, 'WebServicesController') &&
              !is_a($controller, 'Constants')

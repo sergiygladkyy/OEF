@@ -1,8 +1,8 @@
 <?php
 
-require_once('lib/controller/base/BaseController.php');
+require_once('lib/controller/base/EntityController.php');
 
-class AccumulationRegistersController extends BaseController
+class AccumulationRegistersController extends EntityController
 {
    const kind = 'AccumulationRegisters';
    

@@ -1,8 +1,8 @@
 <?php
 
-require_once('lib/controller/base/BaseController.php');
+require_once('lib/controller/base/EntityController.php');
 
-abstract class ObjectsController extends BaseController
+abstract class ObjectsController extends EntityController
 {
    protected function __construct($kind, $type, array& $options = array())
    {

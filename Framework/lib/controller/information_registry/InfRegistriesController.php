@@ -1,8 +1,8 @@
 <?php
 
-require_once('lib/controller/base/BaseController.php');
+require_once('lib/controller/base/EntityController.php');
 
-class InfRegistriesController extends BaseController
+class InfRegistriesController extends EntityController
 {
    const kind = 'information_registry';
    

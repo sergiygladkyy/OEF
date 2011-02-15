@@ -1,8 +1,8 @@
 <?php
 
-require_once('lib/controller/base/BaseController.php');
+require_once('lib/controller/base/EntityController.php');
 
-class TabularsController extends BaseController
+class TabularsController extends EntityController
 {
    protected static $instance = array();
 

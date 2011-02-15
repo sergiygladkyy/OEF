@@ -1,18 +1,16 @@
 <?php
 
-class ReportsController
+require_once('lib/controller/base/BaseController.php');
+
+class ReportsController extends BaseController
 {
-   protected $kind = 'reports';
-   protected $type = null;
-   protected $container = null;
+   const kind = 'reports';
    
    protected static $instance = array();
    
    protected function __construct($type, array& $options = array())
    {
-      $this->type = $type;
-      
-      $this->container = Container::getInstance();
+      parent::__construct(self::kind, $type, $options);
    }
    
    /**
@@ -43,13 +41,33 @@ class ReportsController
    public function displayReportForm(array $headline = array(), array $options = array())
    {
       $errors = array();
+      $result = array();
       
-      $model = $this->container->getModel($this->kind, $this->type, $options); 
+      // Default values
+      $default = $this->getDefaultValuesForEditForm();
       
-      $ret = array('status' => true, 
-                   'result' => array(
-                      'select' => $model->retrieveSelectDataForRelated(array(), $options)
-                   ),
+      if ($default['status'])
+      {
+         $default =& $default['result'];
+         
+         $result['item'] = $default['attributes'];
+         
+         if (isset($default['select']) && is_array($default['select']))
+         {
+            $result['select'] = $default['select'];
+         }
+      }
+      else {$result = array('item' => array()); throw new Exception(print_r($default, true)); }
+      
+      // Get current item
+      $model = $this->container->getModel($this->kind, $this->type, $options);
+      
+      $select = $model->retrieveSelectDataForRelated(array(), $options);
+      
+      $result['select'] = isset($result['select']) ? array_merge($select, $result['select']) : $select;
+      
+      $ret = array('status' => true,
+                   'result' => $result,
                    'errors' => $errors
       );
       
