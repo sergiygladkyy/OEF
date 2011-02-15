@@ -1345,6 +1345,43 @@ class MEmployees
       
       return $result;
    }
+   
+   /**
+    * Get employees with ProjectManager position
+    * 
+    * @param string $date
+    * @return array
+    */
+   static public function getListOfPMForSelect($date = null)
+   {
+      $PMPos = Constants::get('ProjectManagerPosition');
+      
+      if (empty($PMPos)) return array();
+      
+      if (!$date) $date = date('Y-m-d');
+      
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT c.`Description`, ir.`Employee`, MAX(ir.`Period`) AS `Period` ".
+               "FROM information_registry.StaffHistoricalRecords AS ir, catalogs.Employees AS c ".
+               "WHERE ir.`OrganizationalPosition`=".(int) $PMPos." AND ir.`RegisteredEvent` <> 'Firing' AND ".
+               "ir.`Period` <= '".$date."' AND ir.`Employee` = c.`_id` ".
+               "GROUP BY `Employee` ORDER BY c.`Description`";
+      
+      if (null === ($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $select = array();
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         $select[$row['Employee']] = array('text' => $row['Description'], 'value' => $row['Employee']);
+      }
+      
+      return $select;
+   }
 }
 
 

@@ -1418,6 +1418,7 @@ $_dictionary = array(
    // Reports Section
    ///////////////////
    'reports' => array(
+      // Time Cards Report
       'TimeCards' => array(
          'fields' => array(
             'Employee' => array(
@@ -1427,75 +1428,38 @@ $_dictionary = array(
                'type' => 'string'
             )
          )
-      )
-/*      'ProjectManHours' => array(
-         'fields' => array(
-            'Date' => array(
-               'type' => 'date',
-               'precision' => array(
-                  'required' => true
-               )
-            )
-         )
       ),
-      'ProjectResources' => array(
+      
+      // Resource Load Report
+      'ResourceLoad' => array(
          'fields' => array(
-            'Date' => array(
-               'type' => 'date',
+            'Period' => array(
+               'type' => 'enum',
                'precision' => array(
+                  'in' => array(
+                     'This Week'    => 'This Week',
+                     'Last Week'    => 'Last Week',
+                     'This Month'   => 'This Month',
+                     'Last Month'   => 'Last Month',
+                     'This Quarter' => 'This Quarter',
+                     'Last Quarter' => 'Last Quarter',
+                     'This Year'    => 'This Year',
+                     'Last Year'    => 'Last Year'
+                  ),
                   'required' => true
                )
             ),
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
+            'ReportKind' => array(
+               'type' => 'enum',
                'precision' => array(
+                  'in' => array(1 => 'Who does what', 2 => 'Project Workload'),
                   'required' => true
                )
-            )
-         )
-      ),
-      // Which projects are ongoing
-      'RegisteredProjects' => array(
-         'fields' => array(
-            'Date' => array(
-               'type' => 'date'
-            )
-         )
-      ),
-      // How large are the projects (personnel involved and budget)
-      'ProjectOverview' => array(
-         'fields' => array(
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
-               'precision' => array(
-                  'required' => true
-               )
-            )
-         )
-      ),
-      // Who are working on my projects
-      'ResourceAssignments' => array(
-         'fields' => array(
-            'Project' => array(
-               'reference' => 'catalogs.Projects',
-               'precision' => array(
-                  'required' => true
-               )
-            )
-         )
-      ),
-      // How many hours/money have we spent vs. how much is budgeted.
-      'ProjectPerformance' => array(
-         'fields' => array(                        // Use extra field extProjects
-            'Projects' => array(
-               'reference' => 'catalogs.Projects'
-            )
-         )
-      ),
-      // What is the hourly cost of the different consultants?
-      'ResourceCost' => array(
-         'fields' => array(                        // Use extra field extEmployees
-            'Employees' => array(
+            ),
+            'Department' => array(
+               'reference' => 'catalogs.OrganizationalUnits'
+            ),
+            'PM' => array(
                'reference' => 'catalogs.Employees'
             )
          )
@@ -1505,7 +1469,7 @@ $_dictionary = array(
    ///////////////////////////
    // Data processors Section
    ///////////////////////////
-   'data_processors' => array(
+/*   'data_processors' => array(
       'NavCsvImport' => array(
          'fields' => array(
             'Server' => array(
@@ -1533,8 +1497,8 @@ $_dictionary = array(
                )
             )
          )
-      )*/
-   ),
+      )
+   ),*/
    
    ////////////////
    // Web services
