@@ -50,12 +50,12 @@ function onPost($event)
    $id   = $document->getId();
    $doc  = $document->toArray();
    
-   $employee = $doc['Employee'];
-   
    // Retrieve TimeRecords
    $cmodel = $container->getCModel($kind.'.'.$type.'.tabulars', 'TimeRecords');
    
-   if (null === ($result = $cmodel->getEntities($id, array('attributes' => 'Owner'))) || isset($result['errors']))
+   $criterion = "WHERE `Owner` = ".$id." ORDER BY `Date`";
+   
+   if (null === ($result = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($result['errors']))
    {
       throw new Exception('Database error');
    }
@@ -80,31 +80,57 @@ function onPost($event)
    
    $dates = array();
    
+   // Document attributes
+   $employee = $doc['Employee'];
+   $start = $doc['StartDate'];
+   $end   = date('Y-m-d', strtotime($doc['EndDate'])+86400);
+   
+   // Retrieve employee params
+   $eparams  = MEmployees::retrieveParametersInPeriod($employee, $start, $end);
+   
+   if (empty($eparams)) throw new Exception('Unknow employee');
+   
+   // Retrieve Variance Days
+   $variance = MVacation::getScheduleVarianceDays($employee, $start, $end);
+   
+   foreach ($variance as $date => $vkind)
+   {
+      unset($eparams[$date]);
+   }
+   
+   
    // Post document
    $errors = array();
    $pdepts = array();
-   $edepts = array();
-   $esched = array();
-   $ehours = array();
+   $pcheck = array();
+   $pdate  = null;
+   $phours = array('all' => 0);
+   $arrecs = array();
    
    foreach ($result as $values)
    {
-      // Check Employee
-      if ($err = MEmployees::checkByPeriod($employee, $values['Date'], $values['Date']))
+      // Check Vacation
+      if (!isset($eparams[$values['Date']]) && $values['Hours'] != 0)
       {
-         throw new Exception('Invalid record in document tabular section TimeRecords:<br>&nbsp;'.implode('<br>&nbsp;', $err));
+         throw new Exception('Employee has vacation days in this period ('.getFormattedDate($values['Date']).')');
       }
       
-      // Check Vacation
-      if ($err = MVacation::checkByPeriod($employee, $values['Date'], $values['Date']))
+      // Check Employee
+      if (empty($eparams[$values['Date']]) && $values['Hours'] != 0)
       {
-         throw new Exception('Invalid record in document tabular section TimeRecords:<br>&nbsp;'.implode('<br>&nbsp;', $err));
+         throw new Exception('Employee was firing in ('.getFormattedDate($values['Date']).')');
       }
+      
+      $edep = $eparams[$values['Date']]['OrganizationalUnit'];
       
       // Check Project
-      if ($links = MProjects::isClose($values['Project'], date('Y-m-d')))
+      if (empty($pcheck[$values['Project']]))
       {
-         MGlobal::returnMessageByLinks($links);
+         if ($links = MProjects::isClose($values['Project'], date('Y-m-d')))
+         {
+            MGlobal::returnMessageByLinks($links);
+         }
+         else $pcheck[$values['Project']] = true;
       }
       
       // Retrieve project params
@@ -126,46 +152,6 @@ function onPost($event)
       
       $department = $pdepts[$values['Project']];
       
-      // Retrieve employee params
-      if (!isset($edepts[$employee][$values['Date']]))
-      {
-         $odb = $container->getODBManager();
-
-         $query = "SELECT `Period`, `OrganizationalUnit`, `Schedule` ".
-                  "FROM information_registry.StaffHistoricalRecords ".
-                  "WHERE `Employee`=".$employee." AND `Period` <= '".$values['Date']."' ".
-                  "GROUP BY `Period`";
-
-         if (null === ($row = $odb->loadAssoc($query)))
-         {
-            throw new Exception('Database error');
-         }
-         
-         $edepts[$employee][$values['Date']] = $row['OrganizationalUnit'];
-         $esched[$employee][$values['Date']] = $row['Schedule'];
-      }
-      
-      $edep = $edepts[$employee][$values['Date']];
-      $shed = $esched[$employee][$values['Date']];
-      
-      // Retrieve schedule
-      if (!isset($ehours[$employee][$values['Date']]))
-      {
-         $criterion = 'WHERE `Schedule`='.$shed." AND `Date` = '".$values['Date']."' ";
-
-         if (null === ($schedule = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($schedule['errors']))
-         {
-            throw new Exception('Database error');
-         }
-         elseif (empty($schedule))
-         {
-            throw new Exception('Invalid schedule');
-         }
-         
-         $ehours[$employee][$values['Date']] = $schedule[0]['Hours'];
-      }
-      
-      $hours = $ehours[$employee][$values['Date']];
       
       // TimeReportingRecords
       $ir = clone $irModel;
@@ -188,39 +174,64 @@ function onPost($event)
       }
       else throw new Exception('Invalid attributes for TimeReportingRecords');
       
+      
       // EmployeeHoursReported
-      $date    = strtotime($values['Date']);
+      $date  = strtotime($values['Date']);
       $dates[] = $values['Date'];
+      
+      if (!$pdate)
+      {
+         $pdate = $date;
+      }
+      elseif ($pdate != $date && !empty($arrecs))
+      {
+         // Calculate overtime
+         self::calculateOvertime(&$arrecs, &$phours, $hours);
+         
+         $pdate = $date;
+         
+         // Add records
+         self::addEmployeeHoursReported($arModel, $arrecs);
+         
+         $arrecs = array();
+      }
+      
+      $hours = $eparams[$values['Date']]['WorkingHours'];
+      $owertime = 0;
       
       if ($hours == 0)
       {
-         $owertime = 0;
-         $extra    = $values['Hours'];
+         $extra = $values['Hours'];
       }
       else
-      { 
-         $owertime = ($values['Hours'] > $hours) ? $values['Hours'] - $hours : 0;
-         $extra    = 0;
-      }
-      
-      $ar = clone $arModel;
-      
-      if (!$ar->setAttribute('Employee', $employee))                $err[] = 'Invalid value for Employee';
-      if (!$ar->setAttribute('Project',  $values['Project']))       $err[] = 'Invalid value for Project';
-      if (!$ar->setAttribute('EmployeeDepartment', $edep))          $err[] = 'Invalid value for EmployeeDepartment';
-      if (!$ar->setAttribute('Period', date('Y-m-d H:i:s', $date))) $err[] = 'Invalid value for attribute Period';
-      if (!$ar->setAttribute('Hours',    $values['Hours']))         $err[] = 'Invalid value for Hours';
-      if (!$ar->setAttribute('OvertimeHours', $owertime))           $err[] = 'Invalid value for OvertimeHours';
-      if (!$ar->setAttribute('ExtraHours',    $extra))              $err[] = 'Invalid value for ExtraHours';
-      
-      if (!$err)
       {
-         if ($err = $ar->save())
-         {
-            throw new Exception('Can\'t add record in EmployeeHoursReported');
-         }
+         $extra = 0;
+         
+         $phours[$values['Project']] = $values['Hours'];
+         $phours['all'] += $values['Hours'];
       }
-      else throw new Exception('Invalid attributes for EmployeeHoursReported'); 
+      
+      $arrecs[] = array(
+         'Employee'           => $employee,
+         'Project'            => $values['Project'],
+         'EmployeeDepartment' => $edep,
+         'Period'             => date('Y-m-d H:i:s', $date),
+         'Hours'              => $values['Hours'],
+         'OvertimeHours'      => $owertime,
+         'ExtraHours'         => $extra
+      );
+      
+      if ($hours == 0)
+      {
+         self::addEmployeeHoursReported($arModel, $arrecs);
+         $arrecs = array();
+      }
+   }
+   
+   if (!empty($arrecs))
+   {
+      self::calculateOvertime(&$arrecs, &$phours, $hours);
+      self::addEmployeeHoursReported($arModel, $arrecs);
    }
    
    // Calculate totals for EmployeeHoursReported
@@ -257,4 +268,123 @@ function onUnpost($event)
    $return = (empty($iRes) && empty($aRes)) ? true : false;
    
    $event->setReturnValue($return);
+}
+
+
+/**
+ * Add records in EmployeeHoursReported DB
+ * 
+ * @param object $model  - model class
+ * @param array $records - rows
+ * @return void
+ */
+function addEmployeeHoursReported(&$model, &$records)
+{
+   foreach ($records as $record)
+   {
+      $ar = clone $model;
+
+      if (!$ar->setAttribute('Employee',           $record['Employee']))           $err[] = 'Invalid value for Employee';
+      if (!$ar->setAttribute('Project',            $record['Project']))            $err[] = 'Invalid value for Project';
+      if (!$ar->setAttribute('EmployeeDepartment', $record['EmployeeDepartment'])) $err[] = 'Invalid value for EmployeeDepartment';
+      if (!$ar->setAttribute('Period',             $record['Period']))             $err[] = 'Invalid value for attribute Period';
+      if (!$ar->setAttribute('Hours',              $record['Hours']))              $err[] = 'Invalid value for Hours';
+      if (!$ar->setAttribute('OvertimeHours',      $record['OvertimeHours']))      $err[] = 'Invalid value for OvertimeHours';
+      if (!$ar->setAttribute('ExtraHours',         $record['ExtraHours']))         $err[] = 'Invalid value for ExtraHours';
+
+      if (!$err)
+      {
+         if ($err = $ar->save())
+         {
+            throw new Exception('Can\'t add record in EmployeeHoursReported');
+         }
+      }
+      else throw new Exception('Invalid attributes for EmployeeHoursReported');
+   }
+}
+
+/**
+ * Calculate overtime
+ * 
+ * @param array& $arrecs - rows
+ * @param array& $phours - project/hours
+ * @param float $hours   - working hours
+ * @return void
+ */
+function calculateOvertime(&$arrecs, &$phours, $hours)
+{
+   if ($phours['all'] > $hours)
+   {
+      if (($cnt = count($phours)) == 2)
+      {
+         $arrecs[0]['OvertimeHours'] = $phours['all'] - $hours;
+      }
+      else
+      {
+         $sum  = 0;
+         $max  = 0;
+         $ower = $phours['all'] - $hours;
+         $mkey = array();
+         next($phours);
+          
+         for ($i = 2; $i < $cnt; $i++)
+         {
+            list($project, $Hpi) = each($phours);
+            list($key, $record)  = each($arrecs);
+            
+            $cower = round($ower*$Hpi/$phours['all']);
+            if ($cower == 0)
+            {
+               if ($max < $Hpi)
+               {
+                  $max  = $Hpi;
+                  $mkey = array($key);
+               }
+               elseif ($max == $Hpi)
+               {
+                  $mkey[] = $key;
+               }
+            }
+            else $sum += $cower;
+            
+            $arrecs[$key]['OvertimeHours'] = $cower;
+         }
+         
+         list($key, $record) = each($arrecs);
+         
+         if ($sum == 0)
+         {
+            list($project, $Hpi) = each($phours);
+            
+            if ($Hpi > $max)
+            {
+               $arrecs[$key]['OvertimeHours'] = $ower;
+            }
+            else
+            {
+               if ($Hpi == $max) $mkey[] = $key;
+               
+               if (1 === ($cnt = count($mkey)))
+               {
+                  $arrecs[$mkey[0]]['OvertimeHours'] = $ower;
+               }
+               else
+               {
+                  $cower = ceil($ower/$cnt);
+                  
+                  foreach ($mkey as $key)
+                  {
+                     $ower -= $cower;
+                     $arrecs[$key]['OvertimeHours'] = ($ower < 0) ? $cower+$ower : $cower;
+                     
+                     if ($ower <= 0) break;
+                  }
+               }
+            }
+         }
+         else $arrecs[$key]['OvertimeHours'] = $ower - $sum;
+      }
+   }
+   
+   $phours = array('all' => 0);
 }

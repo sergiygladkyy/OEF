@@ -723,7 +723,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' OR `DateTo` >'".$from."')";
+               "WHERE `Employee`=".(int) $employee." AND `DateFrom` <= '".$to."' AND `DateTo` >'".$from."'";
       
       if (null === ($row = $odb->loadAssocList($query)))
       {
@@ -751,7 +751,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND (`DateFrom` <= '".$to."' OR `DateTo` >'".$from."')";
+               "WHERE `Employee`=".(int) $employee." AND `DateFrom` <= '".$to."' AND `DateTo` >'".$from."'";
       
       if (!($res = $odb->executeQuery($query)))
       {
@@ -1100,6 +1100,154 @@ class MEmployees
             $result[$row['Schedule']][$ind[$row['Schedule']]] = array('from' => $row['Period'], 'to' => $to);
             $prev = $row['Schedule'];
          }
+      }
+      
+      return $result;
+   }
+   
+   /**
+    * Get working hours in period
+    * 
+    * @param int $employee - employee id
+    * @param string $from  - date from
+    * @param string $to    - date to
+    * @return array ('date_1' => hours, .., 'date_N' => hours) 
+    */
+   public static function retrieveParametersInPeriod($employee, $from, $to)
+   {
+      if ((($start = strtotime($from)) === -1) || (($end = strtotime($to)) === -1))
+      {
+         throw new Exception('Invalid date format');
+      }
+      
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Retrieve last record
+      $query = "SELECT MAX(`Period`), `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `InternalHourlyRate`, `YearlyVacationDays`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$from."'";
+      
+      if (null === ($first = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      // Retrieve records in period
+      $query = "SELECT * FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` > '".$from."' AND `Period` < '".$to."' ".
+               "ORDER BY `Period` ASC";
+      
+      if (null === ($rows = $odb->loadAssocList($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      // Claculate
+      $result = array();
+      $prev   = array('Date' => $from);
+      
+      if ($first && $first['RegisteredEvent'] != 'Firing')
+      {
+         $result[$from] = array(
+            'OrganizationalUnit'     => $first['OrganizationalUnit'],
+            'Schedule'               => $first['Schedule'],
+            'OrganizationalPosition' => $first['OrganizationalPosition'],
+            'InternalHourlyRate'     => $first['InternalHourlyRate'],
+            'YearlyVacationDays'     => $first['YearlyVacationDays'],
+            'WorkingHours'           => 0
+         );
+         
+         $prev['Schedule'] = $first['Schedule'];
+      }
+      
+      $day = 86400;
+      
+      if (!empty($rows))
+      {
+         foreach($rows as $row)
+         {
+            $tts = strtotime($row['Period']) - $day;
+            $cts = strtotime($prev['Date']);
+            
+            // Hiring
+            if (empty($prev['Schedule']))
+            {
+               while ($tts >= $cts)
+               {
+                  $cind = date('Y-m-d', $cts);
+                  $cts += $day;
+                  
+                  $result[$cind] = array();
+               }
+            }
+            else
+            {
+               $hours = MSchedules::getSchedule($prev['Schedule'], $prev['Date'], $row['Period']);
+               
+               while ($tts > $cts)
+               {
+                  $pind = date('Y-m-d', $cts);
+                  $cts += $day;
+                  $cind = date('Y-m-d', $cts);
+                  
+                  $result[$cind] = $result[$pind];
+                  $result[$pind]['WorkingHours'] = isset($hours[$pind]) ? $hours[$pind] : 0;
+               }
+               
+               $result[$cind]['WorkingHours'] = isset($hours[$cind]) ? $hours[$cind] : 0;
+               
+               $cind = date('Y-m-d', $cts + $day);
+            }
+            
+            $prev['Date'] = $cind;
+            $prev['Schedule'] = $row['Schedule'];
+            
+            if ($row['RegisteredEvent'] != 'Firing')
+            {
+               $result[$cind] = array(
+                  'OrganizationalUnit'     => $row['OrganizationalUnit'],
+                  'Schedule'               => $row['Schedule'],
+                  'OrganizationalPosition' => $row['OrganizationalPosition'],
+                  'InternalHourlyRate'     => $row['InternalHourlyRate'],
+                  'YearlyVacationDays'     => $row['YearlyVacationDays'],
+                  'WorkingHours'           => 0
+               );
+            }
+         }
+      }
+      elseif (empty($prev['Schedule']))
+      {
+         return array();
+      }
+      
+      $tts = $end - $day;
+      $cts = strtotime($prev['Date']);
+      
+      if (empty($prev['Schedule']))
+      {
+         while ($tts >= $cts)
+         {
+            $cind = date('Y-m-d', $cts);
+            $cts += $day;
+            
+            $result[$cind] = array();
+         }
+      }
+      else
+      {
+         $hours = MSchedules::getSchedule($prev['Schedule'], $prev['Date'], $to);
+         
+         while ($tts > $cts)
+         {
+            $pind = date('Y-m-d', $cts);
+            $cts += $day;
+            $cind = date('Y-m-d', $cts);
+
+            $result[$cind] = $result[$pind];
+            $result[$pind]['WorkingHours'] = isset($hours[$pind]) ? $hours[$pind] : 0;
+         }
+          
+         $result[$cind]['WorkingHours'] = isset($hours[$cind]) ? $hours[$cind] : 0;
       }
       
       return $result;
