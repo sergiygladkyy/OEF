@@ -57,7 +57,7 @@ class ReportsController extends BaseController
             $result['select'] = $default['select'];
          }
       }
-      else {$result = array('item' => array()); throw new Exception(print_r($default, true)); }
+      else $result = array('item' => array());
       
       // Get current item
       $model = $this->container->getModel($this->kind, $this->type, $options);
