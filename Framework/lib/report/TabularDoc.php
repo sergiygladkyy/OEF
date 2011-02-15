@@ -169,7 +169,7 @@ class TabularDoc extends Grid
          {
             if (!isset($cols[$c]))
             {
-               $html .= "\n\t<td colsapn=\"".($this->size['C']-$c+1).'">&nbsp;</td>';
+               $html .= "\n\t<td class=\"oe_report_none_border\" colspan=\"".($this->size['C']-$c+1).'">&nbsp;</td>';
                break;
             }
             
