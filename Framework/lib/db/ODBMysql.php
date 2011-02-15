@@ -79,7 +79,7 @@ class ODBMysql extends DBMysql
       }
       
       // Retrieve objects and attributes definition
-      if (!preg_match_all('/(?<=\s|,|\()(?:[^\s.,()]+(?:\.[^\s.,()]+)+)(?=\s|,|\)|\z)/i', $query, $matches))
+      if (!preg_match_all('/(?<=\s|,|\()(?:[^\s.,()]+(?:\.[^\s.,()=]+)+)(?=\s|,|\)|\z|=)/i', $query, $matches))
       {
          return null;
       }
