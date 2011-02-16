@@ -1463,6 +1463,26 @@ $_dictionary = array(
                'reference' => 'catalogs.Employees'
             )
          )
+      ),
+      
+      // Resource Allocation Records Report
+      'ResourceAllocationRecords' => array(
+         'fields' => array(
+            'Period' => array(
+               'type' => 'string',
+               'precision' => array(
+                  'regexp' => '/(\d{4}-\d{2}-\d{2})|This\sWeek|Last\sWeek|This\sMonth|Last\sMonth|'.
+                     'This\sQuarter|Last\sQuarter|This\sYear|Last\sYear/',
+                  'required' => true
+               )
+            ),
+            'Employee' => array(                   // Use extra field ex_employees
+               'reference' => 'catalogs.Employees'
+            ),
+            'Project' => array(                    // Use extra field ex_projects
+               'reference' => 'catalogs.Projects'
+            )
+         )
       )
    ),
    
