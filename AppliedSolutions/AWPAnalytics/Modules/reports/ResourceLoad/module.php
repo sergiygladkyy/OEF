@@ -112,7 +112,7 @@ function onGenerate($event)
    
    /* Generate report */
    
-   $mockup = new Mockup('/var/www/dekiwiki/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/reports/ResourceLoad/ResourceLoad.htm');
+   $mockup = new Mockup($_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/reports/ResourceLoad/ResourceLoad.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');
@@ -136,10 +136,12 @@ function onGenerate($event)
       $cur += $day;
    }
    
-   $a_fgroup = $mockup->getArea('first_group');
-   $a_fhours = $mockup->getArea('first_hours');
-   $a_sgroup = $mockup->getArea('second_group');
-   $a_shours = $mockup->getArea('second_hours');
+   $a_fgroup  = $mockup->getArea('first_group');
+   $a_fhours  = $mockup->getArea('first_hours');
+   $a_dfhours = $mockup->getArea('d_first_hours');
+   $a_sgroup  = $mockup->getArea('second_group');
+   $a_shours  = $mockup->getArea('second_hours');
+   $a_dshours = $mockup->getArea('d_second_hours');
    
    foreach ($data as $fID => $rows)
    {
@@ -153,9 +155,23 @@ function onGenerate($event)
       {
          $_date = date('Y-m-d', $cur);
          
-         $a_fhours->parameters['Hours'] = isset($hours[$fID][$_date]) ? $hours[$fID][$_date] : '&nbsp;';
-         
-         $report->join($a_fhours);
+         if (isset($hours[$fID][$_date]))
+         {
+            $a_dfhours->parameters['Hours'] = $hours[$fID][$_date];
+            $a_dfhours->decode['AllocationRecords'] = array(
+               'uid'     => 'reports.ResourceAllocationRecords',
+               'actions' => 'displayReportForm',
+               'period'  => $_date,
+               $first    => array($fID)
+            );
+            $report->join($a_dfhours);
+         }
+         else
+         {
+            $a_fhours->parameters['Hours'] = '&nbsp;';
+            
+            $report->join($a_fhours);
+         }
          
          $cur += $day;
       }
@@ -172,22 +188,28 @@ function onGenerate($event)
          {
             $_date = date('Y-m-d', $cur);
             
-            $a_shours->parameters['Hours'] = isset($dates[$_date]) ? $dates[$_date] : '&nbsp;';
-            
-            $report->join($a_shours);
+            if (isset($dates[$_date]))
+            {
+               $a_dshours->parameters['Hours'] = $dates[$_date];
+               $a_dshours->decode['AllocationRecords'] = array(
+                  'uid'     => 'reports.ResourceAllocationRecords',
+                  'actions' => 'displayReportForm',
+                  'period'  => $_date,
+                  $first    => $fID,
+                  $second   => $sID
+               );
+               $report->join($a_dshours);
+            }
+            else
+            {
+               $a_shours->parameters['Hours'] = '&nbsp;';
+               
+               $report->join($a_shours);
+            }
             
             $cur += $day;
          }
       }
-
-      /*
-      $a_card->decode['TimeCard'] = array(
-         'uid'     => 'documents.TimeCard',
-         'actions' => 'displayEditForm',
-         'id'      => $doc
-      );
-      */
-      
    }
    
    echo $report->show();
@@ -205,8 +227,25 @@ function onDecode($event)
 
    switch($decode)
    {
-      case 'TimeCard':
+      case 'AllocationRecords':
          $ret['reference'] = $param;
+         $result =& $ret['reference'];
+         
+         $result['headline']['Period'] = $result['period'];
+         unset($result['period']);
+         
+         if (isset($result['Project']))
+         {
+            $result['headline']['Project'] = $result['Project'];
+            unset($result['Project']);
+         }
+         
+         if (isset($result['Employee']))
+         {
+            $result['headline']['Employee'] = $result['Employee'];
+            unset($result['Employee']);
+         }
+         $result['generate'] = true;
          break;
 
       default:
