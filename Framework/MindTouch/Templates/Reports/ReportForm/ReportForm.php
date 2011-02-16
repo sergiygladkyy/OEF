@@ -36,7 +36,10 @@
       var headline = {};
       var fields = entities.getInternalConfiguration((#puid.main_kind != 0 ? puid.main_kind..'.'..puid.main_type..'.'..puid.kind : puid.kind)..'.fields', type);
       foreach (var field in fields) {
-         let headline ..= {(field):__request.args['headline_'..field] ?? ''};
+         if (typeof __request.args['headline_'..field] != 'nil')
+         {
+            let headline ..= {(field):__request.args['headline_'..field]};
+         }
       }
       
       /* Get page data */
@@ -51,8 +54,17 @@
       
       if (data.status != True) {
         let content = '&lt;ul class="ae_errors"&gt;';
-        foreach (var error in data.errors) {
-          let content = content..'&lt;li class="ae_error"&gt;'..error..'&lt;/li&gt;';
+        foreach (var key in map.keys(data.errors)) {
+          var error = data.errors[key];
+          if (error is list) {
+             foreach (var err in error)
+             {
+                let content ..= '&lt;li class="ae_error"&gt;'..(key is str ? key..': ' : '')..err..'&lt;/li&gt;';
+             }
+          }
+          else {
+             let content ..= '&lt;li class="ae_error"&gt;'..(key is str ? key..': ' : '')..error..'&lt;/li&gt;';
+          }
         }
         let content = content..'&lt;/ul&gt;';
         web.html(content);

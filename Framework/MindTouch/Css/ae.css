@@ -65,18 +65,8 @@ ul.ae_editform_field_errors, ul.ae_errors {
 .oe_custom_edit_form input[type=text]  { width: 140px; }
 .oe_custom_edit_form select { width: 144px; }
 
-.ae_report_form input[type=text]  { width: 140px; }
-.ae_report_form select { width: 144px; }
-.ae_report {
-	width: 721px;
-	padding: 20px 0px 4px 0px;
-	overflow: auto;
-}
-
 .ae_even { background-color: #F5F5F5; }
 tr.tabular_item:hover, tr.ae_list_item:hover { background-color: #EEFFC9/*#DEFECB*/; }
-
-.ae_report *[ondblclick] { cursor: url("/skins/common/icons/sheet.ico"), crosshair; }
 
 .ae_list_pagination {
    margin: 0px 0px 7px 0px;
@@ -263,6 +253,16 @@ span.ae_pagination {
 
 /***************************************** Reports *******************************************/
 
+.ae_report_form input[type=text]  { width: 140px; }
+.ae_report_form select { width: 144px; }
+.ae_report {
+	width: 721px;
+	padding: 20px 0px 4px 0px;
+	overflow: auto;
+}
+
+.ae_report *[ondblclick] { cursor: url("/skins/common/icons/sheet.ico"), crosshair; }
+
 .oef_content table.oef_report, .oef_content tr.oef_report {
 	border: 0 none !important;
 }
@@ -275,7 +275,10 @@ span.ae_pagination {
 }
 
 .oef_report td, .oef_report th {
-	border: 1px solid #AAAAAA;
+	border-top:    1px solid #AAAAAA !important;
+	border-right:  1px solid #AAAAAA !important;
+	border-bottom: 1px solid #AAAAAA !important;
+	border-left:   1px solid #AAAAAA !important;
 }
 
 
