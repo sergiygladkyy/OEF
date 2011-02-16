@@ -33,11 +33,18 @@ class ReportModel extends BaseNotStorageEntityModel
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onGenerate');
       $event['headline'] = $this->toArray();
       
-      ob_start();
-      
-      $this->container->getEventDispatcher()->notify($event);
-      
-      $buffer = ob_get_clean();
+      try
+      {
+         ob_start();
+         
+         $this->container->getEventDispatcher()->notify($event);
+         
+         $buffer = ob_get_clean();
+      }
+      catch (Exception $e)
+      {
+         return array($e->getMessage());
+      }
       
       return array();
    }

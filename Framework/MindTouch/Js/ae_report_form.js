@@ -119,7 +119,10 @@ var aeDecode = function(_type, _params)
 		}
 		var data = responce['result']['data'];
 		
-		if (data.content && typeof(data.content) == 'string') {
+		if (!data) {
+			alert('Result is empty');
+		}
+		else if (data.content && typeof(data.content) == 'string') {
 			var decWin = window.open(null, null, 'width=400,height=250');
 			decWin.document.write(data.content);
 			decWin.moveTo(300,200);
@@ -149,7 +152,7 @@ var aeDecode = function(_type, _params)
 			var decWin = window.open(encodeURI(url));
 			decWin.focus();
 		}
-		else alert('Result is empty or wrong');
+		else alert('Result is wrong');
 	};
 	
 	/**
