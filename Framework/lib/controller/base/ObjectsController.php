@@ -203,25 +203,64 @@ abstract class ObjectsController extends EntityController
    }
    
    /**
-    * Restore entities
-    * 
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/controller/base/EntityController#delete($ids, $options)
+    */
+   public function delete($ids, array $options = array())
+   {
+      return array(
+         'status' => false,
+         'result' => array(
+            'msg' => 'Not supported operation'
+         ),
+         'errors' => array()
+      );
+   }
+   
+   /**
+    * Mark for deletion
+    *  
     * @param mixed $ids
     * @param array $options
     * @return array
     */
-   public function restore($ids, array $options = array())
+   public function markForDeletion($ids, array $options = array())
    {
       $status = true;
       
       $cmodel = $this->container->getCModel($this->kind, $this->type, $options);
-      $errors = $cmodel->restore($ids, $options);
+      $errors = $cmodel->markForDeletion($ids, $options);
       
       if ($errors)
       { 
          $status = false;
-         $result['msg'] = 'Not restored';
+         $result['msg'] = 'Not marked for deletion';
       }
-      else $result['msg'] = 'Restored succesfully';
+      else $result['msg'] = 'Marked for deletion succesfully';
+      
+      return array('status' => $status, 'result' => $result, 'errors' => $errors);
+   }
+   
+   /**
+    * Unmark for deletion
+    *  
+    * @param mixed $ids
+    * @param array $options
+    * @return array
+    */
+   public function unmarkForDeletion($ids, array $options = array())
+   {
+      $status = true;
+      
+      $cmodel = $this->container->getCModel($this->kind, $this->type, $options);
+      $errors = $cmodel->unmarkForDeletion($ids, $options);
+      
+      if ($errors)
+      { 
+         $status = false;
+         $result['msg'] = 'Not unmarked for deletion';
+      }
+      else $result['msg'] = 'Unmarked for deletion succesfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }

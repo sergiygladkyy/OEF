@@ -37,62 +37,43 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
    
    
    
-   
    /**
-    * Delete entities with this kind and type
-    * 
-    * @param mixed $values - array or value
-    * @param array $options
-    * @return array - errors
-    */
-   public function delete($values, array $options = array())
-   {
-      if (empty($values)) return array();
-      
-      return $this->markAsRemoved($values, $options);
-   }
-   
-   /**
-    * Restore marked as delete entities with this kind and type
-    * 
-    * @param mixed $values - array or value
-    * @param array $options
-    * @return array - errors
-    */
-   public function restore($values, array $options = array())
-   {
-      if (empty($values)) return array();
-      
-      if (!$this->hasEntities($values, $options)) return array();
-      
-      return $this->changeRemovedMark($values, false, $options);
-   }
-   
-   /**
-    * Merk entities with this kind and type as removed
+    * Mark for deletion
     * 
     * @param mixed $values - array or value
     * @param array& $options
     * @return array - errors
     */
-   public function markAsRemoved($values, array& $options = array())
+   public function markForDeletion($values, array& $options = array())
    {
       if (empty($values)) return array();
       
-      if (!$this->hasEntities($values, $options)) return array();
-      
-      return $this->changeRemovedMark($values, true, $options);
+      return $this->changeDeletionMark($values, true, $options);
    }
    
    /**
-    * Change markRemove flag
+    * Unmark for deletion
     * 
-    * @param mixed& $values
-    * @param boolean $remove
-    * @param array& $options
+    * @param mixed $values - array or value
+    * @param array $options
     * @return array - errors
     */
-   protected function changeRemovedMark(& $values, $remove, array& $options = array())
+   public function unmarkForDeletion($values, array $options = array())
+   {
+      if (empty($values)) return array();
+      
+      return $this->changeDeletionMark($values, false, $options);
+   }
+   
+   /**
+    * Change mark for deletion flag
+    * 
+    * @param mixed&  $values
+    * @param boolean $mark
+    * @param array&  $options
+    * @return array - errors
+    */
+   protected function changeDeletionMark(& $values, $mark, array& $options = array())
    {
       $db_map =& $this->conf['db_map'];
       $params =  $this->retrieveCriteriaQuery($db_map, $values, $options);
@@ -101,42 +82,9 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       
       extract($params, EXTR_OVERWRITE);
       
-      $related =& $this->conf['relations'];
-      $db      =  $this->container->getDBManager($options);
+      $db =  $this->container->getDBManager($options);
       
-      // Change related
-      if (!$remove)
-      {
-         $method = 'restoreRelated';
-         
-         if (!empty($related['catalogs']))  $rel['catalogs']  =& $related['catalogs'];
-         if (!empty($related['documents'])) $rel['documents'] =& $related['documents'];
-      }
-      else
-      {
-         $method = 'removeRelated';
-         $rel = $related;
-      }
-      
-      if (!empty($rel))
-      {
-          // retrieve ids
-         if (!in_array($db_map['pkey'], $fields))
-         {
-            $query  = 'SELECT `'.$db_map['pkey'].'` FROM `'.$db_map['table'].'` '.$criteria;
-            $ids    = $db->loadArrayList($query, array('field' => $db_map['pkey']));
-            
-            if (is_null($ids)) return array($db->getError());
-         }
-         else $ids =& $values;
-         
-         if (!empty($ids)) $errors = $this->$method($rel, $ids, $options);
-         
-         if (!empty($errors)) return $errors;
-      }
-      
-      // Change this mark
-      $query  = 'UPDATE `'.$db_map['table'].'` SET `'.$db_map['deleted'].'`='.($remove ? 1 : 0).' '.$criteria;
+      $query = 'UPDATE `'.$db_map['table'].'` SET `'.$db_map['deleted'].'`='.($mark ? 1 : 0).' '.$criteria;
       
       if (!$db->executeQuery($query))
       {
@@ -146,86 +94,9 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       return array();
    }
    
-   /**
-    * Remove related entities
-    * 
-    * @param array& $related - relation map to this entities
-    * @param array& $ids - ids this entities
-    * @param array $options
-    * @return array - errors
-    */
-   protected function removeRelated(array& $related, array& $ids, array& $options = array())
-   {
-      $errors = array();
-      static $checked = array();
-      static $count = 0;
-      
-      $count++;
-      
-      foreach ($related as $kind => $params)
-      {
-         foreach ($params as $type => $fields)
-         {
-            if (!empty($checked[$kind.$type])) continue;
-            
-            $checked[$kind.$type] = true;
-            
-            $model = $this->container->getCModel($kind, $type, $options);
-            $err   = $model->delete($ids, array('attributes' => $fields));
-            if (!empty($err))
-            {
-               $errors[$kind.'.'.$type] = $err;
-            }
-         }
-      }
-      
-      $count--;
-      
-      if ($count == 0) $checked = array();
-      
-      return $errors;
-   }
    
-   /**
-    * Restore related entities
-    * 
-    * @param array& $related - relation map to this entities
-    * @param array& $ids - ids this entities
-    * @param array $options
-    * @return array - errors
-    */
-   protected function restoreRelated(array& $related, array& $ids, array& $options = array())
-   {
-      $errors = array();
-      static $checked = array();
-      static $count = 0;
-      
-      $count++;
-      
-      foreach ($related as $kind => $params)
-      {
-         foreach ($params as $type => $fields)
-         {
-            if (!empty($checked[$kind.$type])) continue;
-            
-            $checked[$kind.$type] = true;
-            
-            $model = $this->container->getCModel($kind, $type, $options);
-            $err   = $model->restore($ids, array('attributes' => $fields));
-            if (!empty($err))
-            {
-               $errors[$kind.'.'.$type] = $err;
-            }
-         }
-      }
-      
-      $count--;
-      
-      if ($count == 0) $checked = array();
-      
-      return $errors;
-   }
-
+   
+   
    /**
     * Retrieve values for select box
     * 
@@ -239,7 +110,7 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
     * 
     * @param mixed $ids
     * @param array $options
-    * @return array or null
+    * @return array
     */
    abstract public function retrieveLinkData($ids, array $options = array());
    

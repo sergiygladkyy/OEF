@@ -24,22 +24,47 @@ class BaseObjectModel extends BaseEntityModel
    }
    
    /**
-    * (non-PHPdoc)
-    * @see lib/model/BaseEntityModel#delete($options)
+    * Mark for deletion
+    * 
+    * @param array& $options
+    * @return array - errors
     */
-   public function delete(array& $options = array())
+   public function markForDeletion(array& $options = array())
+   {
+      return $this->changeMarkForDeletion(true, $options);
+   }
+   
+   /**
+    * Unmark for deletion
+    * 
+    * @param array& $options
+    * @return array - errors
+    */
+   public function unmarkForDeletion(array& $options = array())
+   {
+      return $this->changeMarkForDeletion(false, $options);
+   }
+   
+   /**
+    * Change MarkForDeletion flag
+    * 
+    * @param boolean $mark
+    * @param array&  $options
+    * @return array - errors
+    */
+   protected function changeMarkForDeletion($mark, array& $options = array())
    {
       if ($this->isNew) return array();
       
-      // Remove this
-      $model  = $this->container->getCModel($this->kind, $this->type, $options);
-      $errors = $model->delete($this->id);
-      
-      if (!empty($errors)) return $errors;
-      
-      $this->isDeleted = true;
+      $db    =  $this->container->getDBManager($options);
+      $dbmap =& $this->conf['db_map'];
+      $query =  "UPDATE `".$dbmap['table']."` SET `".$dbmap['deleted']."` = ".($mark ? 1 : 0)." WHERE `".$dbmap['pkey']."`=".$this->id;
+       
+      if (!$db->executeQuery($query))
+      {
+         return array($db->getError());
+      }
       
       return array();
    }
-
 }
