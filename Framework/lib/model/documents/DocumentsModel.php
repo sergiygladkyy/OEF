@@ -163,14 +163,16 @@ class DocumentsModel extends BaseObjectsModel
    
    
    /**
-    * Mark for deletion
     * (non-PHPdoc)
     * @see BaseObjectsModel#delete($values, $options)
     */
    public function delete($values, array $options = array())
    {
       // Check permissions
-      // None
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Delete'))
+      {
+         return array();
+      }
       
       // Execute method
       return parent::delete($values, $options);

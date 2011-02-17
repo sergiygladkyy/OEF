@@ -218,14 +218,16 @@ class CatalogModel extends BaseObjectModel
    
    
    /**
-    * Mark for deletion
     * (non-PHPdoc)
     * @see BaseObjectModel#delete($options)
     */
    public function delete(array& $options = array())
    {
       // Check permissions
-      // None
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Delete'))
+      {
+         return array();
+      }
       
       // Execute method
       return parent::delete($options);
