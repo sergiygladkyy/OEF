@@ -91,19 +91,17 @@ class DocumentsModel extends BaseObjectsModel
    
    /**
     * (non-PHPdoc)
-    * @see lib/model/base/BaseObjectsModel#markAsRemoved($values, $options)
+    * @see lib/model/base/BaseObjectsModel#markForDeletion($values, $options)
     */
-   public function markAsRemoved($values, array& $options = array())
+   public function markForDeletion($values, array& $options = array())
    {
       if (empty($values)) return array();
-      
-      if (!$this->hasEntities($values, $options)) return array();
       
       $errors = $this->unpost($values, $options);
       
       if (!empty($errors)) return $errors;
       
-      return $this->changeRemovedMark($values, true, $options);
+      return $this->changeDeletionMark($values, true, $options);
    }
    
    /**
@@ -141,7 +139,7 @@ class DocumentsModel extends BaseObjectsModel
       {
          if (!$model->load($id, $options))
          {
-            $errors[] = 'Can\'t load document "'.$this->type.'" with id "'.((int) $id).'"';
+            $errors[] = 'Can\'t load document '.$this->type.' with id "'.((int) $id).'"';
             continue;
          }
           
@@ -149,18 +147,12 @@ class DocumentsModel extends BaseObjectsModel
 
          if ($err)
          {
-            $errors[] = 'Document "'.$this->type.'" not unposted: '.implode(", ", $err);
+            $errors[] = 'Document '.$this->type.' '.$model->getAttribute('Date').' not unposted: '.implode(", ", $err);
          }
       }
       
       return $errors;
    }
-   
-   
-   
-   /************************** For control access rights **************************************/
-   
-   
    
    /**
     * (non-PHPdoc)
@@ -174,9 +166,21 @@ class DocumentsModel extends BaseObjectsModel
          return array();
       }
       
+      if (empty($values)) return array();
+      
+      $errors = $this->unpost($values, $options);
+      
+      if (!empty($errors)) return $errors;
+      
       // Execute method
       return parent::delete($values, $options);
    }
+   
+   
+   
+   /************************** For control access rights **************************************/
+   
+   
    
    /**
     * (non-PHPdoc)

@@ -132,12 +132,19 @@ class DocumentModel extends BaseObjectModel
       return parent::save($options);
    }
    
-
-   
-   
-   /************************** For control access rights **************************************/
-   
-   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/model/base/BaseObjectModel#markForDeletion($options)
+    */
+   public function markForDeletion(array& $options = array())
+   {
+      $errors = $this->changePost(false, $options);
+      
+      if (!empty($errors)) return $errors;
+      
+      // Execute method
+      return parent::markForDeletion($options);
+   }
    
    /**
     * (non-PHPdoc)
@@ -151,9 +158,19 @@ class DocumentModel extends BaseObjectModel
          return array();
       }
       
+      $errors = $this->changePost(false, $options);
+      
+      if (!empty($errors)) return $errors;
+      
       // Execute method
       return parent::delete($options);
    }
+   
+   
+   
+   /************************** For control access rights **************************************/
+   
+   
    
    /**
     * (non-PHPdoc)
