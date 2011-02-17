@@ -75,7 +75,12 @@ class DocumentModel extends BaseObjectModel
    {
       if ($this->isNew) return array('You must save the document');
       
-      if ($this->isPosted() && $post) return array('Document already posted');
+      if ($post)
+      {
+         if ($this->isMarkedForDeletion()) return array('Document was marked for deletion');
+         
+         if ($this->isPosted()) return array('Document already posted');
+      }
       
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model'.($post ? '.onPost' : '.onUnpost'));
       $event->setReturnValue(true);

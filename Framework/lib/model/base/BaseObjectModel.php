@@ -67,4 +67,16 @@ class BaseObjectModel extends BaseEntityModel
       
       return array();
    }
+   
+   /**
+    * Check mark for deletion flag
+    * 
+    * @return boolean (true if entity marked for deletion)
+    */
+   public function isMarkedForDeletion()
+   {
+      if ($this->isNew) return false;
+      
+      return !empty($this->attributes[$this->conf['db_map']['deleted']]);
+   }
 }
