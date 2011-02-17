@@ -24,6 +24,7 @@ function onGenerate($event)
    $container = Container::getInstance();
    $cmodel = $container->getCModel('information_registry', 'BaseCalendar');
    $data   = $cmodel->getEntities($year_cur, array('attributes' => array('Year'), 'key' => 'Date'));
+   $isNew  = empty($data);
    $data   = Utility::convertArrayToJSONString($data);
    
    include(self::$templates_dir.$name.'.php');
@@ -79,7 +80,7 @@ function onProcess($event)
    {
       $event->setReturnValue(array(
          'status' => true,
-         'result' => array('msg' => 'Updated sucessfuly'),
+         'result' => array('msg' => 'Updated sucessfully'),
          'errors' => array()
       ));
    }
