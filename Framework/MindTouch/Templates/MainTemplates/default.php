@@ -70,6 +70,7 @@
   {{
      &lt;html&gt;
        &lt;head&gt;
+         &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
          &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
          &lt;script type="text/javascript" src=(js_path..'/ae_edit_form.js')&gt;&lt;/script&gt;
          &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
@@ -101,6 +102,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
+           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/ae_edit_form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
@@ -118,6 +120,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
+           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/ae_item_form.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
          &lt;body&gt;&lt;/body&gt;
@@ -133,6 +136,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
+           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
          &lt;/head&gt;
@@ -149,6 +153,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
+           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/ae_report_form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
@@ -162,6 +167,7 @@
     {{
        &lt;html&gt;
          &lt;head&gt;
+           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/ae_import_form.js')&gt;&lt;/script&gt;
            &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;

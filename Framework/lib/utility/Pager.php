@@ -93,7 +93,7 @@ class Pager
       
       $values =& $this->criteria['values']; 
       $m_opt['attributes'] =& $this->criteria['attributes'];
-      $m_opt['criterion']   =& $this->criteria['criterion'];
+      $m_opt['criterion']  =& $this->criteria['criterion'];
       
       $cmodel = $this->container->getCModel($this->kind, $this->type, $c_opt);
 
@@ -120,7 +120,8 @@ class Pager
          
          if (!empty($options)) $m_opt = array_merge($options, $m_opt);
          
-         $m_opt['criterion'] = $this->criteria['template'].' LIMIT '.($this->offset + ($current - 1) * $params['max_per_page']).', '.$params['max_per_page'];
+         $m_opt['criterion']  = (isset($this->criteria['template']) ? $this->criteria['template'] : '');
+         $m_opt['criterion'] .= ' LIMIT '.($this->offset + ($current - 1) * $params['max_per_page']).', '.$params['max_per_page'];
          
          $list = $cmodel->getEntities($values, $m_opt);      
          

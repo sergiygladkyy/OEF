@@ -5,6 +5,7 @@ if (defined('MINDTOUCH_DEKI'))
    DekiPlugin::registerHook('Special:OEInstall', array('SpecialOEInstall', 'execute'));
 }
 
+require_once('ext/include/MyPlug.php');
 
 class SpecialOEInstall extends SpecialPagePlugin
 {
@@ -136,8 +137,9 @@ class SpecialOEInstall extends SpecialPagePlugin
          // Update modules
          case 'update_modules':
             
+            $container_options =& $this->conf['Container'];
             require_once('config/init.php');
-            $container = Container::createInstance($this->conf['Container']);
+            $container = Container::getInstance();
             
             $container->getModulesManager()->clearCache();
             $msg = 'Updated succesfully';

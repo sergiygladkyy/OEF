@@ -445,9 +445,9 @@ class SpecialOEController extends SpecialPagePlugin
    
    
    /**
-    * Delete entity (Mark for deletion for object types) 
+    * Delete entity (Only for not object types) 
     * 
-    * Only for 'catalogs', 'documents', 'information_registry'
+    * Only for 'information_registry', 'AccumulationRegisters'
     * 
     * @return array
     */
@@ -471,40 +471,79 @@ class SpecialOEController extends SpecialPagePlugin
          return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
       }
       
-      // Check interactive permission
-      if (defined('IS_SECURE'))
+      if ($values['kind'] == 'catalogs' || $values['kind'] == 'documents')
       {
-         if ($kind == 'information_registry' || $kind == 'AccumulationRegisters')
-         {
-            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.Edit');
-         }
-         else
-         {
-            $access = $this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveMarkForDeletion');
-         }
-         
-         if (!$access)
-         {
-            return array(
-               'status' => false,
-               'result' => array('msg' => 'Access denied'),
-               'errors' => array()
-            );
-         }
+         return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
       }
       
-      // Delete not object and Mark For Deletion object type entity
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission($values['kind'].'.'.$values['type'].'.Edit'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Access denied'),
+            'errors' => array()
+         );
+      }
+      
+      // Delete
       $controller = $this->container->getController($values['kind'], $values['type']);
       
       return $controller->delete((int) $values['_id']);
    }
    
    /**
-    * Restore object entity
+    * Mark for deletion (only for object types)
     * 
     * @return array
     */
-   protected function restore()
+   protected function markForDeletion()
+   {
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $values = $_POST['aeform'];
+      $errors = array();
+      
+      if (empty($values['kind'])) $errors[] = 'Unknow entity kind';
+      if (empty($values['type'])) $errors[] = 'Unknow entity type';
+      if (empty($values['_id']))  $errors[] = 'Unknow entity id';
+      
+      if ($errors)
+      {
+         return array('status' => false, 'errors' => array('global' => implode('; ', $errors)));
+      }
+      
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveMarkForDeletion'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Access denied'),
+            'errors' => array()
+         );
+      }
+      
+      // Mark For Deletion object type entity
+      $controller = $this->container->getController($values['kind'], $values['type']);
+   
+      if (!method_exists($controller, 'markForDeletion'))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
+      }
+      
+      return $controller->markForDeletion((int) $values['_id']);
+   }
+   
+   /**
+    * Unmark for deletion (only for object types)
+    * 
+    * @return array
+    */
+   protected function unmarkForDeletion()
    {
       // Check data
       if (empty($_POST['aeform']))
@@ -534,15 +573,15 @@ class SpecialOEController extends SpecialPagePlugin
          );
       }
       
-      // Restore entity (UnmarkForDeletion)
+      // Unmark for deletion object type entity
       $controller = $this->container->getController($values['kind'], $values['type']);
       
-      if (!method_exists($controller, 'restore'))
+      if (!method_exists($controller, 'unmarkForDeletion'))
       {
          return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
       }
       
-      return $controller->restore((int) $values['_id']);
+      return $controller->unmarkForDeletion((int) $values['_id']);
    }
    
    

@@ -169,7 +169,7 @@
      
      if (is_a($controller, 'ObjectsController'))
      {
-        if (!empty($params['show_deleted']))
+        if (!empty($params['show_marked_for_deletion']))
         {
            $options['criteria']['values'] = empty($params['ids']) ? array() : $params['ids'];
         }

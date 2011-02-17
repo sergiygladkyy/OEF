@@ -119,8 +119,8 @@
   <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New</a>&nbsp;|
   <a href="#" target="_blank" onclick="{{ 'javascript:if (!editListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\')) return false;' }}">Edit</a>&nbsp;|
   <a href="#" target="_blank" onclick="{{ 'javascript:if (!viewListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm'..'\', \''..class..'\')) return false;' }}">View</a>&nbsp;|
-  <a href="#" onclick="{{ 'javascript:deleteListItem(\''..kind..'\', \''..type..'\', \''..class..'\', '..(params.show_deleted ? 'true' : 'false')..'); return false;' }}">Mark for deletion</a>
-  <eval:if test="params.show_deleted">
-    |&nbsp;<a href="#" onclick="{{ 'javascript:restoreListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Restore</a>
+  <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', '..(params.show_marked_for_deletion ? 'true' : 'false')..'); return false;' }}">Mark for deletion</a>
+  <eval:if test="params.show_marked_for_deletion">
+    |&nbsp;<a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
   </eval:if>
 </eval:else>

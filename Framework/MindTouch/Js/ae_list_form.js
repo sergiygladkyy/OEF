@@ -71,15 +71,14 @@ function viewListItem(element, href, prefix)
 }
 
 /**
- * Action delete Item
+ * Action delete Item (only for not object types)
  * 
  * @param kind
  * @param type
  * @param prefix
- * @param show_deleted
- * @return
+ * @return boolean
  */
-function deleteListItem(kind, type, prefix, show_deleted)
+function deleteListItem(kind, type, prefix)
 {
 	var result = true;
 	
@@ -89,7 +88,7 @@ function deleteListItem(kind, type, prefix, show_deleted)
 	{
 		appAddLoader();
 			
-		result = executeDeleteListItem(kind, type, prefix, show_deleted);
+		result = executeDeleteListItem(kind, type, prefix);
 	}
 	else jQuery('.' + kind.replace(/\./g, '_') + '_' + type + '_message').css('display', 'none');
 	
@@ -99,19 +98,47 @@ function deleteListItem(kind, type, prefix, show_deleted)
 }
 
 /**
- * Action restore Item
+ * Action mark for deletion Item (only for object types)
  * 
  * @param kind
  * @param type
  * @param prefix
- * @return
+ * @param show_deleted
+ * @return boolean
  */
-function restoreListItem(kind, type, prefix)
+function markForDeletionListItem(kind, type, prefix, show_deleted)
+{
+	var result = true;
+	
+	appInactive();
+	
+	if (confirm('Are you sure?'))
+	{
+		appAddLoader();
+			
+		result = executeMarkForDeletionListItem(kind, type, prefix, show_deleted);
+	}
+	else jQuery('.' + kind.replace(/\./g, '_') + '_' + type + '_message').css('display', 'none');
+	
+	appActive();
+	
+	return result;
+}
+
+/**
+ * Action unmark for deletion Item
+ * 
+ * @param kind
+ * @param type
+ * @param prefix
+ * @return boolean
+ */
+function unmarkForDeletionListItem(kind, type, prefix)
 {
 	appInactive();
 	appAddLoader();
 	
-	var result = executeRestoreListItem(kind, type, prefix);
+	var result = executeUnmarkForDeletionListItem(kind, type, prefix);
 
 	appActive();
 	
@@ -229,11 +256,15 @@ function updateListForm(pageAPI, tagid, maxRequestTime)
  * @param kind
  * @param type
  * @param prefix
- * @param show_deleted
- * @return
+ * @return boolean
  */
-function executeDeleteListItem(kind, type, prefix, show_deleted)
+function executeDeleteListItem(kind, type, prefix)
 {
+	if (kind == 'catalogs' || kind == 'documents'){
+		displayMessage(kind + '_' + type, 'Unsupported operation', false);
+		return false;
+	}
+	
 	var ret = true;
 	var id  = getItemId(prefix);
 	
@@ -258,31 +289,13 @@ function executeDeleteListItem(kind, type, prefix, show_deleted)
 			{
 				for(var index in data['errors'])
 				{
-					msg += index + ': ' + data['errors'][index]+"\n";
-				}
-				
-				if (kind != 'catalogs' && kind != 'documents') {
-					msg = "At deleted there were some errors\n" + msg;
-				}
-				else {
-					msg = "At Mark for deletion there were some errors\n" + msg;
+					msg += data['errors'][index]+"\n";
 				}
 			}
-			else
+			
+			if (!msg)
 			{
-				if (kind != 'catalogs' && kind != 'documents') {
-					msg = 'Deleted successfully';
-				}
-				else {
-					msg = 'Mark for deletion succesfully';
-				}
-				
-				if (show_deleted != true){
-					jQuery('#' + prefix + '_list_block .ae_current').remove();
-				}
-				else {
-					jQuery('#' + prefix + '_list_block .ae_current').addClass('ae_deleted_col');
-				}
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Deleted successfully' : 'Not deleted');
 			}
 			
 			displayMessage(kind.replace(/\./g, '_') + '_' + type, msg, data['status']);
@@ -293,15 +306,85 @@ function executeDeleteListItem(kind, type, prefix, show_deleted)
 }
 
 /**
- * Restore Item
+ * Mark For Deletion
+ * 
+ * @param kind
+ * @param type
+ * @param prefix
+ * @param show_deleted
+ * @return boolean
+ */
+function executeMarkForDeletionListItem(kind, type, prefix, show_deleted)
+{
+	if (kind != 'catalogs' && kind != 'documents'){
+		displayMessage(kind + '_' + type, 'Unsupported operation', false);
+		return false;
+	}
+	
+	var ret = true;
+	var id  = getItemId(prefix);
+	
+	if (!id) {
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		return false;
+	}
+	
+	jQuery.ajax({
+		url: '/Special:OEController',
+	    async: false,
+		type: 'POST',
+		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'markForDeletion'}),
+		dataType: 'json',
+		success: function (data , status)
+		{
+			ret = data['status'];	
+			
+			var msg = '';
+			
+			if (!data['status'])
+			{
+				for (var index in data['errors'])
+				{
+					msg += data['errors'][index]+"\n";
+				}
+			}
+			else
+			{
+				if (show_deleted != true) {
+					jQuery('#' + prefix + '_list_block .ae_current').remove();
+				}
+				else {
+					jQuery('#' + prefix + '_list_block .ae_current').addClass('ae_deleted_col');
+				}
+			}
+			
+			if (!msg)
+			{
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Mark for deletion succesfully' : 'Not marked for deletion');
+			}
+			
+			displayMessage(kind + '_' + type, msg, data['status']);
+		}
+	});
+	
+	return ret;
+}
+
+/**
+ * Unmark For Deletion Item
  * 
  * @param kind
  * @param type
  * @param prefix
  * @return
  */
-function executeRestoreListItem(kind, type, prefix)
+function executeUnmarkForDeletionListItem(kind, type, prefix)
 {
+	if (kind != 'catalogs' && kind != 'documents'){
+		displayMessage(kind + '_' + type, 'Unsupported operation', false);
+		return false;
+	}
+	
 	var ret = true;
 	var id  = getItemId(prefix);
 	
@@ -314,25 +397,32 @@ function executeRestoreListItem(kind, type, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'restore'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unmarkForDeletion'}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
 			ret = data['status'];
 			
+			var msg = '';
+			
 			if(!data['status'])
 			{
-				var msg = '';
 				for(var index in data['errors'])
 				{
-					msg += index + ': ' + data['errors'][index]+'\n';
+					msg += data['errors'][index]+'\n';
 				}
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, "At Restore there were some errors\n" + msg, false);
 			}
-			else {
+			else
+			{
 				jQuery('#' + prefix + '_list_block .ae_current').removeClass('ae_deleted_col');
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Restore succesfully', true);
 			}
+			
+			if (!msg)
+			{
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Unmarked for deletion succesfully' : 'Not unmarked for deletion');
+			}
+			
+			displayMessage(kind + '_' + type, msg, data['status']);
 	    }
 	});
 	
@@ -440,7 +530,6 @@ function executeClearPostingListItem(kind, type, prefix)
 
 
 
-
 /**
  * Get current (selected) item id
  * 
@@ -465,66 +554,4 @@ function selectColumn(element, prefix)
 	jQuery(element).parent().addClass('ae_current');
 	
 	return false;
-}
-
-/**
- * Display form message
- * 
- * @param prefix
- * @param message
- * @param type
- * @return
- */
-function displayMessage(prefix, message, type)
-{
-	jQuery('.' + prefix + '_message ul').each(function (index) { 
-		this.innerHTML = '<li>' + message + '</li>';
-	});
-	if (type) {
-		jQuery('.' + prefix + '_message').removeClass('errormsg');
-		jQuery('.' + prefix + '_message').addClass('successmsg');
-	}
-	else {
-		jQuery('.' + prefix + '_message').removeClass('successmsg');
-		jQuery('.' + prefix + '_message').addClass('errormsg');
-	}
-	jQuery('.' + prefix + '_message').css('display', 'block');
-}
-
-
-
-
-
-
-/**
- * Set Application in Active
- * 
- * @return void
- */
-function appActive()
-{
-	jQuery('#TB_overlay').remove();
-}
-
-/**
- * Set Application in Inactive
- * 
- * @return void
- */
-function appInactive()
-{
-	if (jQuery('#TB_overlay').size() != 0) return;
-	
-	jQuery('body').append('<div id="TB_overlay" class="TB_overlayBG"></div>');
-}
-
-/**
- * Add Loader to page
- * @return
- */
-function appAddLoader()
-{
-	if (jQuery('#TB_overlay #TB_load').size() != 0) return;
-	
-	jQuery('#TB_overlay').append('<div id="TB_load" style="display: block; margin-top: -10%;"><img src="/skins/common/jquery/thickbox/loadingAnimation.gif"></div>');
 }
