@@ -328,12 +328,12 @@ function processResponse(data, status, options)
 					}
 				}
 				
-				if (result['result'] && result['result']['msg']) {
+				/*if (result['result'] && result['result']['msg']) {
 					if (msg) {
 						msg = result['result']['msg'] + msg;
 					}
 					else msg = result['result']['msg'];
-				}
+				}*/
 			}
 			else Context.setFormChangedFlag(kind + '_' + type + '_item', false);
 			
@@ -419,12 +419,12 @@ function processObjectResponse(data, status, options)
 					}
 				}
 				
-				if (m_data['result'] && m_data['result']['msg']) {
+				/*if (m_data['result'] && m_data['result']['msg']) {
 					if (msg) {
 						msg = m_data['result']['msg'] + msg;
 					}
 					else msg = m_data['result']['msg'];
-				}
+				}*/
 			}
 			
 			/* Check tabular result */

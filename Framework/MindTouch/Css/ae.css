@@ -189,6 +189,17 @@ span.ae_pagination {
     font-weight: 600;
 }
 
+div.errormsg div.inner a {
+	color: #9D0A0E !important;
+	font-weight: 600;
+	font:  14px/22px Verdana,Helvetica,Arial,Sans-Serif !important;
+}
+
+div.errormsg div.inner a:hover {
+	color: #3366CC !important;
+	text-decoration: underline;
+}
+
 .oef_content div.systemmsg ul, #topic div.systemmsg ul {
     margin: 4px 0 !important;
     padding: 4px 0 4px 0px;

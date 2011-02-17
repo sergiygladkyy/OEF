@@ -244,13 +244,18 @@ class MGlobal
    }
    
    /**
-    *
-    * @param array& $links
+    * Generate message by links and get or throw it
+    * 
+    * [ !!! Only documents !!! ]
+    * 
+    * @param array  $links
+    * @param bool   $get
+    * @param string $main_msg
     * @return void
     */
-   public static function returnMessageByLinks($links)
+   public static function returnMessageByLinks($links, $get = false, $main_msg = 'You must unposted the following documents:')
    {
-      $msg = 'You must unposted the following documents:<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">';
+      $msg = $main_msg.'<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">';
 
       $prosessed = array();
 
@@ -262,11 +267,17 @@ class MGlobal
 
             $prosessed[$doc_type][$link['value']] = true;
 
-            $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">'.$link['text'].'</li>';
+            $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">';
+            $msg .= '<a href="?uid=documents.'.$doc_type.'&actions=displayEditForm&id='.$link['value'].'" target="_blank" class="oef_msg_link">'.$link['text'].'</a>';
+            $msg .= '</li>';
          }
       }
-
-      throw new Exception($msg.'</ul>');
+      
+      $msg .= '</ul>';
+      
+      if ($get) return $msg;
+      
+      throw new Exception($msg);
    }
 }
 
