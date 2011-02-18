@@ -5,10 +5,11 @@ require_once('lib/model/base/BaseEntityModel.php');
 class ConstantModel extends BaseEntityModel
 {
    const kind = 'Constants';
+   const type = null;
    
    public function __construct(array& $options = array())
    {
-      parent::__construct(self::kind, null, $options);
+      parent::__construct(self::kind, self::type, $options);
    }
    
    /**

@@ -2779,14 +2779,26 @@ class PersistentLayer
     */
    protected function generateConstantsInternalConfiguration(array& $dict, array& $options = array())
    {
-      $result = $this->generateFieldsInternalConfiguration($dict, 'Constants', $options);
+      $ret  = array();
+      $type = null; 
+      $res  = $this->generateFieldsInternalConfiguration($dict, 'Constants', $options);
       
-      if (isset($res['errors'])) return array('errors' => $res['errors']);
+      if (!isset($res['errors']))
+      {
+         $ret['fields'][$type]     = $res['fields'];
+         $ret['field_sql'][$type]  = $res['field_sql'];
+         $ret['field_type'][$type] = $res['field_type'];
+         $ret['field_prec'][$type] = $res['field_prec'];
+         $ret['references'][$type] = $res['references'];
+         $ret['required'][$type]   = $res['required'];
+         $ret['dynamic'][$type]    = $res['dynamic'];
+         
+         $ret['model'][$type]      = array('modelclass' => 'ConstantModel');
+         $ret['controller'][$type] = array('classname'  => 'Constants');
+      }
+      else $ret = array('errors' => $res['errors']);
       
-      $result['model']      = array('modelclass' => 'ConstantModel');
-      $result['controller'] = array('classname'  => 'Constants');
-      
-      return $result;
+      return $ret;
    }
    
    
@@ -3002,8 +3014,8 @@ class PersistentLayer
       
       if (!empty($constants))
       {
-         $db_map['Constants']['table'] = $dbprefix.'Constants';
-         $db_map['Constants']['pkey']  = '_id';
+         $db_map['Constants'][null]['table'] = $dbprefix.'Constants';
+         $db_map['Constants'][null]['pkey']  = '_id';
       }
       
       return $db_map;
@@ -3019,17 +3031,12 @@ class PersistentLayer
    protected function generateRelationsMap(array& $configuration, array& $options = array())
    {
       $relations = array();
-      $storage   = array(
-         'catalogs',
-         'documents',
-         'information_registry',
-         'AccumulationRegisters'
-      );
+      $storage   = array_diff($this->getAllowedKinds(), $this->getNotStorage());
       
       foreach ($storage as $kind)
       {
-         // Objects and registries
          $references =& $configuration[$kind]['references'];
+         
          foreach ($references as $type => $fields)
          {
             foreach ($fields as $field => $params)
@@ -3310,14 +3317,15 @@ class PersistentLayer
    protected function generateConstantsSQLCreate($CManager, $dbcharset, array& $options = array())
    {
       $kind      = 'Constants';
+      $type      = null;
       $db_map    = $CManager->getInternalConfiguration('db_map', $kind, $options);
       $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
       $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
 
       $query  = array();
 
-      $table = $db_map['table'];
-      $pKey  = $db_map['pkey'];
+      $table = $db_map[$type]['table'];
+      $pKey  = $db_map[$type]['pkey'];
 
       $q  = 'CREATE TABLE IF NOT EXISTS `'.$table.'` (';
       $q .= '`'.$pKey.'` int(11) NOT NULL AUTO_INCREMENT';

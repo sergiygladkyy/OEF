@@ -114,7 +114,7 @@ class ConfigManager
     * @param $name - configuration name
     * @return array
     */
-   public function getInternalConfiguration($name, $key = null, array& $options = array())
+   public function getInternalConfiguration($name, $key = false, array& $options = array())
    {
       if (!isset($this->cache[$name]))
       {
@@ -145,7 +145,7 @@ class ConfigManager
          }
       }
       
-      if (!empty($key))
+      if ($key !== false)
       {
          return isset($this->cache[$name][$key]) ? $this->cache[$name][$key] : array();
       }
@@ -165,7 +165,7 @@ class ConfigManager
     * @param $type - entity type
     * @return array
     */
-   public function getInternalConfigurationByKind($kind, $type = null, array& $options = array())
+   public function getInternalConfigurationByKind($kind, $type = false, array& $options = array())
    {
       if (!isset($this->cache_by_kind[$kind]))
       {
@@ -212,7 +212,7 @@ class ConfigManager
          else $this->cache_by_kind[$kind] =& $this->cache[$name]; 
       }
       
-      if (!empty($type))
+      if ($type !== false)
       {
          return isset($this->cache_by_kind[$kind][$type]) ? $this->cache_by_kind[$kind][$type] : array();
       }

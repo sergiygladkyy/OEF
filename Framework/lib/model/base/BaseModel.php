@@ -96,14 +96,12 @@ abstract class BaseModel
       // retrieve internal db_map
       if (isset($pkind['main_kind']))
       {
-         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['main_kind']][$pkind['main_type']][$pkind['kind']];
+         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['main_kind']][$pkind['main_type']][$pkind['kind']][$type];
       }
       else
       {
-         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['kind']];
+         self::$config[$confname]['db_map'] =& self::$db_map[$pkind['kind']][$type];
       }
-      
-      if ($type !== null) self::$config[$confname]['db_map'] =& self::$config[$confname]['db_map'][$type];
       
       return true;
    }
