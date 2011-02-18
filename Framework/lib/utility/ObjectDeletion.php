@@ -4,7 +4,7 @@ class ObjectDeletion
 {
    protected static $instance = null;
    
-   const kinds = array(
+   private static $kinds = array(
       'catalogs',
       'documents'
    );
@@ -49,15 +49,20 @@ class ObjectDeletion
    public function getMarked(array $options = array())
    {
       $ret   = array();
-      $kinds = self::kinds;
+      $kinds = self::$kinds;
       
       foreach ($kinds as $kind)
       {
-         $types = $this->cmanager->getInternalConfiguration($kind.$kind);
+         $types = $this->cmanager->getInternalConfiguration($kind.'.'.$kind);
          
          foreach ($types as $type)
          {
-            $ret[$kind][$type] = $this->container->getCModel($kind, $type)->getMarkedForDeletion();
+            if (null === ($res = $this->container->getCModel($kind, $type)->getMarkedForDeletion()))
+            {
+               return null;
+            }
+            
+            if (!empty($res)) $ret[$kind][$type] = $res;
          }
       }
       
@@ -84,7 +89,7 @@ class ObjectDeletion
    public function getListOfRelated($params, array $options = array())
    {
       $ret   = array();
-      $kinds = self::kinds;
+      $kinds = self::$kinds;
       
       foreach ($params as $kind => $types)
       {
@@ -97,5 +102,23 @@ class ObjectDeletion
       }
       
       return $ret;
+   }
+   
+  /**
+   * Retrieve data for DeleteMarkedForDeletion form
+   * 
+   * @param array $options
+   * @return array
+   */
+   public function displayDeletionForm(array $options = array())
+   {
+      $result = $this->getMarked();
+      $status = ($result === null) ? false : true;
+      
+      return array(
+         'status' => $status,
+         'result' => $result,
+         'errors' => $status ? array() : array('Database error')
+      );
    }
 }

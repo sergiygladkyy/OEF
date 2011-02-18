@@ -13,6 +13,7 @@ class Container
       $model            = null,
       $cmodel           = null,
       $controller       = null,
+      $objdeletion      = null,
       $validator        = null,
       $event            = null,
       $event_dispatcher = null,
@@ -344,6 +345,28 @@ class Container
    }
    
    /**
+    * Get ObjectDeletion controller
+    * 
+    * @param array& $options
+    * @return object
+    */
+   public function getObjectDeletionController(array& $options = array())
+   {
+      if (isset($this->objdeletion) && is_object($this->objdeletion))
+      {
+         return $this->objdeletion;
+      }
+      
+      $classname = 'ObjectDeletion';
+      
+      import('lib.utility.'.$classname);
+      
+      $this->objdeletion = call_user_func(array($classname, 'getInstance'), $options);
+      
+      return $this->objdeletion;
+   }
+   
+   /**
     * Get validator object
     * 
     * @param array& $options
@@ -351,7 +374,7 @@ class Container
     */
    public function getValidator(array& $options = array())
    {
-      if(isset($this->validator) && is_object($this->validator))
+      if (isset($this->validator) && is_object($this->validator))
       {
          return $this->validator;
       }

@@ -79,5 +79,7 @@ $_templates_map = array(
    
    'Template:Entities/CustomForm' => '/CustomForm/CustomForm.php',
    
-   'Template:Entities/Constants/EditForm' => '/Constants/EditForm.php'
+   'Template:Entities/Constants/EditForm' => '/Constants/EditForm.php',
+
+   'Template:Entities/DeleteMarkedForDeletion/DeletionForm' => '/DeleteMarkedForDeletion/DeletionForm.php'
 );

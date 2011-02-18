@@ -1,12 +1,13 @@
 {{
-   var kind   = 'Constants';
-   var type   = kind;
-   var root   = 'Template:Entities';
-   var prefix = 'default';
-   var data   = entities.displayConstantsForm();
-   
-   var inst_conf = extconfig.Fetch('installer');
-   var js_path   = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
+   var uid     = args[0];
+   var puid    = args[1];
+   var root    = args[2];
+   var current = args[3];
+   var params  = args[4];
+   var prefix  = args[5] ?? 'default';
+   var kind    = puid.kind;
+   var type    = puid.type ?? 'null';
+   var data    = entities.displayConstantsForm();
 }}
 <eval:if test="data.status != True">
   <ul class="ae_errors">
@@ -17,19 +18,24 @@
 </eval:if>
 <eval:else>
   {{
+     var inst_conf = extconfig.Fetch('installer');
+     var js_path   = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
+   
+     var header = string.ToUpperFirst(kind);
+   
      let data = data.result;
      var name_prefix = 'aeform['..kind..']';
-     var field_type  = entities.getInternalConfiguration(kind..'.field_type');
-     var field_prec  = entities.getInternalConfiguration(kind..'.field_prec');
-     var fields      = entities.getInternalConfiguration(kind..'.fields');
-     var required    = entities.getInternalConfiguration(kind..'.required');
-     var references  = entities.getInternalConfiguration(kind..'.references');
+     var field_type  = entities.getInternalConfiguration(kind..'.field_type', type);
+     var field_prec  = entities.getInternalConfiguration(kind..'.field_prec', type);
+     var fields      = entities.getInternalConfiguration(kind..'.fields', type);
+     var required    = entities.getInternalConfiguration(kind..'.required', type);
+     var references  = entities.getInternalConfiguration(kind..'.references', type);
      var item   = data.item is map ? data.item : {};
      var select = data.select;
      var class  = string.replace(kind, '.', '_');
      var js_uid = class;
   }}
-<div class="oef_content">
+  <h3>{{header;}}</h3>
   <form method="post" action="#" class="ae_constants_edit_form" id="{{ class..'_item' }}">
     <div class="{{ class..'_message systemmsg' }}" style="display: none;">
       <div class="inner">
@@ -75,7 +81,6 @@
     </tbody>
     </table>
   </form>
-</div>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
   {{
      &lt;html&gt;

@@ -21,6 +21,7 @@
           "displayReportForm(uid:str, params:map):map" => 'displayReportForm',
           "displayImportForm(uid:str, params:map):map" => 'displayImportForm',
           "displayConstantsForm(params:map):map" => 'displayConstantsForm',
+          "displayDeletionForm(params:map):map"  => 'displayDeletionForm',
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
@@ -417,6 +418,46 @@
      return $controller->displayEditForm($options);
   }
   
+  /**
+   * Retrieve data for DeleteMarkedForDeletion form
+   * 
+   * @param array $params
+   * @return array
+   */
+  function displayDeletionForm($params = array())
+  {
+     // Initialize OEF
+     $errors = initialize();
+     
+     if (!is_array($params)) $params = array();
+     
+     if (!empty($errors)) return array('status' => false, 'errors' => $errors);
+
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->isAdmin())
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
+     $options  = empty($params['options'])  ? array() : $params['options'];
+     
+     $controller = Container::getInstance()->getObjectDeletionController($options);
+
+     if (!method_exists($controller, 'displayDeletionForm')) return array('status' => false, 'errors' => array('Not supported operation'));
+     
+     return $controller->displayDeletionForm($options);
+  }
+  
   
   
   
@@ -427,11 +468,13 @@
    * @param string $type
    * @return array
    */
-  function getInternalConfiguration($kind, $type = null)
+  function getInternalConfiguration($kind, $type = false)
   {
      $errors = initialize();
      
      if (!empty($errors)) return array();
+     
+     if ($type == 'null') $type = null;
      
      return Container::getInstance()->getConfigManager()->getInternalConfigurationByKind($kind, $type);
   }
