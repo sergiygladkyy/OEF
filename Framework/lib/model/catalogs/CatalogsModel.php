@@ -70,12 +70,13 @@ class CatalogsModel extends BaseObjectsModel
       }
       
       // Execute method
-      if (empty($ids)) return array();
-      
-      if (!is_array($ids)) $ids = array($ids);
-      
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `".$db_map['deleted']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['pkey']."` IN (".implode(',', $ids).")";
+      $params =  $this->retrieveCriteriaQuery($db_map, $ids, $options);
+      
+      if (!empty($params['errors'])) return null;
+      
+      $db    = $this->container->getDBManager($options);
+      $query = "SELECT `".$db_map['pkey']."`, `".$db_map['deleted']."`, `Description` FROM `".$db_map['table']."` ".$params['criteria'];
       
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);

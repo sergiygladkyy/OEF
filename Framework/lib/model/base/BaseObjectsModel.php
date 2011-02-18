@@ -159,4 +159,91 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
    {
       return $this->conf['tabulars'];
    }
+   
+   /**
+    * Get marked for delition objects
+    * 
+    * @param array $options
+    * @return array (link desc [retrieveLinkData]) or null
+    */
+   public function getMarkedForDeletion(array $options = array())
+   {
+      $options = array(
+         'attributes' => array('%deleted'),
+         'criterion'  => "`%deleted` = 1"
+      );
+      
+      return $this->retrieveLinkData(null, $options);
+   }
+   
+   /**
+    * Get list of entities related with specified
+    * 
+    * @param mixed $ids - array or value
+    * @param array $options
+    * @return array or null
+    */
+   public function getRelatedEntities($ids, array $options = array())
+   {
+      $ret = array();
+      $related =& $this->conf['relations'];
+      
+      if (!is_array($ids)) $ids = array($ids);
+      
+      static $checked = array();
+      static $count   = 0;
+      
+      $count++;
+      
+      foreach ($related as $kind => $types)
+      {
+         foreach ($types as $type => $fields)
+         {
+            if (!empty($checked[$kind.$type])) continue;
+            
+            $checked[$kind.$type] = true;
+            
+            if ($kind == 'Constants')
+            {
+               $ret[$kind][$type] = $fields;
+               continue;
+            }
+            
+            $cmodel = $this->container->getCModel($kind, $type, $options);
+            
+            if (method_exists($cmodel, 'retrieveLinkData'))
+            {
+               if (null === ($res = $cmodel->retrieveLinkData($ids, array('attributes' => $fields))))
+               {
+                  return null;
+               }
+               
+               if (!empty($res))
+               {
+                  $ret[$kind][$type] = $res;
+               }
+            }
+            else
+            {
+               if (null === ($res = $cmodel->getEntities($ids, array('attributes' => $fields))) || $res['errors'])
+               {
+                  return null;
+               }
+               
+               if (empty($res)) continue;
+               
+               foreach ($res as $row)
+               {
+                  $ret[$kind][$type][$row['_id']] = array('text' => $kind.' '.$type, 'value' => $row['_id']);
+               }
+            }
+         }
+      }
+      
+      $count--;
+      
+      if ($count == 0) $checked = array();
+      
+      return $ret;
+   }
 }
