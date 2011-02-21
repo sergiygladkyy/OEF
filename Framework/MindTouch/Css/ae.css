@@ -297,3 +297,51 @@ div.errormsg div.inner a:hover {
 
 table.oef_widget_table_no_border {border: 0 none !important;}
 .oef_widget_table_no_border td {border-right: 0 none !important;}
+
+
+/******************************** Delete marked for deletion *********************************/ 
+
+#delete_marked_for_deletion_form table,
+#delete_marked_for_deletion_form tr,
+#delete_marked_for_deletion_form td,
+#delete_marked_for_deletion_form th {
+	border: 0 none !important;
+}
+
+#delete_marked_for_deletion_form table {
+	border-collapse: separate;
+	border-spacing: 2px;
+}
+
+#delete_marked_for_deletion_form td {
+	padding: 3px 5px;
+}
+
+#delete_marked_for_deletion_form .oef_group_header {
+	background-color: #DADADA;
+	font-weight: 600;
+}
+
+#delete_marked_for_deletion_form .oef_even {
+	background-color: #EFEFFE;
+}
+
+#oef_marked_for_deletion_container {
+	width: 100%;
+	height: 254px;
+	overflow: auto;
+	margin: 10px 0;
+	border: 1px solid #AAAAAA;
+}
+
+#oef_marked_for_deletion_container .oef_deletion_checkboxes {
+	width: 13px;
+}
+
+#oef_related_entities_container {
+	width: 100%;
+	height: 254px;
+	overflow: auto;
+	margin: 10px 0;
+	border: 1px solid #AAAAAA;
+}

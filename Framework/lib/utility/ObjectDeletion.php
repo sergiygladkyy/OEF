@@ -93,11 +93,18 @@ class ObjectDeletion
       
       foreach ($params as $kind => $types)
       {
-         if (!in_array($kind, $kinds)) continue;
+         if (!in_array($kind, $kinds)) return null;
+         
+         if (!is_array($types)) return null;
          
          foreach ($types as $type => $ids)
          {
-            $ret[$kind][$type] = $this->container->getCModel($kind, $type)->getRelatedEntities($ids);
+            if (null === ($res = $this->container->getCModel($kind, $type)->getRelatedEntities($ids)))
+            {
+               return null;
+            }
+            
+            if (!empty($res)) $ret[$kind][$type] = $res;
          }
       }
       

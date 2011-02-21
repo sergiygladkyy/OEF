@@ -3032,6 +3032,7 @@ class PersistentLayer
    {
       $relations = array();
       $storage   = array_diff($this->getAllowedKinds(), $this->getNotStorage());
+      $haveTab   = $this->getHaveTabulars();
       
       foreach ($storage as $kind)
       {
@@ -3041,24 +3042,27 @@ class PersistentLayer
          {
             foreach ($fields as $field => $params)
             {
-               $relations[$params['kind']][$params['type']][$kind][$type][] = $field;
+               $relations[$params['kind']][$params['type']][$kind][$type]['attributes'][] = $field;
             }
          }
          
-         /*if ($kind == 'information_registry') continue;
+         if (!in_array($kind, $haveTab)) continue;
          
          // Tabular sections
          $references =& $configuration[$kind]['tabulars']['references'];
+         
          foreach ($references as $type => $tabulars)
          {
             foreach ($tabulars as $tabular => $fields)
             {
                foreach ($fields as $field => $params)
                {
-                  $relations[$params['kind']][$params['type']][$kind.'.'.$type.'.tabulars'][$tabular][] = $field;
+                  if ($field == 'Owner') continue;
+                  
+                  $relations[$params['kind']][$params['type']][$kind][$type]['tabulars'][$tabular][] = $field;
                }
             }
-         }*/
+         }
       }
       
       return $relations;

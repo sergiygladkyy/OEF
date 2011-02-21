@@ -27,8 +27,7 @@
      
      let data = data.result;
      
-     var class   = 'delete_marked_for_deletion';
-     var js_uid  = class;
+     var class = 'delete_marked_for_deletion';
   }}
   <h3>Delete marked for deletion</h3>
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
@@ -38,55 +37,53 @@
       </ul>
     </div>
   </div>
-  <form method="post" action="#" id="{{ class..'_item' }}">
+  <form method="post" action="#" id="{{ class..'_form' }}">
     <div id="oef_marked_for_deletion_container">
       <table>
       <eval:foreach var="kind" in="map.keys(data)">
         <tr>
           <td colspan="2" class="oef_group_header">{{ string.toupperfirst(kind) }}</td>
-        <tr>
+        </tr>
         {{ var types = data[kind] }}
         <eval:foreach var="type" in="map.keys(types)">
           {{
              var params = types[type];
              var name_prefix = 'aeform['..kind..']['..type..']';
+             var cnt = 0;
           }}
           <eval:foreach var="row" in="params">
             <tr>
-              <td>
-                <input type="checkbox" name="{{ name_prefix..'[ids][]' }}" value="{{ row['value'] ?? 0 }}" checked />
+              <td class="{{ 'oef_deletion_checkboxes'..(cnt % 2 == 0 ? ' oef_even' : ' oef_not_even') }}">
+                <input type="checkbox" name="{{ name_prefix..'[]' }}" value="{{ row['value'] ?? 0 }}" checked />
               </td>
-              <td>
-                <a href="{{ page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm&id='..row['value']}}" target="_blank" class="oef_msg_link">{{ row['text'] }}</a>
+              <td class="{{ 'oef_deletion_links'..(cnt % 2 == 0 ? ' oef_even' : ' oef_not_even') }}">
+                <a href="{{ page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm&id='..row['value']}}" target="_blank" class="oef_link">{{ row['text'] }}</a>
               </td>
             </tr>
+            {{ let cnt += 1 }}
           </eval:foreach>
         </eval:foreach>
       </eval:foreach>
       </table>
     </div>
     <div id="oef_related_entities_container">
+      &nbsp;
     </div>
     <div>
-      {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt;&nbsp; }}
-      {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt;&nbsp; }}
+      {{ &lt;input type="button" value="Related" class="ae_command" command="related" /&gt;&nbsp; }}
+      {{ &lt;input type="button" value="Delete" class="ae_command" command="delete" /&gt;&nbsp; }}
       {{ &lt;input type="button" value="Close" class="ae_command" command="cancel" /&gt; }}
     </div>
   </form>
-  {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
   {{
      &lt;html&gt;
        &lt;head&gt;
          &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
          &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
-         &lt;script type="text/javascript" src=(js_path..'/ae_edit_form.js')&gt;&lt;/script&gt;
-         &lt;script type="text/javascript" src=(js_path..'/datetimepicker/datetimepicker.js')&gt;&lt;/script&gt;
+         &lt;script type="text/javascript" src=(js_path..'/oe_deletion_form.js')&gt;&lt;/script&gt;
        &lt;/head&gt;
        &lt;body&gt;&lt;/body&gt;
        &lt;tail&gt;
-         &lt;script type="text/javascript"&gt;"
-           pageAPI = '"..page.api.."';
-         "&lt;/script&gt;
        &lt;/tail&gt;
      &lt;/html&gt;
   }}

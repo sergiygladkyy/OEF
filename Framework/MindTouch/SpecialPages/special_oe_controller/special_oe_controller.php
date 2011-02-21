@@ -938,4 +938,36 @@ class SpecialOEController extends SpecialPagePlugin
       
       return $controller->notifyFormEvent($formName, $event, $formData, $parameters);
    }
+   
+   /**
+    * Get list of related entities for deletion form
+    * 
+    * @return array
+    */
+   protected function relatedForDeletion()
+   {
+      // Check data
+      if (empty($_POST['aeform']) || !is_array($_POST['aeform']))
+      {
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      }
+      
+      // Execute action
+      $controller = $this->container->getObjectDeletionController();
+      
+      $list = $controller->getListOfRelated(Utility::escapeRecursive($_POST['aeform']));
+      
+      if ($list === null)
+      {
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      }
+      
+      return array(
+         'status' => true,
+         'result' => array(
+            'list' => $list
+         ),
+         'errors' => array()
+      );
+   }
 }

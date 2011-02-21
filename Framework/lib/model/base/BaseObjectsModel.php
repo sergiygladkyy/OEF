@@ -197,45 +197,86 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       
       foreach ($related as $kind => $types)
       {
-         foreach ($types as $type => $fields)
+         foreach ($types as $type => $params)
          {
             if (!empty($checked[$kind.$type])) continue;
-            
+
             $checked[$kind.$type] = true;
-            
+
+            // Constants
             if ($kind == 'Constants')
             {
-               $ret[$kind][$type] = $fields;
+               $ret[$kind][$type] = $params['attributes'];
                continue;
             }
             
+            // Other entities
             $cmodel = $this->container->getCModel($kind, $type, $options);
             
-            if (method_exists($cmodel, 'retrieveLinkData'))
+            if (isset($params['attributes']))
             {
-               if (null === ($res = $cmodel->retrieveLinkData($ids, array('attributes' => $fields))))
+               $attributes =& $params['attributes'];
+
+               if (method_exists($cmodel, 'retrieveLinkData'))
                {
-                  return null;
+                  if (null === ($res = $cmodel->retrieveLinkData($ids, array('attributes' => $attributes))))
+                  {
+                     return null;
+                  }
+                   
+                  if (!empty($res))
+                  {
+                     $ret[$kind][$type] = $res;
+                  }
                }
-               
-               if (!empty($res))
+               else
                {
-                  $ret[$kind][$type] = $res;
+                  if (null === ($res = $cmodel->getEntities($ids, array('attributes' => $attributes))) || $res['errors'])
+                  {
+                     return null;
+                  }
+                   
+                  foreach ($res as $row)
+                  {
+                     $ret[$kind][$type][$row['_id']] = array('text' => $kind.' '.$type, 'value' => $row['_id']);
+                  }
                }
             }
-            else
+            
+            // Tabular sections
+            if (!isset($params['tabulars'])) continue;
+            
+            $owner = array();
+            
+            foreach ($params['tabulars'] as $ttype => $attributes)
             {
-               if (null === ($res = $cmodel->getEntities($ids, array('attributes' => $fields))) || $res['errors'])
+               $opt = array(
+                  'with_link_desc' => false,
+                  'with_select' => false,
+                  'attributes'  => $attributes
+               );
+               
+               if (null === ($res = $cmodel->retrieveTabularSections($ids, $ttype, $opt)) || $res['errors'])
                {
                   return null;
                }
                
-               if (empty($res)) continue;
-               
-               foreach ($res as $row)
+               foreach ($res[$ttype] as $row)
                {
-                  $ret[$kind][$type][$row['_id']] = array('text' => $kind.' '.$type, 'value' => $row['_id']);
+                  if (isset($ret[$kind][$type][$row['Owner']])) continue;
+                  
+                  $owner[$row['Owner']] = $row['Owner'];
                }
+            }
+            
+            if (null === ($res = $cmodel->retrieveLinkData($owner)))
+            {
+               return null;
+            }
+             
+            if (!empty($res))
+            {
+               $ret[$kind][$type] = isset($ret[$kind][$type]) ? array_merge($ret[$kind][$type], $res) : $res;
             }
          }
       }
