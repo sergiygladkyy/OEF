@@ -52,7 +52,7 @@
              var cnt = 0;
           }}
           <eval:foreach var="row" in="params">
-            <tr>
+            <tr class="{{ 'oef_'..kind..'_'..type..'_item' }}">
               <td class="{{ 'oef_deletion_checkboxes'..(cnt % 2 == 0 ? ' oef_even' : ' oef_not_even') }}">
                 <input type="checkbox" name="{{ name_prefix..'[]' }}" value="{{ row['value'] ?? 0 }}" checked />
               </td>
@@ -70,9 +70,9 @@
       &nbsp;
     </div>
     <div>
-      {{ &lt;input type="button" value="Related" class="ae_command" command="related" /&gt;&nbsp; }}
+      {{ &lt;input type="button" value="Check relations" class="ae_command" command="related" /&gt;&nbsp; }}
       {{ &lt;input type="button" value="Delete" class="ae_command" command="delete" /&gt;&nbsp; }}
-      {{ &lt;input type="button" value="Close" class="ae_command" command="cancel" /&gt; }}
+      {{ &lt;input type="button" value="Unmarked for deletion" class="ae_command" command="unmarked" /&gt; }}
     </div>
   </form>
   {{

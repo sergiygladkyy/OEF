@@ -563,8 +563,67 @@ class SpecialOEController extends SpecialPagePlugin
          return array('errors' => array('global' => implode('; ', $errors)), 'status' => false);
       }
       
+      return $this->executeUnmarkForDeletion($values['kind'], $values['type'], (int) $values['_id']);
+   }
+   
+   /**
+    * Batch unmark for deletion (only for object types)
+    * 
+    * @return array
+    */
+   protected function batchUnmarkForDeletion()
+   {
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Select items'));
+      }
+      
+      if (!is_array($_POST['aeform']))
+      {
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      }
+      
+      $values = Utility::escapeRecursive($_POST['aeform']);
+      $errors = array();
+      $result = array();
+      
+      foreach ($values as $kind => $types)
+      {
+         if (!is_array($types))
+         {
+            $errors['global'] = 'Invalid data';
+            
+            continue;
+         }
+         
+         foreach ($types as $type => $ids)
+         {
+            $result[$kind][$type] = $this->executeUnmarkForDeletion($kind, $type, $ids);
+         }
+      }
+      
+      $status = $errors ? false : true;
+      
+      return array(
+         'status' => $status,
+         'result' => $result,
+         'errors' => $errors
+      );
+   }
+   
+   /**
+    * Execute unmark for deletion
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param mixed $ids
+    * @return array
+    */
+   protected function executeUnmarkForDeletion($kind, $type, $ids)
+   {
       // Check interactive permission
-      if (defined('IS_SECURE') && !$this->user->hasPermission($values['kind'].'.'.$values['type'].'.InteractiveUnmarkForDeletion'))
+      if (defined('IS_SECURE') && !$this->user->hasPermission($kind.'.'.$type.'.InteractiveUnmarkForDeletion'))
       {
          return array(
             'status' => false,
@@ -574,15 +633,16 @@ class SpecialOEController extends SpecialPagePlugin
       }
       
       // Unmark for deletion object type entity
-      $controller = $this->container->getController($values['kind'], $values['type']);
+      $controller = $this->container->getController($kind, $type);
       
       if (!method_exists($controller, 'unmarkForDeletion'))
       {
          return array('status' => false, 'errors' => array('global' => 'Not supported operation'));
       }
       
-      return $controller->unmarkForDeletion((int) $values['_id']);
+      return $controller->unmarkForDeletion($ids);
    }
+   
    
    
    
@@ -939,6 +999,11 @@ class SpecialOEController extends SpecialPagePlugin
       return $controller->notifyFormEvent($formName, $event, $formData, $parameters);
    }
    
+   
+   
+   
+   
+   
    /**
     * Get list of related entities for deletion form
     * 
@@ -947,7 +1012,12 @@ class SpecialOEController extends SpecialPagePlugin
    protected function relatedForDeletion()
    {
       // Check data
-      if (empty($_POST['aeform']) || !is_array($_POST['aeform']))
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Select items'));
+      }
+      
+      if (!is_array($_POST['aeform']))
       {
          return array('errors' => array('global' => 'Invalid data'), 'status' => false);
       }
@@ -968,6 +1038,55 @@ class SpecialOEController extends SpecialPagePlugin
             'list' => $list
          ),
          'errors' => array()
+      );
+   }
+   
+   /**
+    * Delete marked for deletion
+    * 
+    * @return array
+    */
+   protected function deleteMarkedForDeletion()
+   {
+      // Check data
+      if (empty($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Select items'));
+      }
+      
+      if (!is_array($_POST['aeform']))
+      {
+         return array('errors' => array('global' => 'Invalid data'), 'status' => false);
+      }
+      
+      // Execute action
+      $controller = $this->container->getObjectDeletionController();
+      
+      $values = Utility::escapeRecursive($_POST['aeform']);
+      $errors = array();
+      $result = array();
+      
+      foreach ($values as $kind => $types)
+      {
+         if (!is_array($types))
+         {
+            $errors['global'] = 'Invalid data';
+            
+            continue;
+         }
+         
+         foreach ($types as $type => $ids)
+         {
+            $result[$kind][$type] = $controller->deleteMarkedForDeletion($kind, $type, $ids);
+         }
+      }
+      
+      $status = $errors ? false : true;
+      
+      return array(
+         'status' => $status,
+         'result' => $result,
+         'errors' => $errors
       );
    }
 }

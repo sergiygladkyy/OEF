@@ -128,4 +128,35 @@ class ObjectDeletion
          'errors' => $status ? array() : array('Database error')
       );
    }
+   
+   /**
+    * Delete marked for delition
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param array  $ids
+    * @param array& $options
+    * @return array - errors
+    */
+   public function deleteMarkedForDeletion($kind, $type, $ids, array $options = array())
+   {
+      $errors = $this->container->getCModel($kind, $type)->deleteMarkedForDeletion($ids, $options);
+      
+      if ($errors)
+      {
+         $status = false;
+         $msg = 'Not deleted';
+      }
+      else
+      {
+         $status = true;
+         $msg = 'Deleted successfully';
+      }
+      
+      return array(
+         'status' => $status,
+         'result' => array('msg' => $msg),
+         'errors' => $errors
+      );
+   }
 }

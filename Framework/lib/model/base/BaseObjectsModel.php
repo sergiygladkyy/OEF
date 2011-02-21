@@ -287,4 +287,34 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       
       return $ret;
    }
+   
+   /**
+    * Delete marked for deletion
+    * 
+    * @param mixed  $ids
+    * @param array& $options
+    * @return array - errors
+    */
+   public function deleteMarkedForDeletion($ids, array $options = array())
+   {
+      if (empty($ids)) return array();
+      
+      if (!is_array($ids)) $ids = array($ids);
+      
+      $options = array(
+         'attributes' => array('%pkey', '%deleted'),
+         'criterion'  => "`%pkey` IN (".implode(',', $ids).") AND `%deleted`=1"
+      );
+      
+      $errors = $this->delete(true, $options);
+      
+      if ($errors) return $errors;
+      
+      $rows  = count($ids);
+      $arows = $this->container->getDBManager()->getAffectedRows();
+      
+      if ($rows > $arows) $errors[] = 'Don\'t delete all records'; 
+      
+      return $errors;
+   }
 }

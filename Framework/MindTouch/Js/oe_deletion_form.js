@@ -10,6 +10,14 @@ jQuery(document).ready(function() {
 		data: {action: 'relatedForDeletion', form : 'DeletionForm'}
 	};
 	
+	var unmark_options = {
+		url: '/Special:OEController',
+		dataType: 'json',
+		beforeSubmit: prepareRequest,
+		success: processUnmarkResponse,
+		data: {action: 'batchUnmarkForDeletion', form : 'DeletionForm'}
+	};
+	
 	var delete_options = {
 		url: '/Special:OEController',
 		dataType: 'json',
@@ -32,6 +40,8 @@ jQuery(document).ready(function() {
      */
     function commandForm(element)
     {
+    	hideMessages();
+    	
     	var options;
     	var method  = 'submitForm';
     	var form    = jQuery(element).parents('form');
@@ -43,9 +53,13 @@ jQuery(document).ready(function() {
     			options = related_options;
     		break;
     		
+    		case 'unmarked':
+    			options = unmark_options;
+    		break;
+    		
     		case 'delete':
-    			alert('delete');
-    			return;
+    			if (!confirm('Are you soure?')) return;
+    			options = delete_options;
     		break;
     		
     		default:
@@ -108,8 +122,8 @@ function beforeSubmit(form)
  * @return boolean
  */
 function prepareRequest(formData, jqForm, options)
-{ 
-    return true; 
+{
+	return true; 
 }
 
 /**
@@ -128,6 +142,8 @@ function processRelatedResponse(data, status)
 			displayMessage('delete_marked_for_deletion', data.errors.global, false);
 		}
 		
+		appActive();
+		
 		return;
 	}
 	
@@ -142,7 +158,57 @@ function processRelatedResponse(data, status)
 	
 	var form = new DeletionForm();
 	
-	form.addRelatedItems(data);
+	var cnt  = form.addRelatedItems(data);
+	
+	if (cnt == 0) displayMessage('delete_marked_for_deletion', 'Relation not found', true);
+	
+	appActive();
+}
+
+/**
+ * Process respons
+ * 
+ * @param data
+ * @param status
+ * @return
+ */
+function processUnmarkResponse(data, status)
+{
+	if (!data.status)
+	{
+		if (data.errors)
+		{
+			displayMessage('delete_marked_for_deletion', data.errors.global, false);
+		}
+		
+		appActive();
+		
+		return;
+	}
+	
+	var status = true;
+	var form   = new DeletionForm();
+	var data   = data.result;
+	
+	for (var kind in data)
+	{
+		for (var type in data[kind])
+		{
+			var cdata = data[kind][type];
+			
+			if (!cdata.status)
+			{
+				status = false;
+				continue;
+			}
+			
+			form.removeFromMarkedList(kind, type);
+		}
+	}
+	
+	var msg = status ? 'Unmarked successfully' : 'Mark for deletion is not removed from all records';
+	
+	displayMessage('delete_marked_for_deletion', msg, status);
 	
 	appActive();
 }
@@ -156,7 +222,43 @@ function processRelatedResponse(data, status)
  */
 function processDeleteResponse(data, status)
 {
-	;
+	if (!data.status)
+	{
+		if (data.errors)
+		{
+			displayMessage('delete_marked_for_deletion', data.errors.global, false);
+		}
+		
+		appActive();
+		
+		return;
+	}
+	
+	var status = true;
+	var form   = new DeletionForm();
+	var data   = data.result;
+	
+	for (var kind in data)
+	{
+		for (var type in data[kind])
+		{
+			var cdata = data[kind][type];
+			
+			if (!cdata.status)
+			{
+				status = false;
+				continue;
+			}
+			
+			form.removeFromMarkedList(kind, type);
+		}
+	}
+	
+	var msg = status ? 'Deleted successfully' : 'Don\'t delete all records';
+	
+	displayMessage('delete_marked_for_deletion', msg, status);
+	
+	appActive();
 }
 
 
@@ -179,7 +281,8 @@ function ucfirst(str)
 
 function DeletionForm()
 {
-	var rel_id = 'oef_related_entities_container';
+	var mark_id = 'oef_marked_for_deletion_container';
+	var rel_id  = 'oef_related_entities_container';
 	
 	/**
 	 * Add list of related entities in form
@@ -191,6 +294,7 @@ function DeletionForm()
 	{
 		this.clearRelated();
 		
+		var numb = 0;
 		var rows = prepareRelatedData(data);
 		
 		var content = '<table>';
@@ -213,6 +317,7 @@ function DeletionForm()
 					content += '</td></tr>';
 					
 					cnt++;
+					numb++;
 				}
 			}
 		}
@@ -220,6 +325,8 @@ function DeletionForm()
 		content += '</table>';
 		
 		jQuery('#' + rel_id).html(content);
+		
+		return numb;
 	};
 	
 	/**
@@ -230,6 +337,20 @@ function DeletionForm()
 	this.clearRelated = function()
 	{
 		jQuery('#' + rel_id + ' .item').remove();
+	};
+	
+	/**
+	 * Remove items from marked for deletion list
+	 * 
+	 * @param string kind
+	 * @param string type
+	 * @return void
+	 */
+	this.removeFromMarkedList = function (kind, type)
+	{
+		var _class = '.oef_' + kind + '_' + type + '_item';
+		
+		jQuery('#' + mark_id + ' ' + _class + ' input:checked').parents(_class).remove();
 	};
 	
 	/**
