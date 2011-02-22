@@ -160,7 +160,7 @@ function processRelatedResponse(data, status)
 	
 	var cnt  = form.updateForm(data);
 	
-	if (cnt == 0) displayMessage('delete_marked_for_deletion', 'Relation not found', true);
+	if (cnt == 0) displayMessage('delete_marked_for_deletion', 'Relations not found', true);
 	
 	appActive();
 }
@@ -288,7 +288,7 @@ function DeletionForm()
 	 * Update deletion form (process response data)
 	 * 
 	 * @param object data
-	 * @return void
+	 * @return int
 	 */
 	this.updateForm = function(data)
 	{
@@ -296,7 +296,7 @@ function DeletionForm()
 		
 		this.updateMarkedList(rdata.has_related);
 		
-		this.addRelatedItems(rdata.related);
+		return this.addRelatedItems(rdata.related);
 	};
 	
 	/**
@@ -332,7 +332,7 @@ function DeletionForm()
 	 * Add list of related entities in form
 	 * 
 	 * @param object rows
-	 * @return void
+	 * @return int
 	 */
 	this.addRelatedItems = function(rows)
 	{
