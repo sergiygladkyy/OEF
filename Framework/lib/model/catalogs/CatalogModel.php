@@ -116,7 +116,7 @@ class CatalogModel extends BaseObjectModel
       
       /* Default generate */
       $dbmap =& $this->conf['db_map'];
-      $query = "SELECT `Code` FROM `".$dbmap['table']."` ORDER BY `Code` DESC LIMIT 1";
+      $query = "SELECT LENGTH(`Code`) AS `length`, `Code` FROM `".$dbmap['table']."` GROUP BY `length` DESC, `Code` DESC LIMIT 1"; 
       $db    = $this->container->getDBManager($options);
       
       if (!$row = $db->loadAssoc($query))
@@ -128,7 +128,7 @@ class CatalogModel extends BaseObjectModel
       
       // Generate next Code
       $code   = $row['Code'];
-      $length = strlen($code) - 1;
+      $length = $row['length'] - 1; //strlen($code) - 1;
       
       for ($i = $length; $i >= 0; $i--)
       {
