@@ -158,7 +158,7 @@ function processRelatedResponse(data, status)
 	
 	var form = new DeletionForm();
 	
-	var cnt  = form.addRelatedItems(data);
+	var cnt  = form.updateForm(data);
 	
 	if (cnt == 0) displayMessage('delete_marked_for_deletion', 'Relation not found', true);
 	
@@ -285,17 +285,60 @@ function DeletionForm()
 	var rel_id  = 'oef_related_entities_container';
 	
 	/**
-	 * Add list of related entities in form
+	 * Update deletion form (process response data)
 	 * 
 	 * @param object data
 	 * @return void
 	 */
-	this.addRelatedItems = function(data)
+	this.updateForm = function(data)
+	{
+		var rdata = prepareRelatedData(data);
+		
+		this.updateMarkedList(rdata.has_related);
+		
+		this.addRelatedItems(rdata.related);
+	};
+	
+	/**
+	 * Update list of marked for deletion
+	 * 
+	 * @param object rows
+	 * @return void
+	 */
+	this.updateMarkedList = function(rows)
+	{
+		for (var kind in rows)
+		{
+			for (var type in rows[kind])
+			{
+				for (var id in rows[kind][type])
+				{
+					jQuery('#' + mark_id + ' .oef_' + kind + '_' + type + '_' + id).addClass('oef_could_not_be_removed');
+				}
+			}
+		}
+		
+		jQuery('#' + mark_id + ' .oef_deletion_checkboxes input:checked').each(function() {
+			var link = jQuery(this).parents('.oef_marked_item').find('.oef_link').get(0);
+			
+			if (!jQuery(link).hasClass('oef_could_not_be_removed'))
+			{
+				jQuery(link).addClass('oef_could_be_removed');
+			}
+		});
+	};
+	
+	/**
+	 * Add list of related entities in form
+	 * 
+	 * @param object rows
+	 * @return void
+	 */
+	this.addRelatedItems = function(rows)
 	{
 		this.clearRelated();
 		
 		var numb = 0;
-		var rows = prepareRelatedData(data);
 		
 		var content = '<table>';
 		
@@ -361,46 +404,55 @@ function DeletionForm()
 	 */
 	function prepareRelatedData(data)
 	{
-		var result = {};
+		var related = {};
+		var hasrel  = {};
 		
-		for (var dkind in data)
+		for (var pkind in data)
 		{
-			for (var dtype in data[dkind])
+			for (var ptype in data[pkind])
 			{
-				var related = data[dkind][dtype];
+				var relation = data[pkind][ptype];
 				
-				for (var rkind in related)
+				for (var rkind in relation)
 				{
-					if (!result[rkind])
-					{
-						result[rkind] = {};
-					}
+					if (!hasrel[pkind])  hasrel[pkind]  = {};
+					if (!related[rkind]) related[rkind] = {};
 					
-					for (var rtype in related[rkind])
+					for (var rtype in relation[rkind])
 					{
-						var params = related[rkind][rtype];
+						var params = relation[rkind][rtype];
 						
-						if (!result[rkind][rtype])
-						{
-							result[rkind][rtype] = new Array();
-						}
+						if (!hasrel[pkind][ptype])  hasrel[pkind][ptype]  = new Array();
+						if (!related[rkind][rtype]) related[rkind][rtype] = new Array();
 						
 						for (var id in params)
 						{
-							if (!result[rkind][rtype][id])
+							if (!related[rkind][rtype][id])
 							{
 								var param  = params[id];
 								param.kind = rkind;
 								param.type = rtype;
 								
-								result[rkind][rtype][id] = param;
-							} 
+								related[rkind][rtype][id] = param;
+							}
+							
+							if (!param.rel) continue;
+							
+							for (var ind in param.rel)
+							{
+								if (!hasrel[pkind][ptype][param.rel[ind]])
+								{
+									hasrel[pkind][ptype][param.rel[ind]] = new Array();
+								}
+								
+								// Generate relation description array
+							}
 						}
 					}
 				}
 			}
 		}
 		
-		return result;
+		return {'has_related': hasrel, 'related': related};
 	}
 }

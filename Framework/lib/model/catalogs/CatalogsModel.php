@@ -85,9 +85,27 @@ class CatalogsModel extends BaseObjectsModel
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[$row[0]] = array('value' => $row[0], 'text' => $row[2], 'deleted' => $row[1]);
+      while ($row = $db->fetchArray($res))
+      {
+         $list[$row[0]] = array('value' => $row[0], 'text' => $row[2], 'deleted' => $row[1]);
+      }
       
       return $list;
+   }
+   
+   /**
+    * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/model/base/BaseObjectsModel#getLinkDataByRow($row, $options)
+    */
+   public function getLinkDataByRow(array $row, array $options = array())
+   {
+      $db_map =& $this->conf['db_map'];
+      
+      return array(
+         'value'   => $row[$db_map['pkey']],
+         'text'    => $row['Description'],
+         'deleted' => $row[$db_map['deleted']]
+      );
    }
    
    

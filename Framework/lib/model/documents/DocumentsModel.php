@@ -94,6 +94,21 @@ class DocumentsModel extends BaseObjectsModel
    
    /**
     * (non-PHPdoc)
+    * @see ext/OEF/Framework/lib/model/base/BaseObjectsModel#getLinkDataByRow($row, $options)
+    */
+   public function getLinkDataByRow(array $row, array $options = array())
+   {
+      $db_map =& $this->conf['db_map'];
+      
+      return array(
+         'value'   => $row[$db_map['pkey']],
+         'text'    => $this->type.' '.date("Y-m-d H:i:s", strtotime($row['Date'])),
+         'deleted' => $row[$db_map['deleted']]
+      );
+   }
+   
+   /**
+    * (non-PHPdoc)
     * @see lib/model/base/BaseObjectsModel#markForDeletion($values, $options)
     */
    public function markForDeletion($values, array& $options = array())

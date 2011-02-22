@@ -115,6 +115,15 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
    abstract public function retrieveLinkData($ids, array $options = array());
    
    /**
+    * Return link description for row (row = model->toArray())
+    *  
+    * @param array $row
+    * @param array $options
+    * @return array
+    */
+   abstract public function getLinkDataByRow(array $row, array $options = array());
+   
+   /**
     * Retrieve tabular sections params
     * 
     * @param mixed $ids   - parent ids (ids this entity)
@@ -188,7 +197,14 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       $ret = array();
       $related =& $this->conf['relations'];
       
-      if (!is_array($ids)) $ids = array($ids);
+      if (!is_array($ids))
+      {
+         $ids = array($ids => $ids);
+      }
+      else
+      {
+         $ids = array_combine($ids, $ids);
+      }
       
       static $checked = array();
       static $count   = 0;
@@ -217,28 +233,30 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
             {
                $attributes =& $params['attributes'];
 
-               if (method_exists($cmodel, 'retrieveLinkData'))
+               if (null === ($res = $cmodel->getEntities($ids, array('attributes' => $attributes))) || $res['errors'])
                {
-                  if (null === ($res = $cmodel->retrieveLinkData($ids, array('attributes' => $attributes))))
-                  {
-                     return null;
-                  }
-                   
-                  if (!empty($res))
-                  {
-                     $ret[$kind][$type] = $res;
-                  }
+                  return null;
+               }
+               
+               if (method_exists($cmodel, 'getLinkDataByRow'))
+               {
+                  $code = '$ret[$kind][$type][$row[\'_id\']] = $cmodel->getLinkDataByRow($row);';
                }
                else
                {
-                  if (null === ($res = $cmodel->getEntities($ids, array('attributes' => $attributes))) || $res['errors'])
+                  $code = '$ret[$kind][$type][$row[\'_id\']] = array(\'text\' => $kind.\' \'.$type, \'value\' => $row[\'_id\']);';
+               }
+               
+               foreach ($res as $row)
+               {
+                  eval($code);
+                  $ret[$kind][$type][$row['_id']]['rel'] = array();
+                  
+                  foreach ($attributes as $attr)
                   {
-                     return null;
-                  }
-                   
-                  foreach ($res as $row)
-                  {
-                     $ret[$kind][$type][$row['_id']] = array('text' => $kind.' '.$type, 'value' => $row['_id']);
+                     if (!isset($ids[$row[$attr]])) continue;
+                     
+                     $ret[$kind][$type][$row['_id']]['rel'][] = $row[$attr];
                   }
                }
             }
@@ -247,6 +265,7 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
             if (!isset($params['tabulars'])) continue;
             
             $owner = array();
+            $rel   = array();
             
             foreach ($params['tabulars'] as $ttype => $attributes)
             {
@@ -263,9 +282,18 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
                
                foreach ($res[$ttype] as $row)
                {
-                  if (isset($ret[$kind][$type][$row['Owner']])) continue;
+                  if (!isset($rel[$row['Owner']]))
+                  {
+                     $rel[$row['Owner']]   = array();
+                     $owner[$row['Owner']] = $row['Owner'];
+                  }
                   
-                  $owner[$row['Owner']] = $row['Owner'];
+                  foreach ($attributes as $attr)
+                  {
+                     if (!isset($ids[$row[$attr]])) continue;
+                     
+                     $rel[$row['Owner']][] = $row[$attr];
+                  }
                }
             }
             
@@ -273,10 +301,19 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
             {
                return null;
             }
-             
-            if (!empty($res))
+            
+            foreach ($res as $id => $desc)
             {
-               $ret[$kind][$type] = isset($ret[$kind][$type]) ? array_merge($ret[$kind][$type], $res) : $res;
+               if (isset($ret[$kind][$type][$id]))
+               {
+                  $ret[$kind][$type][$id]['rel'] = array_merge ($ret[$kind][$type][$id]['rel'], $rel[$id]);
+                  $ret[$kind][$type][$id]['rel'] = array_unique($ret[$kind][$type][$id]['rel']);
+               }
+               else
+               {
+                  $ret[$kind][$type][$id] = $desc;
+                  $ret[$kind][$type][$id]['rel'] = $rel[$id];
+               }
             }
          }
       }

@@ -52,12 +52,13 @@
              var cnt = 0;
           }}
           <eval:foreach var="row" in="params">
-            <tr class="{{ 'oef_'..kind..'_'..type..'_item' }}">
+            {{ var linkclass = 'oef_link oef_'..kind..'_'..type..'_'..row['value']; }}
+            <tr class="{{ 'oef_marked_item oef_'..kind..'_'..type..'_item' }}">
               <td class="{{ 'oef_deletion_checkboxes'..(cnt % 2 == 0 ? ' oef_even' : ' oef_not_even') }}">
                 <input type="checkbox" name="{{ name_prefix..'[]' }}" value="{{ row['value'] ?? 0 }}" checked />
               </td>
               <td class="{{ 'oef_deletion_links'..(cnt % 2 == 0 ? ' oef_even' : ' oef_not_even') }}">
-                <a href="{{ page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm&id='..row['value']}}" target="_blank" class="oef_link">{{ row['text'] }}</a>
+                <a href="{{ page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm&id='..row['value']}}" target="_blank" class="{{ linkclass }}">{{ row['text'] }}</a>
               </td>
             </tr>
             {{ let cnt += 1 }}

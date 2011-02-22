@@ -345,3 +345,11 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 	margin: 10px 0;
 	border: 1px solid #AAAAAA;
 }
+
+#oef_marked_for_deletion_container .oef_could_be_removed {
+	color: green !important;
+}
+
+#oef_marked_for_deletion_container .oef_could_not_be_removed {
+	color: red !important;
+}
