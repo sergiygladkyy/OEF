@@ -238,25 +238,28 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
                   return null;
                }
                
-               if (method_exists($cmodel, 'getLinkDataByRow'))
+               if (!empty($res))
                {
-                  $code = '$ret[$kind][$type][$row[\'_id\']] = $cmodel->getLinkDataByRow($row);';
-               }
-               else
-               {
-                  $code = '$ret[$kind][$type][$row[\'_id\']] = array(\'text\' => $kind.\' \'.$type, \'value\' => $row[\'_id\']);';
-               }
-               
-               foreach ($res as $row)
-               {
-                  eval($code);
-                  $ret[$kind][$type][$row['_id']]['rel'] = array();
-                  
-                  foreach ($attributes as $attr)
+                  if (method_exists($cmodel, 'getLinkDataByRow'))
                   {
-                     if (!isset($ids[$row[$attr]])) continue;
-                     
-                     $ret[$kind][$type][$row['_id']]['rel'][] = $row[$attr];
+                     $code = '$ret[$kind][$type][$row[\'_id\']] = $cmodel->getLinkDataByRow($row);';
+                  }
+                  else
+                  {
+                     $code = '$ret[$kind][$type][$row[\'_id\']] = array(\'text\' => $kind.\' \'.$type, \'value\' => $row[\'_id\']);';
+                  }
+                  
+                  foreach ($res as $row)
+                  {
+                     eval($code);
+                     $ret[$kind][$type][$row['_id']]['rel'] = array();
+
+                     foreach ($attributes as $attr)
+                     {
+                        if (!isset($ids[$row[$attr]])) continue;
+                         
+                        $ret[$kind][$type][$row['_id']]['rel'][] = $row[$attr];
+                     }
                   }
                }
             }
@@ -296,6 +299,8 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
                   }
                }
             }
+            
+            if (empty($owner)) continue;
             
             if (null === ($res = $cmodel->retrieveLinkData($owner)))
             {
