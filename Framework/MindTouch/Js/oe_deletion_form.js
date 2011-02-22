@@ -307,25 +307,29 @@ function DeletionForm()
 	 */
 	this.updateMarkedList = function(rows)
 	{
+		jQuery('#' + mark_id + ' .oef_deletion_checkboxes input:checked').each(function() {
+			var link = jQuery(this).parents('.oef_marked_item').find('.oef_link').get(0);
+			
+			if (!jQuery(link).hasClass('oef_could_be_removed'))
+			{
+				jQuery(link).removeClass('oef_could_not_be_removed');
+				jQuery(link).addClass('oef_could_be_removed');
+			}
+		});
+		
 		for (var kind in rows)
 		{
 			for (var type in rows[kind])
 			{
 				for (var id in rows[kind][type])
 				{
-					jQuery('#' + mark_id + ' .oef_' + kind + '_' + type + '_' + id).addClass('oef_could_not_be_removed');
+					var selector = '#' + mark_id + ' .oef_' + kind + '_' + type + '_' + id;
+					
+					jQuery(selector).removeClass('oef_could_be_removed');
+					jQuery(selector).addClass('oef_could_not_be_removed');
 				}
 			}
 		}
-		
-		jQuery('#' + mark_id + ' .oef_deletion_checkboxes input:checked').each(function() {
-			var link = jQuery(this).parents('.oef_marked_item').find('.oef_link').get(0);
-			
-			if (!jQuery(link).hasClass('oef_could_not_be_removed'))
-			{
-				jQuery(link).addClass('oef_could_be_removed');
-			}
-		});
 	};
 	
 	/**

@@ -10,6 +10,7 @@ function onPost($event)
 {
    $document  = $event->getSubject();
    $container = Container::getInstance();
+   $odb  = $container->getODBManager();
    $type = $document->getType();
    $id   = $document->getId();
    
@@ -66,7 +67,6 @@ function onPost($event)
       $errors  = array();
       $emplIDS = array();
       $emplPer = array();
-      $odb     = $container->getODBManager();
       
       foreach ($employees as $person => $row)
       {
