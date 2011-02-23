@@ -491,10 +491,17 @@
      
      if (!empty($errors)) return array('status' => false, 'errors' => $errors);
      
-     list($kind, $type) = Utility::parseUID($uid);
-
-     $result = Utility::parseKindString($kind);
-     $result['type'] = $type;
+     try
+     {
+        list($kind, $type) = Utility::parseUID($uid);
+        
+        $result = Utility::parseKindString($kind);
+        $result['type'] = $type;
+     }
+     catch (Exception $e)
+     {
+        return array('status' => false, 'errors' => array('Invalid UID'));
+     }
      
      return $result;
   }
