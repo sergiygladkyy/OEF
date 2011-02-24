@@ -3119,23 +3119,23 @@ class PersistentLayer
          return $this->generateConstantsSQLCreate($CManager, $dbcharset, $options);
       }
       
-      $db_map    = $CManager->getInternalConfiguration('db_map', null, $options);
-      $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
-      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
+      $db_map    = $CManager->getInternalConfiguration('db_map', false, $options);
+      $fields    = $CManager->getInternalConfiguration($kind.'.fields', false, $options);
+      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', false, $options);
       
       $query  = array();
       $db_map =& $db_map[$kind];
       
       if ($kind != 'information_registry')
       {
-         $tab_fields    = $CManager->getInternalConfiguration($kind.'.tabulars.fields', null, $options);
-         $tab_field_sql = $CManager->getInternalConfiguration($kind.'.tabulars.field_sql', null, $options);
+         $tab_fields    = $CManager->getInternalConfiguration($kind.'.tabulars.fields', false, $options);
+         $tab_field_sql = $CManager->getInternalConfiguration($kind.'.tabulars.field_sql', false, $options);
       }
       else
       {
-         $periodical = $CManager->getInternalConfiguration($kind.'.periodical', null, $options);
-         $demensions = $CManager->getInternalConfiguration($kind.'.dimensions', null, $options);
-         $recorders  = $CManager->getInternalConfiguration($kind.'.recorders', null, $options);
+         $periodical = $CManager->getInternalConfiguration($kind.'.periodical', false, $options);
+         $demensions = $CManager->getInternalConfiguration($kind.'.dimensions', false, $options);
+         $recorders  = $CManager->getInternalConfiguration($kind.'.recorders', false, $options);
       }
 
       foreach ($fields as $type => $e_fields)
@@ -3236,15 +3236,15 @@ class PersistentLayer
    {
       $kind      = 'AccumulationRegisters';
       $db_map    = $CManager->getInternalConfiguration('db_map', $kind, $options);
-      $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
-      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
+      $fields    = $CManager->getInternalConfiguration($kind.'.fields', false, $options);
+      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', false, $options);
       
       $query  = array();
       
-      $periodical    = $CManager->getInternalConfiguration($kind.'.periodical',    null, $options);
-      $demensions    = $CManager->getInternalConfiguration($kind.'.dimensions',    null, $options);
-      $recorders     = $CManager->getInternalConfiguration($kind.'.recorders',     null, $options);
-      $register_type = $CManager->getInternalConfiguration($kind.'.register_type', null, $options);
+      $periodical    = $CManager->getInternalConfiguration($kind.'.periodical',    false, $options);
+      $demensions    = $CManager->getInternalConfiguration($kind.'.dimensions',    false, $options);
+      $recorders     = $CManager->getInternalConfiguration($kind.'.recorders',     false, $options);
+      $register_type = $CManager->getInternalConfiguration($kind.'.register_type', false, $options);
 
       foreach ($fields as $type => $e_fields)
       {
@@ -3323,8 +3323,8 @@ class PersistentLayer
       $kind      = 'Constants';
       $type      = null;
       $db_map    = $CManager->getInternalConfiguration('db_map', $kind, $options);
-      $fields    = $CManager->getInternalConfiguration($kind.'.fields', null, $options);
-      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', null, $options);
+      $fields    = $CManager->getInternalConfiguration($kind.'.fields', $type, $options);
+      $field_sql = $CManager->getInternalConfiguration($kind.'.field_sql', $type, $options);
 
       $query  = array();
 
@@ -3618,16 +3618,10 @@ class PersistentLayer
       /* remove all tables */
       
       $tables  = array();
-      $db_map  = $CManager->getInternalConfiguration('db_map', null, $options);
+      $db_map  = $CManager->getInternalConfiguration('db_map', false, $options);
       
       foreach ($db_map as $kind => $map)
       {
-         if ($kind == 'Constants')
-         {
-            $tables[] = $map['table'];
-            continue;
-         }
-         
          foreach ($map as $config)
          {
             $tables[] = $config['table'];
