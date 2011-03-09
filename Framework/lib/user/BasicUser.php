@@ -150,8 +150,9 @@ class BasicUser extends BaseUser
       $db    = $container->getDBManager();
       $dbmap = $container->getConfigManager()->getInternalConfiguration('db_map', 'catalogs');
       $table = $dbmap['SystemUsers']['table'];
+      $pkey  = $dbmap['SystemUsers']['pkey'];
       
-      $query = "SELECT `Attributes` FROM `".$table."` WHERE User='".(int) $userId." AND AuthType='Basic'";
+      $query = "SELECT `Attributes` FROM `".$table."` WHERE `".$pkey."`=".(int) $userId." AND `AuthType`='Basic'";
          
       if (null === ($res = $db->loadAssoc($query)))
       {
