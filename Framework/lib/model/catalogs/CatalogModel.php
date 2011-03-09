@@ -67,8 +67,8 @@ class CatalogModel extends BaseObjectModel
          throw new Exception(__METHOD__.': Not supported operation updateConfiguration');
       }
       
-      $mode = empty($this->attributes[$this->conf['db_map']['folder']]) ? SystemConstants::USAGE_WITH_ITEM : SystemConstants::USAGE_WITH_FOLDER;
-         
+      $mode = $this->isFolder() ? SystemConstants::USAGE_WITH_FOLDER : SystemConstants::USAGE_WITH_ITEM;
+      
       if (!isset($this->conf['use'][$mode])) return false;
       
       $this->conf['attributes'] =& $this->conf['use'][$mode];
@@ -97,7 +97,7 @@ class CatalogModel extends BaseObjectModel
       // Execute method
       $ret = parent::load($id, $options);
       
-      if ($ret && $this->isHierarchical())
+      if ($ret && $this->isFolderHierarchical())
       {
          $this->updateConfiguration();
       }
@@ -141,7 +141,7 @@ class CatalogModel extends BaseObjectModel
       $this->isModified = false;
       $this->modified   = array();
       
-      if ($this->isHierarchical())
+      if ($this->isFolderHierarchical())
       {
          $this->updateConfiguration();
       }
@@ -348,13 +348,23 @@ class CatalogModel extends BaseObjectModel
    }
    
    /**
+    * Is folder hierarchical
+    * 
+    * @return boolean
+    */
+   public function isFolderHierarchical()
+   {
+      return (!empty($this->conf['hierarchy']) && $this->conf['hierarchy'] == 2);
+   }
+   
+   /**
     * Is folder
     * 
     * @return boolean
     */
    public function isFolder()
    {
-      return $this->isHierarchical() && $this->attributes[$this->conf['db_map']['folder']];
+      return $this->isFolderHierarchical() && $this->attributes[$this->conf['db_map']['folder']];
    }
    
    /**
@@ -365,7 +375,7 @@ class CatalogModel extends BaseObjectModel
     */
    public function setFolder($value)
    {
-      if (!$this->isHierarchical())
+      if (!$this->isFolderHierarchical())
       {
          throw new Exception(__METHOD__.': Not supported operation setFolder');
       }
@@ -449,7 +459,7 @@ class CatalogModel extends BaseObjectModel
     */
    protected function addSystemToInsert(& $fields, & $values)
    {
-      if ($this->isHierarchical() && !empty($this->modified['folder']))
+      if ($this->isFolderHierarchical() && !empty($this->modified['folder']))
       {
          if ($fields)
          {
@@ -473,7 +483,7 @@ class CatalogModel extends BaseObjectModel
     */
    protected function addSystemToUpdate(& $fields)
    {
-      if ($this->isHierarchical() && !empty($this->modified['folder']))
+      if ($this->isFolderHierarchical() && !empty($this->modified['folder']))
       {
          $fields[] = "`".$this->conf['db_map']['folder']."`=".($this->attributes[$this->conf['db_map']['folder']] ? 1 : 0);
       }
