@@ -90,8 +90,6 @@ abstract class BaseNotStorageEntityModel extends BaseModel
    {
       if (!$this->hasAttribute($name))
       {
-         throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
-         
          if ($name != 'extra')
          {
             throw new Exception(__METHOD__.': Attribute "'.$name.'" not exists.');
@@ -278,7 +276,7 @@ abstract class BaseNotStorageEntityModel extends BaseModel
          // Has entity ?
          if ($val != 0 && !self::hasEntity($ref['kind'], $ref['type'], $val))
          {
-            $errors[$attr] = '"'.ucfirst($ref['kind']).'.'.$ref['type'].'" with id "'.$val.'" is not exists';
+            $errors[$attr] = 'Not exists';
          }
       }
 

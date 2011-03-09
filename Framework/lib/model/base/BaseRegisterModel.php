@@ -210,7 +210,7 @@ class BaseRegisterModel extends BaseEntityModel
       
       if (!self::hasEntity('documents', $type, $id))
       {
-         return array('Document "'.$type.'" with id "'.$id.'" is not exists');
+         return array('Recorder not exists');
       }
       
       return array();
@@ -219,63 +219,7 @@ class BaseRegisterModel extends BaseEntityModel
 
    /**
     * (non-PHPdoc)
-    * @see lib/model/base/BaseEntityModel#generateInsertQuery($attributes, $options)
-    */
-   protected function generateInsertQuery(array& $attributes, array& $options = array())
-   {
-      // Attributes
-      if (list($field, $value) = each($attributes))
-      {
-         $fields = "`".$field."`";
-         $values = $this->getValueForSQL($field, $value);
-      
-         while (list($field, $value) = each($attributes))
-         {
-            $fields .= ", `".$field."`";
-            $values .= ", ".$this->getValueForSQL($field, $value);
-         }
-      }
-      
-      // System attributes
-      $this->addSystemToInsert($fields, $values);
-      
-      // Insert
-      $query  = "INSERT INTO `".$this->conf['db_map']['table']."`(".$fields.") ";
-      $query .= "VALUES(".$values.")";
-      
-      return $query;
-   }
-   
-   /**
-    * (non-PHPdoc)
-    * @see lib/model/base/BaseEntityModel#generateUpdateQuery($attributes, $options)
-    */
-   protected function generateUpdateQuery(array& $attributes, array& $options = array())
-   {
-      $fields = array();
-      
-      // Attributes
-      foreach ($attributes as $field => $value)
-      {
-         $fields[] = "`".$field."`=".$this->getValueForSQL($field, $value);
-      }
-      
-      // System attributes
-      $this->addSystemToUpdate($fields);
-      
-      // Update
-      $db_map =& $this->conf['db_map'];
-      $query  =  "UPDATE `".$db_map['table']."` SET ".implode(", ", $fields)." WHERE `".$db_map['pkey']."`=".$this->id;
-      
-      return $query;
-   }
-   
-   /**
-    * Add system attributes to insert query
-    * 
-    * @param string $fields
-    * @param string $values
-    * @return void
+    * @see BaseEntityModel#addSystemToInsert($fields, $values)
     */
    protected function addSystemToInsert(& $fields, & $values)
    {
@@ -300,10 +244,8 @@ class BaseRegisterModel extends BaseEntityModel
    }
    
    /**
-    * Add system attributes to insert update
-    * 
-    * @param array $fields
-    * @return void
+    * (non-PHPdoc)
+    * @see BaseEntityModel#addSystemToUpdate($fields)
     */
    protected function addSystemToUpdate(& $fields)
    {
@@ -347,6 +289,7 @@ class BaseRegisterModel extends BaseEntityModel
       
       return $errors;
    }
+   
    
    /**
     * Load entity by dimensions

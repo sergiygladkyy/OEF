@@ -230,6 +230,59 @@ class PersistentLayer
             $errors[$catalog]['global'][] = 'Invalid name';
          }
          
+         
+         /* Check Owners config */
+         
+         if (!isset($conf['Owners']))
+         {
+            $valid[$catalog]['Owners'] = array();
+         }
+         elseif (!is_array($conf['Owners']))
+         {
+            $errors[$catalog]['global'][] = 'Owners configuration for catalog "'.$catalog.'" is wrong';
+         }
+         elseif (empty($conf['Owners']))
+         {
+            $errors[$catalog]['global'][] = 'Owners configuration for catalog "'.$catalog.'" is empty';
+         }
+         else
+         {
+            if (!$err = $this->checkOwnersConfig('catalogs', $conf['Owners']))
+            {
+               $valid[$catalog]['Owners'] = $conf['Owners'];
+            }
+            else $errors[$catalog]['Owners'] = $err;
+         }
+         
+         
+         /* Check Hierarchy config */
+         
+         $hierarchy = false;
+         
+         if (!isset($conf['Hierarchy']))
+         {
+            $valid[$catalog]['Hierarchy'] = array();
+         }
+         elseif (!is_array($conf['Hierarchy']))
+         {
+            $errors[$catalog]['global'][] = 'Hierarchy configuration for catalog "'.$catalog.'" is wrong';
+         }
+         elseif (empty($conf['Hierarchy']))
+         {
+            $errors[$catalog]['global'][] = 'Hierarchy configuration for catalog "'.$catalog.'" is empty';
+         }
+         else
+         {
+            if (!$err = $this->checkHierarchyConfig('catalogs', $conf['Hierarchy']))
+            {
+               $valid[$catalog]['Hierarchy'] = $conf['Hierarchy'];
+               
+               if (!empty($conf['Hierarchy'])) $hierarchy = true;
+            }
+            else $errors[$catalog]['Hierarchy'] = $err;
+         }
+         
+         
          /* Check fields config */
          
          if (!isset($conf['fields']))
@@ -1103,17 +1156,93 @@ class PersistentLayer
    
    
    
+   
+   
+   
+   
    /**
-    * Check fields configuration
+    * Check Owners configuration
     * 
     * @param string $kind - entity kind
     * @param array& $config - !!! метод вносит изменения в передаваемый массив
     * @return array - errors
     */
-   protected function checkFieldsConfig($kind, array& $config)
+   protected function checkOwnersConfig($kind, array& $config)
    {
       $errors = array();
       $valid  = array();
+      
+      foreach ($config as $key => $catalogs_type)
+      {
+         if (is_string($catalogs_type))
+         {
+            $valid[] = $catalogs_type;
+         }
+         else $errors[$key] = 'Configuration is wrong';
+      }
+      
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check Hierarchy configuration
+    * 
+    * @param string $kind - entity kind
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkHierarchyConfig($kind, array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      $allowed_types = $this->getAllowedHierarchyTypes();
+
+      /* type */
+
+      if (!isset($config['type']))
+      {
+         $errors[] = 'Not set hierarchy type';
+      }
+      elseif (!is_string($config['type']))
+      {
+         $errors[] = 'hierarchy type is wrong';
+      }
+      else
+      {
+         $type = ucfirst($config['type']);
+
+         if (false === ($code = array_search($type, $allowed_types)))
+         {
+            $errors[] = 'Not supported hierarchy type';
+            unset($type);
+         }
+         else
+         {
+            $valid['type'] = $code;
+         }
+      }
+       
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check fields configuration
+    * 
+    * @param string $kind    - entity kind
+    * @param array& $config  - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkFieldsConfig($kind, array& $config)
+   {
+      $errors  = array();
+      $valid   = array();
+      $options = ($kind == 'catalogs') ? array('hierarchy' => true) : array();
       
       foreach ($config as $field => $conf)
       {
@@ -1127,7 +1256,7 @@ class PersistentLayer
          // is link?
          if (isset($conf['reference']))
          {
-            if (!$err = $this->checkReferenceConfig($conf))
+            if (!$err = $this->checkReferenceConfig($conf, $options))
             {
                $valid[$field] = $conf;
             }
@@ -1143,7 +1272,7 @@ class PersistentLayer
             continue;
          }
          
-         if (!$err = $this->checkAttributeConfig($kind, $conf))
+         if (!$err = $this->checkAttributeConfig($kind, $conf, $options))
          {
             $valid[$field] = $conf;
          }
@@ -1159,10 +1288,11 @@ class PersistentLayer
    /**
     * Check reference configuration array
     * 
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param array& $config  - !!! метод вносит изменения в передаваемый массив
+    * @param array& $options
     * @return array - errors
     */
-   protected function checkReferenceConfig(array& $config)
+   protected function checkReferenceConfig(array& $config, array& $options = array())
    {
       $errors = array();
       $valid  = array();
@@ -1198,6 +1328,24 @@ class PersistentLayer
             }
          }
       }
+      
+      /* Use */
+      
+      if (!empty($options['hierarchy']))
+      {
+         if (isset($config['use']))
+         {
+            if (!$err = $this->checkUseConfig($config['use']))
+            {
+               $valid['use'] = $config['use'];
+            }
+            else
+            {
+               $errors = array_merge($errors, $err);
+            }
+         }
+         else $valid['use'] = 1;
+      }
 
       $config = $valid;
       unset($valid);
@@ -1208,11 +1356,12 @@ class PersistentLayer
    /**
     * Check attribute configuration array
     * 
-    * @param string $kind - entity kind
-    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @param string $kind    - entity kind
+    * @param array& $config  - !!! метод вносит изменения в передаваемый массив
+    * @param array& $options
     * @return array - errors
     */
-   protected function checkAttributeConfig($kind, array& $config)
+   protected function checkAttributeConfig($kind, array& $config, array& $options = array())
    {
       $errors = array();
       $valid  = array();
@@ -1290,12 +1439,66 @@ class PersistentLayer
          }
       }
       
+      /* Use */
+      
+      if (!empty($options['hierarchy']))
+      {
+         if (isset($config['use']))
+         {
+            if (!$err = $this->checkUseConfig($config['use']))
+            {
+               $valid['use'] = $config['use'];
+            }
+            else
+            {
+               $errors = array_merge($errors, $err);
+            }
+         }
+         else $valid['use'] = 1;
+      }
+      
       $config = $valid;
       unset($valid);
       
       return $errors;
    }
    
+   /**
+    * Check use configuration
+    * 
+    * @param string& $config
+    * @return array - errors
+    */
+   protected function checkUseConfig(& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      $uses   = $this->getAllowedUses();
+      
+      if (!is_string($config))
+      {
+         $errors[] = 'Use type is wrong';
+      }
+      else
+      {
+         $use = ucfirst($config);
+         
+         if (false === ($code = array_search($use, $uses)))
+         {
+            $errors[] = 'Not supported use type';
+            unset($use);
+         }
+         else
+         {
+            $valid = $code;
+         }
+      }
+         
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
    
    /**
     * Check precision configuration array
@@ -1386,7 +1589,22 @@ class PersistentLayer
        
       if (!isset($conf['model']))
       {
-         $valid = $this->getDefaultModel($kind);
+         if ($kind == 'catalogs')
+         {
+            if (!empty($conf['Owners']))
+            {
+               $mtype = 'slave';
+            }
+            
+            if (!empty($conf['Hierarchy']))
+            {
+               $mtype = empty($mtype) ? 'hierarchy' : $mtype.'_and_hierarchy';
+            }
+         }
+         
+         if (empty($mtype)) $mtype = 'base';
+         
+         $valid = $this->getDefaultModel($kind, $mtype);
       }
       elseif (!is_array($conf['model']))
       {
@@ -1703,6 +1921,26 @@ class PersistentLayer
    }
    
    /**
+    * Return list of allowed hierarchy types
+    * 
+    * @return array
+    */
+   protected function getAllowedHierarchyTypes()
+   {
+      return array(1 => 'Item', 2 => 'Folder and item');
+   }
+   
+   /**
+    * Return list of allowed attribute uses types
+    * 
+    * @return array
+    */
+   protected function getAllowedUses()
+   {
+      return array(1 => 'For item', 2 => 'For folder', 3 => 'For folder and item');
+   }
+   
+   /**
     * Get list allowed internal types
     * 
     * @return array
@@ -1774,22 +2012,23 @@ class PersistentLayer
    /**
     * Get default model configuration
     * 
-    * @param string $kind - entity kind
+    * @param string $kind  - entity kind
+    * @param string $mtype - model type
     * @return array
     */
-   public function getDefaultModel($kind)
+   public function getDefaultModel($kind, $mtype = 'base')
    {
       if (!isset($this->_default_models))
       {
          $this->_default_models = $this->loadConfigFromFile(self::p_config_dir.'default_models.php');
       }
       
-      if (empty($this->_default_models[$kind]))
+      if (empty($this->_default_models[$kind][$mtype]))
       {
          throw new Exception(__METHOD__.": Default model configuration is wrong");
       }
       
-      return $this->_default_models[$kind];
+      return $this->_default_models[$kind][$mtype];
    }
    
    /**
@@ -2201,11 +2440,64 @@ class PersistentLayer
                $result['tabulars'] = $this->generateTabularInternalConfiguration($entity_dictionary, '', '');
             }
          }
+         elseif ($kind == 'catalogs')
+         {
+            $result['owners']    = array();
+            $result['hierarchy'] = array();
+            $result['field_use'] = array();
+         }
       }
       
       foreach ($entity_dictionary as $type => $params)
       {
          $result[$kind][] = $type;
+         
+         
+         /* Owners and Hierarchy */
+         
+         if ($kind == 'catalogs')
+         {
+            // Owners
+            foreach ($params['Owners'] as &$uid)
+            {
+               if (isset($this->dictionary['catalogs'][$uid]))
+               {
+                  $result['owners'][$type][] = $uid;
+                  
+                  $uid = ucfirst($uid);
+                  
+                  continue;
+               }
+               
+               try
+               {
+                  list($o_kind, $o_type) = Utility::parseUID($uid);
+                  
+                  if ($o_kind != 'catalogs')
+                  {
+                     $errors[] = 'Invalid owner '.$uid.' for '.$kind.'.'.$type;
+                  }
+                  elseif (!isset($this->dictionary[$o_kind][$o_type]))
+                  {
+                     $errors[] = $uid.' not exists';
+                  }
+                  else
+                  {
+                     $result['owners'][$type][] = $o_type;
+                     
+                     $uid = ucfirst($o_type);
+                  }
+               }
+               catch (Exception $e)
+               {
+                  $errors[] = 'Catalog "'.$type.'": invalid owner uid '.$uid;
+               }
+            }
+            
+            // Hierarchy
+            $result['hierarchy'][$type] = $params['Hierarchy'];
+         }
+         
          
          /* Fields */
          
@@ -2217,6 +2509,7 @@ class PersistentLayer
             $add_fields = array(
                'Code' => array(
                   'type' => 'string',
+                  'use'  => 3,
                   'sql'  => array(
                      'type' => "varchar(".$clength.") NOT NULL"
                   ),
@@ -2227,6 +2520,7 @@ class PersistentLayer
                ),
                'Description' => array(
                   'type' => 'string',
+                  'use'  => 3,
                   'sql'  => array(
                      'type' => "varchar(255) NOT NULL"
                   ),
@@ -2237,6 +2531,53 @@ class PersistentLayer
                $params['fields']['Code'],
                $params['fields']['Description']
             );
+            
+            // Owner attributes
+            if (!empty($params['Owners']))
+            {
+               sort($params['Owners']);
+               array_unshift($params['Owners'], ' ');
+               unset($params['Owners'][0]);
+               
+               $add_fields['OwnerType'] = array(
+                  'type' => 'string',
+                  'use'  => 3,
+                  'sql'  => array(
+                     'type' => "varchar(128) NOT NULL"
+                  ),
+                  'precision' => array(
+                     'required' => true,
+                     'in' => $params['Owners']
+                  )
+               );
+               
+               $add_fields['OwnerId'] = array(
+                  'type' => 'int',
+                  'use'  => 3,
+                  'sql'  => array(
+                     'type' => "int(11) NOT NULL default 0"
+                  ),
+                  'precision' => array(
+                     'required' => true
+                  )
+               );
+               
+               unset(
+                  $params['fields']['OwnerType'],
+                  $params['fields']['OwnerId']
+               );
+            }
+            
+            // Hierarchy attributes
+            if (!empty($params['Hierarchy']))
+            {
+               $add_fields['Parent'] = array(
+                  'reference' => 'catalogs.'.$type,
+                  'use'  => 3
+               );
+               
+               unset($params['fields']['Parent']);
+            }
          }
          elseif ($kind == 'documents')
          {
@@ -2263,6 +2604,12 @@ class PersistentLayer
             {
                $result['field_sql'][$type] = $res['field_sql'];
             }
+            
+            if (isset($res['field_use']))
+            {
+               $result['field_use'][$type] = $res['field_use'];
+            }
+            
             $result['fields'][$type]     = $res['fields'];
             $result['field_type'][$type] = $res['field_type'];
             $result['field_prec'][$type] = $res['field_prec'];
@@ -2828,6 +3175,11 @@ class PersistentLayer
          'dynamic'    => array()
       );
       
+      if ($kind == 'catalogs')
+      {
+         $result['field_use'] = array();
+      }
+      
       foreach ($fields_dictionary as $name => $params)
       {
          $result['fields'][] = $name;
@@ -2885,6 +3237,32 @@ class PersistentLayer
             // Other
             if (!empty($params['precision'])) $result['field_prec'][$name] = $params['precision'];
          }
+         
+         /* Use */
+         
+         if (isset($result['field_use']))
+         {
+            if (isset($params['use']))
+            {
+               switch ($params['use'])
+               {
+                  case 1:
+                     $result['field_use'][SystemConstants::USAGE_WITH_ITEM][] = $name;
+                     break;
+                  case 2:
+                     $result['field_use'][SystemConstants::USAGE_WITH_FOLDER][] = $name;
+                     break;
+                  case 3:
+                     $result['field_use'][SystemConstants::USAGE_WITH_ITEM][]   = $name;
+                     $result['field_use'][SystemConstants::USAGE_WITH_FOLDER][] = $name;
+                     break;
+                     
+                  default:
+                     $errors[] = 'Invalid use type for attribute '.$name;
+               }
+            }
+            else $errors[] = 'Unknow use type for attribute '.$name;
+         }
       }
 
       return empty($errors) ? $result : array('errors' => $errors);
@@ -2921,6 +3299,13 @@ class PersistentLayer
          $db_map['catalogs'][$catalog]['table'] = $dbprefix.'catalogs_'.$catalog;
          $db_map['catalogs'][$catalog]['pkey']  = '_id';
          $db_map['catalogs'][$catalog]['deleted'] = '_deleted';
+         
+         $_conf =& $configuration['catalogs']['hierarchy'];
+         
+         if (!empty($_conf[$catalog]) && $_conf[$catalog]['type'] == 2)
+         {
+            $db_map['catalogs'][$catalog]['folder'] = '_folder';
+         }
          
          /* Tabular sections */
          
@@ -3157,6 +3542,11 @@ class PersistentLayer
          if ($kind == 'catalogs')
          {
             $uKey = ', UNIQUE KEY `Code` (`Code`)';
+            
+            if (isset($db_map[$type]['folder']))
+            {
+               $q .= ', `'.$db_map[$type]['folder'].'` tinyint(1) NOT NULL default 0';
+            }
          }
          elseif ($kind == 'documents')
          {

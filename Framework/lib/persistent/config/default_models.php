@@ -2,39 +2,67 @@
 
 $_default_models = array(
    'catalogs' => array(
-      'modelclass'  => 'CatalogModel',
-      'cmodelclass' => 'CatalogsModel'
+      'base' => array(
+         'modelclass'  => 'CatalogModel',
+         'cmodelclass' => 'CatalogsModel'
+      ),
+      'slave' => array(
+         'modelclass'  => 'CatalogModel',
+         'cmodelclass' => 'CatalogsSlaveModel'
+      ),
+      'hierarchy' => array(
+         'modelclass'  => 'CatalogModel',
+         'cmodelclass' => 'CatalogsHierarchyModel'
+      ),
+      'slave_and_hierarchy' => array(
+         'modelclass'  => 'CatalogModel',
+         'cmodelclass' => 'CatalogsSlaveAndHierarchyModel'
+      )
    ),
    
    'information_registry' => array(
-      'modelclass'  => 'InfRegistryModel',
-      'cmodelclass' => 'InfRegistriesModel'
+      'base' => array(
+         'modelclass'  => 'InfRegistryModel',
+         'cmodelclass' => 'InfRegistriesModel'
+      )
    ),
    
    'AccumulationRegisters' => array(
-      'modelclass'  => 'AccumulationRegisterModel',
-      'cmodelclass' => 'AccumulationRegistersModel'
+      'base' => array(
+         'modelclass'  => 'AccumulationRegisterModel',
+         'cmodelclass' => 'AccumulationRegistersModel'
+      )
    ),
    
    'tabular_sections' => array(
-      'modelclass'  => 'TabularModel',
-      'cmodelclass' => 'TabularsModel'
+      'base' => array(
+         'modelclass'  => 'TabularModel',
+         'cmodelclass' => 'TabularsModel'
+      )
    ),
    
    'documents' => array(
-      'modelclass'  => 'DocumentModel',
-      'cmodelclass' => 'DocumentsModel'
+      'base' => array(
+         'modelclass'  => 'DocumentModel',
+         'cmodelclass' => 'DocumentsModel'
+      )
    ),
    
    'reports' => array(
-      'modelclass' => 'ReportModel'
+      'base' => array(
+         'modelclass' => 'ReportModel'
+      )
    ),
    
    'data_processors' => array(
-      'modelclass' => 'DataProcessorModel'
+      'base' => array(
+         'modelclass' => 'DataProcessorModel'
+      )
    ),
    
    'web_services' => array(
-      'modelclass' => 'WebServiceModel'
+      'base' => array(   
+         'modelclass' => 'WebServiceModel'
+      )
    )
 );

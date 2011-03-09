@@ -221,6 +221,12 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
          }
       }
       
+      // System attributes
+      $this->addSystemToInsert($fields, $values);
+      
+      // Insert
+      $query  = "INSERT INTO `".$this->conf['db_map']['table']."`(".$fields.") ";
+      $query .= "VALUES(".$values.")";
       $query  = "INSERT INTO `".$this->conf['db_map']['table']."`(".$fields.") ";
       $query .= "VALUES(".$values.")";
       
@@ -244,10 +250,37 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
          $fields[] = "`".$field."`=".$this->getValueForSQL($field, $value);
       }
       
+      // System attributes
+      $this->addSystemToUpdate($fields);
+      
+      // Update
       $db_map =& $this->conf['db_map'];
       $query  =  "UPDATE `".$db_map['table']."` SET ".implode(", ", $fields)." WHERE `".$db_map['pkey']."`=".$this->id;
       
       return $query;
+   }
+   
+   /**
+    * Add system attributes to insert query
+    * 
+    * @param string $fields
+    * @param string $values
+    * @return void
+    */
+   protected function addSystemToInsert(& $fields, & $values)
+   {
+      ;
+   }
+   
+   /**
+    * Add system attributes to insert update
+    * 
+    * @param array $fields
+    * @return void
+    */
+   protected function addSystemToUpdate(& $fields)
+   {
+      ;
    }
    
    /**
@@ -259,7 +292,7 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
     */
    protected function getValueForSQL($name, $value)
    {
-      switch($this->conf['types'][$name])
+      switch ($this->conf['types'][$name])
       {
          case 'bool':
          case 'int':
