@@ -313,6 +313,15 @@ class CatalogModel extends BaseObjectModel
          $this->attributes = null;
          $this->isModified = false;
          $this->modified   = array();
+         
+         if ($this->isFolderHierarchical())
+         {
+            $folder = $this->conf['db_map']['folder'];
+            
+            $this->setFolder(!empty($values[$folder]));
+            
+            unset($values[$folder]);
+         }
       }
       else if (!$this->load($values[$pkey], $options)) // Load by id
       {
@@ -354,7 +363,7 @@ class CatalogModel extends BaseObjectModel
     */
    public function isFolderHierarchical()
    {
-      return (!empty($this->conf['hierarchy']) && $this->conf['hierarchy'] == 2);
+      return (!empty($this->conf['hierarchy']) && $this->conf['hierarchy']['type'] == 2);
    }
    
    /**

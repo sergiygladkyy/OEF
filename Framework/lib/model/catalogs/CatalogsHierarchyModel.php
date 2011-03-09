@@ -134,4 +134,69 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       
       return $this->getChildren($parent, $options);
    }
+   
+   /**
+    * (non-PHPdoc)
+    * @see lib/model/base/BaseEntitiesModel#retrieveSelectDataForRelated($fields, $options)
+    */
+   public function retrieveSelectDataForRelated($fields = array(), array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      if ($this->conf['hierarchy']['type'] == 2)
+      {
+         if (empty($fields))
+         {
+            $fields = $this->conf['types'];
+         }
+         
+         if (isset($fields['Parent']))
+         {
+            $parent = $this->retrieveSelectParent($options); 
+            
+            unset($fields['Parent']);
+         }
+      }
+      
+      $result = parent::retrieveSelectDataForRelated($fields, $options);
+      
+      if (isset($parent)) $result['Parent'] = $parent;
+      
+      return $result;
+   }
+   
+   /**
+    * Get data for select
+    * 
+    * @param array $options
+    * @return array
+    */
+   public function retrieveSelectParent(array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.View'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      $db_map =& $this->conf['db_map'];
+      $query  = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 AND `".$db_map['folder']."`=1 ORDER BY `Description` ASC";
+      
+      $db  = $this->container->getDBManager($options);
+      $res = $db->executeQuery($query);
+      
+      if (is_null($res)) return array();
+      
+      $list = array();
+      
+      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $row[1]);
+      
+      return $list;
+   }
 }

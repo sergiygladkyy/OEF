@@ -95,7 +95,7 @@ class CatalogsModel extends BaseObjectsModel
    
    /**
     * (non-PHPdoc)
-    * @see ext/OEF/Framework/lib/model/base/BaseObjectsModel#getLinkDataByRow($row, $options)
+    * @see lib/model/base/BaseObjectsModel#getLinkDataByRow($row, $options)
     */
    public function getLinkDataByRow(array $row, array $options = array())
    {

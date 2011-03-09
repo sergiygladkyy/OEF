@@ -7,8 +7,11 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
+   var field_use  = {};
    var required   = [];
    var dynamic    = {};
+   var hierarchy  = {};
+   var owners     = {};
    var references = [];
    var kind     = '';
    var type     = puid.type;
@@ -36,10 +39,13 @@
       var name_prefix = 'aeform['..kind..']['..type..']';
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
+      let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
+      let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
+      let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       
       var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
       if (item._id > 0) {
@@ -49,6 +55,21 @@
       else {
          var header = 'New ';
          var hidden = '';
+         
+         if (hierarchy.type == 2) {
+            let item ..= {_folder: (__request.args.type == 'group' ? 1 : 0)};
+         }
+      }
+      
+      if (hierarchy.type == 2) {
+         if (item._folder == 1) {
+            let fields = field_use[2];
+         }
+         else {
+            let fields = field_use[1];
+         }
+         
+         let hidden = '&lt;input type="hidden" name="'..name_prefix..'[attributes][_folder]" value="'..item._folder..'" /&gt;';
       }
       
       var class  = string.replace(kind, '.', '_')..'_'..type;
