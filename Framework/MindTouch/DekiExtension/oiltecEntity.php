@@ -22,6 +22,7 @@
           "displayImportForm(uid:str, params:map):map" => 'displayImportForm',
           "displayConstantsForm(params:map):map" => 'displayConstantsForm',
           "displayDeletionForm(params:map):map"  => 'displayDeletionForm',
+          "displayTreeList(uid:str, params:map):map" => 'displayTreeList',
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
@@ -456,6 +457,71 @@
      if (!method_exists($controller, 'displayDeletionForm')) return array('status' => false, 'errors' => array('Not supported operation'));
      
      return $controller->displayDeletionForm($options);
+  }
+  
+  /**
+   * Retrieve data for TreeListForm
+   * 
+   * @param string $uid
+   * @param array $params
+   * @return array
+   */
+  function displayTreeList($uid, array $params = array())
+  {
+     // Initialize OEF
+     $errors = initialize();
+     
+     if (!empty($errors)) return array('status' => false, 'errors' => $errors);
+      
+     list($kind, $type) = Utility::parseUID($uid);
+     
+     // Check interactive permission
+     if (defined('IS_SECURE'))
+     {
+        global $OEF_USER;
+        
+        if (!$OEF_USER->hasPermission($kind.'.'.$type.'.Read'))
+        {
+           return array(
+              'status' => false,
+              'result' => array(),
+              'errors' => array('Access denied')
+           );
+        }
+     }
+     
+     // Retrieve data
+     $options = empty($params['options']) ? array() : $params['options'];
+      
+     $controller = Container::getInstance()->getController($kind, $type, $options);
+     
+     if (!method_exists($controller, 'getChildren')) return array('status' => false, 'errors' => array('Not supported operation'));
+     
+     $options['with_link_desc'] = true;
+     
+     if (!empty($params['show_marked_for_deletion']))
+     {
+        $options['criteria']['values'] = empty($params['ids']) ? array() : $params['ids'];
+     }
+     else
+     {
+        $options['criteria']['attributes'][] = '%deleted';
+
+        if (!empty($params['ids']))
+        {
+           $options['criteria']['values']['%pkey'] = $params['ids'];
+           $options['criteria']['attributes'][] = '%pkey';
+           $options['criteria']['criterion'] = '%deleted = 0 AND %pkey IN (%%pkey%%)';
+        }
+        else {
+           $options['criteria']['values']['%deleted'] = 0;
+           $options['criteria']['criterion'] = '%deleted = %%deleted%%';
+        }
+     }
+     
+     $res = $controller->getChildren(null, $options);
+     
+     return $res;
   }
   
   

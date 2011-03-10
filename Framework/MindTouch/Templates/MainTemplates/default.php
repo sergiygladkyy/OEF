@@ -152,6 +152,7 @@
                &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
                &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
                &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
+               &lt;script type="text/javascript" src=(js_path..'/oe_tree.js')&gt;&lt;/script&gt;
              &lt;/head&gt;
              &lt;body&gt;&lt;/body&gt;
              &lt;tail&gt;

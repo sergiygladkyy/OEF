@@ -31,8 +31,24 @@
   </eval:elseif>
   <eval:else>
     <pre class="script">
-      let params ..= { page: __request.args.page ?? 1 };
-      let data = entities.displayListForm(uid, params);
+      if (#puid.main_kind != 0) {
+         var kind = puid.main_kind..'.'..puid.main_type..'.'..puid.kind;
+      }
+      else {
+         var kind = puid.kind;
+      }
+      
+      var hierarchy = entities.getInternalConfiguration(kind..'.hierarchy', type);
+      var owners    = entities.getInternalConfiguration(kind..'.owners', type);
+      
+      if (#owners == 0 && hierarchy.type is num && prefix == 'default') {
+         let prefix = 'tree';
+         let data   = entities.displayTreeList(uid, params);
+      }
+      else {
+         let params ..= { page: __request.args.page ?? 1 };
+         let data = entities.displayListForm(uid, params);
+      }
       
       if (data.status != True) {
         let content = '&lt;ul class="ae_errors"&gt;';

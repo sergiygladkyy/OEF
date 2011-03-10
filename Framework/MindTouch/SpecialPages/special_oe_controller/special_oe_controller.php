@@ -1089,4 +1089,42 @@ class SpecialOEController extends SpecialPagePlugin
          'errors' => $errors
       );
    }
+   
+   /**
+    * Get children nodes
+    * 
+    * @return array
+    */
+   protected function getChildren()
+   {
+      // Check data
+      $values = isset($_POST['parameters']) ? Utility::escapeRecursive($_POST['parameters']) : array();
+      
+      if (empty($values['uid']) || !is_string($values['uid']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      list($kind, $type) = Utility::parseUID($values['uid']);
+      
+      $node    = isset($values['node']) ? $values['node'] : null;
+      $options = isset($values['options']) ? $values['options'] : array();
+      
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission($kind.'.'.$type.'.Read'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Unknow report'),
+            'errors' => array()
+         );
+      }
+      
+      // Execute method
+      $controller = $this->container->getController($kind, $type);
+      
+      if (!method_exists($controller, 'getChildren')) return array('status' => false, 'errors' => array('Not supported operation'));
+      
+      return $controller->getChildren($node, $options);
+   }
 }

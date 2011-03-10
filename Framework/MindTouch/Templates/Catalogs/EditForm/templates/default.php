@@ -69,7 +69,7 @@
             let fields = field_use[1];
          }
          
-         let hidden = '&lt;input type="hidden" name="'..name_prefix..'[attributes][_folder]" value="'..item._folder..'" /&gt;';
+         let hidden ..= '&lt;input type="hidden" name="'..name_prefix..'[attributes][_folder]" value="'..item._folder..'" /&gt;';
       }
       
       var class  = string.replace(kind, '.', '_')..'_'..type;

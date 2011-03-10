@@ -7,6 +7,9 @@ $_templates_map = array(
    'Template:Entities/Catalogs/ItemForm/default' => '/Catalogs/ItemForm/templates/default.php',
    'Template:Entities/Catalogs/ListForm'         => '/Catalogs/ListForm/ListForm.php',
    'Template:Entities/Catalogs/ListForm/default' => '/Catalogs/ListForm/templates/default.php',
+   'Template:Entities/Catalogs/ListForm/tree'    => '/Catalogs/ListForm/templates/tree.php',
+   'Template:Entities/Catalogs/TreeItem'         => '/Catalogs/TreeItem/TreeItem.php',
+   'Template:Entities/Catalogs/TreeItem/default' => '/Catalogs/TreeItem/templates/default.php',
    
    'Template:Entities/Data_processors' => null,
    'Template:Entities/Data_processors/ImportForm' => '/Data_processors/ImportForm/ImportForm.php',

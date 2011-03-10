@@ -353,3 +353,56 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 #oef_marked_for_deletion_container .oef_could_not_be_removed {
 	color: red !important;
 }
+
+/************************************* Tree View *********************************************/
+
+.oef_tree_not_active {
+	width: 9px;
+	height: 1.6em;
+	float: left;
+}
+
+.oef_tree_active {
+	width: 9px;
+	height: 1.6em;
+	float: left;
+	cursor: pointer;
+	background: url("/skins/common/icons/minus.gif") no-repeat scroll left 60% transparent;
+}
+
+*[class="oef_tree_active oef_tree_closed"] {
+	width: 9px;
+	height: 1.6em;
+	float: left;
+	cursor: pointer;
+	background: url("/skins/common/icons/plus.gif") no-repeat scroll left 60% transparent;
+}
+
+.oef_tree_folder {
+	width: 24px;
+	height: 1.6em;
+	float: left;
+	background: url("/skins/common/icons/folder.gif") no-repeat scroll 4px center transparent;
+}
+
+*[class="oef_tree_folder oef_tree_closed"] {
+	width: 24px;
+	height: 1.6em;
+	float: left;
+	background: url("/skins/common/icons/folder-closed.gif") no-repeat scroll 4px center transparent;
+}
+
+.oef_tree_item {
+	width: 24px;
+	height: 1.6em;
+	float: left;
+	background: url("/skins/common/icons/file.gif") no-repeat scroll 4px center transparent;
+}
+
+.oef_tree_desc {
+	padding-left: 33px;
+}
+
+.oef_tree_loader {
+	background: url("/skins/common/icons/anim-circle.gif") no-repeat scroll 4px center transparent !important;
+}

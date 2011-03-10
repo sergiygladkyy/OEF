@@ -2,7 +2,14 @@
     var value  = args[0];
     var params = args[1];
     var attrs  = params.attrs ?? {};
-    var text   = #value > 0 && value != '0' ? 'yes' : 'no';
+    
+    if ((value is str) && string.startswith(value, '%%')) {
+       var text = value;
+    }
+    else {
+       var text = #value > 0 && value != '0' ? 'yes' : 'no';
+    }
+    
     var attributes = '';
 
     foreach (var name in  map.Keys(attrs)) {

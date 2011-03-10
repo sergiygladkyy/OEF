@@ -7,8 +7,10 @@
     foreach (var name in  map.Keys(attrs)) {
       let attributes = attributes..' '..name..'="'..attrs[name]..'"';
     }
-  
-    let value = entities.GetFormattedDate(value, '%d.%m.%Y %H:%M:%S');
+    
+    if (!string.startswith(value, '%%')) {
+       let value = entities.GetFormattedDate(value, '%d.%m.%Y %H:%M:%S');
+    }
     
     web.html('&lt;span'..attributes..'&gt;'..(#value > 0 ? value : 'not set')..'&lt;/span&gt;');
 }}
