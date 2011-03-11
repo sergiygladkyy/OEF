@@ -275,6 +275,9 @@ function oefTree()
 		padding = parseInt(padding.replace("px", ""), 10);
 		
 		var current = jQuery(item).next().get(0);
+		
+		if (!current) return true;
+		
 		var padd    = jQuery(current).find('.oef_tree_control').css('padding-left');
 		padd = parseInt(padd.replace("px", ""), 10);
 		
