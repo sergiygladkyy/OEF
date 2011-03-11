@@ -478,11 +478,15 @@ class CatalogModel extends BaseObjectModel
     */
    protected function checkParent()
    {
+      if (empty($this->attributes['Parent'])) return array();
+      
       $errors = array();
-      $parent =  $this->attributes['Parent'];
+      $parent = $this->attributes['Parent'];
       $dbmap  =& $this->conf['db_map'];
       
-      if (!$this->isNew && $parent == $this->getId())
+      $id = $this->getId();
+      
+      if (!$this->isNew && $parent == $id)
       {
          return array('Parent' => 'Invalid parent');
       }
@@ -506,6 +510,26 @@ class CatalogModel extends BaseObjectModel
          if ($row[$dbmap['deleted']])
          {
             $errors['Parent'][] = 'Parent could not be marked for deletion';
+         }
+      }
+      
+      if (!$this->isNew)
+      {
+         $cmodel = $this->container->getCModel($this->kind, $this->type);
+         
+         if (null === ($res = $cmodel->getParents($parent)) || $res['errors'])
+         {
+            return array('Validation error');
+         }
+         
+         foreach ($res as $row)
+         {
+            if ($row['Parent'] == $id)
+            {
+               $errors['Parent'][] = 'Child node could not be a parent';
+               
+               break;
+            }
          }
       }
       
