@@ -181,6 +181,15 @@ class CatalogModel extends BaseObjectModel
          }
       }
       
+      // Check Parent
+      if ($this->isHierarchical() && !isset($errors['Parent']))
+      {
+         if ($parent_err = $this->checkParent())
+         {
+            $errors = array_merge($errors, $parent_err);
+         }
+      }
+      
       return $errors;
    }
    
@@ -432,7 +441,7 @@ class CatalogModel extends BaseObjectModel
       
       if (null === ($res = self::hasEntity('catalogs', $type, $id)))
       {
-         return array('Database error');
+         return array('Validation error');
       }
       elseif (!$res)
       {
@@ -450,7 +459,7 @@ class CatalogModel extends BaseObjectModel
          
          if (null === ($row = $db->loadAssoc($query)))
          {
-            return array('Database error');
+            return array('Validation error');
          }
          
          if ($row['OwnerType'] != $type || $row['OwnerId'] != $id)
@@ -460,6 +469,47 @@ class CatalogModel extends BaseObjectModel
       }
          
       return array();
+   }
+   
+   /**
+    * Check parent
+    * 
+    * @return array - errors
+    */
+   protected function checkParent()
+   {
+      $errors = array();
+      $parent =  $this->attributes['Parent'];
+      $dbmap  =& $this->conf['db_map'];
+      
+      if (!$this->isNew && $parent == $this->getId())
+      {
+         return array('Parent' => 'Invalid parent');
+      }
+      
+      if ($this->isFolderHierarchical())
+      {
+         $query = "SELECT * FROM `".$dbmap['table']."` WHERE `".$dbmap['pkey']."`=".$parent;
+         
+         $db = $this->container->getDBManager();
+         
+         if (null === ($row = $db->loadAssoc($query)))
+         {
+            return array('Validation error');
+         }
+         
+         if ($row[$dbmap['folder']] != 1)
+         {
+            $errors['Parent'][] = 'Parent must be a group';
+         }
+         
+         if ($row[$dbmap['deleted']])
+         {
+            $errors['Parent'][] = 'Parent could not be marked for deletion';
+         }
+      }
+      
+      return $errors;
    }
    
    /**
