@@ -112,13 +112,13 @@ function onPost($event)
       // Check Vacation
       if (!isset($eparams[$values['Date']]) && $values['Hours'] != 0)
       {
-         throw new Exception('Employee has vacation days in this period ('.getFormattedDate($values['Date']).')');
+         throw new Exception('Employee has vacation days in this period ('.MGlobal::getFormattedDate($values['Date'], '%d.%m.%Y').')');
       }
       
       // Check Employee
       if (empty($eparams[$values['Date']]) && $values['Hours'] != 0)
       {
-         throw new Exception('Employee was firing in ('.getFormattedDate($values['Date']).')');
+         throw new Exception('Employee was firing in '.MGlobal::getFormattedDate($values['Date'], '%d.%m.%Y'));
       }
       
       $edep = $eparams[$values['Date']]['OrganizationalUnit'];
