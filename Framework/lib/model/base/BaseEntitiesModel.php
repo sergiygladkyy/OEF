@@ -185,33 +185,41 @@ abstract class BaseEntitiesModel extends BaseModel
    {
       $fields = array();
       
-      if (!empty($options['attributes']) && !empty($options['criterion']))
+      if (!empty($values) || (!empty($options['attributes']) && !empty($options['criterion'])))
       {
          // Retrieve WHERE
-         if (!is_array($values)) $values = array($values);
-         
-         if (!is_array($options['attributes']))
+         if (!empty($options['attributes']))
          {
-            $fields[] = $options['attributes'];
-         }
-         else $fields = $options['attributes'];
+            // Check values
+            if (!is_array($values)) $values = array($values);
+             
+            if (!is_array($options['attributes']))
+            {
+               $fields[] = $options['attributes'];
+            }
+            else $fields = $options['attributes'];
 
-         if (empty($options['criterion']))
+            if (empty($options['criterion']))
+            {
+               $criteria = $this->generateWhere($db_map['table'], $fields, $values);
+            }
+            else
+            {
+               $criteria = $this->generateWhereByCriteria($db_map, $fields, $values, $options['criterion']);
+            }  
+         }
+         elseif (!empty($options['criterion']))
          {
-            $criteria = $this->generateWhere($db_map['table'], $fields, $values);
+            $criteria = (string) $options['criterion'];
          }
          else
          {
-            $criteria = $this->generateWhereByCriteria($db_map, $fields, $values, $options['criterion']);
+            $criteria = 'WHERE `'.$db_map['pkey'].'`'.(is_array($values) ? ' IN ('.implode(',', $values).')' : '='.(int) $values);
          }
       }
       elseif (!empty($options['criterion']))
       {
          $criteria = (string) $options['criterion'];
-      }
-      elseif (!empty($values))
-      {
-         $criteria = 'WHERE `'.$db_map['pkey'].'`'.(is_array($values) ? ' IN ('.implode(',', $values).')' : '='.(int) $values);
       }
       else $criteria = '';
       
