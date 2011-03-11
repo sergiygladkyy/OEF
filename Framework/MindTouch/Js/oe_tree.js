@@ -1,4 +1,6 @@
 var oe_item_template = {};
+var oe_field_type    = {};
+var oe_default_value = {};
 var load = false;
 
 /************************************* OnLoad ******************************************/
@@ -10,6 +12,8 @@ jQuery(document).ready(function() {
 
 function clickTree(event)
 {
+	hideMessages();
+	
 	event = event || window.event;
 	
 	var node = event.target || event.srcElement;
@@ -151,6 +155,8 @@ function oefTree()
 		
 		var padding  = jQuery(item).find('.oef_tree_control').css('padding-left');
 		var template = oe_item_template[prefix];
+		var ftypes   = oe_field_type[prefix];
+		var defval   = oe_default_value[prefix] ? oe_default_value[prefix] : 'not set';
 		
 		padding = parseInt(padding.replace("px", ""), 10);
 		
@@ -179,6 +185,51 @@ function oefTree()
 					value = links[field][value]['text'];
 				}
 				
+				switch (ftypes[field])
+				{
+					case 'date':
+						if (!value || value == '0000-00-00')
+						{
+							value = defval;
+						}
+						else
+						{
+							var date = value.split('-');
+							value = date[2] + '.' + date[1] + '.' + date[0];
+						}
+						break;
+						
+					case 'datetime':
+						if (!value || value == '0000-00-00 00:00:00')
+						{
+							value = defval;
+						}
+						else
+						{
+							var date = value.split(' ');
+							var time = date[1];
+							date = date[0];
+							date = date.split('-');
+							
+							value =  date[2] + '.' + date[1] + '.' + date[0] + ' ' + time;
+						}
+						break;
+						
+					case 'time':
+						if (!value || value == '00:00:00')
+						{
+							value = defval;
+						}
+						break;
+						
+					case 'year':
+						if (!value || value == '0000')
+						{
+							value = defval;
+						}
+						break;
+				}
+				
 				tpl = tpl.replace('%%' + field + '%%', value);
 			}
 			
@@ -187,6 +238,11 @@ function oefTree()
 			
 			jQuery(added).attr('parent', nodeId).find('.oef_tree_control').css('padding-left', (padding + 15) + 'px');
 			jQuery(added).find('.ae_item_id').text(list[key]['_id']);
+			
+			if (list[key]['_deleted'] != 0)
+			{
+				jQuery(added).addClass('ae_deleted_col');
+			}
 			
 			if (folder != null)
 			{

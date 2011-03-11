@@ -16,6 +16,7 @@
    var list   = data.list;
    var links  = data.links;
    var class  = '';
+   var defval = '&nbsp;';
    
    var tmpList = string.Split(uid,'.');
    var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
@@ -81,7 +82,8 @@
              field_prec: field_prec,
              hierarchy:  hierarchy,
              owners:     owners,
-             references: references
+             references: references,
+             params: {default_value: defval}
            };
            
            var template = root..'/Catalogs/TreeItem';
@@ -106,10 +108,8 @@
   </eval:else>
   <a href="#" target="_blank" onclick="{{ 'javascript:if (!editListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\')) return false;' }}">Edit</a>&nbsp;|
   <a href="#" target="_blank" onclick="{{ 'javascript:if (!viewListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm'..'\', \''..class..'\')) return false;' }}">View</a>&nbsp;|
-  <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', '..(params.show_marked_for_deletion ? 'true' : 'false')..'); return false;' }}">Mark for deletion</a>
-  <eval:if test="params.show_marked_for_deletion">
-    |&nbsp;<a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
-  </eval:if>
+  <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', true); return false;' }}">Mark for deletion</a>&nbsp;|
+  <a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
   {{
      var flag  = false;
      let links = {};
@@ -149,6 +149,12 @@
      var js_uid = string.replace(kind, '.', '_')..'_'..type;
   }}
   <eval:if test="flag == True">
-    {{ &lt;script type="text/javascript"&gt;" oe_item_template['"..js_uid.."'] = '"..string.replace(string.escape(content), '/script', '/%%script%%').."';"&lt;/script&gt; }}
+    {{
+       &lt;script type="text/javascript"&gt;"
+          oe_item_template['"..js_uid.."'] = '"..string.replace(string.escape(content), '/script', '/%%script%%').."';
+          oe_field_type['"..js_uid.."'] = "..json.emit(field_type)..";
+          oe_default_value['"..js_uid.."'] = '"..defval.."';
+       "&lt;/script&gt;
+    }}
   </eval:if>
 </eval:else>

@@ -15,6 +15,7 @@
    var hierarchy  = data.hierarchy;
    var owners     = data.owners;
    var references = data.references;
+   var params     = data.params ?? {};
    var htype      = hierarchy.type is num ? hierarchy.type : 0; 
 }}
 
@@ -54,7 +55,7 @@
                let value = item[field];
             }
             
-            var tpl_params = {reference: references[field], precision: field_prec[field]};
+            var tpl_params = {reference: references[field], precision: field_prec[field], params: params};
             
             var template = root..'/ListFormFields';
             var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
