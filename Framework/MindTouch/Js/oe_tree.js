@@ -1,4 +1,5 @@
 var oe_item_template = {};
+var load = false;
 
 /************************************* OnLoad ******************************************/
 
@@ -45,7 +46,12 @@ function oefTree()
 		
 		if (jQuery(item).find('.oef_tree_active').hasClass('oef_tree_closed'))
 		{
+			if (load) return false;
+			
+			load = true;
+			
 			jQuery(item).find('.oef_tree_folder, .oef_tree_item').addClass('oef_tree_loader');
+			
 			this.load(uid, nodeId, this.appendChild);
 		}
 		else
@@ -81,19 +87,28 @@ function oefTree()
     		reqTimeout: null,
     		beforeSend: function (xmlhttp)
     		{
-    			this.reqTimeout = setTimeout(function () { xmlhttp.abort(); alert('Timeout have been exceeded'); }, 30000);
+    			this.reqTimeout = setTimeout(function () { xmlhttp.abort(); abort(); }, 30000);
     		},
     		success: function (data, status)
     		{
     		    clearTimeout(this.reqTimeout);
     		    
-    		    callback(data, nodeId);
+    		    if (!data)
+    		    {
+    		    	requestError();
+    		    }
+    		    else
+    		    {
+    		    	callback(data, nodeId);
+    		    	
+    		    	endLoad();
+    		    }
     		},
     	    error: function (XMLHttpRequest, textStatus, errorThrown)
     	    {
     			clearTimeout(this.reqTimeout);
     			
-    			alert('Request error');
+    			requestError();
     	    }
     	});
 	};
@@ -112,9 +127,9 @@ function oefTree()
 			
 			for (var field in data['errors'])
 			{
-				if (!displayErrors(prefix + '_' + field, result['errors'][field]))
+				if (!displayErrors(prefix + '_' + field, data['errors'][field]))
 				{
-					msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + result['errors'][field];
+					msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][field];
 				}
 			}
 			
@@ -187,8 +202,6 @@ function oefTree()
 			jQuery(added).find('.oef_tree_active').click(clickTree);
 		}
 		
-		jQuery(item).find('.oef_tree_folder, .oef_tree_item').removeClass('oef_tree_loader');
-		
 		return true;
 	};
 	
@@ -226,4 +239,25 @@ function oefTree()
 		
 		return true;
 	};
+	
+	function endLoad()
+	{
+		jQuery(item).find('.oef_tree_folder, .oef_tree_item').removeClass('oef_tree_loader');
+		
+		load = false;
+	}
+	
+	function abort()
+	{
+		endLoad();
+		
+		alert('Timeout have been exceeded');
+	}
+	
+	function requestError()
+	{
+		endLoad();
+		
+		alert('Request error');
+	}
 }

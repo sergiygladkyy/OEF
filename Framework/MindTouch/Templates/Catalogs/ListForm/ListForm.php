@@ -30,7 +30,7 @@
     </ul>
   </eval:elseif>
   <eval:else>
-    <pre class="script">
+   {{
       if (#puid.main_kind != 0) {
          var kind = puid.main_kind..'.'..puid.main_type..'.'..puid.kind;
       }
@@ -40,9 +40,11 @@
       
       var hierarchy = entities.getInternalConfiguration(kind..'.hierarchy', type);
       var owners    = entities.getInternalConfiguration(kind..'.owners', type);
+      var isTree    = false;
       
       if (#owners == 0 && hierarchy.type is num && prefix == 'default') {
          let prefix = 'tree';
+         let isTree = true;
          let data   = entities.displayTreeList(uid, params);
       }
       else {
@@ -90,5 +92,28 @@
          
          content;
       }
-    </pre>
+      
+      var js_path = params.js_path;
+      
+      &lt;html&gt;
+        &lt;head&gt;
+          &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
+          &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+          &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
+          if (isTree)
+          {
+            &lt;script type="text/javascript" src=(js_path..'/oe_tree.js')&gt;&lt;/script&gt;
+          }
+        &lt;/head&gt;
+        &lt;body&gt;&lt;/body&gt;
+          &lt;tail&gt;
+            if (!isTree)
+            {
+              &lt;script type="text/javascript"&gt;"
+                setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
+              "&lt;/script&gt;
+            }
+          &lt;/tail&gt;
+        &lt;/html&gt;
+   }}
   </eval:else>

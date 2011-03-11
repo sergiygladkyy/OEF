@@ -99,6 +99,44 @@
          &lt;/html&gt;
       }}
     </eval:if>
+    <eval:elseif test="action == 'displayListForm'">
+      {{
+         if (#puid.main_kind != 0) {
+            var kind = puid.main_kind..'.'..puid.main_type..'.'..puid.kind;
+         }
+         else {
+            var kind = puid.kind;
+         }
+         
+         if (kind != 'catalogs')
+         {
+            &lt;html&gt;
+              &lt;head&gt;
+                &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
+                &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
+                &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
+              &lt;/head&gt;
+              &lt;body&gt;&lt;/body&gt;
+              &lt;tail&gt;
+                &lt;script type="text/javascript"&gt;"
+                  setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
+                "&lt;/script&gt;
+              &lt;/tail&gt;
+            &lt;/html&gt;
+         }
+         else let params ..= {js_path: js_path};
+         
+         var template = root..'/'..string.ToUpperFirst(puid.kind)..'/'..tpl_name;
+         var content  = wiki.template(template, [uid, puid, root, template, params, prefix]);
+         
+         if (string.contains(content, 'href="'..template..'"'))
+         {
+            let content = 'Template not found';
+         }
+         
+         content;
+      }}
+    </eval:elseif>
     <eval:else>
       <pre class="script">
         var template = root..'/'..string.ToUpperFirst(puid.kind)..'/'..tpl_name;
@@ -140,24 +178,6 @@
              &lt;tail&gt;
                &lt;script type="text/javascript"&gt;"
                  jQuery(document).ready(function() { setInterval(\"updateItemForm('"..page.api.."', null, 3000)\", 5000); });
-               "&lt;/script&gt;
-             &lt;/tail&gt;
-           &lt;/html&gt;
-        }}
-      </eval:elseif>
-      <eval:elseif test="action == 'displayListForm'">
-        {{
-           &lt;html&gt;
-             &lt;head&gt;
-               &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
-               &lt;script type="text/javascript" src=(js_path..'/jquery.form.js')&gt;&lt;/script&gt;
-               &lt;script type="text/javascript" src=(js_path..'/ae_list_form.js')&gt;&lt;/script&gt;
-               &lt;script type="text/javascript" src=(js_path..'/oe_tree.js')&gt;&lt;/script&gt;
-             &lt;/head&gt;
-             &lt;body&gt;&lt;/body&gt;
-             &lt;tail&gt;
-               &lt;script type="text/javascript"&gt;"
-                 setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
                "&lt;/script&gt;
              &lt;/tail&gt;
            &lt;/html&gt;
