@@ -403,6 +403,10 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 	padding-left: 33px;
 }
 
+.oef_desc {
+	padding-left: 24px;
+}
+
 .oef_tree_loader {
 	background: url("/skins/common/icons/anim-circle.gif") no-repeat scroll 4px center transparent !important;
 }

@@ -16,8 +16,9 @@
    var list   = data.list;
    var links  = data.links;
    var class  = '';
+   var defval = '&nbsp;';
    var pagination = data.pagination;
-
+   
    var tmpList = string.Split(uid,'.');
    var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
 }}
@@ -47,6 +48,7 @@
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       
+      var htype  = hierarchy.type is num ? hierarchy.type : 0;
       let class  = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
@@ -61,8 +63,16 @@
   <thead>
     <tr>
       <th style="display: none;">ID</th>
+      <th>Description</th>
       <eval:foreach var="field" in="fields">
-        <th>{{ string.ToUpperFirst(field); }}</th>
+        <eval:if test="field != 'Description' && (htype == 0 || field != 'Parent') && (#owners == 0 || field != 'OwnerId')">
+          <eval:if test="field == 'OwnerType'">
+            <th>Owner</th>
+          </eval:if>
+          <eval:else>
+            <th>{{ string.ToUpperFirst(field); }}</th>
+          </eval:else>
+        </eval:if>
       </eval:foreach>
     </tr>
   </thead>
@@ -73,29 +83,59 @@
           <td style="display: none;">
             <span class="{{ class..'_item_id ae_item_id' }}" style="display: none;">{{ item._id }}</span>
           </td>
+          <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+            <div class="oef_tree_control">
+              <eval:if test="htype == 2 && item._folder == 1">
+                <div class="oef_tree_folder oef_tree_closed">&nbsp;</div>
+              </eval:if>
+              <eval:else>
+                <div class="oef_tree_item">&nbsp;</div>
+              </eval:else>
+              <div class="oef_desc"><nobr>{{ item['Description'] }}</nobr></div>
+            </div>
+          </td>
           <eval:foreach var="field" in="fields">
-            <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
-              <pre class="script">
-                var value  = '';
-                if (!(references[field] is nil)) {
-                   let value = links[field][item[field]];
-                }
-                else {
-                   let value = item[field];
-                }
-              
-                var tpl_params = {reference: references[field], precision: field_prec[field]};
-              
-                var template = root..'/ListFormFields';
-                var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
-              
-                if (string.contains(content, 'href="'..template..'"')) {
-                  let content = 'Template not found';
-                }
-              
-                content;
-              </pre>
-            </td>
+            <eval:if test="(field != 'Description' && (htype == 0 || field != 'Parent') && (#owners == 0 || field != 'OwnerId'))">
+              <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+                <pre class="script">
+                  var value  = '';
+                  
+                  if (field == 'OwnerType' && #owners > 0) {
+                     let value = links[field][item[field]][item['OwnerId']];
+                     
+                     var c_field_type = 'reference';
+                     var tpl_params   = {
+                        reference: {kind: kind, type: item[field]},
+                        precision: {}
+                     };
+                  }
+                  else {
+                     if (!(references[field] is nil)) {
+                        let value = links[field][item[field]];
+                     }
+                     else {
+                        let value = item[field];
+                     }
+                     
+                     var c_field_type = field_type[field];
+                     var tpl_params   = {
+                        reference: references[field],
+                        precision: field_prec[field],
+                        params: {default_value: defval}
+                     };
+                  }
+                  
+                  var template = root..'/ListFormFields';
+                  var content  = wiki.template(template, [c_field_type, value, tpl_params, type, template, prefix]);
+                  
+                  if (string.contains(content, 'href="'..template..'"')) {
+                     let content = 'Template not found';
+                  }
+                  
+                  content;
+                </pre>
+              </td>
+            </eval:if>
           </eval:foreach>
         </eval:if>
         <eval:else>
