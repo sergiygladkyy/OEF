@@ -70,3 +70,7 @@ li > ul {
 a.cancel {
     color: #FF4500 !important;
 }
+#pageText input {
+    font-size: 13px !important;
+    color:  #777777 !important;
+}

@@ -94,30 +94,37 @@
      $framework = '.'.$conf['base_for_deki_ext'].$conf['framework_dir'];
 
      $container_options = array(
-         'base_dir' => $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$appliedSolutionName[1]
+        'base_dir' => $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$appliedSolutionName[1]
      );
 
-      if (!chdir($framework)) return array('Initialize error');
-     if (!$full)
-     {
-        require_once('lib/utility/Loader.php');
-        require_once('lib/utility/Utility.php');
-        require_once('lib/container/Container.php');
-        require_once('lib/controller/Constants/Constants.php');
+     if (!chdir($framework)) return array('Initialize error');
+     
+     try {
+        if (!$full)
+        {
+           require_once('lib/utility/Loader.php');
+           require_once('lib/utility/Utility.php');
+           require_once('lib/container/Container.php');
+           require_once('lib/controller/Constants/Constants.php');
 
-        $container = Container::createInstance($container_options);
+           $container = Container::createInstance($container_options);
 
-        // Security (duplicated piece of code of 123 config/init.php)
-        $odb = $container->getODBManager();
-        $res = $odb->loadAssoc('SELECT count(*) AS cnt FROM catalogs.SystemUsers');
+           // Security (duplicated piece of code of 123 config/init.php)
+           $odb = $container->getODBManager();
+           $res = $odb->loadAssoc('SELECT count(*) AS cnt FROM catalogs.SystemUsers');
 
-        if (!isset($res['cnt'])) return array('Initialize error');
+           if (!isset($res['cnt'])) return array('Initialize error');
 
-        if ($res['cnt'] > 0) define('IS_SECURE', true);
+           if ($res['cnt'] > 0) define('IS_SECURE', true);
+        }
+        else
+        {
+           require_once('config/init.php');
+        }
      }
-     else
+     catch (Exception $e)
      {
-        require_once('config/init.php');
+        return array('Initialize error');
      }
 
      // Initialize user
@@ -697,28 +704,33 @@
 
      return strftime($format, $mt);
   }
-   function getApplicationName()
-    {
-        $pagePath='';
-        foreach (split(',',$_SERVER['HTTP_X_DEKISCRIPT_ENV']) as  $value) {
-            if(strpos($value,'page.path')!==false)
-            {
-                $pagePath = $value;
-                break;
-            }
-        }
-        if(strlen($pagePath)<=0)
-            return array(-2,$_SERVER['HTTP_X_DEKISCRIPT_ENV']);
-        $tmp = split('"',$pagePath);
-        $pagePath = $tmp[1];
-
-        $root_path = ExternalConfig::$extconfig['installer']['root_path'];
-        foreach($root_path as $key => $value)
+  
+  /**
+   * Return current applied solution name
+   * 
+   * @return array
+   */
+  function getApplicationName()
+  {
+     $pagePath='';
+     foreach (split(',',$_SERVER['HTTP_X_DEKISCRIPT_ENV']) as  $value) {
+        if (strpos($value,'page.path')!==false)
         {
-            if(strpos($pagePath,$key)!==false)
-                return array(0,$value);
+           $pagePath = $value;
+           break;
         }
-        return array(-2,$pagePath);
+     }
+     if (strlen($pagePath)<=0)
+        return array(-2,$_SERVER['HTTP_X_DEKISCRIPT_ENV']);
+     $tmp = split('"',$pagePath);
+     $pagePath = $tmp[1];
 
-    }
+     $root_path = ExternalConfig::$extconfig['installer']['root_path'];
+     foreach ($root_path as $key => $value)
+     {
+        if (strpos($pagePath,$key)!==false)
+           return array(0,$value);
+     }
+     return array(-2,$pagePath);
+  }
 ?>

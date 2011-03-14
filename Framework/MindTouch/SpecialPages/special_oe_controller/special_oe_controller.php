@@ -53,12 +53,17 @@ class SpecialOEController extends SpecialPagePlugin
       // Initialize OEF framework
       $special = new self($pageName, basename(__FILE__, '.php'));
 
-      if(!$special->initialize())
-              return array(
+      try {
+         if(!$special->initialize())
+            return array(
                'status' => false,
-               'result' => array('msg' => 'can`t find root_path from request, path:'.$_REQUEST['page_path']),
-               'errors' => array()
+               'errors' => array('global' => 'Initialize error '.$_REQUEST['page_path'])
             );
+      }
+      catch (Exception $e)
+      {
+         return array('errors' => array('global' => 'Initialize error'), 'status' => false);
+      }
 
       // Check user
       if (defined('IS_SECURE'))
@@ -90,13 +95,12 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function initialize()
    {
-      $appliedSolutionName = getApplicationName();
+      $appliedSolutionName = $this->getApplicationName();
 
-      if($appliedSolutionName === false )
+      if ($appliedSolutionName === false)
       {
          return false;
       }
-
 
       global $IP;
 
@@ -1140,18 +1144,23 @@ class SpecialOEController extends SpecialPagePlugin
 
       return $controller->getChildren($node, $options);
    }
+   
 
-    function getApplicationName()
-    {
-        $pagePath= $_REQUEST['page_path'];
+   /**
+    * Return current applied solution name
+    * 
+    * @return string or false
+    */
+   function getApplicationName()
+   {
+      $pagePath = $_REQUEST['page_path'];
 
-        $root_path = ExternalConfig::$extconfig['installer']['root_path'];
-        foreach($root_path as $key => $value)
-        {
-            if(strpos($pagePath,$key)!==false)
-                return $value;
-        }
-        return false;
-
-    }
+      $root_path = ExternalConfig::$extconfig['installer']['root_path'];
+      foreach($root_path as $key => $value)
+      {
+         if (strpos($pagePath, $key) !== false)
+            return $value;
+      }
+      return false;
+   }
 }
