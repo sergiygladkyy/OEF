@@ -78,7 +78,7 @@
    */
   function initialize($full = false)
   {
-      $appliedSolutionName = getApplicationName();
+     $appliedSolutionName = getApplicationName();
 
      if($appliedSolutionName[0] === -1 )
      {
@@ -88,7 +88,8 @@
      {
          return array( 'There is no root_path like in page.path  :',$appliedSolutionName[1],$_SERVER[HTTP_X_DEKISCRIPT_ENV]);
      }
-           $conf =& ExternalConfig::$extconfig['installer'];
+
+     $conf =& ExternalConfig::$extconfig['installer'];
 
      $framework = '.'.$conf['base_for_deki_ext'].$conf['framework_dir'];
 
@@ -714,7 +715,7 @@
         $root_path = ExternalConfig::$extconfig['installer']['root_path'];
         foreach($root_path as $key => $value)
         {
-            if($key == $pagePath);
+            if(strpos($pagePath,$key)!==false)
                 return array(0,$value);
         }
         return array(-2,$pagePath);
