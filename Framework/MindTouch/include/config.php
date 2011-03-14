@@ -19,9 +19,12 @@ ExternalConfig::$extconfig = array (
       'base_dir' => '/ext/OEF',
       'base_for_deki_ext' => '/OEF',
       'framework_dir' => '/Framework',
-      'applied_solutions_dir' => '/AppliedSolutions',
       'templates_dir'  => '/Templates',
-      'templates_map'  => '/Templates/templates_map.php'
+      'templates_map'  => '/Templates/templates_map.php',
+      'root_path' => array(
+          'Release2' => 'AWPAnalytics',
+          'Release1' => 'Oiltec'
+      )
    )
 );
 ?>

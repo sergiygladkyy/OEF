@@ -108,6 +108,52 @@ class CatalogsModel extends BaseObjectsModel
       );
    }
    
+   protected function retrieveLinksDescriptions(array& $list, array& $options = array())
+   {
+      $ids = array();
+      $own = array();
+      
+      // retrieve related ids
+      foreach ($list as $entity)
+      {
+         foreach ($this->conf['references'] as $field => $param)
+         {
+            if ($entity[$field] > 0) $ids[$field][] = $entity[$field];
+         }
+         
+         if (!empty($this->conf['owners']))
+         {
+            if ($entity['OwnerId'] > 0)
+            {
+               $own[$entity['OwnerType']][$entity['OwnerId']] = $entity['OwnerId'];
+            }
+         }
+      }
+      
+      $result = array();
+      
+      // retrieve link descriptions
+      foreach ($this->conf['references'] as $field => $param)
+      {
+         if (empty($ids[$field])) continue;
+         
+         $ids[$field] = array_unique($ids[$field]);
+         $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
+         
+         $result[$field] = $cmodel->retrieveLinkData($ids[$field]);
+      }
+      
+      foreach ($own as $otype => $ids)
+      {
+         $cmodel = $this->container->getCModel($this->kind, $otype, $options);
+         
+         $result['OwnerType'][$otype] = $cmodel->retrieveLinkData($ids);
+      }
+      
+      return $result;
+   }
+   
+   
    
    
    /************************** For control access rights **************************************/

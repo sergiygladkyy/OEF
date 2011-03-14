@@ -25,6 +25,7 @@ abstract class BaseEntitiesModel extends BaseModel
     */
    public function getEntities($values = null, array $options = array())
    {
+      // Retrieve entities
       $db_map =& $this->conf['db_map'];
       $params =  $this->retrieveCriteriaQuery($db_map, $values, $options);
       
@@ -35,31 +36,13 @@ abstract class BaseEntitiesModel extends BaseModel
       $res   = $db->loadAssocList($query, $options);
       
       if (empty($options['with_link_desc']) || is_null($res)) return $res;
-
-      $ids = array();
       
-      // retrieve related ids
-      foreach ($res as $entity)
-      {
-         foreach ($this->conf['references'] as $field => $param)
-         {
-            if ($entity[$field] > 0) $ids[$field][] = $entity[$field];
-         }
-      }
-      
+      // Retrieve links descriptions
       $result['list'] = $res;
+      
       unset($res);
       
-      // retrieve link descriptions
-      foreach ($this->conf['references'] as $field => $param)
-      {
-         if (empty($ids[$field])) continue;
-         
-         $ids[$field] = array_unique($ids[$field]);
-         $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
-         
-         $result['links'][$field] = $cmodel->retrieveLinkData($ids[$field]);
-      }
+      $result['links'] = $this->retrieveLinksDescriptions($result['list'], $options);
       
       return $result;
    }
@@ -161,6 +144,42 @@ abstract class BaseEntitiesModel extends BaseModel
       {
          $model = $this->container->getCModel($params['kind'], $params['type'], $options);
          $result[$field] = $model->retrieveSelectData($options);
+      }
+      
+      return $result;
+   }
+   
+   /**
+    * Get list of links descriptions
+    * 
+    * @param array& $list
+    * @param array& $options
+    * @return array
+    */
+   protected function retrieveLinksDescriptions(array& $list, array& $options = array())
+   {
+      $ids = array();
+      
+      // retrieve related ids
+      foreach ($list as $entity)
+      {
+         foreach ($this->conf['references'] as $field => $param)
+         {
+            if ($entity[$field] > 0) $ids[$field][] = $entity[$field];
+         }
+      }
+      
+      $result = array();
+      
+      // retrieve link descriptions
+      foreach ($this->conf['references'] as $field => $param)
+      {
+         if (empty($ids[$field])) continue;
+         
+         $ids[$field] = array_unique($ids[$field]);
+         $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
+         
+         $result[$field] = $cmodel->retrieveLinkData($ids[$field]);
       }
       
       return $result;
