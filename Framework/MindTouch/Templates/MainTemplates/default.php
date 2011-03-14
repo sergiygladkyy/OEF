@@ -69,6 +69,16 @@
   {{
     var inst_conf = extconfig.Fetch('installer');
     var js_path = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
+    
+    &lt;html&gt;
+      &lt;head&gt;&lt;/head&gt;
+      &lt;body&gt;&lt;/body&gt;
+      &lt;tail&gt;
+        &lt;script type="text/javascript"&gt;"
+          OEF_PAGE_PATH = '"..page.path.."';
+        "&lt;/script&gt;
+      &lt;/tail&gt;
+    &lt;/html&gt;
   }}
   <div class="oef_content">
     <eval:if test="action == 'displayCustomForm'">

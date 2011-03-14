@@ -277,7 +277,7 @@ function executeDeleteListItem(kind, type, prefix)
 		url: '/Special:OEController',
 	    async: false,
 		type: 'POST',
-		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'delete'}),
+		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'delete', page_path: OEF_PAGE_PATH}),
 		dataType: 'json',
 		success: function (data , status)
 		{
@@ -333,7 +333,7 @@ function executeMarkForDeletionListItem(kind, type, prefix, show_deleted)
 		url: '/Special:OEController',
 	    async: false,
 		type: 'POST',
-		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'markForDeletion'}),
+		data: ({aeform: {kind: kind, type: type, _id : id}, action: 'markForDeletion', page_path: OEF_PAGE_PATH}),
 		dataType: 'json',
 		success: function (data , status)
 		{
@@ -397,7 +397,7 @@ function executeUnmarkForDeletionListItem(kind, type, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unmarkForDeletion'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unmarkForDeletion', page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
@@ -451,7 +451,7 @@ function executePostListItem(kind, type, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post', page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
@@ -500,7 +500,7 @@ function executeClearPostingListItem(kind, type, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost', page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {

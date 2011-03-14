@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
 		dataType: 'json',
 		beforeSubmit: prepareRequest,
 		success: processRelatedResponse,
-		data: {action: 'relatedForDeletion', form : 'DeletionForm'}
+		data: {action: 'relatedForDeletion', form : 'DeletionForm', page_path: OEF_PAGE_PATH}
 	};
 	
 	var unmark_options = {
@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 		dataType: 'json',
 		beforeSubmit: prepareRequest,
 		success: processUnmarkResponse,
-		data: {action: 'batchUnmarkForDeletion', form : 'DeletionForm'}
+		data: {action: 'batchUnmarkForDeletion', form : 'DeletionForm', page_path: OEF_PAGE_PATH}
 	};
 	
 	var delete_options = {
@@ -23,7 +23,7 @@ jQuery(document).ready(function() {
 		dataType: 'json',
 		beforeSubmit: prepareRequest,
 		success: processDeleteResponse,
-		data: {action: 'deleteMarkedForDeletion', form : 'DeletionForm'}
+		data: {action: 'deleteMarkedForDeletion', form : 'DeletionForm', page_path: OEF_PAGE_PATH}
 	};
     
 	jQuery('.ae_command').each(function(index) {

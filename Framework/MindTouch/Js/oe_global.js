@@ -1,3 +1,5 @@
+var OEF_PAGE_PATH = null;
+
 /**
  * Display editform fields errors
  * 
