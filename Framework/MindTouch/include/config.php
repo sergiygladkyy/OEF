@@ -22,8 +22,8 @@ ExternalConfig::$extconfig = array (
       'templates_dir'  => '/Templates',
       'templates_map'  => '/Templates/templates_map.php',
       'root_path' => array(
-          'Release2' => 'AWPAnalytics',
-          'Release1' => 'Oiltec'
+          'Release_2' => 'AWPAnalytics',
+          'Release_1' => 'Oiltec'
       )
    )
 );
