@@ -341,11 +341,11 @@ class DBMysql implements DBManager
       
       $list = array();
       
-      if (!empty($options['key']))
+      if (isset($options['key']))
       {
          while ($row = $this->fetchRow($res)) $list[$row[$options['key']]] = $row;
       }
-      elseif (!empty($options['field']))
+      elseif (isset($options['field']))
       {
          while ($row = $this->fetchRow($res)) $list[] = $row[$options['field']];
       }
