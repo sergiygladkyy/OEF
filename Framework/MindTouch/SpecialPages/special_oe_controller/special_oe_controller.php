@@ -53,7 +53,12 @@ class SpecialOEController extends SpecialPagePlugin
       // Initialize OEF framework
       $special = new self($pageName, basename(__FILE__, '.php'));
       
-      $special->initialize();
+      if(!$special->initialize())
+              return array(
+               'status' => false,
+               'result' => array('msg' => 'can`t find root_path from request, path:'.$_REQUEST['page_path']),
+               'errors' => array()
+            );
       
       // Check user
       if (defined('IS_SECURE'))
@@ -87,14 +92,11 @@ class SpecialOEController extends SpecialPagePlugin
    {
       $appliedSolutionName = getApplicationName();
 
-      if($appliedSolutionName[0] === -1 )
+      if($appliedSolutionName === false )
       {
-         return array( 'There is no page.path  in $_SERVER[HTTP_X_DEKISCRIPT_ENV] :',$appliedSolutionName[1]);
+         return false;
       }
-      else if($appliedSolutionName[0] === -2 )
-      {
-         return array( 'There is no root_path like in page.path  :',$appliedSolutionName[1],$_SERVER[HTTP_X_DEKISCRIPT_ENV]);
-      }
+      
 
       global $IP;
       
@@ -106,7 +108,7 @@ class SpecialOEController extends SpecialPagePlugin
       if (!chdir($framework)) return false;
       
       $container_options = array(
-         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$appliedSolutionName[1]
+         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$appliedSolutionName
       );
       
       require_once('config/init.php');
@@ -1141,26 +1143,15 @@ class SpecialOEController extends SpecialPagePlugin
 
     function getApplicationName()
     {
-        $pagePath='';
-        foreach (split(',',$_SERVER[HTTP_X_DEKISCRIPT_ENV]) as  $value) {
-            if(strpos($value,'page.path')!==false)
-            {
-                $pagePath = $value;
-                break;
-            }
-        }
-        if(strlen($pagePath)<=0)
-            return array(-2,$_SERVER[HTTP_X_DEKISCRIPT_ENV]);
-        $tmp = split('"',$pagePath);
-        $pagePath = $tmp[1];
+        $pagePath= $_REQUEST['page_path'];
 
         $root_path = ExternalConfig::$extconfig['installer']['root_path'];
         foreach($root_path as $key => $value)
         {
             if($key == $pagePath);
-                return array(0,$value);
+                $value;
         }
-        return array(-2,$pagePath);
+        return false;
 
     }
 }
