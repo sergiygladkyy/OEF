@@ -85,6 +85,17 @@ class SpecialOEController extends SpecialPagePlugin
     */
    protected function initialize()
    {
+      $appliedSolutionName = getApplicationName();
+
+      if($appliedSolutionName[0] === -1 )
+      {
+         return array( 'There is no page.path  in $_SERVER[HTTP_X_DEKISCRIPT_ENV] :',$appliedSolutionName[1]);
+      }
+      else if($appliedSolutionName[0] === -2 )
+      {
+         return array( 'There is no root_path like in page.path  :',$appliedSolutionName[1],$_SERVER[HTTP_X_DEKISCRIPT_ENV]);
+      }
+
       global $IP;
       
       $this->conf = ExternalConfig::$extconfig['installer'];
@@ -95,7 +106,7 @@ class SpecialOEController extends SpecialPagePlugin
       if (!chdir($framework)) return false;
       
       $container_options = array(
-         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$this->conf['applied_solution_name']
+         'base_dir' => $IP.$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$appliedSolutionName[1]
       );
       
       require_once('config/init.php');
@@ -1127,4 +1138,29 @@ class SpecialOEController extends SpecialPagePlugin
       
       return $controller->getChildren($node, $options);
    }
+
+    function getApplicationName()
+    {
+        $pagePath='';
+        foreach (split(',',$_SERVER[HTTP_X_DEKISCRIPT_ENV]) as  $value) {
+            if(strpos($value,'page.path')!==false)
+            {
+                $pagePath = $value;
+                break;
+            }
+        }
+        if(strlen($pagePath)<=0)
+            return array(-2,$_SERVER[HTTP_X_DEKISCRIPT_ENV]);
+        $tmp = split('"',$pagePath);
+        $pagePath = $tmp[1];
+
+        $root_path = ExternalConfig::$extconfig['installer']['root_path'];
+        foreach($root_path as $key => $value)
+        {
+            if($key == $pagePath);
+                return array(0,$value);
+        }
+        return array(-2,$pagePath);
+
+    }
 }
