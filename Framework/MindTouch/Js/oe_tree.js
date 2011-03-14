@@ -80,6 +80,7 @@ function oefTree()
     		type: 'POST',
     		data: ({
     			action:     'getChildren',
+    			page_path:  OEF_PAGE_PATH,
     			parameters: {
     				uid:     uid,
     				node:    nodeId,

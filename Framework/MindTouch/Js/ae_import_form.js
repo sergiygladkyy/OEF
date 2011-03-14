@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: processResponse,
-       data: {action: 'import', form : 'ImportForm'}
+       data: {action: 'import', form : 'ImportForm', page_path: OEF_PAGE_PATH}
     };
     
     jQuery('.ae_import_form').submit(function() {

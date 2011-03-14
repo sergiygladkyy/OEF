@@ -13,7 +13,7 @@ var custom_edit_form_options = {
     dataType:  'json',
     beforeSubmit: prepareRequest,
     success: function (data, status) { processObjectResponse(data, status, this.options); },
-    data: {action: 'save', form: 'CustomForm'}
+    data: {action: 'save', form: 'CustomForm', page_path: OEF_PAGE_PATH}
 };
 
 /************************************* OnLoad ******************************************/
@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
       dataType:  'json',
       beforeSubmit: prepareRequest,
       success: function (data, status) { processResponse(data, status, this.options); },
-      data: {action: 'save'}
+      data: {action: 'save', page_path: OEF_PAGE_PATH}
     };
     
     var object_edit_form_options = {
@@ -39,7 +39,7 @@ jQuery(document).ready(function() {
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: function (data, status) { processObjectResponse(data, status, this.options); },
-       data: {action: 'save', form: 'ObjectForm'}
+       data: {action: 'save', form: 'ObjectForm', page_path: OEF_PAGE_PATH}
     };
     
     var constants_edit_form_options = {
@@ -49,7 +49,7 @@ jQuery(document).ready(function() {
     	dataType:  'json',
     	beforeSubmit: prepareRequest,
     	success: function (data, status) { processConstantsResponse(data, status, this.options); },
-    	data: {action: 'updateConstants'}
+    	data: {action: 'updateConstants', page_path: OEF_PAGE_PATH}
     };
 
     jQuery('.ae_edit_form').submit(function() {
@@ -746,7 +746,7 @@ function executePost(kind, type, id, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'post', page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
@@ -799,7 +799,7 @@ function executeClearPosting(kind, type, id, prefix)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost'}),
+	    data: ({aeform: {kind: kind, type: type, _id : id}, action: 'unpost', page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
@@ -925,7 +925,7 @@ function displayCustomForm(uid, form, params, tag_id)
 	    url: '/Special:OEController',
 	    async: false,
 	    type: 'POST',
-	    data: ({action: 'generateForm', uid: uid, name: form, parameters: params}),
+	    data: ({action: 'generateForm', uid: uid, name: form, parameters: params, page_path: OEF_PAGE_PATH}),
 	    dataType: 'json',
 	    success: function (data , status)
 	    {
@@ -1022,7 +1022,8 @@ function oeEventDispatcher()
 		    	event: eventName,
 		    	formName: formName,
 		    	formData: formData,
-		    	parameters: params
+		    	parameters: params,
+		    	page_path:  OEF_PAGE_PATH
 		    }),
 		    dataType: 'json',
 		    success: function (data, status)
@@ -1488,7 +1489,7 @@ function oefDynamicUpdate()
 		dataType:  'json',
 		beforeSubmit: prepareRequest,
 		success: function (data, status) { processDynamicUpdateResponse(data, status, this.options); },
-		data: {action: 'save', form: 'ObjectForm'}
+		data: {action: 'save', form: 'ObjectForm', page_path: OEF_PAGE_PATH}
     };
 	
 	/**

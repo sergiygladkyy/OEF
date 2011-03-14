@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
        dataType:  'json',
        beforeSubmit: prepareRequest,
        success: processResponse,
-       data: {action: 'generate', form : 'ReportForm'}
+       data: {action: 'generate', form : 'ReportForm', page_path: OEF_PAGE_PATH}
     };
     
     jQuery('.ae_report_form').submit(function() {
@@ -181,7 +181,7 @@ var aeDecode = function(_type, _params)
     		url: '/Special:OEController',
     	    async: true,
     		type: 'POST',
-    		data: ({parameters: params, action: 'decode'}),
+    		data: ({parameters: params, action: 'decode', page_path: OEF_PAGE_PATH}),
     		cache: false,
     		dataType: 'json',
     		reqTimeout: null,
