@@ -148,19 +148,16 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       }
       
       // Execute method
-      if ($this->conf['hierarchy']['type'] == 2)
+      if (empty($fields))
       {
-         if (empty($fields))
-         {
-            $fields = $this->conf['types'];
-         }
+         $fields = $this->conf['types'];
+      }
+      
+      if (isset($fields['Parent']))
+      {
+         $parent = $this->retrieveSelectParent($options); 
          
-         if (isset($fields['Parent']))
-         {
-            $parent = $this->retrieveSelectParent($options); 
-            
-            unset($fields['Parent']);
-         }
+         unset($fields['Parent']);
       }
       
       $result = parent::retrieveSelectDataForRelated($fields, $options);
@@ -185,17 +182,66 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       }
       
       // Execute method
+      $db = $this->container->getDBManager($options);
+      
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 AND `".$db_map['folder']."`=1 ORDER BY `Description` ASC";
+      $wh_add = ($this->conf['hierarchy']['type'] == 2) ? " AND `".$db_map['folder']."`=1" : '';
       
-      $db  = $this->container->getDBManager($options);
-      $res = $db->executeQuery($query);
+      if (isset($options['pkey']) && is_numeric($options['pkey']) && 0 < (int) $options['pkey'])
+      {
+         $id = (int) $options['pkey'];
+         $ids[$id] = $id;
+         $stack = array(0 => array($id));
+         $cur   = 0;
+         
+         while (!empty($stack))
+         {
+            if (!$row = each($stack[$cur]))
+            {
+               unset($stack[$cur]);
+               
+               $cur--;
+               
+               if ($cur < 0) break;
+               
+               continue;
+            }
+            
+            $query = "SELECT `".$db_map['pkey']."` FROM `".$db_map['table']."` WHERE `Parent`=".$row[1].$wh_add;
+            
+            if (null === ($res = $db->executeQuery($query)))
+            {
+               return array();
+            }
+            
+            unset($stack[$cur][$row[0]]);
+            
+            if ($db->getNumRows($res))
+            {
+               $cur++;
+               $stack[$cur] = array();
+               
+               while ($r = $db->fetchRow($res))
+               {
+                  $stack[$cur][] = $r[0];
+                  $ids[$r[0]]    = $r[0];
+               }
+            }
+         }
+         
+         $wh_add .= " AND `".$db_map['pkey']."` NOT IN(".implode(',', $ids).")";
+      }
       
-      if (is_null($res)) return array();
+      $query = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0".$wh_add." ORDER BY `Description` ASC";
+      
+      if (null === ($res = $db->executeQuery($query)))
+      {
+         return array();
+      }
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $row[1]);
+      while ($row = $db->fetchArray($res)) $list[$row[0]] = array('value' => $row[0], 'text' => $row[1]);
       
       return $list;
    }

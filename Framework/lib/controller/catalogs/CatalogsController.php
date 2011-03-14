@@ -45,7 +45,7 @@ class CatalogsController extends ObjectsController
    {
       if (empty(self::$conf['hierarchy']['type']))
       {
-         return self::displayListForm(1, $options);
+         return array('status' => false, 'result' => array(), 'errors' => array('It is not hierarchical catalog'));
       }
       
       $status = true;
@@ -74,13 +74,11 @@ class CatalogsController extends ObjectsController
     */
    public function displayEditForm($id = null, array $options = array())
    {
-      $return = parent::displayEditForm($id, $options);
-      
-      if (!empty(self::$conf['hierarchy']['type']) && $return['status'] && $id)
+      if (!empty(self::$conf['hierarchy']['type']) && $id)
       {
-         unset($return['result']['select']['Parent'][$id]);
+         $options['pkey'] = $id;
       }
       
-      return $return;
+      return parent::displayEditForm($id, $options);
    }
 }
