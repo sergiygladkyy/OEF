@@ -7,6 +7,7 @@ class PersistentLayer
    const m_config_dir    = 'config/';   
    const p_config_dir    = 'lib/persistent/config/';
    const i_config_dir    = 'config/internal/';
+   const container_path  = 'config/container.php';
    const dictionary_path = 'config/dictionary.php';
    const config_map_path = 'config/internal/config_map.php';
    
@@ -16,8 +17,9 @@ class PersistentLayer
       $applied_solution_name = null,
       $applied_solution_dir  = null,
 	  $config_dir      = null,
+	  $container_path  = null,
 	  $dictionary_path = null,
-      $config_map_path = null,
+	  $config_map_path = null,
       $dictionary      = array();
    
    /**
@@ -89,6 +91,7 @@ class PersistentLayer
       $apps = $this->applied_solution_name ? $this->applied_solution_name.'/' : '';
 	  
 	  $this->config_dir      = $base.$apps.self::i_config_dir;
+	  $this->container_path  = $base.$apps.self::container_path;
 	  $this->dictionary_path = $base.$apps.self::dictionary_path;
       $this->config_map_path = $base.$apps.self::config_map_path;
    }
@@ -2108,7 +2111,7 @@ class PersistentLayer
    protected function createInternalConfiguration(array& $dictionary, array& $options = array())
    {
       // configuration map
-      $map['container'] = self::m_config_dir.'container.php';
+      $map['container'] = $this->container_path;
       
       // generate db_settings configuration
       $_conf = $this->loadConfigFromFile($map['container']);
