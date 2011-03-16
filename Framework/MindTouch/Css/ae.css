@@ -357,7 +357,7 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 /************************************* Tree View *********************************************/
 
 .oef_tree_not_active {
-	width: 9px;
+	width: 16px;
 	height: 1.6em;
 	float: left;
 }
