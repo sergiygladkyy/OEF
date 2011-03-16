@@ -4,6 +4,8 @@ require_once('lib/controller/base/EntityController.php');
 
 abstract class ObjectsController extends EntityController
 {
+   protected $conf = array();
+   
    protected function __construct($kind, $type, array& $options = array())
    {
       parent::__construct($kind, $type, $options);
@@ -59,8 +61,21 @@ abstract class ObjectsController extends EntityController
       }
       else $result['item'] = array_merge($result['item'], $item->toArray($options));
       
+      $item_opt = $options;
+      
+      if (!empty($this->conf['hierarchy']['type']) && $id)
+      {
+         $item_opt['pkey'] = $id;
+      }
+      
+      if (!empty($this->conf['owners']) && $id)
+      {
+         $item_opt['otype'] = $result['item']['OwnerType'];
+         $item_opt['oid']   = $result['item']['OwnerId'];
+      }
+      
       $model  = $this->container->getCModel($this->kind, $this->type, $options);
-      $select = $model->retrieveSelectDataForRelated(array(), $options);
+      $select = $model->retrieveSelectDataForRelated(array(), $item_opt);
       $types  = $model->getTabularsList();
       
       $result['select'] = isset($result['select']) ? array_merge($select, $result['select']) : $select;
@@ -264,4 +279,23 @@ abstract class ObjectsController extends EntityController
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
+   
+   /**
+    * Return select data
+    * 
+    * @param mixed $fields
+    * @param array $options
+    * @return array
+    */
+   public function getSelectData($fields = array(), array $options = array())
+   {
+      $cmodel = $this->container->getCModel($this->kind, $this->type, $options);
+      
+      return array(
+         'status' => true,
+         'result' => $cmodel->retrieveSelectDataForRelated($fields, $options),
+         'errors' => array()
+      );
+   }
+   
 }

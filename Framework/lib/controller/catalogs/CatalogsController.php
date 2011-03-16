@@ -7,7 +7,6 @@ class CatalogsController extends ObjectsController
    const kind = 'catalogs';
    
    protected static $instance = array();
-   protected static $conf     = array();
    
    protected function __construct($type, array& $options = array())
    {
@@ -15,8 +14,8 @@ class CatalogsController extends ObjectsController
       
       $CManager = $this->container->getConfigManager($options);
       
-      self::$conf['hierarchy'] = $CManager->getInternalConfiguration($this->kind.'.hierarchy', $this->type);
-      self::$conf['owners']    = $CManager->getInternalConfiguration($this->kind.'.owners', $this->type);
+      $this->conf['hierarchy'] = $CManager->getInternalConfiguration($this->kind.'.hierarchy', $this->type);
+      $this->conf['owners']    = $CManager->getInternalConfiguration($this->kind.'.owners', $this->type);
    }
    
    /**
@@ -43,7 +42,7 @@ class CatalogsController extends ObjectsController
     */
    public function getChildren($nodeId = null, array $options = array())
    {
-      if (empty(self::$conf['hierarchy']['type']))
+      if (empty($this->conf['hierarchy']['type']))
       {
          return array('status' => false, 'result' => array(), 'errors' => array('It is not hierarchical catalog'));
       }
@@ -72,13 +71,13 @@ class CatalogsController extends ObjectsController
     * (non-PHPdoc)
     * @see lib/controller/base/ObjectsController#displayEditForm($id, $options)
     */
-   public function displayEditForm($id = null, array $options = array())
+   /*public function displayEditForm($id = null, array $options = array())
    {
-      if (!empty(self::$conf['hierarchy']['type']) && $id)
+      if (!empty($this->conf['hierarchy']['type']) && $id)
       {
          $options['pkey'] = $id;
       }
       
       return parent::displayEditForm($id, $options);
-   }
+   }*/
 }

@@ -37,7 +37,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 }
 
 .ae_edit_form select, .ae_object_edit_form select {
-	width: 144px;
+	width: 146px;
 }
 
 .ae_posted {
@@ -63,7 +63,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 .ae_constants_edit_form select { width: 144px; }
 
 .oe_custom_edit_form input[type=text]  { width: 140px; }
-.oe_custom_edit_form select { width: 144px; }
+.oe_custom_edit_form select { width: 146px; }
 
 .ae_even { background-color: #F5F5F5; }
 tr.tabular_item:hover, tr.ae_list_item:hover { background-color: #EEFFC9/*#DEFECB*/; }
@@ -363,44 +363,44 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 }
 
 .oef_tree_active {
-	width: 9px;
+	width: 16px;
 	height: 1.6em;
 	float: left;
 	cursor: pointer;
-	background: url("/skins/common/icons/minus.gif") no-repeat scroll left 60% transparent;
+	background: url("/skins/common/icons/minusH.gif") no-repeat scroll left 60% transparent;
 }
 
 *[class="oef_tree_active oef_tree_closed"] {
-	width: 9px;
+	width: 16px;
 	height: 1.6em;
 	float: left;
 	cursor: pointer;
-	background: url("/skins/common/icons/plus.gif") no-repeat scroll left 60% transparent;
+	background: url("/skins/common/icons/plusH.gif") no-repeat scroll left 60% transparent;
 }
 
 .oef_tree_folder {
 	width: 24px;
 	height: 1.6em;
 	float: left;
-	background: url("/skins/common/icons/folder.gif") no-repeat scroll 4px center transparent;
+	background: url("/skins/common/icons/folder.png") no-repeat scroll 4px center transparent;
 }
 
 *[class="oef_tree_folder oef_tree_closed"] {
 	width: 24px;
 	height: 1.6em;
 	float: left;
-	background: url("/skins/common/icons/folder-closed.gif") no-repeat scroll 4px center transparent;
+	background: url("/skins/common/icons/folder.png") no-repeat scroll 4px center transparent;
 }
 
 .oef_tree_item {
 	width: 24px;
 	height: 1.6em;
 	float: left;
-	background: url("/skins/common/icons/file.gif") no-repeat scroll 4px center transparent;
+	background: url("/skins/common/icons/file.png") no-repeat scroll 4px center transparent;
 }
 
 .oef_tree_desc {
-	padding-left: 33px;
+	padding-left: 40px;
 }
 
 .oef_desc {
@@ -409,4 +409,106 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 
 .oef_tree_loader {
 	background: url("/skins/common/icons/anim-circle.gif") no-repeat scroll 4px center transparent !important;
+}
+
+
+/************************************* Edit Box **********************************************/
+
+.oef_edit_box_container {
+	width: 146px;
+}
+
+.oef_edit_box_input_container {
+	float: left;
+	width: 110px;
+	height: 18px;
+	padding-left: 3px;
+	border: 1px solid rgb(179, 172, 134);
+	border-right: 0px none;
+	-moz-border-radius: 3px 0px 0px 3px;
+}
+
+.oef_edit_box_btns_container {
+	float: left;
+	width: 30px;
+	height: 18px;
+	border: 1px solid rgb(179, 172, 134);
+	border-left: 0px none;
+	-moz-border-radius: 0px 3px 3px 0px;
+	background-color: #F5F2DD;
+    background-image: url("/skins/common/icons/button.png");
+    background-repeat: repeat-x;
+    overflow: hidden;
+}
+
+.oef_edit_box_input_container .oef_edit_box_text {
+	width: 108px;
+	border: 0 none;
+	height: 18px;
+	overflow: hidden;
+	line-height: 1.5em;
+	color: #000000;
+}
+
+.oef_edit_box_button {
+	width: 14px;
+	height: 100%;
+	float: left;
+	border-left: 1px solid rgb(179, 172, 134);
+}
+
+.oef_edit_box_button:hover {
+	background: url("/skins/common/icons/edit_box_sel_button.png") no-repeat scroll 0px 0px transparent;
+}
+
+.oef_edit_box_button img {
+	width: 12px;
+	height: 12px;
+	padding: 3px 1px;
+}
+
+.oef_edit_box_item_container {
+	position: absolute;
+	width: 146px !important;
+	background-color: white;
+	border-left:   2px solid #AAAAAA !important;
+	border-top:    1px solid #AAAAAA !important;
+	border-bottom: 1px solid #111111 !important;
+	border-right:  1px solid #111111 !important;
+}
+
+.oef_edit_box_item_container td {
+	padding: 2px 4px;
+	line-height: 1.1em !important;
+	color: #000000;
+	border: 0 none !important;
+	border-right: 0 none !important;
+}
+
+.oef_edit_box_item_container td:hover {
+	background-color: #3565C0;
+	color: #FFFFFF;
+}
+
+.oef_edit_box_select_form {
+	position: fixed;
+	left: 50%;
+	top:  50%;
+    margin: -20% 0 0 -100px;
+    width: 300px;
+	height: 200px;
+	background-color: #F7F7F7;
+	padding: 6px;
+	z-index: 1000;
+	border-radius: 5px;
+	-moz-border-radius: 8px;
+}
+
+.ae_object_edit_form .oef_edit_box_select_form select {
+	width: 300px;
+	height: 163px;
+}
+
+.oef_edit_box_select_form_actions {
+	margin: 10px 0;
 }

@@ -153,6 +153,68 @@ class CatalogsModel extends BaseObjectsModel
       return $result;
    }
    
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntitiesModel#retrieveSelectDataForRelated($fields, $options)
+    */
+   public function retrieveSelectDataForRelated($fields = array(), array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      if (!is_array($fields)) $fields = empty($fields) ? array() : array($fields => true);
+      
+      if (!empty($this->conf['owners']) && isset($fields['OwnerType']) || isset($options['otype']))
+      {
+         $owner = $this->retrieveSelectOwner($options);
+         
+         unset($fields['OwnerType']);
+      }
+      
+      if (!($owner && empty($fields)))
+      {
+         $result = parent::retrieveSelectDataForRelated($fields, $options);
+      }
+      
+      if (isset($owner)) $result['OwnerType'] = $owner;
+      
+      return $result;
+   }
+   
+   /**
+    * Get select data for OwnerId field
+    * 
+    * @param array $options
+    * @return array
+    */
+   public function retrieveSelectOwner(array $options = array())
+   {
+      if (empty($this->conf['owners'])) return array();
+      
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      if (empty($options['otype']) || !in_array($options['otype'], $this->conf['owners']))
+      {
+         return array();
+      }
+      
+      $otype = $options['otype'];
+      $oid   = isset($options['oid']) ? (int) $options['oid'] : 0;
+      
+      $model = $this->container->getCModel($this->kind, $otype, $options);
+      
+      return $oid ? $model->retrieveLinkData($oid, $options) : $model->retrieveSelectData($options);
+   }
+   
    
    
    
@@ -256,22 +318,5 @@ class CatalogsModel extends BaseObjectsModel
       
       // Execute method
       return parent::countEntities($values, $options);
-   }
-
-   
-   /**
-    * (non-PHPdoc)
-    * @see BaseEntitiesModel#retrieveSelectDataForRelated($fields, $options)
-    */
-   public function retrieveSelectDataForRelated($fields = array(), array $options = array())
-   {
-      // Check permissions
-      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
-      {
-         return array();
-      }
-      
-      // Execute method
-      return parent::retrieveSelectDataForRelated($fields, $options);
    }
 }  

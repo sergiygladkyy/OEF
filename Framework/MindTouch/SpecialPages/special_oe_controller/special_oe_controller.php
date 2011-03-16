@@ -121,6 +121,24 @@ class SpecialOEController extends SpecialPagePlugin
 
       return true;
    }
+   
+   /**
+    * Return current applied solution name
+    * 
+    * @return string or false
+    */
+   function getApplicationName()
+   {
+      $pagePath = $_REQUEST['page_path'];
+
+      $root_path = ExternalConfig::$extconfig['installer']['root_path'];
+      foreach($root_path as $key => $value)
+      {
+         if (strpos($pagePath, $key) !== false)
+            return $value;
+      }
+      return false;
+   }
 
 
    /************************************* Actions *********************************************/
@@ -1132,7 +1150,7 @@ class SpecialOEController extends SpecialPagePlugin
       {
          return array(
             'status' => false,
-            'result' => array('msg' => 'Unknow report'),
+            'result' => array('msg' => 'Unknow entity'),
             'errors' => array()
          );
       }
@@ -1145,22 +1163,42 @@ class SpecialOEController extends SpecialPagePlugin
       return $controller->getChildren($node, $options);
    }
    
-
    /**
-    * Return current applied solution name
-    * 
-    * @return string or false
+    * Get select data
+    *
+    * @return array
     */
-   function getApplicationName()
+   protected function getSelectData()
    {
-      $pagePath = $_REQUEST['page_path'];
-
-      $root_path = ExternalConfig::$extconfig['installer']['root_path'];
-      foreach($root_path as $key => $value)
+      // Check data
+      $options = isset($_POST['parameters']) ? Utility::escapeRecursive($_POST['parameters']) : array();
+      
+      if (empty($options['uid']) || !is_string($options['uid']))
       {
-         if (strpos($pagePath, $key) !== false)
-            return $value;
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
       }
-      return false;
+      
+      list($kind, $type) = Utility::parseUID($options['uid']);
+      
+      $fields = isset($options['fields']) ? $options['fields'] : array();
+      
+      unset($options['uid'], $options['fields']);
+      
+      // Check interactive permission
+      if (defined('IS_SECURE') && !$this->user->hasPermission($kind.'.'.$otype.'.Read'))
+      {
+         return array(
+            'status' => false,
+            'result' => array('msg' => 'Unknow entity'),
+            'errors' => array()
+         );
+      }
+
+      // Execute method
+      $controller = $this->container->getController($kind, $type);
+
+      if (!method_exists($controller, 'getSelectData')) return array('status' => false, 'errors' => array('Not supported operation'));
+      
+      return $controller->getSelectData($fields, $options);
    }
 }

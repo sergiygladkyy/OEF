@@ -87,34 +87,55 @@
     <table>
     <tbody>
     <eval:foreach var="field" in="fields">
-      <tr>
-        <td class="{{ class..'_name ae_editform_field_name' }}">{{ string.ToUpperFirst(field); }}:</td>
-        <td class="{{ class..'_value ae_editform_field_value' }}">
-          <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
-          <pre class="script">
-            var name   = name_prefix..'[attributes]['..field..']';
-            var params = {
-               select:    select[field],
-               required:  list.contains(required, field),
-               dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
-            };
-            
-            if (references[field]) {
-              let params ..= {reference: references[field]};
-            }
-            
-            var template   = root..'/EditFormFields';
-            var content    = wiki.template(template, [field_type[field], name, item[field], params, type, template, prefix]);
-      
-            if (string.contains(content, 'href="'..template..'"')) {
-              let content = 'Template not found';
-            }
-          
-            content;
-          </pre>
-        </td>
-      </tr>
+      <eval:if test="#owners == 0 || field != 'OwnerId'">
+        {{
+           if (#owners > 0 && field == 'OwnerType') {
+              var name   = name_prefix..'[attributes]';
+              var value  = {OwnerType: item[field], OwnerId: item['OwnerId']};
+              var f_name = 'Owner';
+              var f_type = 'OwnerReference';
+              var params = {
+                 owners:    owners,
+                 select:    select[field],
+                 required:  list.contains(required, field),
+                 dynamic:   list.contains(dynamic, field),
+                 precision: field_prec[field]
+              };
+           }
+           else {
+              var name   = name_prefix..'[attributes]['..field..']';
+              var value  = item[field];
+              var f_name = string.ToUpperFirst(field);
+              var f_type = field_type[field];
+              var params = {
+                 select:    select[field],
+                 required:  list.contains(required, field),
+                 dynamic:   list.contains(dynamic, field),
+                 precision: field_prec[field]
+              };
+              
+              if (references[field]) {
+                 let params ..= {reference: references[field]};
+              }
+           }
+        }}      
+        <tr>
+          <td class="{{ class..'_name ae_editform_field_name' }}">{{ f_name }}:</td>
+          <td class="{{ class..'_value ae_editform_field_value' }}">
+            <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
+            <pre class="script">
+              var template   = root..'/EditFormFields';
+              var content    = wiki.template(template, [f_type, name, value, params, type, template, prefix]);
+              
+              if (string.contains(content, 'href="'..template..'"')) {
+                 let content = 'Template not found';
+              }
+              
+              content;
+            </pre>
+          </td>
+        </tr>
+      </eval:if>
     </eval:foreach>
     <eval:foreach var="tabular" in="tab_s">
       <tr>

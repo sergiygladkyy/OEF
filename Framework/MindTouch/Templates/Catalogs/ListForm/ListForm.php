@@ -105,14 +105,14 @@
           }
         &lt;/head&gt;
         &lt;body&gt;&lt;/body&gt;
-          &lt;tail&gt;
-            if (!isTree)
-            {
-              &lt;script type="text/javascript"&gt;"
-                setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
-              "&lt;/script&gt;
-            }
-          &lt;/tail&gt;
-        &lt;/html&gt;
+        &lt;tail&gt;
+          if (!isTree)
+          {
+            &lt;script type="text/javascript"&gt;"
+              setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
+            "&lt;/script&gt;
+          }
+        &lt;/tail&gt;
+      &lt;/html&gt;
    }}
   </eval:else>

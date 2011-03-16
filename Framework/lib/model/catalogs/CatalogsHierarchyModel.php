@@ -160,7 +160,10 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
          unset($fields['Parent']);
       }
       
-      $result = parent::retrieveSelectDataForRelated($fields, $options);
+      if (!empty($fields))
+      {
+         $result = parent::retrieveSelectDataForRelated($fields, $options);
+      }
       
       if (isset($parent)) $result['Parent'] = $parent;
       
@@ -176,7 +179,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
    public function retrieveSelectParent(array $options = array())
    {
       // Check permissions
-      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.View'))
+      if (defined('IS_SECURE') && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
       {
          return array();
       }
