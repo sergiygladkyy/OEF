@@ -25,6 +25,7 @@
           "displayTreeList(uid:str, params:map):map" => 'displayTreeList',
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
+          "getAppliedSolutionName():map" => 'getAppliedSolutionName',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
           "generateForm(uid:str, name:str, params:map):map" => 'generateCustomForm',
           "GetFormattedDate(date:str, format:str):str" => 'getFormattedDate'
@@ -703,6 +704,23 @@
      }
 
      return strftime($format, $mt);
+  }
+  
+  /**
+   * Get current applied solution name
+   * 
+   * @return array
+   */
+  function getAppliedSolutionName()
+  {
+     $appName = getApplicationName();
+     
+     if ($appName[0] === -1 || $appName[0] === -2)
+     {
+         return array('status' => false, 'errors' => array('Initialize error'));
+     }
+     
+     return array('status' => true, 'result' => $appName[1]);
   }
   
   /**
