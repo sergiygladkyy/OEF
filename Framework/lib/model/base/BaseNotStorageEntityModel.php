@@ -410,10 +410,10 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       {
          foreach ($this->conf['references'] as $field => $param)
          {
-            $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
             if (!empty($result[$field]))
             {
-               $data = $cmodel->retrieveLinkData($result[$field]);
+               $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
+               $data   = $cmodel->retrieveLinkData($result[$field]);
                $result[$field] = $data[$result[$field]];
             }
             else $result[$field] = array();
