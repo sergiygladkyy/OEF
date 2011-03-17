@@ -6,14 +6,15 @@
    var prefix = args[4] ?? 'default';
    var fields = {};
    var field_type = {};
+   var owners     = {};
    var references = {}; 
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
    var tabulars = data.tabulars;
-
+   
    var tmpList = string.Split(uid,'.');
-   var header = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
+   var header  = string.Remove(string.ToUpperFirst(tmpList[0]),string.Length(tmpList[0])-1,1)..' '..tmpList[1];
 }}
 <h3>{{header;}}</h3>
 <eval:if test="puid is nil">
@@ -36,6 +37,7 @@
       }
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       var tab_s      = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
   }}
@@ -46,23 +48,37 @@
   <table>
   <tbody>
     <eval:foreach var="field" in="fields">
-      <tr>
-        <td class="ae_itemform_field_name">{{ string.ToUpperFirst(field); }}:</td>
-        <td class="ae_itemform_field_value">
-          <pre class="script">
-            var params = {reference: references[field]};
-            
-            var template = root..'/ItemFormFields';
-            var content  = wiki.template(template, [field_type[field], item[field], params, type, template, prefix]);
-      
-            if (string.contains(content, 'href="'..template..'"')) {
-              let content = 'Template not found';
-            }
-          
-            content;
-          </pre>
-        </td>
-      </tr>
+      <eval:if test="#owners == 0 || field != 'OwnerId'">
+        {{
+           if (field == 'OwnerType' && #owners > 0) {
+              var value  = item['OwnerId'];
+              var params = {reference: {kind: kind, type: item[field]}};
+              var f_name = 'Owner';
+              var c_field_type = 'reference';
+           }
+           else {
+              var value  = item[field];
+              var params = {reference: references[field]};
+              var f_name = string.ToUpperFirst(field);
+              var c_field_type = field_type[field];
+           }
+        }}
+        <tr>
+          <td class="ae_itemform_field_name">{{ f_name }}:</td>
+          <td class="ae_itemform_field_value">
+            <pre class="script">
+              var template = root..'/ItemFormFields';
+              var content  = wiki.template(template, [c_field_type, value, params, type, template, prefix]);
+              
+              if (string.contains(content, 'href="'..template..'"')) {
+                 let content = 'Template not found';
+              }
+              
+              content;
+            </pre>
+          </td>
+        </tr>
+      </eval:if>
     </eval:foreach>
     <eval:foreach var="tabular" in="tab_s">
       <tr>
