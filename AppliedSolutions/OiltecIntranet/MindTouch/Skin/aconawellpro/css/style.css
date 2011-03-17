@@ -1,0 +1,115 @@
+.userProfile { width:725px; float:left; }
+.userTabs { width:715px; padding:0 5px; height:28px; border-bottom:1px solid #d2d2d2; }
+img { border:0; }
+.userTabs a, .userTabs a:visited { text-decoration:none; border-top:1px solid #d2d2d2; border-right:1px solid #d2d2d2; border-left:1px solid #d2d2d2; float:left; height:15px; position:relative; margin-right:4px; padding:6px 8px; margin-bottom:-1px; -moz-border-radius-topleft:3px; -moz-border-radius-topright:3px; line-height:1em;}
+.userTabs a:hover, .userTabs a.active { border-bottom:1px solid #ffffff; }
+.userTabs span.icon { background-image:url(../images/userTabs.png); float:left; height:16px; width:16px; margin-right:3px; }
+.userTabs span.info { background-position:0 0; }
+.userTabs span.blog { background-position:-16px 0; }
+.userTabs span.proj { background-position:-32px 0; }
+.userTabs b { font-size:12px; color:#000; text-decoration:none; }
+.userTabs b span { color:#646464; padding-left:5px; }
+
+.userLeft { width:210px; padding-top:20px; float:left; }
+.userPhoto {  overflow:hidden; -moz-border-radius:3px; text-align: center; padding-bottom: 18px;}
+.userPhoto a.new, .userPhoto a:hover.new, .userPhoto a:visited.new { text-decoration: none !important; border: 0 none !important; }
+.userPhoto img { max-width:200px; max-height:200px; padding:4px; border:1px solid #d2d2d2; }
+
+.userPic { width:153px; height:185px; float:left; background:url(../images/userPicLeft.jpg); margin-top:1px; }
+
+.userRight { width:495px; padding: 20px 0px 20px 20px; float:left; background:url(../images/userPicRight.jpg) no-repeat right top; }
+
+.userRows { width:302px; float:left; }
+
+.userRow {
+    float: left;
+    background-color: #F6F3FA;
+    font-size: 12px;
+    line-height: 17px;
+    color: #494949;
+    font-family: Arial;
+    border-top: 1px solid #D2D2D2;
+    width: 100%;
+}
+.userValue { margin: 7px 6px 5px 0px; }
+.userValue a { line-height: 17px !important; }
+
+.userRow input[type="text"], .userRow input[type="file"] {
+    color: #666666 !important;
+    border: 1px solid #cccccc !important;
+    height: 15px;
+    line-height: 15px;
+    padding: 1px 10px;
+    -moz-border-radius: 3px;
+    font-size: 12px !important;
+    margin: 8px 6px 8px 0px !important;
+    width: 133px;
+    background-color: #FDFDFD;
+}
+
+.userRow input[type="file"] {
+    height: 20px;
+    width: 154px;
+}
+
+.userRow select {
+    color: #666666 !important;
+    border: 1px solid #cccccc !important;
+    padding: 1px 0px 1px 10px;
+    -moz-border-radius: 3px;
+    font-size: 12px !important;
+    margin: 8px 6px 8px 0px !important;
+    width: 154px;
+    background-color: #FDFDFD;
+}
+
+.userRow input[type="checkbox"] {
+    height: 15px;
+    color: #666666 !important;
+    border: none !important;
+    padding: 0 !important;
+    -moz-border-radius: 3px;
+    font-size: 12px !important;
+    margin: 8px 6px 8px 0px !important;
+    background-color: #FDFDFD;
+}
+
+.checkBoxText { color:#666666; }
+
+.userRowLeft { padding: 7px 0 5px 21px; float: left; width: 117px; font-weight: bold; }
+.userRowRight { float: left; width: 163px; }
+
+.userRowRight b { padding-top:0px; display:block; }
+
+.userRowClear { background-clear:none; width:100%; float:left; height:29px;  }
+
+.userRowTop .userRowLeft, .userRowTop .userRowLeft { border-top:1px solid #d2d2d2; }
+
+.userProfileEdit { cursor:pointer; width:105px; height:21px; float:left; border: none ! important; background:url(../images/userProfileEdit.png); margin-left:20px; margin-bottom:7px; }
+input.userProfileSubmit {cursor:pointer; width:109px; height:21px; float:left; border: none ! important; background:url(../images/userProfileSubmit.png); margin-left:20px; margin-bottom:7px; }
+.userProfileCancel {cursor:pointer; width:66px; height:21px; float:left; border: none ! important; background:url(../images/userProfileCancel.png); margin-left:20px; }
+.userBusinessCard {
+    position:relative;
+    left:50%;
+    margin: 0px 0px 19px -75px;
+    cursor:pointer;
+    width:145px !important;
+    height:21px !important;
+    border: none ! important;
+    background:url(../images/userBusinessCard.png);
+}
+
+.soon {
+    margin-right: 200px;
+    margin-left: 250px;
+    margin-bottom: 100px;
+    margin-top: 100px;
+}
+.UpdateMTButton {
+    cursor:pointer;
+    padding:5px;
+    margin:5px;
+}
+tr.UpdateRows{
+    border-bottom:1px gray solid;
+}

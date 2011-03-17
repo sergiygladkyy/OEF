@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Time Cards</title>
+  <style>
+    table { border-collapse: collapse; padding: 0px; color: #111111;}
+	th, td { border: 1px solid #000000; padding: 0px 3px 1px 3px;}
+	
+	*[area=total]    { background-color: #ffdeed; }
+	*[area=headline] { background-color: #dedeed; }
+	*[area=body]     { background-color: #eeffc9; }
+  </style>
+</head>
+<body>
+    <!-- BEG Макет -->
+    <table class="oef_report">
+	<tr area="header">
+	  <td colspan="6" class="oe_report_none_border" style="font-size: 18px;">[header]</td>
+    </tr>
+	<tr area="header">
+	  <td colspan="6" class="oe_report_none_border"> </td>
+	</tr>
+    <tr area="headline">
+	  <td class="oe_report_none_border" style="min-width: 70px;"> </td>
+      <th>Period</th>
+      <th style="width: 96px;">Posted</th>
+	  <th style="width: 62px;">Hours</th>
+	  <th style="width: 62px;">Overtime</th>
+	  <th style="width: 62px;">Extra</th>
+    </tr>
+    <tr area="employee">
+      <td colspan="6" class="oe_report_none_border" style="background-color: #dedeed;">[Employee]</td>
+    </tr>
+    <tr area="card">
+      <td class="oe_report_none_border"> </td>
+	  <td decode="TimeCard">[Period]</td>
+	  <td decode="TimeCard">[Posted]</td>
+	  <td decode="TimeCard">[Hours]</td>
+	  <td decode="TimeCard">[Overtime]</td>
+	  <td decode="TimeCard">[Extra]</td>
+    </tr>
+	<tr area="total">
+      <td colspan="3" class="oe_report_none_border" style="text-align: right;"><b>Overall hours:</b></td>
+      <td>[THours]</td>
+      <td>[TOvertime]</td>
+      <td>[TExtra]</td>
+    </tr>
+	</table>
+  <!-- END Макет -->
+</body>
+</html>

@@ -1,0 +1,612 @@
+<extension>
+	<title>AWPSkin Extension</title>
+	<copyright>Copyright (c) Oiltec Solutions AS</copyright>
+	<label>AWPSkin</label>
+	<namespace>awpskin</namespace>
+	<description>
+		This extension contains functions for controlling AconaWellpro skin panes.
+	</description>
+
+	<function>
+		<name>hidePageHeader</name>
+		<description>Hides page header element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hidePageHeader()	{
+							var divElement = document.getElementById("pageHierarchy");
+							var divElement1 = document.getElementById("pageRevision");
+
+							// DOM3 = IE5, NS6
+							if (divElement != null)
+								divElement.style.display = 'none';
+							if (divElement1 != null)
+								divElement1.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hidePageHeader();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hidePageTitle</name>
+		<description>Hides page title element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hidePageTitle()	{
+							var divElement = document.getElementById("pageTitle");
+
+							// DOM3 = IE5, NS6
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hidePageTitle();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideFilePane</name>
+		<description>Hides files attachement page element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideFilePane()	{
+							var divElement = document.getElementById("file-section");
+
+							// DOM3 = IE5, NS6
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideFilePane();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideImagePane</name>
+		<description>Hides image gallery page element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideImagePane()	{
+							var divElement = document.getElementById("gallery-section");
+
+							// DOM3 = IE5, NS6
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideImagePane();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideCommentsPane</name>
+		<description>Hides comments page element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideCommentsPane()	{
+							var divElement = document.getElementById("comments-section");
+
+							// DOM3 = IE5, NS6
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideCommentsPane();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideTagPane</name>
+		<description>Hides edit tag page element.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideTagPane()	{
+							var divElementHdr = document.getElementById("pageTagsLabel");
+							var divElement = document.getElementById("pageTags");
+
+							// DOM3 = IE5, NS6
+							if (divElementHdr != null)
+								divElementHdr.style.display = 'none';
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideTagPane();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideIncomingLinksPane</name>
+		<description>Hides incoming links page section.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideIncomingLinksPane()	{
+							var divElementHdr = document.getElementById("pageILinksLabel");
+							var divElement = document.getElementById("pageILinks");
+
+							// DOM3 = IE5, NS6
+							if (divElementHdr != null)
+								divElementHdr.style.display = 'none';
+							if (divElement != null)
+								divElement.style.display = 'none';
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideIncomingLinksPane();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hidePageInfo</name>
+		<description>Hides all file attachments, comments, tegs and links panes.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hidePageInfo()	{
+							var pageIDs=new Array();
+							pageIDs[0] = document.getElementById("file-section");
+							pageIDs[1] = document.getElementById("gallery-section");
+							pageIDs[2] = document.getElementById("comments-section");
+							pageIDs[3] = document.getElementById("pageTagsLabel");
+							pageIDs[4] = document.getElementById("pageTags");
+							pageIDs[5] = document.getElementById("pageILinksLabel");
+							pageIDs[6] = document.getElementById("pageILinks");
+							pageIDs[7] = document.getElementById("pageInfo");
+							var i;
+
+							for (i in pageIDs)
+							{
+								if (pageIDs[i] != null)
+									pageIDs[i].style.display = 'none';
+							}
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hidePageInfo();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>hideAllStandardPanes</name>
+		<description>Hides all standard page panes.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function hideAllStandardPanes()	{
+							var pageIDs=new Array();
+							pageIDs[0] = document.getElementById("pageTitle");
+							pageIDs[1] = document.getElementById("file-section");
+							pageIDs[2] = document.getElementById("gallery-section");
+							pageIDs[3] = document.getElementById("comments-section");
+							pageIDs[4] = document.getElementById("pageTagsLabel");
+							pageIDs[5] = document.getElementById("pageTags");
+							pageIDs[6] = document.getElementById("pageILinksLabel");
+							pageIDs[7] = document.getElementById("pageILinks");
+							pageIDs[8] = document.getElementById("pageHierarchy");
+							pageIDs[9] = document.getElementById("pageRevision");
+							pageIDs[10] = document.getElementById("pageInfo");
+							var i;
+
+							for (i in pageIDs)
+							{
+								if (pageIDs[i] != null)
+									pageIDs[i].style.display = 'none';
+							}
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						hideAllStandardPanes();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>showMainPageHeader</name>
+		<description>Shows main page header: horizontal menu and images.</description>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+					<script type="text/javascript">
+						function showMainPageHeader()	{
+							var pageIDs=new Array();
+							pageIDs[0] = document.getElementById("tsubmenu");
+							pageIDs[1] = document.getElementById("main-pic-header");
+							var i;
+
+							for (i in pageIDs)
+							{
+								if (pageIDs[i] != null)
+									pageIDs[i].style.display = 'block';
+							}
+						}
+					</script>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						showMainPageHeader();
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageTopMenu</name>
+		<description>Set main page top (orange) menu item.</description>
+		<param name="menuPosition" type="str">Menu position ID. From pos1 to pos10</param>
+		<param name="menuLabel" type="str">Menu label caption</param>
+		<param name="menuLink" type="str">Wep page address</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageTopMenu(<eval:js>args.menuPosition</eval:js>, <eval:js>args.menuLabel</eval:js>, <eval:js>args.menuLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockLeftHeader</name>
+		<description>Set main page picture block left section header.</description>
+		<param name="headerText" type="str">Header text</param>
+		<param name="headerLink" type="str">Header web link</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockLeftHeader(<eval:js>args.headerText</eval:js>, <eval:js>args.headerLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockMiddleHeader</name>
+		<description>Set main page picture block middle section header.</description>
+		<param name="headerText" type="str">Header text</param>
+		<param name="headerLink" type="str">Header web link</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockMiddleHeader(<eval:js>args.headerText</eval:js>, <eval:js>args.headerLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockRightHeader</name>
+		<description>Set main page picture block right section header.</description>
+		<param name="headerText" type="str">Header text</param>
+		<param name="headerLink" type="str">Header web link</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockRightHeader(<eval:js>args.headerText</eval:js>, <eval:js>args.headerLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockLeftText</name>
+		<description>Set main page picture block left section text.</description>
+		<param name="paragraphText" type="str">Paragraph text</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockLeftText(<eval:js>args.paragraphText</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockRightText</name>
+		<description>Set main page picture block right section text.</description>
+		<param name="paragraphText" type="str">Paragraph text</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockRightText(<eval:js>args.paragraphText</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockLeftButtonMore</name>
+		<description>Set link for the main page picture block left section 'More' button.</description>
+		<param name="buttonLink" type="str">Button web link</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockLeftButtonMore(<eval:js>args.buttonLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+	<function>
+		<name>mainPageBlockRightButtonMore</name>
+		<description>Set link for the main page picture block right section 'More' button.</description>
+		<param name="buttonLink" type="str">Button web link</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockRightButtonMore(<eval:js>args.buttonLink</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        
+        <function>
+		<name>mainPageTopMenuBackground</name>
+		<description>set main page top menu background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+                                    
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageTopMenuBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        <function>
+		<name>mainPageTopSubMenuBackground</name>
+		<description>set main page sub menu background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageTopSubMenuBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        <function>
+		<name>mainPageBlockLeftHeaderBackground</name>
+		<description>set main page left header background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockLeftHeaderBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        <function>
+		<name>mainPageMiddleHeaderBackground</name>
+		<description>set main page middle header background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageMiddleHeaderBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+
+
+        <function>
+		<name>mainPageBlockRightBackground</name>
+		<description>set main page right block background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockRightBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+       <function>
+		<name>mainPageBlockLeftTextBackground</name>
+		<description>set main page left block  background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockLeftTextBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        <function>
+		<name>mainPageBlockMiddleTextBackground</name>
+		<description>set main page middle block  background</description>
+                <param name="path" type="str">Path to picture</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+
+				</head>
+				<body>
+                               	</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageBlockMiddleTextBackground(<eval:js>args.path</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+        <function>
+		<name>mainPageSetHeader</name>
+		<description>Set header images with folder 'Header name'.</description>
+		<param name="name" type="str">Header name</param>
+		<return>
+			<html xmlns:eval="http://mindtouch.com/2007/dekiscript">
+				<head>
+				</head>
+				<body>
+				</body>
+				<tail>
+					<script type="text/javascript">
+						mainPageSetBackground(<eval:js>args.name</eval:js>);
+					</script>
+				</tail>
+			</html>
+		</return>
+	</function>
+</extension>
