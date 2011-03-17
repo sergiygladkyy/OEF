@@ -7,7 +7,7 @@ $_conf = array(
       'dbusername' => "root",
       'dbpass'     => "",
       'dbname'     => "mt_db",
-      'dbprefix'   => "oiltec_",
+      'dbprefix'   => "AWPAnalytics_",
       'dbcharset'  => "utf8", // cp1251
       
       'classname'  => 'DBMysql',
@@ -25,9 +25,9 @@ $_conf = array(
    'modules' => array(
       'classname' => 'ModulesManager',
       'options'   => array(
-         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/modules/',
-         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/cache/',
-         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/templates/'
+         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Modules/',
+         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Cache/',
+         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Templates/'
       )
    ),
    
