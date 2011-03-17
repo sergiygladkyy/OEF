@@ -202,11 +202,12 @@ class SpecialOEInstall extends SpecialPagePlugin
                      $content = file_get_contents($path);
                   }
                   else $content = '<p>Folder</p>';
-                  $template = str_replace('Template:OEF/','Template:OEF/'.$appliedSolutionName.'/',$template);
+                  $template = 'Template:OEF/'.$appliedSolutionName.'/'.$template;
                   if (!$this->postContent($template, $content))
                   {
                      $errors[] = 'Template '.$template.' not posted';
                   }
+                  else $errors[] = $template;
                }
 
                if (!$errors) $msg = 'Updated succesfully';

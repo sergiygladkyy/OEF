@@ -1,16 +1,16 @@
 <?php
 $_templates_map = array(
-   'Template:OEF/Catalogs/EditForm/defaultNaturalPersons'         => '/Catalogs/EditForm/templates/defaultNaturalPersons.php',
-   'Template:OEF/Catalogs/EditForm/defaultSchedules'         => '/Catalogs/EditForm/templates/defaultSchedules.php',
+   'Catalogs/EditForm/defaultNaturalPersons'         => '/Catalogs/EditForm/templates/defaultNaturalPersons.php',
+   'Catalogs/EditForm/defaultSchedules'         => '/Catalogs/EditForm/templates/defaultSchedules.php',
 
-   'Template:OEF/Documents/EditForm/defaultPeriodicClosing' => '/Documents/EditForm/templates/defaultPeriodicClosing.php',
-   'Template:OEF/Documents/EditForm/defaultProjectAssignment' => '/Documents/EditForm/templates/defaultProjectAssignment.php',
-   'Template:OEF/Documents/EditForm/defaultProjectRegistration' => '/Documents/EditForm/templates/defaultProjectRegistration.php',
-   'Template:OEF/Documents/EditForm/defaultTimeCard' => '/Documents/EditForm/templates/defaultTimeCard.php',
-   'Template:OEF/Documents/EditForm/defaultVacationOrder' => '/Documents/EditForm/templates/defaultVacationOrder.php',
+   'Documents/EditForm/defaultPeriodicClosing' => '/Documents/EditForm/templates/defaultPeriodicClosing.php',
+   'Documents/EditForm/defaultProjectAssignment' => '/Documents/EditForm/templates/defaultProjectAssignment.php',
+   'Documents/EditForm/defaultProjectRegistration' => '/Documents/EditForm/templates/defaultProjectRegistration.php',
+   'Documents/EditForm/defaultTimeCard' => '/Documents/EditForm/templates/defaultTimeCard.php',
+   'Documents/EditForm/defaultVacationOrder' => '/Documents/EditForm/templates/defaultVacationOrder.php',
 
-   'Template:OEF/Reports/ReportForm/defaultProjectManHours' => '/Reports/ReportForm/templates/defaultProjectManHours.php',
-   'Template:OEF/Reports/ReportForm/defaultProjectResources' => '/Reports/ReportForm/templates/defaultProjectResources.php',
-   'Template:OEF/Reports/ReportForm/defaultProjectManHours' => '/Reports/ReportForm/templates/defaultProjectManHours.php'
+   'Reports/ReportForm/defaultProjectManHours' => '/Reports/ReportForm/templates/defaultProjectManHours.php',
+   'Reports/ReportForm/defaultProjectResources' => '/Reports/ReportForm/templates/defaultProjectResources.php',
+   'Reports/ReportForm/defaultProjectManHours' => '/Reports/ReportForm/templates/defaultProjectManHours.php'
     )
 ?>
