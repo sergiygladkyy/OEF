@@ -572,6 +572,30 @@ class CatalogModel extends BaseObjectModel
       }
    }
    
+   /**
+    * (non-PHPdoc)
+    * @see BaseEntityModel#toArray($options)
+    */
+   public function toArray(array $options = array())
+   {
+      // Check permissions
+      if (defined('IS_SECURE') && !$this->isNew && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
+      {
+         return array();
+      }
+      
+      // Execute method
+      $item = parent::toArray($options);
+      
+      if (!empty($options['with_link_desc']) && $this->hasOwner() && !empty($item['OwnerType']) && !empty($item['OwnerId']))
+      {
+         $cmodel = $this->container->getCModel($this->kind, $item['OwnerType'], $options);
+         $data   = $cmodel->retrieveLinkData($item['OwnerId']);
+         $item['OwnerId'] = $data[$item['OwnerId']];
+      }
+      
+      return $item;
+   }
    
    
    
@@ -593,22 +617,6 @@ class CatalogModel extends BaseObjectModel
       
       // Execute method
       return parent::delete($options);
-   }
-   
-   /**
-    * (non-PHPdoc)
-    * @see BaseEntityModel#toArray($options)
-    */
-   public function toArray(array $options = array())
-   {
-      // Check permissions
-      if (defined('IS_SECURE') && !$this->isNew && !$this->container->getUser()->hasPermission($this->kind.'.'.$this->type.'.Read'))
-      {
-         return array();
-      }
-      
-      // Execute method
-      return parent::toArray($options);
    }
    
    /**
