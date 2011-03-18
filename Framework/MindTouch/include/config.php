@@ -21,9 +21,10 @@ ExternalConfig::$extconfig = array (
       'framework_dir' => '/Framework',
       'templates_dir'  => '/Templates',
       'templates_map'  => '/Templates/templates_map.php',
+      'solution_templates_map' => '/MindTouch/Templates/templates_map.php',
       'root_path' => array(
-          'Release_2' => 'AWPAnalytics',
-          'Release_1' => 'Oiltec'
+          'AWPAnalytics'   => 'AWPAnalytics',
+          'OiltecIntranet' => 'OiltecIntranet'
       )
    )
 );

@@ -25,9 +25,9 @@ $_conf = array(
    'modules' => array(
       'classname' => 'ModulesManager',
       'options'   => array(
-         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/OiltecIntranet/Modules/',
-         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/OiltecIntranet/Cache/',
-         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/OiltecIntranet/Templates/'
+         'modules_dir'  => '../AppliedSolutions/OiltecIntranet/Modules/',
+         'cache_dir'    => '../AppliedSolutions/OiltecIntranet/Cache/',
+         'template_dir' => '../AppliedSolutions/OiltecIntranet/Templates/'
       )
    ),
    

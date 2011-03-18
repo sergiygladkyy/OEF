@@ -25,9 +25,9 @@ $_conf = array(
    'modules' => array(
       'classname' => 'ModulesManager',
       'options'   => array(
-         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Modules/',
-         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Cache/',
-         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/AWPAnalytics/Templates/'
+         'modules_dir'  => '../AppliedSolutions/AWPAnalytics/Modules/',
+         'cache_dir'    => '../AppliedSolutions/AWPAnalytics/Cache/',
+         'template_dir' => '../AppliedSolutions/AWPAnalytics/Templates/'
       )
    ),
    

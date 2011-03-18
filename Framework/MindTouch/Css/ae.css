@@ -41,7 +41,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 }
 
 .ae_posted {
-	background: url("/skins/common/icons/doc_list_posted.png") no-repeat scroll left 2px transparent;
+	background: url("/skins/common/icons/doc_list_posted.png") no-repeat scroll left 3px transparent;
 	padding-left: 22px;
 }
 
