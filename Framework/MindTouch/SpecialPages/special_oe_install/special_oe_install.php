@@ -162,52 +162,19 @@ class SpecialOEInstall extends SpecialPagePlugin
             try
             {
                $map = Utility::loadArrayFromFile('.'.$this->conf['templates_map']);
+               $path=$this->conf['root'].$this->conf['base_dir'].'/Framework/Templates/OEF.php';
+               $this->createTemplate('','',$path,false,$errors);
 
                foreach ($map as $template => $path)
                {
-                  if (!is_null($path))
-                  {
-                     $path = '.'.$this->conf['templates_dir'].$path;
-
-                     if (!file_exists($path))
-                     {
-                        $errors[] = 'Template '.$template.': file not exists';
-                        continue;
-                     }
-
-                     $content = file_get_contents($path);
-                  }
-                  else $content = '<p>Folder</p>';
-                  $template = str_replace('Template:OEF/','Template:OEF/'.$appliedSolutionName.'/',$template);
-                  if (!$this->postContent($template, $content))
-                  {
-                     $errors[] = 'Template '.$template.' not posted';
-                  }
+                   $this->createTemplate($template,$appliedSolutionName,$path,true,$errors);
                }
                $mapSolution = Utility::loadArrayFromFile($this->conf['root'].$this->conf['base_dir'].
                        $this->conf['applied_solutions_dir'].'/'.$appliedSolutionName.$this->conf['solution_templates_map']);
                foreach ($mapSolution as $template => $path)
                {
-                  if (!is_null($path))
-                  {
-                     $path = $this->conf['root'].$this->conf['base_dir'].
-                       $this->conf['applied_solutions_dir'].'/'.$appliedSolutionName.'/MindTouch/Templates'.$path;
-
-                     if (!file_exists($path))
-                     {
-                        $errors[] = 'Template '.$path.': file not exists';
-                        continue;
-                     }
-
-                     $content = file_get_contents($path);
-                  }
-                  else $content = '<p>Folder</p>';
-                  $template = 'Template:OEF/'.$appliedSolutionName.'/'.$template;
-                  if (!$this->postContent($template, $content))
-                  {
-                     $errors[] = 'Template '.$template.' not posted';
-                  }
-                  else $errors[] = $template;
+                   $path=$this->conf['root'].$this->conf['base_dir'].$this->conf['applied_solutions_dir'].'/'.$appliedSolutionName.'/MindTouch/Templates'.$path;
+                   $this->createTemplate($template,$appliedSolutionName,$path,false,$errors);
                }
 
                if (!$errors) $msg = 'Updated succesfully';
@@ -227,6 +194,36 @@ class SpecialOEInstall extends SpecialPagePlugin
       elseif ($msg)
       {
          DekiMessage::success($msg);
+      }
+   }
+   /**
+    * Create template
+    * @param string $template - template name (and path in MT)
+    * @param string $appliedSolutionName - $applied solution name
+    * @param bool $changePath - if true - path can be changed (used for relative path)
+    * @param string $path - path to template
+    * @param array $errors - reference to errors array
+    */
+   protected function createTemplate($template,$appliedSolutionName,$path,$changePath,&$errors)
+   {
+      if (!is_null($path))
+      {
+         if($changePath)
+            $path = '.'.$this->conf['templates_dir'].$path;
+
+         if (!file_exists($path))
+         {
+            $errors[] = 'Template '.$template.': file not exists'.$path;
+            return;
+         }
+
+         $content = file_get_contents($path);
+      }
+      else $content = '<p>Folder</p>';
+      $template = 'Template:OEF/'.$appliedSolutionName.'/'.$template;
+      if (!$this->postContent($template, $content))
+      {
+         $errors[] = 'Template '.$template.' not posted';
       }
    }
 
