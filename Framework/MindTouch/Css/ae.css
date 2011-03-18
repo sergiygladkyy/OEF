@@ -41,13 +41,20 @@ ul.ae_editform_field_errors, ul.ae_errors {
 }
 
 .ae_posted {
-	background: url("/skins/common/icons/accept.png") no-repeat scroll left center transparent;
+	background: url("/skins/common/icons/doc_list_posted.png") no-repeat scroll left 2px transparent;
 	padding-left: 22px;
 }
+
+.ae_not_posted {
+	background: url("/skins/common/icons/doc_list_unposted.png") no-repeat scroll left 2px transparent;
+	padding-left: 22px;
+}
+
 .ae_field_posted { 
 	background: url("/skins/common/icons/accept.png") no-repeat scroll left center transparent;
 	padding-left: 22px;
 }
+
 .ae_field_not_posted {
 	background: url("/skins/common/icons/silk/information.png") no-repeat scroll left center transparent;
 	padding-left: 22px;
