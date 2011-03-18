@@ -11,6 +11,7 @@ class ModulesManager
          'documents' => array(
             'onPost',
             'onUnpost',
+            'onGenerateCode',
             'onBeforeAddingRecord'
          ),
          'reports' => array(
