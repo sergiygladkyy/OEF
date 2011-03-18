@@ -1914,6 +1914,16 @@ class PersistentLayer
    }
    
    /**
+    * Return object entity kinds
+    * 
+    * @return array
+    */
+   protected function getObjectTypes()
+   {
+      return array('catalogs', 'documents');
+   }
+   
+   /**
     * Return entity kinds that can have tabular sections
     * 
     * @return array
@@ -2506,34 +2516,34 @@ class PersistentLayer
          
          $add_fields = array();
          
-         if ($kind == 'catalogs')
+         if (in_array($kind, $this->getObjectTypes()))
          {
             $clength = empty($params['fields']['Code']['precision']['max_length']) ? 5 : $params['fields']['Code']['precision']['max_length'];
-            $add_fields = array(
-               'Code' => array(
-                  'type' => 'string',
-                  'use'  => 3,
-                  'sql'  => array(
-                     'type' => "varchar(".$clength.") NOT NULL"
-                  ),
-                  'precision' => array(
-                     'required'   => true,
-                     'max_length' => $clength
-                  )
+            $add_fields['Code'] = array(
+               'type' => 'string',
+               'use'  => 3,
+               'sql'  => array(
+                  'type' => "varchar(".$clength.") NOT NULL"
                ),
-               'Description' => array(
-                  'type' => 'string',
-                  'use'  => 3,
-                  'sql'  => array(
-                     'type' => "varchar(255) NOT NULL"
-                  ),
-                  'precision' => array('required' => true)
+               'precision' => array(
+                  'required'   => true,
+                  'max_length' => $clength
                )
             );
-            unset(
-               $params['fields']['Code'],
-               $params['fields']['Description']
+            unset($params['fields']['Code']);
+         }
+         
+         if ($kind == 'catalogs')
+         {
+            $add_fields['Description'] = array(
+               'type' => 'string',
+               'use'  => 3,
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL"
+               ),
+               'precision' => array('required' => true)
             );
+            unset($params['fields']['Description']);
             
             // Owner attributes
             if (!empty($params['Owners']))
@@ -2585,14 +2595,12 @@ class PersistentLayer
          elseif ($kind == 'documents')
          {
             $field = 'Date';
-            $add_fields = array(
-               $field => array(
-                  'type' => 'datetime',
-                  'sql'  => array(
-                     'type' => "DATETIME NOT NULL default '0000-00-00'"
-                  ),
-                  'precision' => array('required' => true)
-               )
+            $add_fields[$field] = array(
+               'type' => 'datetime',
+               'sql'  => array(
+                  'type' => "DATETIME NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array('required' => true)
             );
             unset($params['fields'][$field]);   
          }
@@ -3319,7 +3327,7 @@ class PersistentLayer
          {
             foreach ($tabulars[$catalog] as $tabular)
             {
-               $t_map[$tabular]['table'] = $dbprefix.'CAT_'.$catalog.'_'.$tabular;
+               $t_map[$tabular]['table'] = $dbprefix.'CAT_'.$catalog.'_TS_'.$tabular;
                $t_map[$tabular]['pkey']  = '_id';
             }
          }
@@ -3390,7 +3398,7 @@ class PersistentLayer
          {
             foreach ($tabulars[$document] as $tabular)
             {
-               $t_map[$tabular]['table'] = $dbprefix.'DOC_'.$document.'_'.$tabular;
+               $t_map[$tabular]['table'] = $dbprefix.'DOC_'.$document.'_TS_'.$tabular;
                $t_map[$tabular]['pkey']  = '_id';
             }
          }
