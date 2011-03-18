@@ -3299,7 +3299,7 @@ class PersistentLayer
       
       foreach ($catalogs as $catalog)
       {
-         $db_map['catalogs'][$catalog]['table'] = $dbprefix.'catalogs_'.$catalog;
+         $db_map['catalogs'][$catalog]['table'] = $dbprefix.'CAT_'.$catalog;
          $db_map['catalogs'][$catalog]['pkey']  = '_id';
          $db_map['catalogs'][$catalog]['deleted'] = '_deleted';
          
@@ -3319,7 +3319,7 @@ class PersistentLayer
          {
             foreach ($tabulars[$catalog] as $tabular)
             {
-               $t_map[$tabular]['table'] = $dbprefix.'catalogs_'.$catalog.'_'.$tabular;
+               $t_map[$tabular]['table'] = $dbprefix.'CAT_'.$catalog.'_'.$tabular;
                $t_map[$tabular]['pkey']  = '_id';
             }
          }
@@ -3331,7 +3331,7 @@ class PersistentLayer
       
       foreach ($iRegistries as $register)
       {
-         $db_map['information_registry'][$register]['table'] = $dbprefix.'information_registry_'.$register;
+         $db_map['information_registry'][$register]['table'] = $dbprefix.'IR_'.$register;
          $db_map['information_registry'][$register]['pkey']  = '_id';
          
          // Recorders
@@ -3346,7 +3346,7 @@ class PersistentLayer
       
       foreach ($aRegistries as $register)
       {
-         $db_map['AccumulationRegisters'][$register]['table']  = $dbprefix.'accumulation_registers_'.$register;
+         $db_map['AccumulationRegisters'][$register]['table']  = $dbprefix.'AR_'.$register;
          $db_map['AccumulationRegisters'][$register]['pkey']   = '_id';
          $db_map['AccumulationRegisters'][$register]['line']   = '_line';
          $db_map['AccumulationRegisters'][$register]['active'] = '_active';
@@ -3354,7 +3354,7 @@ class PersistentLayer
          
          $total_map =& $db_map['AccumulationRegisters'][$register]['total'];
          
-         $total_map['table'] = $dbprefix.'accumulation_registers_'.$register.'_total';
+         $total_map['table'] = $dbprefix.'AR_'.$register.'_total';
          $total_map['pkey']  = '_id';
          
          // Register type
@@ -3376,7 +3376,7 @@ class PersistentLayer
       
       foreach ($documents as $document)
       {
-         $db_map['documents'][$document]['table'] = $dbprefix.'documents_'.$document;
+         $db_map['documents'][$document]['table'] = $dbprefix.'DOC_'.$document;
          $db_map['documents'][$document]['pkey']  = '_id';
          $db_map['documents'][$document]['post']  = '_post';
          $db_map['documents'][$document]['deleted'] = '_deleted';
@@ -3390,7 +3390,7 @@ class PersistentLayer
          {
             foreach ($tabulars[$document] as $tabular)
             {
-               $t_map[$tabular]['table'] = $dbprefix.'documents_'.$document.'_'.$tabular;
+               $t_map[$tabular]['table'] = $dbprefix.'DOC_'.$document.'_'.$tabular;
                $t_map[$tabular]['pkey']  = '_id';
             }
          }
