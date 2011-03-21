@@ -147,7 +147,9 @@ class SpecialOEInstall extends SpecialPagePlugin
          // Update modules
          case 'update_modules':
 
-            $container_options =& $this->conf['Container'].$appliedSolutionName;
+            $container_options = $this->conf['Container'];
+            $container_options['base_dir'] .= $appliedSolutionName;
+            
             require_once('config/init.php');
             $container = Container::getInstance();
 
