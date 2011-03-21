@@ -45,6 +45,17 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
    }
    
    /**
+    * Return true if this is a new object
+    * 
+    * @return boolean
+    */
+   public function isNew()
+   {
+      return $this->isNew;
+   }
+   
+   
+   /**
     * Load entity with id = $id
     * 
     * @param int $id - entity id

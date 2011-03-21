@@ -5,6 +5,13 @@ require_once('lib/model/base/BaseEntityModel.php');
 class BaseObjectModel extends BaseEntityModel
 {
    /**
+    * If standard processing for input on basis was performed - contents true
+    * 
+    * @var boolean
+    */
+   private $stInputOnBasis = false;
+   
+   /**
     * Constructor
     * 
     * @param string $kind
@@ -28,12 +35,27 @@ class BaseObjectModel extends BaseEntityModel
       if (!parent::initialize($kind, $type)) return false;
       
       $confname = self::getConfigurationName($kind, $type);
-
-      if (isset(self::$config[$confname]['relations'])) return true;
+      $CManager = $this->container->getConfigManager();
       
-      $relations = $this->container->getConfigManager()->getInternalConfiguration('relations', $kind);
+      // relations
+      if (!isset(self::$config[$confname]['relations']))
+      {
+         $conf = $CManager->getInternalConfiguration('relations', $kind);
 
-      self::$config[$confname]['relations'] = isset($relations[$type]) ? $relations[$type] : array();
+         self::$config[$confname]['relations'] = isset($conf[$type]) ? $conf[$type] : array();
+      }
+      
+      // basis_for
+      if (!isset(self::$config[$confname]['basis_for']))
+      {
+         self::$config[$confname]['basis_for'] = $CManager->getInternalConfiguration($kind.'.basis_for', $type);
+      }
+      
+      // input_on_basis
+      if (!isset(self::$config[$confname]['input_on_basis']))
+      {
+         self::$config[$confname]['input_on_basis'] = $CManager->getInternalConfiguration($kind.'.input_on_basis', $type);
+      }
       
       return true;
    }
@@ -290,5 +312,127 @@ class BaseObjectModel extends BaseEntityModel
       if ($this->isNew) return false;
       
       return !empty($this->attributes[$this->conf['db_map']['deleted']]);
+   }
+   
+   /**
+    * Input on basis
+    * 
+    * @param mixed $object  - BaseObjectModel or array('kind' => <string>, 'type' => <string>, 'pkey' => <int>)
+    * @param array $options
+    * @return array - errors
+    */
+   public function inputOnBasis($object, array $options = array())
+   {
+      if (!$this->isNew)
+      {
+         throw new Exception(__METHOD__.': Only new object can be input on basis');
+      }
+      
+      $input =& $this->conf['input_on_basis'];
+       
+      // Check data
+      if (is_array($object))
+      {
+         $kind = isset($object['kind']) ? (string) $object['kind'] : '';
+         $type = isset($object['type']) ? (string) $object['type'] : '';
+         $id   = isset($object['id'])   ? (int)    $object['id']   : 0;
+      }
+      elseif (!is_a($model, 'BaseObjectModel'))
+      {
+         return array('Invalid object');
+      }
+      else
+      {
+         $kind = $object->getKind();
+         $type = $object->getType();
+      }
+      
+      if (!isset($input[$kind]) || !in_array($type, $input[$kind]))
+      {
+         return array('Invalid basic object');
+      }
+      
+      if (is_array($object))
+      {
+         if ($id <= 0)
+         {
+            return array('Invalid basic object');
+         }
+         
+         $object = $this->container->getModel($kind, $type, $options);
+         $object->load($id, $options);
+      }
+      
+      if ($object->isNew())
+      {
+         return array('Basic object not must be new');
+      }
+      
+      // Filing object
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model'.'.onInputOnBasis');
+      $event->setReturnValue(true);
+      $event['subject'] = $this;
+      $event['object']  = $object;
+      $event['standard_processing'] = true;
+      
+      try
+      {
+         $this->container->getEventDispatcher()->notify($event);
+      }
+      catch(Exception $e)
+      {
+         return array($e->getMessage());
+      }
+      
+      if (!$event->getReturnValue())
+      {
+         return array('Not processed. Module error');
+      }
+      
+      if ($event['standard_processing'])
+      {
+         return $this->standardProcessingInputOnBasis($object, $options);
+      }
+      
+      return array();
+   }
+   
+   /**
+    * Standard processing input on basis action
+    * 
+    * @param BaseObjectModel $object
+    * @param array& $options
+    * @return array - errors
+    */
+   protected function standardProcessingInputOnBasis(BaseObjectModel $object, array& $options = array())
+   {
+      if ($this->stInputOnBasis) return array();
+      
+      $this->stInputOnBasis = true;
+      
+      $errors = array();
+      $otypes = $this->container->getConfigManager($options)->getInternalConfiguration($object->getKind().'.field_type', $object->getType());
+      $types  = $this->conf['types'];
+      $values = $object->toArray();
+      
+      unset($types['Code'], $types['Date']);
+      
+      if ($err = $this->setAttribute('Date', date('Y-m-d H:i:s')))
+      {
+         $errors['Date'] = $err;
+      }
+      
+      foreach ($types as $attr => $type)
+      {
+         if (isset($otypes[$attr]) && $otypes[$attr] == $type && isset($values[$attr]))
+         {
+            if ($err = $this->setAttribute($attr, $values[$attr]))
+            {
+               $errors[$attr] = $err;
+            }
+         }
+      }
+      
+      return $errors;
    }
 }

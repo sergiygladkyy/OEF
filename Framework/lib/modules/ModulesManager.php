@@ -6,13 +6,15 @@ class ModulesManager
       $model_events = array(
          'catalogs' => array(
             'onGenerateCode',
-            'onBeforeAddingRecord'
+            'onBeforeAddingRecord',
+            'onInputOnBasis'
          ),
          'documents' => array(
             'onPost',
             'onUnpost',
             'onGenerateCode',
-            'onBeforeAddingRecord'
+            'onBeforeAddingRecord',
+            'onInputOnBasis'
          ),
          'reports' => array(
             'onGenerate',

@@ -13,17 +13,26 @@ abstract class BaseObjectsModel extends BaseEntitiesModel
       if (!parent::initialize($kind, $type)) return false;
       
       $confname = self::getConfigurationName($kind, $type);
-
-      if (isset(self::$config[$confname]['relations']) && isset(self::$config[$confname]['tabulars'])) return true;
-      
-      $CManager  = $this->container->getConfigManager();
+      $CManager = $this->container->getConfigManager();
       
       // relations
       if (!isset(self::$config[$confname]['relations']))
       {
-         $relations = $CManager->getInternalConfiguration('relations', $kind);
+         $conf = $CManager->getInternalConfiguration('relations', $kind);
 
-         self::$config[$confname]['relations'] = isset($relations[$type]) ? $relations[$type] : array();
+         self::$config[$confname]['relations'] = isset($conf[$type]) ? $conf[$type] : array();
+      }
+      
+      // basis_for
+      if (!isset(self::$config[$confname]['basis_for']))
+      {
+         self::$config[$confname]['basis_for'] = $CManager->getInternalConfiguration($kind.'.basis_for', $type);
+      }
+      
+      // input_on_basis
+      if (!isset(self::$config[$confname]['input_on_basis']))
+      {
+         self::$config[$confname]['input_on_basis'] = $CManager->getInternalConfiguration($kind.'.input_on_basis', $type);
       }
       
       // tabulars

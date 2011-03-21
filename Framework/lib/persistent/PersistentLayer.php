@@ -30,7 +30,7 @@ class PersistentLayer
     */
    public static function getInstance(array $options = array())
    {
-      if(is_null(self::$instance))
+      if (is_null(self::$instance))
       {
          self::$instance = new PersistentLayer($options);
       }
@@ -333,6 +333,29 @@ class PersistentLayer
             else $errors[$catalog]['tabular_sections'] = $err;
          }
          
+         /* Check BasisFor configuration */
+         
+         if (!isset($conf['basis_for']))
+         {
+            $valid[$catalog]['basis_for'] = array();
+         }
+         elseif (!is_array($conf['basis_for']))
+         {
+            $errors[$catalog]['global'][] = '"Basis for" configuration for catalog "'.$catalog.'" is wrong';
+         }
+         elseif (empty($conf['basis_for']))
+         {
+            $errors[$catalog]['global'][] = '"Basis for" configuration for catalog "'.$catalog.'" is empty';
+         }
+         else
+         {
+            if (!$err = $this->checkBasisForConfig($conf['basis_for']))
+            {
+               $valid[$catalog]['basis_for'] = $conf['basis_for'];
+            }
+            else $errors[$catalog]['basis_for'] = $err;
+         }
+         
          
          /* Check common config */
           
@@ -619,6 +642,29 @@ class PersistentLayer
                $valid[$document]['recorder_for'] = $conf['recorder_for'];
             }
             else $errors[$document]['recorder_for'] = $err;
+         }
+         
+         /* Check BasisFor configuration */
+         
+         if (!isset($conf['basis_for']))
+         {
+            $valid[$document]['basis_for'] = array();
+         }
+         elseif (!is_array($conf['basis_for']))
+         {
+            $errors[$document]['global'][] = '"Basis for" configuration for document "'.$document.'" is wrong';
+         }
+         elseif (empty($conf['basis_for']))
+         {
+            $errors[$document]['global'][] = '"Basis for" configuration for document "'.$document.'" is empty';
+         }
+         else
+         {
+            if (!$err = $this->checkBasisForConfig($conf['basis_for']))
+            {
+               $valid[$document]['basis_for'] = $conf['basis_for'];
+            }
+            else $errors[$document]['basis_for'] = $err;
          }
          
          
@@ -1576,6 +1622,32 @@ class PersistentLayer
    }
    
    /**
+    * Check basis_for configuration
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkBasisForConfig($config)
+   {
+      $errors = array();
+      $valid  = array();
+      
+      foreach ($config as $key => $uid)
+      {
+         if (is_string($uid))
+         {
+            $valid[] = $uid;
+         }
+         else $errors[$key] = 'Configuration is wrong';
+      }
+      
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
     * Check common configuration
     * 
     * @param string $kind
@@ -2229,6 +2301,12 @@ class PersistentLayer
       }
       else $errors = $result['errors'];
       
+      // Basis for and Input on basis
+      if (!$errors)
+      {
+         $errors = $this->processBasis($internal, 'catalogs');
+      }
+      
       
       /* Information registry */
       
@@ -2264,9 +2342,9 @@ class PersistentLayer
       
       unset($result);
       
-      // Recorders and Recorder for
       if (!$errors)
       {
+         // Recorders and Recorder for
          foreach ($internal['documents']['recorders'] as $r_kind => $conf)
          {
             foreach ($conf as $r_type => $recorder)
@@ -2300,6 +2378,9 @@ class PersistentLayer
             }
             unset($internal[$reg_kind]['recorder_for']);
          }
+         
+         // Basis for and Input on basis
+         $errors = $this->processBasis($internal, 'documents');
       }
       
       /* Reports */
@@ -2358,6 +2439,36 @@ class PersistentLayer
       
       
       return ($errors) ? array('errors' => $errors) : $internal; 
+   }
+   
+   /**
+    * Processing Basic for and Input on basic configurations
+    * 
+    * @param array& $internal - internal configuration
+    * @param string $kind     - entity kind
+    * @return array - errors
+    */
+   protected function processBasis(array& $internal, $kind)
+   {
+      foreach ($internal[$kind]['basis_for'] as $type => $r_kinds)
+      {
+         foreach ($r_kinds as $r_kind => $r_types)
+         {
+            foreach ($r_types as $r_type)
+            {
+               if (!isset($internal[$r_kind]['input_on_basis'][$r_type][$kind]))
+               {
+                  $internal[$r_kind]['input_on_basis'][$r_type][$kind] = array($type);
+               }
+               elseif (!in_array($type, $internal[$r_kind]['input_on_basis'][$r_type][$kind]))
+               {
+                  $internal[$r_kind]['input_on_basis'][$r_type][$kind][] = $type;
+               }
+            }
+         }
+      }
+      
+      return array();
    }
    
    /**
@@ -2432,6 +2543,17 @@ class PersistentLayer
          'forms'      => array(),
          'templates'  => array()
       );
+      
+      $is_obj_type = false;
+      $_obj_types  = $this->getObjectTypes();
+      
+      if (in_array($kind, $_obj_types))
+      {
+         $is_obj_type = true;
+         
+         $result['basis_for'] = array();
+         $result['input_on_basis'] = array();
+      }
       
       if (in_array($kind, $this->getHaveTabulars()))
       {
@@ -2651,6 +2773,37 @@ class PersistentLayer
                catch (Exception $e)
                {
                   $errors[] = 'Document "'.$type.'": invalid recorder uid "'.$uid.'"';
+               }
+            }
+         }
+         
+         
+         /* Basis for */
+         
+         if ($is_obj_type)
+         {
+            foreach ($params['basis_for'] as $uid)
+            {
+               try
+               {
+                  list($r_kind, $r_type) = Utility::parseUID($uid);
+                  
+                  if (!in_array($r_kind, $_obj_types))
+                  {
+                     $errors[] = 'Invalid kind'; 
+                  }
+                  elseif (!isset($this->dictionary[$r_kind][$r_type]))
+                  {
+                     $errors[] = $uid.' not exists';
+                  }
+                  else
+                  {
+                     $result['basis_for'][$type][$r_kind][] = $r_type;
+                  }
+               }
+               catch (Exception $e)
+               {
+                  $errors[] = $kind.'.'.$type.': invalid basis for uid "'.$uid.'"';
                }
             }
          }
