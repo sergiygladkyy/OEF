@@ -519,3 +519,41 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 .oef_edit_box_select_form_actions {
 	margin: 10px 0;
 }
+
+
+/************************************* SubMenu ********************************************/
+
+.oe_list_action_menu a {
+	padding: 3px 2px;
+}
+
+#oef_js_submenu {
+	z-index: 999;
+	background-color: #FEFEFE;
+	padding: 4px;
+	border: 1px solid #CCCCCC;
+    margin-top: 2px;
+}
+
+#oef_js_submenu .oef_menu_item {
+	/*border-bottom: 1px solid #CCCCCC;*/
+    color: #333333;
+    font-family: Verdana,Arial,Sans-Serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.6em;
+    margin: 0;
+    padding: 4px 8px 6px 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.oe_list_action_menu a.oef_menu_opened {
+	background-color: #3565C0 !important;
+	color: #FFFFFF !important;
+}
+
+#oef_js_submenu .oef_menu_item:hover {
+	background-image: url("/skins/aconawellpro/standard/menu_icons/tools_menu_bg_hover.gif");
+}

@@ -10,7 +10,8 @@
    var field_prec = {};
    var hierarchy  = {};
    var owners     = {};
-   var references = {}; 
+   var references = {};
+   var basis_for  = {}; 
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -47,6 +48,7 @@
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
+      let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
       
       var htype  = hierarchy.type is num ? hierarchy.type : 0;
       let class  = string.replace(kind, '.', '_')..'_'..type;
@@ -160,17 +162,22 @@
     }}
     </div>
   </eval:if>
-  <eval:if test="hierarchy.type == 2">
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New Item</a>&nbsp;|
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm&type=group'..'\', \''..class..'\');' }}" >New Group</a>&nbsp;|
-  </eval:if>
-  <eval:else>
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New</a>&nbsp;|
-  </eval:else>
-  <a href="#" target="_blank" onclick="{{ 'javascript:if (!editListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\')) return false;' }}">Edit</a>&nbsp;|
-  <a href="#" target="_blank" onclick="{{ 'javascript:if (!viewListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm'..'\', \''..class..'\')) return false;' }}">View</a>&nbsp;|
-  <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', '..(params.show_marked_for_deletion ? 'true' : 'false')..'); return false;' }}">Mark for deletion</a>
-  <eval:if test="params.show_marked_for_deletion">
-    |&nbsp;<a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
-  </eval:if>
+  <div class="oe_list_action_menu oef_menu">
+    <eval:if test="hierarchy.type == 2">
+      <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New Item</a>&nbsp;|
+      <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm&type=group'..'\', \''..class..'\');' }}" >New Group</a>&nbsp;|
+    </eval:if>
+    <eval:else>
+      <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New</a>&nbsp;|
+    </eval:else>
+    <a href="#" target="_blank" onclick="{{ 'javascript:if (!editListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\')) return false;' }}">Edit</a>&nbsp;|
+    <a href="#" target="_blank" onclick="{{ 'javascript:if (!viewListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm'..'\', \''..class..'\')) return false;' }}">View</a>&nbsp;|
+    <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', '..(params.show_marked_for_deletion ? 'true' : 'false')..'); return false;' }}">Mark for deletion</a>
+    <eval:if test="params.show_marked_for_deletion">
+      |&nbsp;<a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
+    </eval:if>
+    <eval:if test="#basis_for &gt; 0">
+      |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">New On Basis</a>
+    </eval:if>
+  </div>
 </eval:else>

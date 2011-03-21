@@ -246,6 +246,23 @@ function updateListForm(pageAPI, tagid, maxRequestTime)
 	});
 }
 
+/**
+ * Create new entity by current
+ * 
+ * @param DOMElements element - action link
+ * @param string kind         - current entity kind
+ * @param string type         - current entity type
+ * @param object basis_for    - basis_for configuration
+ * @return void
+ */
+function newOnBasis(element, kind, type, basis_for)
+{
+	var basis = new oefNewOnBasis(kind, type, basis_for);
+	
+	return basis.updateMenu(element);
+}
+
+
 
 
 /************************************* Functions ******************************************/
@@ -554,4 +571,149 @@ function selectColumn(element, prefix)
 	jQuery(element).parent().addClass('ae_current');
 	
 	return false;
+}
+
+
+
+
+
+
+function oefNewOnBasis(kind, type, basis_for, page_path)
+{
+	var submenu_id = 'oef_js_submenu';
+	var link = null;
+	
+	this.kind  = kind;
+	this.type  = type;
+	this.basis_for = basis_for;
+	
+	
+	/**
+	 * Process update menu event
+	 * 
+	 * @param DOMElements element - clicked link
+	 * @return void
+	 */
+	this.updateMenu = function(element)
+	{
+		link = element;
+		
+		if (jQuery(element).hasClass('oef_menu_opened'))
+		{
+			removeSubmenu();
+			
+			return true;
+		}
+		else
+		{
+			openSubMenu(this.kind, this.type, this.basis_for);
+			
+			return false;
+		}
+	};
+	
+	/**
+	 * Open submenu
+	 * 
+	 * @return void
+	 */
+	function openSubMenu(kind, type, basis_for)
+	{
+		var bid = getItemId(kind + '_' + type);
+		
+		if (!bid)
+		{
+			alert('Choose an list item');
+			return;
+		}
+		
+		jQuery(link).addClass('oef_menu_opened');
+		
+		var pos     = getElementPosition(link);
+		var submenu = '';
+		
+		submenu += '<div id="' + submenu_id + '" ';
+		submenu += 'style="position: absolute; top: ' + (pos['top'] + pos['height']) + 'px; left: ' + pos['left'] + 'px;">';
+		
+		for (var rkind in basis_for)
+		{
+			for (var i in basis_for[rkind])
+			{
+				var rtype = basis_for[rkind][i];
+				
+				submenu += '<div class="oef_menu_item" uid="' + rkind + '.' + rtype + '">' + rtype + '</div>';
+			}
+		}
+		
+		submenu += '</div>'; 
+		
+		jQuery(link).append(submenu);
+		jQuery('#' + submenu_id + ' .oef_menu_item').click(function(event) {
+			event = event || window.event;
+			
+			var node  = event.target || event.srcElement;
+			var uid   = jQuery(node).attr('uid');
+			var basis = kind + '.' + type;
+			var href  = location.href + '?uid=' + uid + '&actions=displayEditForm&basis=' + basis + '&bid=' + bid;
+			jQuery(link).attr('href', href);
+		});
+		
+		jQuery('body').bind('click', bodyClick);
+	}
+	
+	/**
+	 * Remove submenu
+	 * 
+	 * @return void
+	 */
+	function removeSubmenu()
+	{
+		jQuery(link).removeClass('oef_menu_opened');
+		
+		jQuery('#' + submenu_id).remove();
+	}
+	
+	/**
+	 * Add to body onClick event to control this submenu
+	 * 
+	 * @param DOMEvents event
+	 * @return void
+	 */
+	function bodyClick(event)
+	{
+		event = event || window.event;
+		
+		var node  = event.target || event.srcElement;
+		
+		if (node != link && jQuery(node).parents('#' + submenu_id).size() == 0)
+		{
+			removeSubmenu();
+			
+			jQuery('body').unbind('click', bodyClick);
+		}
+	}
+	
+	/**
+	 * Return elements position attributes
+	 * 
+	 * @param DOMElements elem
+	 * @return object
+	 */
+	function getElementPosition(elem)
+	{
+	    var w = elem.offsetWidth;
+	    var h = elem.offsetHeight;
+	    
+	    var l = 0;
+	    var t = 0;
+	    
+	    while (elem)
+	    {
+	        l += elem.offsetLeft;
+	        t += elem.offsetTop;
+	        elem = elem.offsetParent;
+	    }
+
+	    return {"left":l, "top":t, "width": w, "height":h};
+	}
 }
