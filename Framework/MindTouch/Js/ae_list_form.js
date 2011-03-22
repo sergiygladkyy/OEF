@@ -222,14 +222,9 @@ function updateListForm(pageAPI, tagid, maxRequestTime)
 			body = jQuery(body).text();
 			if (jQuery(body).find('span.warning')[0]) return;
 			
-			var oldMsg = jQuery('#' + tagid + ' .systemmsg').get(0);
-			if (!oldMsg) return;
+			var id = parseInt(jQuery('.ae_list_block .ae_current').find('.ae_item_id').text(), 10);
 			
-			var msg = oldMsg.cloneNode(true);
-			var id  = parseInt(jQuery('.ae_list_block .ae_current').find('.ae_item_id').text(), 10);
-			
-			jQuery('#' + tagid).html(body);
-			jQuery('#' + tagid + ' .systemmsg').replaceWith(msg);
+			jQuery('#' + tagid + ' .ae_listform').replaceWith(jQuery(body).find('.ae_listform'));
 			if (id) {
 				jQuery('#' + tagid + ' .ae_item_id').each(function () {
 					if (parseInt(this.innerHTML, 10) == id)	{
@@ -577,8 +572,15 @@ function selectColumn(element, prefix)
 
 
 
-
-function oefNewOnBasis(kind, type, basis_for, page_path)
+/**
+ * Constructor Submenu for New On Basis
+ * 
+ * @param string kind
+ * @param string type
+ * @param object basis_for
+ * @return 
+ */
+function oefNewOnBasis(kind, type, basis_for)
 {
 	var submenu_id = 'oef_js_submenu';
 	var link = null;
@@ -602,10 +604,12 @@ function oefNewOnBasis(kind, type, basis_for, page_path)
 		{
 			removeSubmenu();
 			
-			return true;
+			return (element.href == location.href) ? false : true;
 		}
 		else
 		{
+			element.href = '';
+			
 			openSubMenu(this.kind, this.type, this.basis_for);
 			
 			return false;
@@ -655,6 +659,7 @@ function oefNewOnBasis(kind, type, basis_for, page_path)
 			var uid   = jQuery(node).attr('uid');
 			var basis = kind + '.' + type;
 			var href  = location.href + '?uid=' + uid + '&actions=displayEditForm&basis=' + basis + '&bid=' + bid;
+			
 			jQuery(link).attr('href', href);
 		});
 		

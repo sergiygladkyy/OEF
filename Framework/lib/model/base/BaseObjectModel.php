@@ -418,12 +418,18 @@ class BaseObjectModel extends BaseEntityModel
       $types  = $this->conf['types'];
       $values = $object->toArray();
       
-      unset($types['Code'], $types['Date']);
+      unset($types['Code']);
       
-      if (!$this->setAttribute('Date', date('Y-m-d H:i:s')))
+      if ($this->kind == 'documents')
       {
-         $errors['Date'] = 'Invalid value type';
+         if (!$this->setAttribute('Date', date('Y-m-d H:i:s')))
+         {
+            $errors['Date'] = 'Invalid value type';
+         }
+         
+         unset($types['Date']);
       }
+      // @todo moved this in DocumentModel
       
       foreach ($types as $attr => $type)
       {
