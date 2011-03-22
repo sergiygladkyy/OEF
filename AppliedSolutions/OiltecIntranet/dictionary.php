@@ -114,6 +114,14 @@ $_dictionary = array(
                   'required' => true
                )
             )
+         ),
+         
+         'Forms' => array(
+            'UserProfile'
+         ),
+         
+         'Templates' => array(
+            'UserProfile'
          )
       ),
       
@@ -157,6 +165,43 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'InvoicingInformation' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Customer' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               )
+            ),
+            'Supplier'=> array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               )
+            )
+         )
+      ),
+      
+      // List of Nomenclature
+      'Nomenclature' => array(
+         'fields' => array(
+            'Price' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
                )
             )
          )
@@ -445,6 +490,12 @@ $_dictionary = array(
                   'required' => true,
                   'dynamic_update' => true
                )
+            ),
+            'Contract' => array(
+               'reference' => 'documents.Contract',
+               'precision' => array(
+                  'required' => true
+               )
             )
          ),
          
@@ -663,6 +714,155 @@ $_dictionary = array(
          
          'Templates' => array(
             'TimeCard'
+         )
+      ),
+      
+      // Document Contract
+      'Contract' => array(
+         /*'recorder_for' => array(
+            
+         ),*/
+         
+         'basis_for' => array(
+            'documents.ProjectRegistration',
+            'catalogs.Projects'
+         ),
+         
+         'fields' => array(
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true,
+                  'dynamic_update' => true
+               )
+            ),
+            'ContractNumber' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ContractConclusionDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'TotalAmountNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'DeliveryDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            'Milestones' => array(
+               'fields' => array(
+                  'MilestoneName' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'MilestoneDeadline' => array(
+                     'type' => 'date',
+                     'sql'  => array(
+                        'type' => "DATE NOT NULL default '0000-00-00'"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'MilestoneAmountNOK' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'required' => true,
+                        'min' => 0
+                     )
+                  )
+               )
+            )
+         )
+      ),
+      
+      // Document Invoice
+      'Invoice' => array(
+         /*'recorder_for' => array(
+            
+         ),*/
+         
+         'fields' => array(
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Project' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            'Milestones' => array(
+               'fields' => array(
+                  'Nomenclature' => array(
+                     'reference' => 'catalogs.Nomenclature',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Quantity' => array(
+                     'type' => 'int',
+                     'sql'  => array(
+                        'type' => "int(8) NOT NULL default 0"
+                     ),
+                     'precision' => array(
+                        'required' => true,
+                        'min' => 0
+                     )
+                  ),
+                  'Price' => array(
+                     'type' => 'float',
+                     'sql'  => array(
+                        'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+                     ),
+                     'precision' => array(
+                        'required' => true,
+                        'min' => 0
+                     )
+                  )
+               )
+            )
          )
       )
    ),
