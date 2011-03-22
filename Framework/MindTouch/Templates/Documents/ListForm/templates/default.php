@@ -139,7 +139,7 @@
     <a href="#" onclick="{{ 'javascript:postListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Post</a>&nbsp;|
     <a href="#" onclick="{{ 'javascript:clearPostingListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Clear posting</a>
     <eval:if test="#basis_for &gt; 0">
-      |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">New On Basis</a>
+      |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">Create linked...</a>
     </eval:if>
   </div>
 </eval:else>
