@@ -360,10 +360,13 @@ class BaseObjectModel extends BaseEntityModel
          }
          
          $object = $this->container->getModel($kind, $type, $options);
-         $object->load($id, $options);
+         
+         if (!$object->load($id, $options))
+         {
+            return array('Unknow basic object');
+         }
       }
-      
-      if ($object->isNew())
+      elseif ($object->isNew())
       {
          return array('Basic object not must be new');
       }
@@ -417,18 +420,18 @@ class BaseObjectModel extends BaseEntityModel
       
       unset($types['Code'], $types['Date']);
       
-      if ($err = $this->setAttribute('Date', date('Y-m-d H:i:s')))
+      if (!$this->setAttribute('Date', date('Y-m-d H:i:s')))
       {
-         $errors['Date'] = $err;
+         $errors['Date'] = 'Invalid value type';
       }
       
       foreach ($types as $attr => $type)
       {
          if (isset($otypes[$attr]) && $otypes[$attr] == $type && isset($values[$attr]))
          {
-            if ($err = $this->setAttribute($attr, $values[$attr]))
+            if (!$this->setAttribute($attr, $values[$attr]))
             {
-               $errors[$attr] = $err;
+               $errors[$attr] = 'Invalid value type';
             }
          }
       }

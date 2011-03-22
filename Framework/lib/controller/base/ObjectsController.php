@@ -59,7 +59,54 @@ abstract class ObjectsController extends EntityController
          
          $result['item'] = $item->toArray($options);
       }
-      else $result['item'] = array_merge($result['item'], $item->toArray($options));
+      else
+      {
+         // Input on basis
+         if (!empty($options['input_on_basis']))
+         {
+            // Check params
+            $buid = isset($options['input_on_basis']['uid']) ? $options['input_on_basis']['uid']: false;
+            $bid  = isset($options['input_on_basis']['id'])  ? (int) $options['input_on_basis']['id'] : false;
+            
+            if (empty($buid))
+            {
+               $errors[] = 'Unknow basis uid';
+            }
+            elseif (!is_string($buid))
+            {
+               $errors[] = 'Invalid basis uid';
+            }
+            else
+            {
+               try {
+                  list($bkind, $btype) = Utility::parseUID($buid);
+               }
+               catch(Exception $e)
+               {
+                  $errors[] = 'Invalid basis uid';
+               }
+            }
+            
+            if (empty($bid))
+            {
+               $errors[] = 'Unknow basis id';
+            }
+            
+            if ($errors)
+            {
+               return array('status' => false, 'result' => null, 'errors' => $errors);
+            }
+            
+            // Input
+            if ($errors = $item->inputOnBasis(array('kind' => $bkind, 'type' => $btype, 'id' => $bid)))
+            {
+               return array('status' => false, 'result' => null, 'errors' => $errors);
+            }
+         }
+         
+         // Merge with default values
+         $result['item'] = array_merge($result['item'], $item->toArray($options));
+      }
       
       $item_opt = $options;
       

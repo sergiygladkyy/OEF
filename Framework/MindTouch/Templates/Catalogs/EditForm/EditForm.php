@@ -51,6 +51,14 @@
          }};
       }
       
+      var basisUID = __request.args.basis ?? '';
+      var basisID  = __request.args.bid   ?? 0;
+      
+      if (#basisUID > 0 && basisID > 0)
+      {
+         let options ..= {input_on_basis: {uid: basisUID, id: basisID}};
+      }
+      
       let data = entities.displayEditForm(uid, id, {options: options});
       
       if (data.status != True) {
