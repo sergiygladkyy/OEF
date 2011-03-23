@@ -163,9 +163,10 @@ class SpecialOEInstall extends SpecialPagePlugin
 
             try
             {
-               $map = Utility::loadArrayFromFile('.'.$this->conf['templates_map']);
-               $path=$this->conf['root'].$this->conf['base_dir'].'/Framework/Templates/OEF.php';
+               $path = $this->conf['root'].$this->conf['base_dir'].$this->conf['framework_dir'].$this->conf['templates_dir'].'/OEF.php';
                $this->createTemplate('','',$path,false,$errors);
+               
+               $map = Utility::loadArrayFromFile('.'.$this->conf['templates_map']);
 
                foreach ($map as $template => $path)
                {

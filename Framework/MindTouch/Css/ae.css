@@ -524,7 +524,7 @@ table.oef_widget_table_no_border {border: 0 none !important;}
 /************************************* SubMenu ********************************************/
 
 .oe_list_action_menu {
-	padding-top: 6px;
+	padding: 5px 0 2px;
 }
 
 .oe_list_action_menu a {
