@@ -135,7 +135,7 @@ abstract class BaseModel
     * @param int $id - entity id
     * @return boolean or null
     */
-   protected static function hasEntity($kind, $type, $id, array $options = array())
+   public static function hasEntity($kind, $type, $id, array $options = array())
    {
       $confname = $kind.".".$type;
       

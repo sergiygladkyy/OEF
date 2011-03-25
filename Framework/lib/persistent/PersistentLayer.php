@@ -3414,7 +3414,7 @@ class PersistentLayer
             if (!empty($params['precision'])) $result['field_prec'][$name] = $params['precision'];
          }
          
-         if ($params['type'] == 'file')
+         if (isset($params['type']) && $params['type'] == 'file')
          {
             $result['files'][$name] = $result['field_prec'][$name];
             $result['field_prec'][$name] = array();
