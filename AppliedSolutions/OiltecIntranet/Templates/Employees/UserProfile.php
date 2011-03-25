@@ -22,7 +22,7 @@
 </div>
 </div>
 
-<form method="post" action="#" class="oe_custom_edit_form" id="{{ class..'_item' }}">
+<form method="post" action="#" class="oe_custom_edit_form" id="{{ class..'_item' }}" enctype="multipart/form-data">
 <input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
 
 <div class="userLeft">
@@ -40,13 +40,6 @@
 <div class="userRight">
 <div id="tab1">
     <div class="userRows userFields">
-    <div class="userRow">
-        <div class="userRowLeft">Username:</div>
-        <div class="userRowRight" >
-          <div id="left0" class="userValue"><?php echo $attrs["Employee"]["NaturalPerson"]["text"] ?></div>
-          <div id="right0" style="display:none;"><input type="text" onfocus="focusF(this);" onblur="blurF(this);" value="<?php echo $attrs["Employee"]["NaturalPerson"]["text"]?>" name="<?php echo $prefix."[NaturalPerson]"; ?>"/></div>
-        </div>
-    </div>
     
 
    <div class="userRow">
@@ -78,10 +71,16 @@
         <div class="userRowRight" >
           <div id="left4" class="userValue"><?php echo $attrs["Person"]["Gender"]?></div>
           <div id="right4" style="display:none;">
-              <!--<input type="text"  onfocus="focusF(this);" onblur="blurF(this);" value="<?php echo $attrs["Person"]["Gender"]?>" name="<?php echo $prefix."[Gender]"; ?>"/>-->
               <select name="<?php echo $prefix."[Gender]"; ?>">
-                    <option value="male" selected="<?php echo $attrs["Person"]["Gender"]=='Male'?1:0 ?>">Male</option>
-                    <option value="female" selected="<?php echo $attrs["Person"]["Gender"]=='Female'?1:0 ?>">Female</option>
+               <?php if ($attrs["Person"]["Gender"]=='Male'): ?>
+
+                    <option value="male" selected="1">Male</option>
+                    <option value="female" >Female</option>
+
+                <?php else: ?>
+                    <option value="male" >Male</option>
+                    <option value="female" selected="1">Female</option>
+                <?php endif;?>
               </select>
           </div>
         </div>
@@ -94,6 +93,14 @@
           <div id="right5" style="display:none;"><input type="text"  onfocus="focusF(this);"  value="<?php echo $attrs["Person"]["Phone"]?>" name="<?php echo $prefix."[Phone]"; ?>"/></div>
         </div>
     </div>
+
+    <div class="userRow" id="photo_id" style="display:none;">
+        <div class="userRowLeft">Path:</div>
+        <div class="userRowRight" >
+          <input name="<?php echo $prefix."[Photo]"; ?>" type="file" onfocus="focusF(this);" onblur="blurF(this);" />
+        </div>
+    </div>
+
     </div>
     <input type="button" id="userEdit1" class="userProfileEdit" onclick="openForm(1)" />
     <input type="button" id="userSubmit1" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
@@ -159,7 +166,7 @@
       <input type="button" value="Save" class="ae_command" command="save" />
       <input type="button" value="Close" class="ae_command" command="cancel" />
 </div>-->
-
+<input type="hidden" value="<?php echo $attrs["Person"]["_id"]?>" name="<?php echo $prefix."[_id]"; ?>" />
 </form>
 <script type="text/javascript">
 function focusF(it) {
@@ -170,7 +177,7 @@ function blurF(it) {
 }
 function openForm(mode) {
     var count=5;
-    for(i=0; i<=count; i++)
+    for(i=1; i<=count; i++)
     {
         if(mode)
             {
@@ -200,16 +207,22 @@ function openForm(mode) {
         }
     }
     if (mode)
+    {
         document.getElementById('labelWarning').style.display='block';
+        document.getElementById('photo_id').style.display='block';
+    }
     else
+    {
         document.getElementById('labelWarning').style.display='none';
+        document.getElementById('photo_id').style.display='none';
+    }
 }
 
 function show(num){
     if(num=='tab1')
-        document.getElementById('labelWarning').innerHTML ="Change User Profile"
+        document.getElementById('labelWarning').innerHTML ="Changind catalog Natural Person"
     else
-        document.getElementById('labelWarning').innerHTML ="To change data you need..."
+        document.getElementById('labelWarning').innerHTML ="To change data you need post document RecruitingOrder"
     document.getElementById(num).style.display='block';
 
     document.getElementById("h"+num).style.display='block';
