@@ -105,7 +105,7 @@ abstract class BaseModel
       
       // retrieve files confihuration
       try {
-         self::$config[$confname]['files'] = $CManager->getInternalConfiguration($kind.'.files', $type);
+         self::$config[$confname]['files'] = $CManager->getInternalConfigurationByKind($kind.'.files', $type);
       }
       catch(Exception $e)
       {
