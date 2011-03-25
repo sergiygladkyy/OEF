@@ -426,7 +426,7 @@ class Utility
          // Create new image
          $new_img = imagecreatetruecolor($width, $height);
          
-         $fpath = $dir.'/'.$name_pref.$new_fname;
+         $fpath = $dir.$name_pref.$new_fname;
          
          // Resize
          if (ImageCopyResampled($new_img, $img, 0, 0, 0, 0, $width, $height, $size[0], $size[1]))
@@ -451,5 +451,47 @@ class Utility
          'result' => $result,
          'errors' => $errors
       );
+   }
+   
+   /**
+    * Return relative path to upload dir
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param string $attr
+    * @return string
+    */
+   public static function getUploadDir($kind = null, $type = null, $attr = null)
+   {
+      $dir = self::getAbsolutePathToUploadDir($kind, $type, $attr);
+      
+      return str_replace($_SERVER['DOCUMENT_ROOT'], '', $dir);
+   }
+   
+   /**
+    * Return absolute path to upload dir
+    * 
+    * @param string $kind
+    * @param string $type
+    * @param string $attr
+    * @return string
+    */
+   public function getAbsolutePathToUploadDir($kind = null, $type = null, $attr = null)
+   {
+      try {
+         $conf = Container::getInstance()->getConfigManager()->getUploadConfiguration();
+         $dir  = isset($conf['options']['upload_dir']) && is_string($conf['options']['upload_dir']) && is_dir($conf['options']['upload_dir']) ? $conf['options']['upload_dir'] : '/';
+      }
+      catch(Exception $e)
+      {
+         $dir = '/';
+      }
+      
+      if ($dir)  $dir  = realpath($dir).'/';
+      if ($kind) $dir .= $kind.'/';
+      if ($type) $dir .= $type.'/';
+      if ($attr) $dir .= $attr.'/';
+      
+      return $dir;
    }
 }

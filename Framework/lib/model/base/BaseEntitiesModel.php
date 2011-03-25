@@ -108,7 +108,50 @@ abstract class BaseEntitiesModel extends BaseModel
       
       if (!empty($params['errors'])) return $params['errors'];
       
-      $db    =  $this->container->getDBManager($options);
+      $db = $this->container->getDBManager($options);
+      
+      // Remove files
+      if (!empty($this->conf['files']))
+      {
+         $errors  = array();
+         $f_attrs = array_keys($this->conf['files']);
+         
+         $query = "SELECT `".$db_map['pkey']."`, `".implode("`, `", $f_attrs)."` FROM`".$db_map['table']."` ".$params['criteria'];
+         
+         if (null === ($res = $db->executeQuery($query)))
+         {
+            return array($db->getError());
+         }
+         
+         while ($row = $db->fetchAssoc($res))
+         {
+            $can_deleted = true;
+            
+            foreach ($f_attrs as $attr)
+            {
+               if (!empty($row[$attr]) && ($err = $this->removeFiles($attr, $row[$attr])))
+               {
+                  $errors = array_merge($errors, $err);
+                  $can_deleted = false;
+               }
+            }
+            
+            if ($can_deleted) $ids[] = $row[$db_map['pkey']];
+         }
+         
+         if (!empty($ids))
+         {
+            $query = 'DELETE FROM `'.$db_map['table'].'` WHERE `'.$db_map['pkey'].'` IN ('.implode(',', $ids).')';
+            
+            if (!$db->executeQuery($query))
+            {
+               $errors[] = $db->getError();
+            }
+         }
+         
+         return $errors;
+      }
+      
       $query = 'DELETE FROM `'.$db_map['table'].'` '.$params['criteria'];
       
       if (!$db->executeQuery($query))

@@ -239,12 +239,12 @@ class Upload
       
       if (!isset($settings['image']) || empty($settings['image']))
       {
-         if (!copy($file['tmp_name'], $dir.'/'.$fname))
+         if (!copy($file['tmp_name'], $dir.$fname))
          {
             throw new Exception('Can\'t save file');
          }
          
-         $this->last_uploaded = array($dir.'/'.$fname);
+         $this->last_uploaded = array($dir.$fname);
       }
       else
       {
@@ -271,12 +271,12 @@ class Upload
          
          if (!$not_copy)
          {
-            if (!copy($file['tmp_name'], $dir.'/'.$fname))
+            if (!copy($file['tmp_name'], $dir.$fname))
             {
                throw new Exception('Can\'t save file');
             }
             
-            $result['result'][] = $dir.'/'.$fname;
+            $result['result'][] = $dir.$fname;
          }
          
          $this->last_uploaded = $result['result'];
@@ -302,7 +302,8 @@ class Upload
     */
    protected function getDirName($kind, $type, $attribute, array& $options = array())
    {
-      $dir = self::$conf['upload_dir'].$kind.'/'.$type.'/'.$attribute;
+      //$dir = self::$conf['upload_dir'].$kind.'/'.$type.'/'.$attribute.'/';
+      $dir = Utility::getAbsolutePathToUploadDir($kind, $type, $attribute);
       
       if ($error = $this->checkDir($dir, $options))
       {

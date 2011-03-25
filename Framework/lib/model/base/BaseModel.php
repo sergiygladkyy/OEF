@@ -103,6 +103,15 @@ abstract class BaseModel
          self::$config[$confname]['db_map'] =& self::$db_map[$pkind['kind']][$type];
       }
       
+      // retrieve files confihuration
+      try {
+         self::$config[$confname]['files'] = $CManager->getInternalConfiguration($kind.'.files', $type);
+      }
+      catch(Exception $e)
+      {
+         self::$config[$confname]['files'] = array();
+      }
+      
       return true;
    }
    
@@ -146,5 +155,41 @@ abstract class BaseModel
       $res = $db->loadAssoc($query);
       
       return (is_null($res) ? null : ($res['cnt'] ? true : false));
+   }
+   
+   /**
+    * Remove files
+    * 
+    * @param string $name
+    * @param string $value
+    * @return array - errors
+    */
+   protected function removeFiles($name, $value)
+   {
+      if (empty($this->conf['files'][$name])) return true;
+      
+      $dir    = Utility::getAbsolutePathToUploadDir($this->kind, $this->type, $name);
+      $errors = array();
+      $params = $this->conf['files'][$name];
+      
+      if (isset($params['image']))
+      {
+         unset($params['image']['max_width'], $params['image']['max_height']);
+         
+         foreach ($params['image'] as $prefix => $set)
+         {
+            if (file_exists($dir.$prefix.$value) && !unlink($dir.$prefix.$value))
+            {
+               $errors[] = "Can't delete ".$dir.$prefix.$value;
+            }
+         }
+      }
+      
+      if (file_exists($dir.$value) && !unlink($dir.$value))
+      {
+         $errors[] = "Can't delete ".$dir.$value;
+      }
+      
+      return $errors;
    }
 }

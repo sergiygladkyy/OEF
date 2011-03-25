@@ -92,6 +92,24 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
    
    
    
+   /**
+    * (non-PHPdoc)
+    * @see BaseNotStorageEntityModel#setAttribute($name, $value)
+    */
+   public function setAttribute($name, $value)
+   {
+      if ($this->hasAttribute($name) && $this->conf['types'][$name] == 'file')
+      {
+         $old = $this->getAttribute($name);
+         
+         if ($old && $this->removeFiles($name, $old))
+         {
+            return false;
+         }
+      }
+      
+      return parent::setAttribute($name, $value);
+   }
    
    /**
     * Set entity params from array
@@ -332,6 +350,22 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
    {
       if ($this->isNew) return array();
       
+      $errors = array();
+      
+      // Remove files
+      if (!empty($this->conf['files']))
+      {
+         foreach ($this->conf['files'] as $attr => $prec)
+         {
+            if ($this->attributes[$attr] && ($err = $this->removeFiles($attr, $this->attributes[$attr])))
+            {
+               $errors = array_merge($errors, $err);
+            }
+         }
+         
+         if ($errors) return $errors;
+      }
+      
       // Remove this
       $errors = $this->removeThis($options);
       
@@ -359,5 +393,4 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
       
       return array();
    }
-
 }
