@@ -79,6 +79,12 @@ $_dictionary = array(
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
+            ),
+            'Phone' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
             )
          ),
          
