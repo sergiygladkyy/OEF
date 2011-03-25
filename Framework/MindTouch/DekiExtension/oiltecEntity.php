@@ -26,6 +26,7 @@
           "getInternalConfiguration(kind:str, type:str):map" => 'getInternalConfiguration',
           "parseUID(uid:str):map" => 'parseUID',
           "getAppliedSolutionName():map" => 'getAppliedSolutionName',
+          "getUploadDir(kind:str, type:str, attr:str):map" => 'getUploadDir',
           "executeQuery(query:str, params:map):map" => 'executeQuery',
           "generateForm(uid:str, name:str, params:map):map" => 'generateCustomForm',
           "GetFormattedDate(date:str, format:str):str" => 'getFormattedDate'
@@ -750,5 +751,27 @@
            return array(0,$value);
      }
      return array(-2,$pagePath);
+  }
+  
+  /**
+   * Return relative path to upload dir
+   * 
+   * @param string $kind
+   * @param string $type
+   * @param string $attr
+   * @return string
+   */
+  function getUploadDir($kind = null, $type = null, $attr = null)
+  {
+     $errors = initialize();
+
+     if (!empty($errors)) return array('status' => false, 'errors' => $errors);
+
+     $dir = Utility::getUploadDir($kind, $type, $attr);
+
+     return array(
+        'status' => true,
+        'result' => $dir
+     );
   }
 ?>
