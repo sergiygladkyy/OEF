@@ -72,15 +72,13 @@
           <div id="left4" class="userValue"><?php echo $attrs["Person"]["Gender"]?></div>
           <div id="right4" style="display:none;">
               <select name="<?php echo $prefix."[Gender]"; ?>">
-               <?php if ($attrs["Person"]["Gender"]=='Male'): ?>
-
-                    <option value="male" selected="1">Male</option>
-                    <option value="female" >Female</option>
-
-                <?php else: ?>
-                    <option value="male" >Male</option>
-                    <option value="female" selected="1">Female</option>
-                <?php endif;?>
+                <?php foreach ($gender as $value => $text): ?>
+                  <?php if ($attrs["Person"]["Gender"] == $text): ?>
+                    <option value="<?php echo $value ?>" selected><?php echo $text ?></option>
+                  <?php else: ?>
+                    <option value="<?php echo $value ?>"><?php echo $text ?></option>
+                  <?php endif;?>
+                <?php endforeach; ?>
               </select>
           </div>
         </div>
@@ -97,7 +95,7 @@
     <div class="userRow" id="photo_id" style="display:none;">
         <div class="userRowLeft">Path:</div>
         <div class="userRowRight" >
-          <input name="<?php echo $prefix."[Photo]"; ?>" type="file" onfocus="focusF(this);" onblur="blurF(this);" />
+          <input name="aeform[catalogs][NaturalPersons][attributes][Photo]" type="file" onfocus="focusF(this);" onblur="blurF(this);" />
         </div>
     </div>
 
@@ -233,10 +231,28 @@ function show(num){
 }
 function _submit(elem)
 {
-    //alert(elem.nodeName);
+	Context.addListener('catalogs_Employees_end_process', onEndProcess);
+
+	hideMessages();
+	
     processFormCommand(elem);
-    //document.userform.submit();
-    openForm(0);
+
+    appInactive();
+	appAddLoader();
+}
+
+function onEndProcess(params)
+{
+	if (Context.getLastStatus())
+    {
+	    var systemmsg = jQuery('#oef_custom_form .systemmsg').get(0).cloneNode(true);
+	    
+    	displayCustomForm('catalogs.Employees', 'UserProfile', {employee: '<?php echo $attrs["Person"]["_id"]?>'}, 'oef_custom_form');
+
+    	jQuery('#oef_custom_form .systemmsg').replaceWith(systemmsg);	
+    }
+
+	appActive();
 }
 </script>
 <!--<?php echo'<pre>'.print_r($attrs, true).'</pre>'?>-->

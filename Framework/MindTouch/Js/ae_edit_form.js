@@ -481,6 +481,8 @@ function processObjectResponse(data, status, options)
 			{
 				Context.setFormChangedFlag(main_kind + '_' + main_type + '_item', false);
 			}
+			
+			Context.notify(main_kind + '_' + main_type + '_end_process');
 		}
 	}
 }
@@ -1760,6 +1762,7 @@ function oefContext()
 {
 	this.lastStatus  = true;
 	this.formChanged = {};
+	this.listeners   = {};
 	
 	this.getLastStatus = function()
 	{
@@ -1781,5 +1784,27 @@ function oefContext()
 		if (this.formChanged[form_id]) return true;
 		
 		return false;
+	};
+	
+	this.addListener = function(event_name, callback)
+	{
+		if (!this.listeners.event_name)
+		{
+			this.listeners.event_name = new Array();
+		}
+		
+		this.listeners.event_name.push(callback);
+	};
+	
+	this.notify = function(event_name, params)
+	{
+		if (!this.listeners.event_name) return;
+		if (!params) params = {};
+		
+		for (var i in this.listeners.event_name)
+		{
+			var callback = this.listeners.event_name[i];
+			callback(params);
+		}
 	};
 }
