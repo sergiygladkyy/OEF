@@ -216,6 +216,51 @@ abstract class EntityController extends BaseController
       
       if ($errors) return array('status' => false, 'errors' => $errors);
       
+      // Save uploaded files
+      $files = $this->container->getConfigManager()->getInternalConfiguration($this->kind.'.files', $this->type, $options);
+      
+      if (!empty($files))
+      {
+         $upload = $this->container->getUpload();
+         
+         foreach ($files as $attr => $prec)
+         {
+            // Check
+            if ($err = $upload->getError($this->kind, $this->type, $attr))
+            {
+               if ($err != UPLOAD_ERR_NO_FILE)
+               {
+                  $errors[$attr] = 'File not uploaded';
+               }
+               
+               continue;
+            }
+            
+            // Save
+            try
+            {
+               $fname = $upload->saveUploadedFile($this->kind, $this->type, $attr, array('settings' => $prec));
+               
+               if (!$item->setAttribute($attr, $fname))
+               {
+                  $errors[$attr] = 'Invalid value';
+               }
+            }
+            catch(Exception $e)
+            {
+               $errors[$attr] = $e->getMessage();
+               
+               if ($e->getCode() && $err = $upload->removeLastUploaded())
+               {
+                  $errors[$attr] = array_merge($errors[$attr], $err);
+               }
+            }
+         }
+         
+         if ($errors) return array('status' => false, 'errors' => $errors);
+      }
+      
+      // Save entity
       $res = $item->save($options);
       
       if (empty($res))

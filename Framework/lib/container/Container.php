@@ -21,7 +21,8 @@ class Container
       $request          = null,
       $response         = null,
       $user             = null,
-      $storage          = null;
+      $storage          = null,
+      $upload           = null;
 
    
    /**
@@ -695,5 +696,42 @@ class Container
       }
       
       return $this->user;
+   }
+   
+   /**
+    * Return Upload object
+    * 
+    * @param array& $options
+    * @return object
+    */
+   public function getUpload(array& $options = array())
+   {
+      if (isset($this->upload) && is_object($this->upload)) return $this->upload;
+      
+      $_conf = $this->ConfigManager->getUploadConfiguration($options);
+
+      $classname = $_conf['classname'];
+ 
+      if (isset($options['options']) && is_array($options['options']))
+      {
+         if (isset($_conf['options']) && is_array($_conf['options']))
+         {
+            $options['options'] = array_merge($_conf['options'], $options['options']);
+         }
+      }
+      elseif (isset($_conf['options']) && is_array($_conf['options']))
+      {
+         $options['options'] = $_conf['options'];
+      }
+      
+      import('lib.utility.'.$classname);
+
+      if (!class_exists($classname)) throw new Exception(__METHOD__.': Upload class "'.$classname.'" does not exist');
+      
+      $this->upload = call_user_func(array($classname, 'createInstance'), $options['options']);
+      
+      if (!is_object($this->upload)) throw new Exception(__METHOD__.': Upload class "'.$classname.'" does not exist');
+      
+      return $this->upload;
    }
 }

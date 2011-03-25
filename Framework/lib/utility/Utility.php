@@ -346,4 +346,110 @@ class Utility
       
       return true;
    }
+   
+   /**
+    * Resize and save image
+    * 
+    * [
+    *   $params = array(
+    *     '<add_to_new_fname>' => array(
+    *        'max_width'  => 150,
+    *        'max_height' => 100
+    *     ),
+    *     ..............................
+    *   )
+    *   
+    *   Saved as $new_fname.<add_to_new_fname>
+    * ]
+    * 
+    * @param string $fname - file name
+    * @param string $ext   - extension
+    * @param string $dir
+    * @param string $new_fname
+    * @param array  $params
+    * 
+    * @return array - errors
+    */
+   public static function resizeAndSaveImage($fname, $ext, $dir, $new_fname, array $params)
+   {
+      if ($ext == "gif" || $ext == "GIF")
+      {
+         $ext = 'gif';
+         $createFunc = 'imagecreatefromgif';
+         $saveFunc   = 'imagegif';
+      }
+      elseif ($ext == "jpg" || $ext == "jpeg" || $ext == "JPG" || $ext == "JPEG")
+      {
+         $ext = 'jpeg';
+         $createFunc = 'imagecreatefromjpeg';
+         $saveFunc   = 'imagejpeg';
+      }
+      elseif ($ext == "png" || $ext == "PNG")
+      {
+         $ext = 'png';
+         $createFunc = 'imagecreatefrompng';
+         $saveFunc   = 'imagepng';
+      }
+      else
+      {
+         return array('Not supported image type');
+      }
+      
+      // Retrieve original size
+      $size = getimagesize($fname);
+      $base = ($size[0] >= $size[1]) ? $size[0] : $size[1];
+      
+      // Create new image
+      $img = $createFunc($fname);
+      
+      $errors = array();
+      $result = array();
+      
+      // Create and save resized images
+      foreach ($params as $name_pref => $r_size)
+      {
+         // Calculate new size
+         $wk = isset($r_size['max_width'])  ? abs($r_size['max_width'])/$size[0]  : 0;
+         $hk = isset($r_size['max_height']) ? abs($r_size['max_height'])/$size[1] : 0;
+         
+         if (!$wk && !$hk)
+         {
+            $errors[$name_pref] = 'Invalid image size parameters';
+            break;
+         }
+         
+         $k  = ($wk == 0) ? $hk : ($hk == 0) ? $wk : ($wk > $hk) ? $hk : $wk;
+         
+         $width  = $size[0]*$k;
+         $height = $size[1]*$k;
+         
+         // Create new image
+         $new_img = imagecreatetruecolor($width, $height);
+         
+         $fpath = $dir.'/'.$name_pref.$new_fname;
+         
+         // Resize
+         if (ImageCopyResampled($new_img, $img, 0, 0, 0, 0, $width, $height, $size[0], $size[1]))
+         {
+            if (!$saveFunc($new_img, $fpath, 100))
+            {
+               $errors[$name_pref] = "Can't save image";
+               break;
+            }
+         }
+         else
+         {
+            $errors[$name_pref] = "Can't resize image";
+            break;
+         }
+         
+         $result[] = $fpath;
+      }
+      
+      return array(
+         'status' => $errors ? false : true,
+         'result' => $result,
+         'errors' => $errors
+      );
+   }
 }

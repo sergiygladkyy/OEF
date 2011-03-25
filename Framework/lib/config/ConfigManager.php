@@ -305,4 +305,15 @@ class ConfigManager
    {
       return $this->getFromContainerConfiguration('response', $options);
    }
+   
+   /**
+    * Get Upload configuration
+    * 
+    * @param array& $options
+    * @return array
+    */
+   public function getUploadConfiguration(array& $options = array())
+   {
+      return $this->getFromContainerConfiguration('upload', $options);
+   }
 }

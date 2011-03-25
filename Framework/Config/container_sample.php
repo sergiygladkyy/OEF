@@ -25,9 +25,9 @@ $_conf = array(
    'modules' => array(
       'classname' => 'ModulesManager',
       'options'   => array(
-         'modules_dir'  => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/modules/',
-         'cache_dir'    => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/cache/',
-         'template_dir' => $_SERVER['DOCUMENT_ROOT'].'/AppliedSolutions/Test/templates/'
+         'modules_dir'  => '../AppliedSolutions/SolutionName/modules/',
+         'cache_dir'    => '../AppliedSolutions/SolutionName/cache/',
+         'template_dir' => '../AppliedSolutions/SolutionName/templates/'
       )
    ),
    
@@ -57,6 +57,15 @@ $_conf = array(
       'classname' => 'Response',
       'options'   => array(
          //'protocol' => 'HTTP/1.1'
+      )
+   ),
+   
+   /* Upload */
+   'upload' => array(
+      'classname' => 'Upload',
+      'options'   => array(
+         'upload_dir'  => '../AppliedSolutions/SolutionName/upload/',
+         'form_prefix' => 'aeform'
       )
    )
 );

@@ -32,6 +32,7 @@
       else {
          let kind = puid.kind;
       }
+      var enctype = '';
       var name_prefix = 'aeform['..kind..']['..type..']';
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
@@ -49,10 +50,15 @@
          var hidden = '';
       }
       
+      if (#map.select(field_type, "$.value=='file'") > 0)
+      {
+         let enctype = 'multipart/form-data';
+      }
+      
       var class  = string.replace(kind, '.', '_')..'_'..type;
       var js_uid = class;
   }}
-  <form method="post" action="#" class="ae_edit_form" id="{{ class..'_item' }}">
+  <form method="post" action="#" class="ae_edit_form" id="{{ class..'_item' }}" enctype="{{ enctype }}">
     {{ web.html(hidden) }}
     <div class="{{ class..'_message systemmsg' }}" style="display: none;">
       <div class="inner">

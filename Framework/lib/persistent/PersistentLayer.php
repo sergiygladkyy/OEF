@@ -2553,6 +2553,7 @@ class PersistentLayer
          
          $result['basis_for'] = array();
          $result['input_on_basis'] = array();
+         $result['files'] = array();
       }
       
       if (in_array($kind, $this->getHaveTabulars()))
@@ -2743,6 +2744,11 @@ class PersistentLayer
                $result['field_use'][$type] = $res['field_use'];
             }
             
+            if ($is_obj_type)
+            {
+               $result['files'][$type] = $res['files'];
+            }
+            
             $result['fields'][$type]     = $res['fields'];
             $result['field_type'][$type] = $res['field_type'];
             $result['field_prec'][$type] = $res['field_prec'];
@@ -2865,6 +2871,7 @@ class PersistentLayer
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
+         'files'      => array(),
          'recorders'  => array(),
          'model'      => array(),
          'controller' => array(),
@@ -2937,6 +2944,7 @@ class PersistentLayer
             $result['references'][$registry] = $res['references'];
             $result['required'][$registry]   = $res['required'];
             $result['dynamic'][$registry]    = $res['dynamic'];
+            $result['files'][$registry]      = $res['files'];
          }
          else $errors = array_merge($errors, $res['errors']);
          
@@ -2996,6 +3004,7 @@ class PersistentLayer
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
+         'files'      => array(),
          'model'      => array(),
          'controller' => array()
       );
@@ -3029,6 +3038,7 @@ class PersistentLayer
             $result['references'][$type][$tabular] = $res['references'];
             $result['required'][$type][$tabular]   = $res['required'];
             $result['dynamic'][$type][$tabular]    = $res['dynamic'];
+            $result['files'][$type][$tabular]      = $res['files'];
          }
          else $errors = array_merge($errors, $res['errors']);
          
@@ -3336,7 +3346,8 @@ class PersistentLayer
          'field_prec' => array(),
          'references' => array(),
          'required'   => array(),
-         'dynamic'    => array()
+         'dynamic'    => array(),
+         'files'      => array()
       );
       
       if ($kind == 'catalogs')
@@ -3377,6 +3388,7 @@ class PersistentLayer
             {
                $result['field_sql'][$name] = $params['sql']['type'];
             }
+            
             $result['field_type'][$name] = $params['type'];
          }
 
@@ -3401,6 +3413,13 @@ class PersistentLayer
             // Other
             if (!empty($params['precision'])) $result['field_prec'][$name] = $params['precision'];
          }
+         
+         if ($params['type'] == 'file')
+         {
+            $result['files'][$name] = $result['field_prec'][$name];
+            $result['field_prec'][$name] = array();
+         }
+         
          
          /* Use */
          

@@ -10,7 +10,7 @@ $_precision_by_types = array(
       'type'    => 'bool' 
    ),
    'in'  => array(
-      'allowed' => 'all',
+      'allowed' => array('int', 'float', 'string', 'text', 'date', 'datetime', 'time', 'timestamp', 'year', 'enum'),
       'type'    => 'array' 
    ),
    'min' => array(
@@ -36,5 +36,17 @@ $_precision_by_types = array(
    'dynamic_update' => array(
       'allowed' => array('reference'),
       'type'    => 'bool'
+   ),
+   'max_file_size' => array(
+      'allowed' => array('file'),
+      'type'    => 'numeric'
+   ),
+   'allowed_exts' => array(
+      'allowed' => array('file'),
+      'type'    => 'array'
+   ),
+   'image' => array(
+      'allowed' => array('file'),
+      'type'    => 'array'
    )
 );
