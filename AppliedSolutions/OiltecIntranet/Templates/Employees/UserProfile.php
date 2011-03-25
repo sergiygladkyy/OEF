@@ -1,7 +1,13 @@
-
+<!--<ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>-->
+<div class="catalogs_Employees_message systemmsg" style="display: none;">
+  <div class="inner">
+    <ul class="flashMsg">
+      <li>&nbsp;</li>
+    </ul>
+  </div>
+</div>
 <?php $prefix = $form_prefix.'[attributes]' ?>
 <h5 id="labelWarning" style="display:none;"> Login Records </h5>
-<input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
 
 
 <div class="userTabs">
@@ -21,7 +27,11 @@
 
 <div class="userLeft">
     <div class="userPhoto">
+        <?php if (isset($attrs["Person"]["Photo"]) ): ?>
+           <a href="<?php echo $uploadDir.$attrs["Person"]["Photo"] ?>"><img src="<?php echo $uploadDir.'preview'.$attrs["Person"]["Photo"] ?>" /></a>
+        <?php else: ?>
            <center>No image</center>
+        <?php endif;?>
     </div>
     <div class="userPic"></div>
   
@@ -197,7 +207,7 @@ function openForm(mode) {
 
 function show(num){
     if(num=='tab1')
-        document.getElementById('labelWarning').innerHTML =" "
+        document.getElementById('labelWarning').innerHTML ="Change User Profile"
     else
         document.getElementById('labelWarning').innerHTML ="To change data you need..."
     document.getElementById(num).style.display='block';
@@ -216,3 +226,4 @@ function _submit(elem)
     openForm(0);
 }
 </script>
+<!--<?php echo'<pre>'.print_r($attrs, true).'</pre>'?>-->

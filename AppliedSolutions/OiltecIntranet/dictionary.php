@@ -1,12 +1,12 @@
 <?php
 
 $_dictionary = array(
-    
+
    ////////////////////
    // Catalogs Section
    ////////////////////
    'catalogs' => array(
-   
+
       // List of Departments of the Enterprise (Organization)
       'OrganizationalUnits' => array(
          'fields' => array(
@@ -17,7 +17,7 @@ $_dictionary = array(
             ),
          )
       ),
-      
+
       // Contains a list of Positions that can be assigned, when hiring the person
       'OrganizationalPositions' => array(
          'fields' => array(
@@ -28,7 +28,7 @@ $_dictionary = array(
             ),
          )
       ),
-      
+
       // List of Private individuals and their base attributes
       'NaturalPersons' => array(
          'fields' => array(
@@ -85,18 +85,32 @@ $_dictionary = array(
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
+            ),
+            'Photo' => array(
+               'type' => 'file',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'image' => array(
+                     'preview' => array(
+                        'max_width'  => 200,
+                        'max_height' => 200
+                     )
+                  )
+               )
             )
          ),
-         
+
          'Forms' => array(
             'LoginRecords'
          ),
-         
+
          'Templates' => array(
             'LoginRecords'
          )
       ),
-      
+
       // List of employees
       'Employees' => array(
          'fields' => array(
@@ -121,16 +135,16 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'Forms' => array(
             'UserProfile'
          ),
-         
+
          'Templates' => array(
             'UserProfile'
          )
       ),
-      
+
       // List of Projects
       'Projects' => array(
          'fields' => array(
@@ -141,7 +155,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // List of SubProjects
       'SubProjects' => array(
          'fields' => array(
@@ -158,7 +172,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // List of Counteragents
       'Counteragents' => array(
          'fields' => array(
@@ -196,7 +210,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // List of Nomenclature
       'Nomenclature' => array(
          'fields' => array(
@@ -212,7 +226,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // List of Schedules
       'Schedules' => array(
          'fields' => array(
@@ -222,31 +236,31 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'Forms' => array(
             'Schedule'
          ),
-         
+
          'Templates' => array(
             'Schedule'
          )
       )
    ),
-   
-   
-    
+
+
+
    ////////////////////
    // Documents Section
    ////////////////////
    'documents' => array(
-   
+
       // Document RecruitingOrder
       'RecruitingOrder' => array(
          'recorder_for' => array(
             'information_registry.StaffEmploymentPeriods',
             'information_registry.StaffHistoricalRecords'
          ),
-         
+
          'fields' => array(
             'Responsible' => array(
                'reference' => 'catalogs.SystemUsers',
@@ -255,7 +269,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Employees' => array(
                'fields' => array(
@@ -321,7 +335,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document DismissalOrder
       'DismissalOrder' => array(
          'recorder_for' => array(
@@ -329,7 +343,7 @@ $_dictionary = array(
             'information_registry.StaffHistoricalRecords',
             'AccumulationRegisters.EmployeeVacationDays'
          ),
-         
+
          'fields' => array(
             'Responsible' => array(
                'reference' => 'catalogs.SystemUsers',
@@ -338,7 +352,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Employees' => array(
                'fields' => array(
@@ -367,14 +381,14 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document VacationOrder
       'VacationOrder' => array(
          'recorder_for' => array(
             'information_registry.ScheduleVarianceRecords',
             'AccumulationRegisters.EmployeeVacationDays'
          ),
-         
+
          'fields' => array(
             'Responsible' => array(
                'reference' => 'catalogs.SystemUsers',
@@ -383,7 +397,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Employees' => array(
                'fields' => array(
@@ -415,14 +429,14 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document PeriodicClosing
       'PeriodicClosing' => array(
          'recorder_for' => array(
             'AccumulationRegisters.EmployeeVacationDays'
          )
       ),
-      
+
       // Document ProjectRegistration
       'ProjectRegistration' => array(
          'recorder_for' => array(
@@ -430,7 +444,7 @@ $_dictionary = array(
             'information_registry.SubprojectRegistrationRecords',
             'information_registry.MilestoneRecords'
          ),
-         
+
          'fields' => array(
             'Project' => array(
                'reference' => 'catalogs.Projects',
@@ -504,7 +518,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Subprojects' => array(
                'fields' => array(
@@ -541,13 +555,13 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document ProjectClosure
       'ProjectClosure' => array(
          'recorder_for' => array(
             'information_registry.ProjectClosureRecords'
          ),
-         
+
          'fields' => array(
             'Project' => array(
                'reference' => 'catalogs.Projects',
@@ -572,14 +586,14 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document ProjectAssignment
       'ProjectAssignment' => array(
          'recorder_for' => array(
             'information_registry.ProjectAssignmentRecords',
             'information_registry.ProjectAssignmentPeriods'
          ),
-         
+
          'fields' => array(
             'Project' => array(
                'reference' => 'catalogs.Projects',
@@ -588,7 +602,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Resources' => array(
                'fields' => array(
@@ -639,14 +653,14 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document TimeCard
       'TimeCard' => array(
          'recorder_for' => array(
             'information_registry.TimeReportingRecords',
             'AccumulationRegisters.EmployeeHoursReported'
          ),
-         
+
          'fields' => array(
             'Employee' => array(
                'reference' => 'catalogs.Employees',
@@ -673,7 +687,7 @@ $_dictionary = array(
                )
             ),
          ),
-         
+
          'tabular_sections' => array(
             'TimeRecords' => array(
                'fields' => array(
@@ -713,27 +727,27 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'Forms' => array(
             'TimeCard'
          ),
-         
+
          'Templates' => array(
             'TimeCard'
          )
       ),
-      
+
       // Document Contract
       'Contract' => array(
          /*'recorder_for' => array(
-            
+
          ),*/
-         
+
          'basis_for' => array(
             'documents.ProjectRegistration',
             'catalogs.Projects'
          ),
-         
+
          'fields' => array(
             'Customer' => array(
                'reference' => 'catalogs.Counteragents',
@@ -780,7 +794,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Milestones' => array(
                'fields' => array(
@@ -816,13 +830,13 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Document Invoice
       'Invoice' => array(
          /*'recorder_for' => array(
-            
+
          ),*/
-         
+
          'fields' => array(
             'Customer' => array(
                'reference' => 'catalogs.Counteragents',
@@ -837,7 +851,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'tabular_sections' => array(
             'Milestones' => array(
                'fields' => array(
@@ -872,14 +886,14 @@ $_dictionary = array(
          )
       )
    ),
-   
 
-   
+
+
    ////////////////////////////////
    // Information registry Section
    ////////////////////////////////
    'information_registry' => array(
-      
+
       // Calendar
       'BaseCalendar' => array(
          'dimensions' => array(
@@ -902,7 +916,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'Working' => array(
                'type' => 'bool',
@@ -923,16 +937,16 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'Forms' => array(
             'BaseCalendar'
          ),
-         
+
          'Templates' => array(
             'BaseCalendar'
          )
       ),
-      
+
       // Schedules
       'Schedules' => array(
          'dimensions' => array(
@@ -961,7 +975,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'Hours' => array(
                'type' => 'float',
@@ -974,7 +988,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Staff Employment Periods
       'StaffEmploymentPeriods' => array(
          'dimensions' => array(
@@ -997,13 +1011,13 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'RecruitingOrder',
             'DismissalOrder'
          )
       ),
-      
+
       // Staff Historical Records
       'StaffHistoricalRecords' => array(
          'dimensions' => array(
@@ -1014,9 +1028,9 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'periodical' => 'day', // [ second | day | month | quarter | year ]
-         
+
          'fields' => array(
             'OrganizationalUnit' => array(
                'reference' => 'catalogs.OrganizationalUnits'
@@ -1056,13 +1070,13 @@ $_dictionary = array(
                )
             ),
          ),
-         
+
          'recorders' => array(
             'RecruitingOrder',
             'DismissalOrder'
          )
       ),
-      
+
       // Schedule Variance Records
       'ScheduleVarianceRecords' => array(
          'fields' => array(
@@ -1101,12 +1115,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'VacationOrder'
          )
       ),
-      
+
       // Project Registration Records
       'ProjectRegistrationRecords' => array(
          'dimensions' => array(
@@ -1117,7 +1131,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'ProjectDepartment' => array(
                'reference' => 'catalogs.OrganizationalUnits',
@@ -1176,12 +1190,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectRegistration'
          )
       ),
-      
+
       // Subproject Registration Records
       'SubprojectRegistrationRecords' => array(
          'dimensions' => array(
@@ -1198,12 +1212,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectRegistration'
          )
       ),
-      
+
       // Milestone Records
       'MilestoneRecords' => array(
          'dimensions' => array(
@@ -1223,7 +1237,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'MileStoneDeadline' => array(
                'type' => 'date',
@@ -1235,12 +1249,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectRegistration'
          )
       ),
-      
+
       // Project Closure Records
       'ProjectClosureRecords' => array(
          'dimensions' => array(
@@ -1251,7 +1265,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'ClosureDate' => array(
                'type' => 'date',
@@ -1269,12 +1283,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectClosure'
          )
       ),
-      
+
       // Project Assignment Records
       'ProjectAssignmentRecords' => array(
          'dimensions' => array(
@@ -1300,7 +1314,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'Hours' => array(
                'type' => 'float',
@@ -1334,12 +1348,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectAssignment'
          )
       ),
-      
+
       // Project Assignment Periods
       'ProjectAssignmentPeriods' => array(
          'dimensions' => array(
@@ -1356,7 +1370,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'DateFrom' => array(
                'type' => 'date',
@@ -1398,12 +1412,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'ProjectAssignment'
          )
       ),
-      
+
       // Time Reporting Records
       'TimeReportingRecords' => array(
          'dimensions' => array(
@@ -1429,7 +1443,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'Hours' => array(
                'type' => 'float',
@@ -1462,12 +1476,12 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'TimeCard'
          )
       ),
-      
+
       // Divisional Chiefs
       'DivisionalChiefs' => array(
          'dimensions' => array(
@@ -1485,7 +1499,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // LoginRecords
       'LoginRecords' => array(
          'dimensions' => array(
@@ -1506,7 +1520,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'SystemUser' => array(
                'reference' => 'catalogs.SystemUsers',
@@ -1517,16 +1531,16 @@ $_dictionary = array(
          )
       )
    ),
-   
-   
-   
+
+
+
    //////////////////////////////////
    // Accumulation Registers Section
    //////////////////////////////////
    'AccumulationRegisters' => array(
       'EmployeeVacationDays'  => array(
          'register_type' => 'Balances',
-         
+
          'dimensions' => array(
             'Employee' => array(
                'reference' => 'catalogs.Employees',
@@ -1535,9 +1549,9 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          //'periodical' - Always second
-         
+
          'fields' => array(
             'VacationDays' => array(
                'type' => 'int',
@@ -1549,18 +1563,18 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
              'VacationOrder',
              'PeriodicClosing',
              'DismissalOrder'
          )
       ),
-      
+
       // Employee Hours Reported
       'EmployeeHoursReported' => array(
          'register_type' => 'Turnovers',
-      
+
          'dimensions' => array(
             'Employee' => array(
                'reference' => 'catalogs.Employees',
@@ -1581,7 +1595,7 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'fields' => array(
             'Hours' => array(
                'type' => 'float',
@@ -1611,15 +1625,15 @@ $_dictionary = array(
                )
             )
          ),
-         
+
          'recorders' => array(
             'TimeCard'
          )
       )
    ),
-   
-   
-   
+
+
+
    ///////////////////
    // Reports Section
    ///////////////////
@@ -1629,13 +1643,13 @@ $_dictionary = array(
          'fields' => array(
             'Employee' => array(
                'reference' => 'catalogs.Employees'
-            ), 
+            ),
             'Period' => array(
                'type' => 'string'
             )
          )
       ),
-      
+
       // Resource Load Report
       'ResourceLoad' => array(
          'fields' => array(
@@ -1670,7 +1684,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       // Resource Allocation Records Report
       'ResourceAllocationRecords' => array(
          'fields' => array(
@@ -1691,7 +1705,7 @@ $_dictionary = array(
          )
       )
    ),
-   
+
    ///////////////////////////
    // Data processors Section
    ///////////////////////////
@@ -1725,7 +1739,7 @@ $_dictionary = array(
          )
       )
    ),*/
-   
+
    ////////////////
    // Web services
    ////////////////
@@ -1830,7 +1844,7 @@ $_dictionary = array(
             )
          )
       ),
-      
+
       'Personal' => array(
          'actions' => array(
             'getEmployeeHours' => array(
@@ -1852,8 +1866,8 @@ $_dictionary = array(
          )
       )
    ),
-   
-   
+
+
    ////////////
    // Security
    ////////////
@@ -1894,7 +1908,7 @@ $_dictionary = array(
          )
       )
    ),
-   
+
    'Roles' => array(
       'Admin' => array(
          'password' => 'Admin',
@@ -1905,9 +1919,9 @@ $_dictionary = array(
          'roles'    => array('OEF_ROLE_3')
       )
    ),
-   
-   
-   
+
+
+
    /////////////////////
    // Constants Section
    /////////////////////

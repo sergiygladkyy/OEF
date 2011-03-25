@@ -217,7 +217,7 @@ abstract class EntityController extends BaseController
       if ($errors) return array('status' => false, 'errors' => $errors);
       
       // Save uploaded files
-      $files = $this->container->getConfigManager()->getInternalConfiguration($this->kind.'.files', $this->type, $options);
+      $files = $this->container->getConfigManager()->getInternalConfigurationByKind($this->kind.'.files', $this->type, $options);
       
       if (!empty($files))
       {

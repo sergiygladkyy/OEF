@@ -58,5 +58,13 @@ $_conf = array(
       'options'   => array(
          //'protocol' => 'HTTP/1.1'
       )
+   ),
+   /* Upload */
+   'upload' => array(
+      'classname' => 'Upload',
+      'options'   => array(
+         'upload_dir'  => '../AppliedSolutions/OiltecIntranet/upload/',
+         'form_prefix' => 'aeform'
+      )
    )
 );
