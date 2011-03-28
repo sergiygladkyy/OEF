@@ -6,8 +6,21 @@
     </ul>
   </div>
 </div>
+<?php if (empty($attrs['Employee'])): ?>
+  <div style="height: 250px; border: 1px solid #DDDDDD; background-color: #F8F8F8; margin-bottom: 10px;">
+    <?php if ($isCurrentEmployee): ?>
+      <script>
+        displayMessage('catalogs_Employees', 'With the current user is not associated or one employee. You can fix this in catalog <a href="?uid=catalogs.NaturalPersons&actions=displayListForm">NaturalPersons</a>.', 2);
+      </script>
+    <?php else: ?>
+      <script>
+        displayMessage('catalogs_Employees', 'Employee not exists. You can create a new employee with a document <a href="?uid=documents.RecruitingOrder&actions=displayListForm">RecruitingOrder</a>.', 2);
+      </script>
+    <?php endif; ?>
+  </div>
+<?php else: ?>
 <?php $prefix = $form_prefix.'[attributes]' ?>
-<h5 id="labelWarning" style="display:none;"> Login Records </h5>
+
 
 
 <div class="userTabs">
@@ -34,13 +47,13 @@
         <?php endif;?>
     </div>
     <div class="userPic"></div>
-  
+
 </div>
 
 <div class="userRight">
 <div id="tab1">
     <div class="userRows userFields">
-    
+
 
    <div class="userRow">
         <div class="userRowLeft">First Name:</div>
@@ -106,7 +119,7 @@
 
 </div>
 
-    
+
 <div id="tab2" style="display:none;">
     <div class="userRows userFields">
     <div class="userRow">
@@ -115,9 +128,9 @@
           <div id="left6" class="userValue"><?php echo $attrs["StaffRecord"]["Employee"]["text"]?></div>
         </div>
     </div>
-    
 
-    
+
+    <?php if($attrs["Employee"]["NowEmployed"]==1):?>
     <div class="userRow">
         <div class="userRowLeft">Unit:</div>
         <div class="userRowRight" >
@@ -150,13 +163,20 @@
         </div>
     </div>
     </div>
+    <?php else: ?>
+        <h5>The information you see is empty since it is contributed by the following document:
+        <a href="<?php echo str_replace("#","",$_SERVER[PHP_SELF]);?>?uid=documents.<?php echo $attrs['StaffRecord']['_rec_type']?>&actions=displayEditForm&id=<?php echo $attrs['StaffRecord']['_rec_id']?>">Document</a>.<br>
+         If you want to update the information you may need to re-submit the document.<br>
+         For making so, click the link above, perform "Clear Posting", then update the data and perform "Post".<br>
+         Attention, that you must have the sufficient access rights for this</h5>
+    <?php endif; ?>
 
-    <input type="button" id="userEdit2" class="userProfileEdit" onclick="openForm(1)" />
+    <!--<input type="button" id="userEdit2" class="userProfileEdit" onclick="openForm(1)" />
     <input type="button" id="userSubmit2" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
-    <input type="button" id="userCancel2" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />
-
+    <input type="button" id="userCancel2" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />-->
+<h5 id="labelWarning" style="display:none; clear: both;">&nbsp; </h5>
 </div>
-    
+
 </div>
 
 <!--<div class="ae_submit" >
@@ -165,7 +185,11 @@
       <input type="button" value="Close" class="ae_command" command="cancel" />
 </div>-->
 <input type="hidden" value="<?php echo $attrs["Person"]["_id"]?>" name="<?php echo $prefix."[_id]"; ?>" />
+
 </form>
+
+
+
 <script type="text/javascript">
 function focusF(it) {
 	it.style.background='#fffbc7';
@@ -189,7 +213,7 @@ function openForm(mode) {
                  document.getElementById('right'+i).style.display='none';
             }
     }
-    for(i=1;i<3;i++)
+    for(i=1;i<2;i++)
     {
         if (mode) {
             document.getElementById('userEdit'+i).style.display='none';
@@ -217,10 +241,18 @@ function openForm(mode) {
 }
 
 function show(num){
+    hideMessages();
+    var isHired = <?php echo$attrs["Employee"]["NowEmployed"]?>;
+    if(isHired =="0")
+        document.getElementById('labelWarning').style.display='none';
     if(num=='tab1')
-        document.getElementById('labelWarning').innerHTML ="Changind catalog Natural Person"
+        document.getElementById('labelWarning').innerHTML =""
     else
-        document.getElementById('labelWarning').innerHTML ="To change data you need post document RecruitingOrder"
+        document.getElementById('labelWarning').innerHTML ="The information you see is read only since it is contributed by the following document: "+
+        "<a href=\""+location.href.replace("#","")+"?uid=documents."+"<?php echo $attrs['StaffRecord']['_rec_type']?>"+"&actions=displayEditForm&id="+"<?php echo $attrs['StaffRecord']['_rec_id']?>"+"\">Document</a>.<br>"+
+        "If you want to update the information you may need to re-submit the document.<br>"+
+        " For making so, click the link above, perform \"Clear Posting\", then update the data and perform \"Post\".<br>"+
+        " Attention, that you must have the sufficient access rights for this<br>"
     document.getElementById(num).style.display='block';
 
     document.getElementById("h"+num).style.display='block';
@@ -234,7 +266,7 @@ function _submit(elem)
 	Context.addListener('catalogs_Employees_end_process', onEndProcess);
 
 	hideMessages();
-	
+
     processFormCommand(elem);
 
     appInactive();
@@ -246,13 +278,13 @@ function onEndProcess(params)
 	if (Context.getLastStatus())
     {
 	    var systemmsg = jQuery('#oef_custom_form .systemmsg').get(0).cloneNode(true);
-	    
+
     	displayCustomForm('catalogs.Employees', 'UserProfile', {employee: '<?php echo $attrs["Person"]["_id"]?>'}, 'oef_custom_form');
 
-    	jQuery('#oef_custom_form .systemmsg').replaceWith(systemmsg);	
+    	jQuery('#oef_custom_form .systemmsg').replaceWith(systemmsg);
     }
 
 	appActive();
 }
 </script>
-<!--<?php echo'<pre>'.print_r($attrs, true).'</pre>'?>-->
+<?php endif;?>
