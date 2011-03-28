@@ -261,17 +261,15 @@ function show(num){
 
     document.getElementById("h"+num).style.display='none';
 }
+
 function _submit(elem)
 {
-	Context.addListener('catalogs_Employees_end_process', onEndProcess);
-
 	hideMessages();
 
     processFormCommand(elem);
-
-    appInactive();
-	appAddLoader();
 }
+
+Context.addListener('catalogs_Employees_end_process', onEndProcess);
 
 function onEndProcess(params)
 {
@@ -283,8 +281,6 @@ function onEndProcess(params)
 
     	jQuery('#oef_custom_form .systemmsg').replaceWith(systemmsg);
     }
-
-	appActive();
 }
 </script>
 <?php endif;?>
