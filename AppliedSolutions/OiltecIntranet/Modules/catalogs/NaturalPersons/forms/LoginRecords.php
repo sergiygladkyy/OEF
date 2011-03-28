@@ -66,29 +66,22 @@ function onProcess($event)
    
    unset($values['Records']);
    
-   $model = $container->getModel('catalogs', 'NaturalPersons');
-    
-   if (!($ret = $model->fromArray($values)))
-   {
-      if ($ret = $model->save()) $errors = $ret;
-   }
-   else $errors = $ret;
+   $controller = $container->getController('catalogs', 'NaturalPersons');
    
-   if ($errors)
+   $method = isset($values['_id']) ? 'update' : 'create';
+   $return = $controller->$method($values);
+   
+   if (!$return['status'])
    {
-      $event->setReturnValue(array(
-         'status' => false,
-         'result' => array(
-            'msg' => 'Catalog not '.(isset($values['_id']) ? 'updated' : 'created')
-         ),
-         'errors' => $errors
-      ));
+      $return['result']['msg'] = 'Catalog not '.(isset($values['_id']) ? 'updated' : 'created');
+      
+      $event->setReturnValue($return);
       
       return;
    }
    
    $result = array();
-   $person = $model->getId();
+   $person = $return['result']['_id'];
    
    if (!isset($values['_id']))
    {
