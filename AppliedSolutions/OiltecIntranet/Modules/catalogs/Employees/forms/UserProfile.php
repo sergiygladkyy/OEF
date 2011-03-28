@@ -53,7 +53,7 @@ function onGenerate($event)
          throw new Exception('Database error');
       }
 
-      if ($row['RegisteredEvent'] != 'Firing')
+      if ($row && $row['RegisteredEvent'] != 'Firing')
       {
          $staff = $container->getModel('information_registry', 'StaffHistoricalRecords');
 
