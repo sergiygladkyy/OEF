@@ -28,6 +28,7 @@ $_templates_map = array(
    'EditFormFields/defaultDate'           => '/EditFormFields/templates/defaultDate.php',
    'EditFormFields/defaultDatetime'       => '/EditFormFields/templates/defaultDatetime.php',
    'EditFormFields/defaultEnum'           => '/EditFormFields/templates/defaultEnum.php',
+   'EditFormFields/defaultFile'           => '/EditFormFields/templates/defaultFile.php',
    'EditFormFields/defaultFloat'          => '/EditFormFields/templates/defaultFloat.php',
    'EditFormFields/defaultInt'            => '/EditFormFields/templates/defaultInt.php',
    'EditFormFields/defaultOwnerReference' => '/EditFormFields/templates/defaultOwnerReference.php',
