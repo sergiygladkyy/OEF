@@ -146,35 +146,35 @@ function onProcess($event)
    }
    
    // Delete records
-   if (!empty($ids))
+   $options = array(
+      'attributes' => array('%pkey'),
+      'criterion'  => "`NaturalPerson`=".$person.(empty($ids) ? '' : " AND `%pkey` NOT IN (".implode(',', $ids).")")
+   );
+   
+   if ($cmodel->delete(true, $options))
    {
-      $options = array(
-         'attributes' => array('%pkey'),
-         'criterion'  => "`NaturalPerson`=".$person." AND `%pkey` NOT IN (".implode(',', $ids).")"
-      );
-       
-      if ($cmodel->delete(true, $options))
-      {
-         throw new Exception('Database error');
-      }
+      throw new Exception('Database error');
    }
    
    // Add records
-   $model = $container->getModel('information_registry', 'LoginRecords');
-   
-   foreach ($add as $vals)
+   if (!empty($add))
    {
-      $ir = clone $model;
+      $model = $container->getModel('information_registry', 'LoginRecords');
       
-      if (!$ir->setAttribute('NaturalPerson', $person))          $err[] = 'Invalid value for NaturalPerson';
-      if (!$ir->setAttribute('AuthType',   $vals['AuthType']))   $err[] = 'Invalid value for AuthType';
-      if (!$ir->setAttribute('SystemUser', $vals['SystemUser'])) $err[] = 'Invalid value for SystemUser';
-      
-      if (!$err)
+      foreach ($add as $vals)
       {
-         if ($err = $ir->save()) $errors = array_merge($errors, $err);
+         $ir = clone $model;
+
+         if (!$ir->setAttribute('NaturalPerson', $person))          $err[] = 'Invalid value for NaturalPerson';
+         if (!$ir->setAttribute('AuthType',   $vals['AuthType']))   $err[] = 'Invalid value for AuthType';
+         if (!$ir->setAttribute('SystemUser', $vals['SystemUser'])) $err[] = 'Invalid value for SystemUser';
+
+         if (!$err)
+         {
+            if ($err = $ir->save()) $errors = array_merge($errors, $err);
+         }
+         else $errors = array_merge($errors, $err);
       }
-      else $errors = array_merge($errors, $err);
    }
    
    if (!$errors)
