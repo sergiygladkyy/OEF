@@ -6,6 +6,8 @@ var pageAPI = '';
 var processFormCommand = null;
 var Context = new oefContext();
 
+Context.addListener('end_response_process', onEndResponseProcess);
+
 var custom_edit_form_options = {
 	options: {},
     async: false,
@@ -181,7 +183,7 @@ function submitObjectForm(form, options)
 	}
 	else Context.setLastStatus(false);
 	
-	appActive();
+	//appActive();
 }
 
 /**
@@ -199,6 +201,17 @@ function submitForm(form, options)
 	
 	jQuery(form).ajaxSubmit(options);
 
+	//appActive();
+}
+
+/**
+ * Calling after response process
+ * 
+ * @param params
+ * @return
+ */
+function onEndResponseProcess(params)
+{
 	appActive();
 }
 
@@ -289,6 +302,8 @@ function processConstantsResponse(result, status, options)
 	
 	// Print main message
 	displayMessage(prefix, msg.length > 0 ? msg : result['result']['msg'], result['status']);
+	
+	Context.notify('end_response_process');
 }
 
 /**
@@ -378,6 +393,8 @@ function processResponse(data, status, options)
 			displayMessage(kind + '_' + type,  msg.length > 0 ? msg : result['result']['msg'], result['status']);
 		}
 	}
+	
+	Context.notify('end_response_process');
 }
 
 /**
@@ -485,6 +502,8 @@ function processObjectResponse(data, status, options)
 			Context.notify(main_kind + '_' + main_type + '_end_process');
 		}
 	}
+	
+	Context.notify('end_response_process');
 }
 
 /**
@@ -1788,22 +1807,30 @@ function oefContext()
 	
 	this.addListener = function(event_name, callback)
 	{
-		if (!this.listeners.event_name)
+		if (!this.listeners[event_name])
 		{
-			this.listeners.event_name = new Array();
+			this.listeners[event_name] = new Array();
 		}
 		
-		this.listeners.event_name.push(callback);
+		for (var i in this.listeners[event_name])
+		{
+			if (this.listeners[event_name][i].toString() == callback.toString())
+			{
+				return;
+			}
+		}
+		
+		this.listeners[event_name].push(callback);
 	};
 	
 	this.notify = function(event_name, params)
 	{
-		if (!this.listeners.event_name) return;
+		if (!this.listeners[event_name]) return;
 		if (!params) params = {};
 		
-		for (var i in this.listeners.event_name)
+		for (var i in this.listeners[event_name])
 		{
-			var callback = this.listeners.event_name[i];
+			var callback = this.listeners[event_name][i];
 			callback(params);
 		}
 	};
