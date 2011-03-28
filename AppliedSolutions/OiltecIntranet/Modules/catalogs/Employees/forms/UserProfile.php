@@ -34,6 +34,7 @@ function onGenerate($event)
    else
    {
       $empId = MEmployees::retrieveCurrentEmployee();
+      $user  = $container->getUser();
       $isCurrentEmployee = true;
    }
    
