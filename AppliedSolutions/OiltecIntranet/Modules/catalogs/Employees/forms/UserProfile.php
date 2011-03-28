@@ -26,11 +26,21 @@ function onGenerate($event)
    $gender = $gender['Gender']['in'];
     
    // Retrieve employee
-   $empId    = !empty($params['employee']) ? (int) $params['employee'] : 0;
-   $employee = $container->getModel('catalogs', 'Employees');
-
+   if (!empty($params['employee']))
+   {
+      $empId = (int) $params['employee'];
+      $isCurrentEmployee = false;
+   }
+   else
+   {
+      $empId = MEmployees::retrieveCurrentEmployee();
+      $isCurrentEmployee = true;
+   }
+   
    if ($empId > 0)
    {
+      $employee = $container->getModel('catalogs', 'Employees');
+      
       if (!$employee->load($empId))
       {
          throw new Exception('Database error');
@@ -64,9 +74,9 @@ function onGenerate($event)
 
          $attrs['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
       }
+      
+      $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
    }
-
-   $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
 
    include(self::$templates_dir.$name.'.php');
 }
