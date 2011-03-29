@@ -9,7 +9,7 @@ img { border:0; }
 .userTabs span.info { background-position:0 0; }
 .userTabs span.blog { background-position:-16px 0; }
 .userTabs span.proj { background-position:-32px 0; }
-.userTabs b { font-size:12px; color:#000; text-decoration:none; }
+.userTabs b { font-size:12px;  text-decoration:none; }
 .userTabs b span { color:#646464; padding-left:5px; }
 
 .userLeft { width:220px; margin: 20px 0; float: left; }
@@ -34,6 +34,7 @@ img { border:0; }
     font-family: Arial;
     border-top: 1px solid #D2D2D2;
     width: 100%;
+    height: 37px;
 }
 .userValue { margin: 7px 6px 5px 0px; }
 .userValue a { line-height: 17px !important; }
@@ -133,12 +134,12 @@ input.userBusinessCard {
   
 <div class="userTabs">
   <div id="htab1">
-    <a href="#"  class="active"  onclick="show('tab1'); return false;" ><span class="icon info"></span><b>Personal info</b></a>
-    <a href="#" onclick="show('tab2'); return false;"><span class="icon blog"></span><b>Organization</b></a>
+    <a href="#"  class="active"  onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
+    <a href="#" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
   </div>
   <div id="htab2" style="display:none;">
-    <a href="#" onclick="show('tab1'); return false;" ><span class="icon info"></span><b>Personal info</b></a>
-    <a href="#" class="active" onclick="show('tab2'); return false;" ><span class="icon proj"></span><b>Organization</b></a>
+    <a href="#" onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
+    <a href="#" class="active" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
   </div>
 </div>
 
@@ -216,7 +217,12 @@ input.userBusinessCard {
             <input name="aeform[catalogs][NaturalPersons][attributes][Photo]" type="file" size="10" onfocus="focusF(this);" onblur="blurF(this);" />
           </div>
         </div>
-      
+        <div class="userRowClear">   </div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
       </div>
       
       <div class="userActions">
@@ -263,6 +269,12 @@ input.userBusinessCard {
             <div id="left10" class="userValue"><?php echo $attrs["StaffRecord"]["YearlyVacationDays"]?></div>
           </div>
         </div>
+        <div class="userRowClear">   </div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
+        <div class="userRow"></div>
 
      </div>
    </div>
@@ -279,6 +291,20 @@ input.userBusinessCard {
 </div>
 
 <script type="text/javascript">
+jQuery(document).ready(function() {
+var divElement = document.getElementById("comments-section");
+if (divElement != null)
+    divElement.style.display = 'none';
+divElement = document.getElementById("gallery-section");
+if (divElement != null)
+    divElement.style.display = 'none';
+divElement = document.getElementById("file-section");
+if (divElement != null)
+    divElement.style.display = 'none';
+divElement = document.getElementById("pageInfo");
+if (divElement != null)
+    divElement.style.display = 'none';
+});
 function focusF(it) {
 	it.style.background='#fffbc7';
 }
