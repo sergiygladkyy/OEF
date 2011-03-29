@@ -174,7 +174,19 @@
           <div style="width: 702px;">
           {{
             &lt;div id="oef_custom_form"&gt;&nbsp;&lt;/div&gt;;
-            &lt;script type="text/javascript"&gt;"displayCustomForm('"..uid.."', 'LoginRecords', {person: "..(item._id > 0 ? item._id : 0).."}, 'oef_custom_form');"&lt;/script&gt;;
+            &lt;script type="text/javascript"&gt;"
+              displayCustomForm('"..uid.."', 'LoginRecords', {person: "..(item._id > 0 ? item._id : 0).."}, 'oef_custom_form');
+              
+              function onEndProcess(params)
+              {
+                 if (Context.getLastStatus())
+                 {
+                    displayCustomForm('"..uid.."', 'LoginRecords', {person: "..(item._id > 0 ? item._id : 0).."}, 'oef_custom_form');
+                 }
+              }
+              
+              Context.addListener('"..js_uid.."_end_process', onEndProcess);
+            "&lt;/script&gt;;
           }}
           </div>
         </td>
