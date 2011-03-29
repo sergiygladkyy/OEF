@@ -74,6 +74,11 @@ function onGenerate($event)
          }
 
          $attrs['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
+         
+         $doc['type'] = $attrs['StaffRecord']['_rec_type'];
+         $doc['id']   = $attrs['StaffRecord']['_rec_id'];
+         $doc['desc'] = $container->getCModel('documents', $doc['type'])->retrieveLinkData($doc['id']);
+         $doc['desc'] = $doc['desc'][$doc['id']]['text'];
       }
       
       $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
