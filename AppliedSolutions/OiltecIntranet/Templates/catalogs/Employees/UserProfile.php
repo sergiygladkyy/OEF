@@ -134,12 +134,14 @@ input.userBusinessCard {
   
 <div class="userTabs">
   <div id="htab1">
+
     <a href="#"  class="active"  onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
     <a href="#" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
   </div>
   <div id="htab2" style="display:none;">
     <a href="#" onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
     <a href="#" class="active" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
+
   </div>
 </div>
 
