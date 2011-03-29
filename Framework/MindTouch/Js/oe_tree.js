@@ -229,6 +229,10 @@ function oefTree()
 							value = defval;
 						}
 						break;
+					
+					case 'bool':
+						value = value && value != '0' ? 'yes' : 'no';
+						break;
 				}
 				
 				tpl = tpl.replace('%%' + field + '%%', value);

@@ -12,11 +12,12 @@
    var fields     = data.fields;
    var field_type = data.field_type;
    var field_prec = data.field_prec;
+   var field_use  = data.field_use[item._folder ? 2 : 1];
    var hierarchy  = data.hierarchy;
    var owners     = data.owners;
    var references = data.references;
    var params     = data.params ?? {};
-   var htype      = hierarchy.type is num ? hierarchy.type : 0; 
+   var htype      = hierarchy.type is num ? hierarchy.type : 0;
 }}
 
 <tr class="{{ class..'_list_item ae_list_item'..(item._deleted != 0  ? ' ae_deleted_col' : '') }}">
@@ -55,11 +56,15 @@
                let value = item[field];
             }
             
+            var not_used = (htype == 2 && #list.select(field_use, "$=='"..field.."'") < 1);
+            
+            let params ..= {not_used: not_used};
+            
             var tpl_params = {reference: references[field], precision: field_prec[field], params: params};
             
             var template = root..'/ListFormFields';
             var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
-            
+          
             if (string.contains(content, 'href="'..template..'"')) {
                let content = 'Template not found';
             }

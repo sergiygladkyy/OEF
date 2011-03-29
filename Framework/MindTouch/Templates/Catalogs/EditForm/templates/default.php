@@ -48,23 +48,25 @@
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       
-      var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      var htype  = hierarchy.type is num ? hierarchy.type : 0;
+      
       if (item._id > 0) {
-         var header = 'Edit ';
          var hidden = '&lt;input type="hidden" name="'..name_prefix..'[attributes][_id]" value="'..item._id..'" /&gt;';
       }
       else {
-         var header = 'New ';
          var hidden = '';
          
-         if (hierarchy.type == 2) {
+         if (htype == 2) {
             let item ..= {_folder: (__request.args.type == 'group' ? 1 : 0)};
          }
       }
       
-      if (hierarchy.type == 2) {
+      var use_tabulars = true;
+      
+      if (htype == 2) {
          if (item._folder == 1) {
             let fields = field_use[2];
+            let use_tabulars = false;
          }
          else {
             let fields = field_use[1];
@@ -143,32 +145,35 @@
         </tr>
       </eval:if>
     </eval:foreach>
-    <eval:foreach var="tabular" in="tab_s">
-      <tr>
-        <td colspan="2">
-          {{
-             var template = root..'/Tabulars/EditForm';
-             var tpl_params = [
-               uid,
-               {main_kind: puid.kind, main_type: puid.type, kind: 'tabulars', type: tabular},
-               tabulars[tabular],
-               root,
-               template,
-               {name_prefix: name_prefix..'[tabulars]'},
-               prefix
-             ];
-             var content  = wiki.template(template, tpl_params);
-      
-             if (string.contains(content, 'href="'..template..'"'))
-             {
-                let content = 'Template not found';
-             }
-          
-             content;
-          }}
-        </td>
-      </tr>
-    </eval:foreach>
+    <eval:if test="use_tabulars">
+      {{ var tab_s = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars'); }}
+      <eval:foreach var="tabular" in="tab_s">
+        <tr>
+          <td colspan="2">
+            {{
+               var template = root..'/Tabulars/EditForm';
+               var tpl_params = [
+                 uid,
+                 {main_kind: puid.kind, main_type: puid.type, kind: 'tabulars', type: tabular},
+                 tabulars[tabular],
+                 root,
+                 template,
+                 {name_prefix: name_prefix..'[tabulars]'},
+                 prefix
+               ];
+               var content  = wiki.template(template, tpl_params);
+               
+               if (string.contains(content, 'href="'..template..'"'))
+               {
+                  let content = 'Template not found';
+               }
+               
+               content;
+            }}
+          </td>
+        </tr>
+      </eval:foreach>
+    </eval:if>
       <tr>
         <td class="ae_submit" colspan="2">
           {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt;&nbsp; }}

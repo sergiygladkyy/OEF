@@ -3027,7 +3027,7 @@ class PersistentLayer
          
          /* Fields */
          
-         $res = $this->generateFieldsInternalConfiguration($params['fields'], $kind, $options);
+         $res = $this->generateFieldsInternalConfiguration($params['fields'], $kind.'.'.$type.'.tabulars', $options);
           
          if (!isset($res['errors']))
          {
@@ -3364,7 +3364,8 @@ class PersistentLayer
             // Link params
             if (!strpos($params['reference'], "."))
             {
-               $r_kind = $kind;
+               $_pos   = strpos($kind, '.');
+               $r_kind = $_pos ? substr($kind, 0, $_pos) : $kind;
                $r_type = $params['reference'];
             }
             else list($r_kind, $r_type) = explode(".", $params['reference']);

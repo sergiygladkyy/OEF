@@ -8,6 +8,7 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
+   var field_use  = {};
    var hierarchy  = {};
    var owners     = {};
    var references = {}; 
@@ -42,6 +43,7 @@
       }
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
+      let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
@@ -80,6 +82,7 @@
              fields: fields,
              field_type: field_type,
              field_prec: field_prec,
+             field_use:  field_use,
              hierarchy:  hierarchy,
              owners:     owners,
              references: references,
@@ -134,6 +137,7 @@
        fields:     fields,
        field_type: field_type,
        field_prec: field_prec,
+       field_use:  field_use,
        hierarchy:  hierarchy,
        owners:     owners,
        references: references

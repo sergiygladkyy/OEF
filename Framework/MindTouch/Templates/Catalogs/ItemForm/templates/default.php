@@ -6,6 +6,8 @@
    var prefix = args[4] ?? 'default';
    var fields = {};
    var field_type = {};
+   var field_use  = {};
+   var hierarchy  = {};
    var owners     = {};
    var references = {}; 
    var kind     = '';
@@ -37,9 +39,21 @@
       }
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
-      var tab_s      = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
+      
+      var htype = hierarchy.type is num ? hierarchy.type : 0;
+      
+      if (htype == 2 && item._folder == 1) {
+         let fields = field_use[2];
+         var use_tabulars = false;
+      }
+      else {
+         let fields = field_use[1];
+         var use_tabulars = true;
+      }
   }}
   <eval:if test="item._deleted != 0">
   <div  style="float: right; margin: 30px 20px 0px 10px; font-size:12px; font-weight: bold; color: rgb(218, 6, 32);">Mark for deletion</div>
@@ -80,32 +94,35 @@
         </tr>
       </eval:if>
     </eval:foreach>
-    <eval:foreach var="tabular" in="tab_s">
-      <tr>
-        <td colspan="2">
-          {{
-             var template = root..'/Tabulars/ItemForm';
-             var tpl_params = [
-               uid,
-               {main_kind: puid.kind, main_type: puid.type, kind: 'tabulars', type: tabular},
-               tabulars[tabular],
-               root,
-               template,
-               [],
-               prefix
-             ];
-             var content = wiki.template(template, tpl_params);
-      
-             if (string.contains(content, 'href="'..template..'"'))
-             {
-                let content = 'Template not found';
-             }
-          
-             content;
-          }}
-        </td>
-      </tr>
-    </eval:foreach>
+    <eval:if test="use_tabulars">
+      {{ var tab_s = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars'); }}
+      <eval:foreach var="tabular" in="tab_s">
+        <tr>
+          <td colspan="2">
+            {{
+               var template = root..'/Tabulars/ItemForm';
+               var tpl_params = [
+                 uid,
+                 {main_kind: puid.kind, main_type: puid.type, kind: 'tabulars', type: tabular},
+                 tabulars[tabular],
+                 root,
+                 template,
+                 [],
+                 prefix
+               ];
+               var content = wiki.template(template, tpl_params);
+               
+               if (string.contains(content, 'href="'..template..'"'))
+               {
+                  let content = 'Template not found';
+               }
+               
+               content;
+            }}
+          </td>
+        </tr>
+      </eval:foreach>
+    </eval:if>
       <tr>
         <td class="ae_edit" colspan="2"><a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a></td>
       </tr>

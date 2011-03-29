@@ -1,13 +1,14 @@
 {{
-    var value  = args[0];
-    var params = args[1];
-    var attrs  = params.attrs ?? {};
+    var value   = args[0];
+    var params  = args[1];
+    var attrs   = params.attrs ?? {};
+    var options = params.params ?? {};
     
     if ((value is str) && string.startswith(value, '%%')) {
        var text = value;
     }
     else {
-       var text = #value > 0 && value != '0' ? 'yes' : 'no';
+       var text = options['not_used'] ? '&nbsp;' : (#value > 0 && value != '0' ? 'yes' : 'no');
     }
     
     var attributes = '';
