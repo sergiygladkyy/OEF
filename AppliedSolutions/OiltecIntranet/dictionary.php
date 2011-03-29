@@ -175,20 +175,26 @@ $_dictionary = array(
 
       // List of Counteragents
       'Counteragents' => array(
+         'Hierarchy' => array(
+            'type' => 'Folder and item' // Item | Folder and item 
+         ),
+         
          'fields' => array(
             'Code' => array(
                'precision' => array(
                   'max_length' => 8
                )
             ),
-            'ContactInformation' => array(
+            'Information' => array(
                'type' => 'string',
+               'use'  => 'For item',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
             ),
             'InvoicingInformation' => array(
                'type' => 'string',
+               'use'  => 'For item',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
                ),
@@ -198,14 +204,50 @@ $_dictionary = array(
             ),
             'Customer' => array(
                'type' => 'bool',
+               'use'  => 'For item',
                'sql'  => array(
                   'type' => "TINYINT(1) NOT NULL default 0"
                )
             ),
             'Supplier'=> array(
                'type' => 'bool',
+               'use'  => 'For item',
                'sql'  => array(
                   'type' => "TINYINT(1) NOT NULL default 0"
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            'ContactPersons' => array(
+               'fields' => array(
+                  'Person' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Duties' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'ContactInformation' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'precision' => array(
+                        'required' => true
+                     )
+                  )
                )
             )
          )
@@ -739,11 +781,14 @@ $_dictionary = array(
 
       // Document Contract
       'Contract' => array(
-         /*'recorder_for' => array(
-
-         ),*/
+         'recorder_for' => array(
+            'information_registry.ContractRecords',
+            'information_registry.ContractMilestoneRecords'
+         ),
 
          'basis_for' => array(
+            'documents.Invoice',
+            //'documents.ProjectHandOver',
             'documents.ProjectRegistration',
             'catalogs.Projects'
          ),
@@ -762,6 +807,16 @@ $_dictionary = array(
                   'type' => "varchar(255) NOT NULL default ''"
                ),
                'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Kind' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('WithCustomer', 'WithSupplier', 'Other')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'WithCustomer', 2 => 'WithSupplier', 3 => 'Other'),
                   'required' => true
                )
             ),
@@ -1528,6 +1583,104 @@ $_dictionary = array(
                   'required' => true
                )
             )
+         )
+      ),
+      
+      // ContractRecords
+      'ContractRecords' => array(
+         'dimensions' => array(
+            'ContractNumber' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+
+         'fields' => array(
+            'Kind' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('WithCustomer', 'WithSupplier', 'Other')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'WithCustomer', 2 => 'WithSupplier', 3 => 'Other'),
+                  'required' => true
+               )
+            ),
+            'ContractConclusionDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'TotalAmountNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'DeliveryDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            )
+         ),
+
+         'recorders' => array(
+            'Contract'
+         )
+      ),
+      
+      // ContractMilestoneRecords
+      'ContractMilestoneRecords' => array(
+         'fields' => array(
+            'MilestoneName' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'MilestoneDeadline' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'MilestoneAmountNOK' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            )
+         ),
+
+         'recorders' => array(
+            'Contract'
          )
       )
    ),
