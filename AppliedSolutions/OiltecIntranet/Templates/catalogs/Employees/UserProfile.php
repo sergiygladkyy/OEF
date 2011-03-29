@@ -336,7 +336,7 @@ function show(num){
     	if (isHired)
     	{
         	var msg = "The information you see is read only since it is contributed by the following document: " +
-        		'<?php echo '<a target="_blank" href="?uid=documents.'.$doc['type'].'&actions=displayEditForm&id='.$doc['id'].'">'.$doc['desc'].'</a>' ?>' +
+        		'<?php echo '<a target="_blank" href="\' + location.pathname + \'?uid=documents.'.$doc['type'].'&actions=displayEditForm&id='.$doc['id'].'">'.$doc['desc'].'</a>' ?>' +
         		" If you want to update the information you may need to re-submit the document." +
             	" For making so, click the link above, perform \"Clear Posting\", then update the data and perform \"Post\"." +
             	" Attention, that you must have the sufficient access rights for this"
