@@ -240,7 +240,7 @@ input.userBusinessCard {
         <div class="userRow">
           <div class="userRowLeft">Organization:</div>
           <div class="userRowRight" >
-            <div id="left6" class="userValue"><?php echo $attrs["StaffRecord"]["Employee"]["text"]?></div>
+            <div id="left6" class="userValue"><?php echo Constants::get('OrganizationName') ?></div>
           </div>
         </div>
 
