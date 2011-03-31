@@ -2090,6 +2090,15 @@ $_dictionary = array(
          'precision' => array(
             'required' => true
          )
+      ),
+      'OrganizationName' => array(
+         'type' => 'string',
+         'sql'  => array(
+            'type' => "varchar(255) NOT NULL default ''"
+         ),
+         'precision' => array(
+            'required' => true
+         )
       )
    )
 );
