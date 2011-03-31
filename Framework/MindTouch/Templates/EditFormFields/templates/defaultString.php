@@ -1,8 +1,9 @@
 {{
-  var name   = args[0];
-  var value  = args[1];
-  var params = args[2];
-  var attrs  = params.attrs ?? {};
+  var name    = args[0];
+  var value   = args[1];
+  var params  = args[2];
+  var attrs   = params.attrs ?? {};
+  var options = params.options ?? {};
   var attributes = '';
   
   if (!(params.precision.max_length is nil)) {
@@ -17,5 +18,10 @@
     let name = name..attributes;
   }
   
-  web.html('&lt;input type="text" name="'..name..'" value="'..value..'" /&gt;');
+  if (options.text) {
+     web.html('&lt;textarea name="'..name..'"&gt;'..value..'&lt;/textarea&gt;');
+  }
+  else {
+     web.html('&lt;input type="text" name="'..name..'" value="'..value..'" /&gt;');
+  }
 }}
