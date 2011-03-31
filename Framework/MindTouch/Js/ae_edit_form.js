@@ -1587,6 +1587,36 @@ function oefDynamicUpdate()
 			    		listener(this);
 			    	});
 			    });
+				
+				var winW, winH, minW, minH, maxW, maxH, divW, divH, posT, posL;
+				
+				winW = jQuery(window).width();
+				winH = jQuery(window).height();
+				divW = jQuery('#' + tagID).width();
+				divH = jQuery('#' + tagID).height();
+				minW = 425;
+				minH = 40;
+				maxW = (winW - 150) < minW ? minW : winW - 150;
+				maxH = (winH - 100) < minH ? minH : winH - 100;
+				posT = Math.floor((maxH - divH)/2);
+				posL = Math.floor((maxW - divW)/2);
+				
+				posT = posT > 0 ? (posT > maxH*0.2 ? Math.floor(maxH*0.2) : posT < 50 ? 50 : posT) : 50;
+				posL = posL > 0 ? posL + 75 : 15;
+				
+				if (maxH < divH)
+				{
+					if (maxW >= divW)
+					{
+						minW = divW + 15;
+						
+						if (maxW < minW) maxW = minW;
+					}
+				} 
+				
+				jQuery('#' + tagID).css('min-width', minW).css('min-height', minH).
+					css('max-width', maxW).css('max-height', maxH).
+					css('top', posT).css('left', posL);
 			},
 		    error: function (XMLHttpRequest, textStatus, errorThrown)
 		    {

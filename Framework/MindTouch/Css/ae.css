@@ -241,11 +241,7 @@ div.errormsg div.inner a:hover {
 
 #oef_dynamic_upadate_edit_form {
 	position: fixed;
-	width: 450px;
 	overflow: auto;
-	top: 20%;
-	left: 50%;
-	margin: 0 0 0 -210px;
 	background-color: #F7F7F7;
 	padding: 6px;
 	z-index: 1000;
