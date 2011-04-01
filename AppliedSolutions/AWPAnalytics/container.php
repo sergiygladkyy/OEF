@@ -4,9 +4,9 @@ $_conf = array(
    /* DB configuration */
    'db' => array(
       'dbserver'   => "localhost",
-      'dbusername' => "root",
-      'dbpass'     => "",
-      'dbname'     => "mt_db",
+      'dbusername' => "wikiuser",
+      'dbpass'     => "mQ3cRe4lGTMo6QPx",
+      'dbname'     => "wikidb",
       'dbprefix'   => "AWPAnalytics_",
       'dbcharset'  => "utf8", // cp1251
       
@@ -27,7 +27,8 @@ $_conf = array(
       'options'   => array(
          'modules_dir'  => '../AppliedSolutions/AWPAnalytics/Modules/',
          'cache_dir'    => '../AppliedSolutions/AWPAnalytics/Cache/',
-         'template_dir' => '../AppliedSolutions/AWPAnalytics/Templates/'
+         'template_dir' => '../AppliedSolutions/AWPAnalytics/Templates/',
+         'layout_dir'   => '../AppliedSolutions/AWPAnalytics/Layout/'
       )
    ),
    
@@ -57,6 +58,15 @@ $_conf = array(
       'classname' => 'Response',
       'options'   => array(
          //'protocol' => 'HTTP/1.1'
+      )
+   ),
+   
+   /* Upload */
+   'upload' => array(
+      'classname' => 'Upload',
+      'options'   => array(
+         'upload_dir'  => '../AppliedSolutions/AWPAnalytics/Upload/',
+         'form_prefix' => 'aeform'
       )
    )
 );

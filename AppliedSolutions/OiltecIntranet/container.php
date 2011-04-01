@@ -4,9 +4,9 @@ $_conf = array(
    /* DB configuration */
    'db' => array(
       'dbserver'   => "localhost",
-      'dbusername' => "root",
-      'dbpass'     => "",
-      'dbname'     => "mt_db",
+      'dbusername' => "wikiuser",
+      'dbpass'     => "mQ3cRe4lGTMo6QPx",
+      'dbname'     => "wikidb",
       'dbprefix'   => "OiltecIntranet_",
       'dbcharset'  => "utf8", // cp1251
       
@@ -27,7 +27,8 @@ $_conf = array(
       'options'   => array(
          'modules_dir'  => '../AppliedSolutions/OiltecIntranet/Modules/',
          'cache_dir'    => '../AppliedSolutions/OiltecIntranet/Cache/',
-         'template_dir' => '../AppliedSolutions/OiltecIntranet/Templates/'
+         'template_dir' => '../AppliedSolutions/OiltecIntranet/Templates/',
+         'layout_dir'   => '../AppliedSolutions/OiltecIntranet/Layout/'
       )
    ),
    
@@ -59,11 +60,12 @@ $_conf = array(
          //'protocol' => 'HTTP/1.1'
       )
    ),
+   
    /* Upload */
    'upload' => array(
       'classname' => 'Upload',
       'options'   => array(
-         'upload_dir'  => '../AppliedSolutions/OiltecIntranet/upload/',
+         'upload_dir'  => '../AppliedSolutions/OiltecIntranet/Upload/',
          'form_prefix' => 'aeform'
       )
    )
