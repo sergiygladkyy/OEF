@@ -211,13 +211,24 @@ abstract class EntityController extends BaseController
     */
    protected function processFrom($values, array $options = array())
    {
+      $CManager = $this->container->getConfigManager();
+      $types    = $CManager->getInternalConfigurationByKind($this->kind.'.field_type', $this->type, $options);
+      
+      foreach ($types as $field => $type)
+      {
+         if ($type == 'bool' && !isset($values[$field]))
+         {
+            $values[$field] = 0;
+         }
+      }
+      
       $item   = $this->container->getModel($this->kind, $this->type, $options);
       $errors = $item->fromArray($values);
       
       if ($errors) return array('status' => false, 'errors' => $errors);
       
       // Save uploaded files
-      $files = $this->container->getConfigManager()->getInternalConfigurationByKind($this->kind.'.files', $this->type, $options);
+      $files = $CManager->getInternalConfigurationByKind($this->kind.'.files', $this->type, $options);
       
       if (!empty($files))
       {
