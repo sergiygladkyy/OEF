@@ -27,7 +27,8 @@ $_conf = array(
       'options'   => array(
          'modules_dir'  => '../AppliedSolutions/SolutionName/modules/',
          'cache_dir'    => '../AppliedSolutions/SolutionName/cache/',
-         'template_dir' => '../AppliedSolutions/SolutionName/templates/'
+         'template_dir' => '../AppliedSolutions/SolutionName/templates/',
+         'layout_dir'   => '../AppliedSolutions/SolutionName/layout/'
       )
    ),
    

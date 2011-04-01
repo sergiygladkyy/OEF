@@ -369,6 +369,7 @@ class PersistentLayer
             $valid[$catalog]['controller'] = $conf['controller'];
             $valid[$catalog]['Forms']      = $conf['Forms'];
             $valid[$catalog]['Templates']  = $conf['Templates'];
+            $valid[$catalog]['Layout']     = $conf['Layout'];
          }
       }
       
@@ -571,6 +572,7 @@ class PersistentLayer
             $valid[$registry]['controller'] = $conf['controller'];
             $valid[$registry]['Forms']      = $conf['Forms'];
             $valid[$registry]['Templates']  = $conf['Templates'];
+            $valid[$registry]['Layout']     = $conf['Layout'];
          }
       }
       
@@ -704,6 +706,7 @@ class PersistentLayer
             $valid[$document]['controller'] = $conf['controller'];
             $valid[$document]['Forms']      = $conf['Forms'];
             $valid[$document]['Templates']  = $conf['Templates'];
+            $valid[$document]['Layout']     = $conf['Layout'];
          }
       }
       
@@ -818,6 +821,7 @@ class PersistentLayer
             $valid[$name]['controller'] = $conf['controller'];
             $valid[$name]['Forms']      = $conf['Forms'];
             $valid[$name]['Templates']  = $conf['Templates'];
+            $valid[$name]['Layout']     = $conf['Layout'];
          }
       }
 
@@ -1800,6 +1804,36 @@ class PersistentLayer
       unset($valid);
       
       
+      /* Check Layout config */
+      
+      if (!isset($conf['Layout']))
+      {
+         $valid = array();
+      }
+      elseif (!is_array($conf['Layout']))
+      {
+         $errors['global'][] = 'Layout configuration for "'.$kind.'.'.$type.'" is wrong';
+      }
+      elseif (empty($conf['Layout']))
+      {
+         $errors['global'][] = 'Layout configuration for "'.$kind.'.'.$type.'" is empty';
+      }
+      else
+      {
+         if ($err = $this->checkTemplatesConfig($conf['Layout']))
+         {
+            $errors['Layout'] = $err;
+         }
+         else
+         {
+            $valid = $conf['Layout'];
+         }
+      }
+       
+      $conf['Layout'] = $valid;
+      unset($valid);
+      
+      
       return $errors;
    }
    
@@ -1923,6 +1957,39 @@ class PersistentLayer
          elseif (!$this->checkName($template))
          {
             $errors['global'][] = 'Invalid Template name "'.$template.'"';
+         }
+         else
+         {
+            $valid[] = $template;
+         }
+      }
+
+      $config = $valid;
+      unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check Layout configuration array
+    * 
+    * @param array& $config - !!! метод вносит изменения в передаваемый массив
+    * @return array - errors
+    */
+   protected function checkLayoutConfig(array& $config)
+   {
+      $errors = array();
+      $valid  = array();
+      
+      foreach ($config as $template)
+      {
+         if (!is_string($template))
+         {
+            $errors['global'][] = 'Layout configuration is wrong';
+         }
+         elseif (!$this->checkName($template))
+         {
+            $errors['global'][] = 'Invalid Layout name "'.$template.'"';
          }
          else
          {
@@ -2541,7 +2608,8 @@ class PersistentLayer
          'model'      => array(),
          'controller' => array(),
          'forms'      => array(),
-         'templates'  => array()
+         'templates'  => array(),
+         'layout'     => array()
       );
       
       $is_obj_type = false;
@@ -2844,6 +2912,10 @@ class PersistentLayer
          /* Templates */
          
          $result['templates'][$type] = $params['Templates'];
+         
+         /* Layout */
+         
+         $result['layout'][$type] = $params['Layout'];
       }
       
       return empty($errors) ? $result : array('errors' => $errors);
@@ -2876,7 +2948,8 @@ class PersistentLayer
          'model'      => array(),
          'controller' => array(),
          'forms'      => array(),
-         'templates'  => array()
+         'templates'  => array(),
+         'layout'     => array()
       );
       
       $result['recorder_for'] = array();
@@ -2977,6 +3050,10 @@ class PersistentLayer
          /* Templates */
          
          $result['templates'][$registry] = $params['Templates'];
+         
+         /* Layout */
+         
+         $result['layout'][$type] = $params['Layout'];
       }
       
       return empty($errors) ? $result : array('errors' => $errors);

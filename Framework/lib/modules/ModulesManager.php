@@ -7,22 +7,25 @@ class ModulesManager
          'catalogs' => array(
             'onGenerateCode',
             'onBeforeAddingRecord',
-            'onInputOnBasis'
+            'onInputOnBasis',
+            'onPrint'
          ),
          'documents' => array(
             'onPost',
             'onUnpost',
             'onGenerateCode',
             'onBeforeAddingRecord',
-            'onInputOnBasis'
+            'onInputOnBasis',
+            'onPrint'
          ),
          'reports' => array(
             'onGenerate',
-            'onDecode'
+            'onDecode',
+            'onPrint'
          ),
          'data_processors' => array('onImport'),
-         'information_registry'  => array('onBeforeAddingRecord'),
-         'AccumulationRegisters' => array('onBeforeAddingRecord')
+         'information_registry'  => array('onBeforeAddingRecord', 'onPrint'),
+         'AccumulationRegisters' => array('onBeforeAddingRecord', 'onPrint')
       ),
       $forms_events = array(
          'catalogs'  => array('onGenerate', 'onProcess', 'onFormUpdateRequest', 'onBeforeOpening'),
@@ -38,7 +41,8 @@ class ModulesManager
       $instance     = null,
       $modules_dir  = null,
       $cache_dir    = null,
-      $template_dir = null;
+      $template_dir = null,
+      $layout_dir = null;
    
    protected
       $container = null, 
@@ -71,6 +75,7 @@ class ModulesManager
       self::$modules_dir  = isset($options['modules_dir'])  ? $options['modules_dir']  : 'modules/';
       self::$cache_dir    = isset($options['cache_dir'])    ? $options['cache_dir']    : 'cache/';
       self::$template_dir = isset($options['template_dir']) ? $options['template_dir'] : 'templates/';
+      self::$layout_dir   = isset($options['layout_dir'])   ? $options['layout_dir']   : 'layout/';
       
       $this->container = Container::getInstance($options);
       $CManager = $this->container->getConfigManager($options);
@@ -112,6 +117,7 @@ class ModulesManager
       
       $this->map = array_merge_recursive($this->map, $this->createFormsModules($kinds, $options));
       $this->map = array_merge_recursive($this->map, $this->createTemplates($kinds, $options));
+      $this->map = array_merge_recursive($this->map, $this->createLayout($kinds, $options));
       
       return array('modules' => $this->map);
    }
@@ -266,6 +272,57 @@ class ModulesManager
    }
    
    /**
+    * Create empty layouts
+    * 
+    * @throws Exception
+    * @param array $kinds
+    * @param array& $options
+    * @return array - modules map
+    */
+   protected function createLayout(array $kinds, array& $options = array())
+   {
+      if (!is_array($kinds)) $kinds = array($kinds);
+      
+      $CManager = $this->container->getConfigManager($options);
+      
+      $map = array();
+      
+      foreach ($kinds as $kind)
+      {
+         $entities  = $CManager->getInternalConfiguration($kind.'.'.$kind);
+         $templates = $CManager->getInternalConfiguration($kind.'.layout');
+         $basepath  = self::$layout_dir.$kind.'/';
+         
+         $map[$kind] = array();
+         
+         // Create templates
+         foreach ($entities as $type)
+         {
+            $dir = $basepath.$type.'/';
+            
+            if (!is_dir($dir))
+            {
+               if (!mkdir($dir, 0755, true)) throw new Exception(__METHOD__.': Can\'t create dir "'.$dir.'"');
+            }
+            
+            foreach ($templates[$type] as $name)
+            {
+               $file = $dir.$name.'.php';
+                
+               if (!file_exists($file))
+               {
+                  file_put_contents($file, '');
+               }
+               
+               $map[$kind][$type]['layout'][$name] = $file;
+            }
+         }
+      }
+
+      return $map;
+   }
+   
+   /**
     * Create empty constants module
     * 
     * @throws Exception
@@ -355,7 +412,7 @@ class ModulesManager
       {
          foreach ($modules as $module_type => $paths)
          {
-            if ($module_type == 'templates') continue;
+            if ($module_type == 'templates' || $module_type == 'layout') continue;
             
             foreach ($paths as $name => $path)
             {
@@ -457,6 +514,7 @@ class ModulesManager
             
             $code .= "class ".$classname."\n{\n   ";
             $code .= "protected static \$templates_dir = '".self::$template_dir.$kind.'/'.$type."/';\n   \n   ";
+            $code .= "protected static \$layout_dir    = '".self::$layout_dir.  $kind.'/'.$type."/';\n   \n   ";
             $code .= str_replace("\n", "\n   ", $content)."\n}";
          }
          elseif ($res === false)
