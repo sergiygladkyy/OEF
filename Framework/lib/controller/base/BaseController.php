@@ -128,4 +128,45 @@ abstract class BaseController
          'errors' => $errors
       );
    }
+   
+   /**
+    * Print
+    * 
+    * @param string $template - template name
+    * @param int    $id       - entity id
+    * @param array  $options
+    * @return array
+    */
+   public function printEntity($template, $id = null, array $options = array())
+   {
+      $model = $this->container->getModel($this->kind, $this->type);
+      
+      if (!is_null($id) && !$model->load($id))
+      {
+         return array('status' => false, 'result' => array(), 'errors' => array('Unknow entity'));
+      }
+      
+      $output = '';
+      $errors = $model->printThis($output, $template, $options);
+      
+      if (empty($errors))
+      {
+         $msg = 'Generated succesfully';
+         $status = true;
+      }
+      else
+      {
+         $msg = 'Print form not generated';
+         $status = false;
+      }
+      
+      return array(
+         'status' => $status,
+         'result' => array(
+            'output' => $output,
+            'msg'    => $msg
+         ),
+         'errors' => $errors
+      );
+   }
 }

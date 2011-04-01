@@ -422,4 +422,33 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       
       return $result;
    }
+   
+   /**
+    * Print
+    * 
+    * @param string& $buffer     - there remains the generated pattern
+    * @param string  $template   - template name
+    * @param array&  $parameters
+    * @return array - errors
+    */
+   public function printThis(& $buffer, $template, array $options = array())
+   {
+      $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.model.onPrint');
+      $event['options'] = $options;
+      
+      try
+      {
+         ob_start();
+         
+         $this->container->getEventDispatcher()->notify($event);
+         
+         $buffer = ob_get_clean();
+      }
+      catch (Exception $e)
+      {
+         return array($e->getMessage());
+      }
+      
+      return array();
+   }
 }

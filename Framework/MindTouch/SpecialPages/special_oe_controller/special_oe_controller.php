@@ -1201,4 +1201,47 @@ class SpecialOEController extends SpecialPagePlugin
       
       return $controller->getSelectData($fields, $options);
    }
+   
+   /**
+    * Print entity
+    * 
+    * @return array
+    */
+   protected function printEntity()
+   {
+      // Check data
+      if (empty($_POST['aeform']) || !is_array($_POST['aeform']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+
+      $values = Utility::escapeRecursive($_POST['aeform']);
+      
+      if (empty($values['kind']) || !is_string($values['kind']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      if (empty($values['type']) || !is_string($values['type']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      if (empty($values['template']) || !is_string($values['template']))
+      {
+         return array('status' => false, 'errors' => array('global' => 'Invalid data'));
+      }
+      
+      $id       = empty($values['id']) ? null : (int) $values['id'];
+      $options  = isset($values['options']) && is_array($values['options']) ? $values['options'] : array();
+      
+      $controller = $this->container->getController($values['kind'], $values['type']);
+      
+      if (!method_exists($controller, 'printEntity'))
+      {
+         return array('status' => false, 'errors' => array('Not supported operation'));
+      }
+      
+      return $controller->printEntity($values['template'], $id, $options);
+   }
 }

@@ -191,3 +191,92 @@ function appDisplayLoader(flag)
 		jQuery('#TB_load').css("display", flag ? 'block' : 'none');
 	}
 }
+
+
+
+
+
+/**
+ * Action print Item
+ * 
+ * @param kind
+ * @param type
+ * @param id
+ * @param template
+ * @param options
+ * @return boolean
+ */
+function printItem(kind, type, id, template, options)
+{
+	appInactive();
+	appAddLoader();
+	
+	var result = executePrintItem(kind, type, id, template, options);
+
+	appActive();
+	
+	return result;
+}
+
+/**
+ * Print Item
+ * 
+ * @param kind
+ * @param type
+ * @param id
+ * @param template
+ * @param options
+ * @return
+ */
+function executePrintItem(kind, type, id, template, options)
+{
+	var ret = true, prefix;
+	
+	prefix  = kind.replace('.', '_');
+	prefix += '_' + type;
+
+	jQuery.ajax({
+	    url: '/Special:OEController',
+	    async: false,
+	    type: 'POST',
+	    data: ({
+	    	page_path: OEF_PAGE_PATH,
+	    	action: 'printEntity',
+	    	aeform: {
+	    		kind:     kind,
+	    		type:     type,
+	    		id:       id,
+	    		template: template,
+	    		options:  options
+	    	}
+	    }),
+	    dataType: 'json',
+	    success: function (data , status)
+	    {
+			ret = data['status'];
+			
+			var msg = '';
+			
+			if(!data['status'])
+			{
+				for(var index in data['errors'])
+				{
+					msg += data['errors'][index]+'\n';
+				}
+			}
+			else
+			{
+				alert(data['result']['output']);
+			}
+			
+			if (!msg)
+			{
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Unmarked for deletion succesfully' : 'Not unmarked for deletion');
+			}
+			
+			displayMessage(prefix, msg, data['status']);
+	    }
+	});
+	
+	return ret;
+}
