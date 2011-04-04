@@ -79,6 +79,7 @@
       &lt;html&gt;
         &lt;head&gt;
           &lt;script type="text/javascript" src=(js_path..'/oe_global.js')&gt;&lt;/script&gt;
+          &lt;script type="text/javascript" src=(js_path..'/oe_print.js')&gt;&lt;/script&gt;
           &lt;script type="text/javascript"&gt;"
             OEF_PAGE_PATH = '"..page.path.."';
           "&lt;/script&gt;

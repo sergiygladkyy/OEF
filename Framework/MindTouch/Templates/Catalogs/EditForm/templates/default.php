@@ -13,6 +13,7 @@
    var hierarchy  = {};
    var owners     = {};
    var references = [];
+   var layout     = [];
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -47,6 +48,7 @@
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       var htype  = hierarchy.type is num ? hierarchy.type : 0;
       
@@ -83,15 +85,18 @@
       var class  = string.replace(kind, '.', '_')..'_'..type;
       var js_uid = class;
   }}
+  <div class="{{ class..'_message systemmsg' }}" style="display: none;">
+    <div class="inner">
+      <ul class="flashMsg">
+        <li>&nbsp;</li>
+      </ul>
+    </div>
+  </div>
+  <div class="{{ class..'_actions ae_editform_actions' }}" style="{{ item._id &gt; 0 ? 'display: block;' : 'display: none;' }}">
+    &nbsp;
+  </div>
   <form method="post" action="#" class="ae_object_edit_form" id="{{ class..'_item' }}" enctype="{{ enctype }}">
     {{ web.html(hidden) }}
-    <div class="{{ class..'_message systemmsg' }}" style="display: none;">
-      <div class="inner">
-        <ul class="flashMsg">
-          <li>&nbsp;</li>
-        </ul>
-      </div>
-    </div>
     <table>
     <tbody>
     <eval:foreach var="field" in="fields">
@@ -185,4 +190,7 @@
     </table>
   </form>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
+  <eval:if test="item._id &gt; 0">
+    {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..", {print: "..(#layout > 0 ? '\''..Json.Emit(layout)..'\'' : 'false').."});"&lt;/script&gt; }}
+  </eval:if>
 </eval:else>

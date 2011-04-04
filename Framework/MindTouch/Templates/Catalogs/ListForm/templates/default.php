@@ -11,7 +11,8 @@
    var hierarchy  = {};
    var owners     = {};
    var references = {};
-   var basis_for  = {}; 
+   var basis_for  = {};
+   var layout     = [];
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -49,6 +50,7 @@
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       var htype  = hierarchy.type is num ? hierarchy.type : 0;
       let class  = string.replace(kind, '.', '_')..'_'..type;
@@ -178,6 +180,9 @@
     </eval:if>
     <eval:if test="#basis_for &gt; 0">
       |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">Create linked...</a>
+    </eval:if>
+    <eval:if test="#layout &gt; 0">
+      |&nbsp;<a href="#" onclick="{{ 'if (!printListItem(this, \''..kind..'\', \''..type..'\', '..Json.Emit(layout)..')) return false;' }}">Print</a>
     </eval:if>
   </div>
 </eval:else>

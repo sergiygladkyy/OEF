@@ -728,18 +728,33 @@ function clearPosting(kind, type, id, prefix)
 /**
  * Generate ActionsMenu
  * 
- * @param selector - jQuery selector (menu container)
- * @param kind     - entity kind
- * @param type     - entity type
- * @param itemID   - entity id
+ * @param mixed  selector - jQuery selector (menu container)
+ * @param string kind     - entity kind
+ * @param string type     - entity type
+ * @param int    itemID   - entity id
+ * @param object options
  * @return void
  */
-function generateActionsMenu(selector, kind, type, itemID)
+function generateActionsMenu(selector, kind, type, itemID, options)
 {
 	var prefix = kind.replace(/\./g, '_') + '_' + type;
+	var menu   = '';
 	
-	var menu = '<a href="#" onclick="javascript:post(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Post</a>';
-    menu += '&nbsp;|&nbsp;<a href="#" onclick="javascript:clearPosting(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Clear posting</a>';
+	if (kind == 'documents')
+	{
+		menu += '<a href="#" onclick="javascript:post(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Post</a>';
+		menu += '&nbsp;|&nbsp;<a href="#" onclick="javascript:clearPosting(\'' + kind + '\', \'' + type + '\', ' + itemID + ', \'' + prefix + '\'); return false;">Clear posting</a>';
+	}
+	
+	if (options && options.print)
+	{
+		if (menu.length) menu += '&nbsp;|&nbsp;';
+		
+		options.print = options.print.replace(/'/g, "\'");
+		options.print = options.print.replace(/"/g, "'");
+		
+		menu += '<a href="#" onclick="if (!onPrint(this, \'' + kind + '\', \'' + type + '\', ' + itemID + ', ' + options.print + ')) return false;">Print</a>';
+	}
     
     jQuery(selector).html(menu);
 }

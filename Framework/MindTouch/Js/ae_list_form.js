@@ -257,6 +257,28 @@ function newOnBasis(element, kind, type, basis_for)
 	return basis.updateMenu(element);
 }
 
+/**
+ * Action print Item
+ * 
+ * @param element
+ * @param kind
+ * @param type
+ * @param layout
+ * @return
+ */
+function printListItem(element, kind, type, layout)
+{
+	var prefix = kind.replace(/\./g, '_') + '_' + type;
+	var id     = getItemId(prefix);
+	
+	if (!id) {
+		alert('Choose an list item');
+		return false;
+	}
+	
+	return onPrint(element, kind, type, id, layout);
+}
+
 
 
 

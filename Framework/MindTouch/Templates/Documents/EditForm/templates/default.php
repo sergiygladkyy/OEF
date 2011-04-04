@@ -10,6 +10,7 @@
    var required   = [];
    var dynamic    = {};
    var references = [];
+   var layout     = [];
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -41,6 +42,7 @@
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
       if (item._id > 0) {
@@ -151,7 +153,7 @@
   </form>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';"&lt;/script&gt; }}
   <eval:if test="item._id &gt; 0">
-    {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..");"&lt;/script&gt; }}
+    {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..", {print: "..(#layout > 0 ? '\''..Json.Emit(layout)..'\'' : 'false').."});"&lt;/script&gt; }}
   </eval:if>
   <eval:if test="item._post &gt; 0">
     {{ 

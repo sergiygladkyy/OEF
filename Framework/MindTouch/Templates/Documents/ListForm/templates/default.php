@@ -10,6 +10,7 @@
    var field_prec = {};
    var references = {}; 
    var basis_for  = {};
+   var layout     = [];
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -45,6 +46,7 @@
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       let class  = string.replace(kind, '.', '_')..'_'..type;
   }}
@@ -140,6 +142,9 @@
     <a href="#" onclick="{{ 'javascript:clearPostingListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Clear posting</a>
     <eval:if test="#basis_for &gt; 0">
       |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">Create linked...</a>
+    </eval:if>
+    <eval:if test="#layout &gt; 0">
+      |&nbsp;<a href="#" onclick="{{ 'if (!printListItem(this, \''..kind..'\', \''..type..'\', '..Json.Emit(layout)..')) return false;' }}">Print</a>
     </eval:if>
   </div>
 </eval:else>
