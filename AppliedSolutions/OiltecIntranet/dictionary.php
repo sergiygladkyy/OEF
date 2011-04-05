@@ -788,7 +788,7 @@ $_dictionary = array(
 
          'basis_for' => array(
             'documents.Invoice',
-            //'documents.ProjectHandOver',
+            'documents.ProjectHandover',
             'documents.ProjectRegistration',
             'catalogs.Projects'
          ),
@@ -883,6 +883,565 @@ $_dictionary = array(
                   )
                )
             )
+         )
+      ),
+      
+      // Document ProjectHandover
+      'ProjectHandover' => array(
+         'recorder_for' => array(
+            'information_registry.ProjectHandoverRecords'
+         ),
+         
+         'fields' => array(
+            'SalesManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ProjectManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'TenderResonsible' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'MainProject' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => false
+               )
+            ),
+            'ProjectCode' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ProjectName' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Contract' => array(
+               'reference' => 'documents.Contract',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'CustomerMainContact' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'SelligPrice' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'MaterialsCost' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'TotalIndirectLaborCost' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'NumberOfHours' => array(
+               'type' => 'int',
+               'sql'  => array(
+                  'type' => "int(8) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'GrossMargin' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'AddedValuePerHour' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'EstimatedStartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'EstimatedEndDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            
+            // Review of contract
+            'HaveContract' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveContractComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'ReportFormatAgreed' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ReportFormatAgreedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'PaymentScheduleGuaranteesInsurance' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'PaymentScheduleGuaranteesInsuranceComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HavePenalty' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HavePenaltyComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DeliveryConditions' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DeliveryConditionsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DemandForDocumentation' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DemandForDocumentationComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsTotalBudget' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsTotalBudgetComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'PriceStrategyUsed' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'PriceStrategyUsedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // OFFER / QUOTE REVIEW
+            'HaveAllDesc' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveAllDescComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'AnythingMissing' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AnythingMissingComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HardwareDelivery' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HardwareDeliveryComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // BID CLARIFICATIONS (BC)
+            'HaveBCMinutesOfMeeting' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveBCMinutesOfMeetingComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'AllBCCorrespondenceArhived' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AllBCCorrespondenceArhivedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // ECONOMY
+            'ContainBankGuarantees' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ContainBankGuaranteesComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsSACASheet' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsSACASheetComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DemandsForReportingToEconomy' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DemandsForReportingToEconomyComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // ORGANIZING
+            'HasWorkforce' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasWorkforceComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'NeedNewEmployments' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'NeedNewEmploymentsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HasResources' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasResourcesComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // TECHNICAL SOLUTION
+            'HasTechnicalSolution' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasTechnicalSolutionComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsInternalDevelopment' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsInternalDevelopmentComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // CRITICAL FACTORS
+            'CriticalFactors' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'CriticalFactorsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // EXPERIENCE
+            'ConditionsComparedToPrevious' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ConditionsComparedToPreviousComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // PROJECT MANAGERS DECLARATION OF ACCEPTANCE
+            'AcceptCondition' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('SatisfyingAccept', 'PartialSatisfyingAccept', 'NotSatisfyingNotAccept')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'SatisfyingAccept', 2 => 'PartialSatisfyingAccept', 3 => 'NotSatisfyingNotAccept'),
+                  'required' => true
+               )
+            )
+         ),
+         
+         'tabular_sections' => array(
+            // MISC
+            'Misc' => array(
+               'fields' => array(
+                  'Issue' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  ),
+                  'Comment' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  )
+               )
+            ),
+            // CONDITIONS / CAUSES
+            'Conditions' => array(
+               'fields' => array(
+                  'Description' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  ),
+                  'Comment' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  )
+               )
+            ),
+         ),
+         
+         'Layout' => array(
+            'ProjectHandover'
          )
       ),
 
@@ -1681,6 +2240,528 @@ $_dictionary = array(
 
          'recorders' => array(
             'Contract'
+         )
+      ),
+      
+      // ProjectHandoverRecords
+      'ProjectHandoverRecords' => array(
+         /*'dimensions' => array(
+            
+         ),*/
+
+         'fields' => array(
+            'SalesManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ProjectManager' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'TenderResonsible' => array(
+               'reference' => 'catalogs.Employees',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'MainProject' => array(
+               'reference' => 'catalogs.Projects',
+               'precision' => array(
+                  'required' => false
+               )
+            ),
+            'ProjectCode' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ProjectName' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Contract' => array(
+               'reference' => 'documents.Contract',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'Customer' => array(
+               'reference' => 'catalogs.Counteragents',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'CustomerMainContact' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'SelligPrice' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'MaterialsCost' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'TotalIndirectLaborCost' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'NumberOfHours' => array(
+               'type' => 'int',
+               'sql'  => array(
+                  'type' => "int(8) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'GrossMargin' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'AddedValuePerHour' => array(
+               'type' => 'float',
+               'sql'  => array(
+                  'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
+               ),
+               'precision' => array(
+                  'required' => true,
+                  'min' => 0
+               )
+            ),
+            'EstimatedStartDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'EstimatedEndDate' => array(
+               'type' => 'date',
+               'sql'  => array(
+                  'type' => "DATE NOT NULL default '0000-00-00'"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            
+            // Review of contract
+            'HaveContract' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveContractComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'ReportFormatAgreed' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ReportFormatAgreedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'PaymentScheduleGuaranteesInsurance' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'PaymentScheduleGuaranteesInsuranceComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HavePenalty' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HavePenaltyComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DeliveryConditions' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DeliveryConditionsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DemandForDocumentation' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DemandForDocumentationComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsTotalBudget' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsTotalBudgetComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'PriceStrategyUsed' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'PriceStrategyUsedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // OFFER / QUOTE REVIEW
+            'HaveAllDesc' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveAllDescComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'AnythingMissing' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AnythingMissingComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HardwareDelivery' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HardwareDeliveryComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // BID CLARIFICATIONS (BC)
+            'HaveBCMinutesOfMeeting' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HaveBCMinutesOfMeetingComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'AllBCCorrespondenceArhived' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'AllBCCorrespondenceArhivedComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // ECONOMY
+            'ContainBankGuarantees' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ContainBankGuaranteesComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsSACASheet' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsSACASheetComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'DemandsForReportingToEconomy' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'DemandsForReportingToEconomyComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // ORGANIZING
+            'HasWorkforce' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasWorkforceComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'NeedNewEmployments' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'NeedNewEmploymentsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'HasResources' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasResourcesComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // TECHNICAL SOLUTION
+            'HasTechnicalSolution' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'HasTechnicalSolutionComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'IsInternalDevelopment' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'IsInternalDevelopmentComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // CRITICAL FACTORS
+            'CriticalFactors' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'CriticalFactorsComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // EXPERIENCE
+            'ConditionsComparedToPrevious' => array(
+               'type' => 'bool',
+               'sql'  => array(
+                  'type' => "TINYINT(1) NOT NULL default 0"
+               ),
+               'precision' => array(
+                  'required' => true
+               )
+            ),
+            'ConditionsComparedToPreviousComment' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            
+            // PROJECT MANAGERS DECLARATION OF ACCEPTANCE
+            'AcceptCondition' => array(
+               'type' => 'enum',
+               'sql'  => array(
+                  'type' => "ENUM('SatisfyingAccept', 'PartialSatisfyingAccept', 'NotSatisfyingNotAccept')"
+               ),
+               'precision' => array(
+                  'in' => array(1 => 'SatisfyingAccept', 2 => 'PartialSatisfyingAccept', 3 => 'NotSatisfyingNotAccept'),
+                  'required' => true
+               )
+            )
+         ),
+
+         'recorders' => array(
+            'ProjectHandover'
          )
       )
    ),
