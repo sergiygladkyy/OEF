@@ -521,10 +521,11 @@ function processTabularResponce(kind, data, options)
 	
 	jQuery('.tabular_item:hidden').remove();
 	
-	var msg = '';
 	
 	for (var type in data)
 	{
+		var msg = '';
+		
 		for (var i in data[type])
 		{
 			var m_data = data[type][i];
@@ -545,6 +546,14 @@ function processTabularResponce(kind, data, options)
 				insertId(kind + '_' + type, m_data['result']['_id'], i);
 			}
 		}
+		
+		/* Print main message */
+		
+		if (!msg) {
+			msg = m_data['status'] ? 'Tabular section updated succesfully' : 'At updating Tabular section there were some errors';
+		}
+		
+		displayMessage(kind + '_' + type,  msg, m_data['status']);
 	}
 	
 	if (!flag) Context.setLastStatus(false);
@@ -553,13 +562,7 @@ function processTabularResponce(kind, data, options)
 	
 	if (flag && options.close) return flag;
 	
-	/* Print main message */
 	
-	if (!msg) {
-		msg = flag ? 'Tabular section updated succesfully' : 'At updating Tabular section there were some errors';
-	}
-	
-	displayMessage(kind + '_' + type,  msg, flag);
 	
 	return flag;
 }
