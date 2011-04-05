@@ -57,7 +57,7 @@
       <th style="width: 10px;"><input type="checkbox" onclick="{{ 'javascript:checkAll(\''..class..'\', this);' }}" /></th>
       <eval:foreach var="field" in="fields">
         <eval:if test="field != 'Owner'">
-          <th>{{ string.ToUpperFirst(field); }}</th>
+          <th class="{{ class..'_'..field..'_header' }}">{{ string.ToUpperFirst(field); }}</th>
         </eval:if>
       </eval:foreach>
     </tr>
@@ -82,7 +82,7 @@
          };
          
          var template = root..'/Tabulars/TabularItem';
-         var content  = wiki.template(template, [kind, type, params, root, template, prefix]);
+         var content  = wiki.template(template, [puid, kind, type, params, root, template, prefix]);
       
          if (string.contains(content, 'href="'..template..'"')) {
             let content = 'Template not found';
@@ -128,7 +128,7 @@
      };
          
      let template = root..'/Tabulars/TabularItem';
-     let content  = wiki.template(template, [kind, type, params, root, template, prefix]);
+     let content  = wiki.template(template, [puid, kind, type, params, root, template, prefix]);
       
      if (!string.contains(content, 'href="'..template..'"')) {
         var flag = true;

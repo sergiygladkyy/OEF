@@ -23,6 +23,7 @@ ul.ae_editform_field_errors, ul.ae_errors {
 
 .ae_tabular_section {
 	width: 702px;
+	min-height: 80px;
 	padding: 0px 0px 4px 0px;
 	overflow: auto;
 }

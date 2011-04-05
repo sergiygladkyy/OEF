@@ -1,10 +1,14 @@
 {{
-   var kind    = args[0];
-   var type    = args[1];
-   var data    = args[2];
-   var root    = args[3];
-   var current = args[4];
-   var prefix  = args[5] ?? 'default';
+   var puid    = args[0];
+   var kind    = args[1];
+   var type    = args[2];
+   var data    = args[3];
+   var root    = args[4];
+   var current = args[5];
+   var prefix  = args[6] ?? 'default';
+   var name    = (#puid.main_kind != 0) ? string.ToUpperFirst(puid.main_kind)..string.ToUpperFirst(puid.main_type) : '';
+   
+   let name ..= string.ToUpperFirst(type);
 }}
   <eval:if test="current is nil">
     <ul class="ae_errors">
@@ -29,13 +33,13 @@
   <eval:else>
     <pre class="script">
       var tpl_params = [kind, type, data, root, prefix];
-      var template   = current..'/'..prefix..string.ToUpperFirst(type);
+      var template   = current..'/'..prefix..name;
       var content    = wiki.template(template, tpl_params);
       if (string.contains(content, 'href="'..template..'"'))
       {
          if (prefix != 'default')
          {
-            let template = current..'/default'..string.ToUpperFirst(type);
+            let template = current..'/default'..name;
             let content  = wiki.template(template, tpl_params);
          
             if (string.contains(content, 'href="'..template..'"'))

@@ -7,6 +7,9 @@
    var params  = args[5];
    var prefix  = args[6] ?? 'default';
    var type    = puid.type;
+   var name    = (#puid.main_kind != 0) ? string.ToUpperFirst(puid.main_kind)..string.ToUpperFirst(puid.main_type) : '';
+   
+   let name ..= string.ToUpperFirst(type);
 }}
   <eval:if test="current is nil">
     <ul class="ae_errors">
@@ -40,13 +43,13 @@
       }
       else {
          var tpl_params = [uid, puid, data.result, root, prefix, params.name_prefix];
-         var template   = current..'/'..prefix..string.ToUpperFirst(type);
+         var template   = current..'/'..prefix..name;
          var content    = wiki.template(template, tpl_params);
          if (string.contains(content, 'href="'..template..'"'))
          {
             if (prefix != 'default')
             {
-               let template = current..'/default'..string.ToUpperFirst(type);
+               let template = current..'/default'..name;
                let content  = wiki.template(template, tpl_params);
                
                if (string.contains(content, 'href="'..template..'"'))

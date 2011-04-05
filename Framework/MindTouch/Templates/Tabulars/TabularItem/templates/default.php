@@ -35,7 +35,7 @@
              required:  list.contains(required, field),
              dynamic:   list.contains(dynamic, field),
              precision: field_prec[field],
-             attrs: {id: _prefix..'_field'}
+             attrs:     {id: _prefix..'_field'}
           };
             
           if (references[field]) {
