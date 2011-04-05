@@ -1,3 +1,5 @@
+var OPENED_TO_PRINT = {};
+
 /**
  * Process onPrint event
  * 
@@ -257,9 +259,26 @@ function oefPrint(kind, type, id, layout)
 	 */
 	this.displayPrintWindow = function(content)
 	{
-		var pWin = window.open(null, '_blank', 'width=800,height=600,menubar=1,toolbar=0');
-		var doc  = pWin.document.open("text/html", "replace");
-		var txt  = "<html><body>" + content + "</body></html>";
+		var pWin, doc, txt = '';
+		
+		if (!OPENED_TO_PRINT[this.kind])
+		{
+			OPENED_TO_PRINT[this.kind] = {};
+		}
+		
+		if (!OPENED_TO_PRINT[this.kind][this.type] || OPENED_TO_PRINT[this.kind][this.type].closed)
+		{
+			OPENED_TO_PRINT[this.kind][this.type] = window.open(null, '_blank', 'width=810,height=600,menubar=1,toolbar=0,scrollbars=1');
+		}
+		
+		pWin = OPENED_TO_PRINT[this.kind][this.type];
+		
+		doc  = pWin.document.open("text/html", "replace");
+		
+		txt += '<html><body style="padding: 0; margin: 0;">';
+		txt += '<table id="oef_print_container" style="width: 100%; background-color: #444444; border: 0 none;"><tr><td align="center">';
+		txt += '<table style="width: 0; height: 0; background-color: #FFFFFF;"><tr><td>' + content + '</td></tr></table>';
+		txt += '</td></tr></table></body></html>';
 		
 		doc.write(txt);
 		doc.close();
