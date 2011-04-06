@@ -137,11 +137,11 @@ $_dictionary = array(
          ),
 
          'Forms' => array(
-            'UserProfile'
+            'UserProfile','UserBrowser'
          ),
 
          'Templates' => array(
-            'UserProfile'
+            'UserProfile','UserBrowser'
          )
       ),
 

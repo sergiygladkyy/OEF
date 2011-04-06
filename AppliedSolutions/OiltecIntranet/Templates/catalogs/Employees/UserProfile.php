@@ -21,7 +21,7 @@ img { border:0; }
 
 .userRight { float:left; margin: 20px 0px 20px 8px;  }
 
-.userActions { float: left; width: 190px; overflow:hidden; }
+.userActions { float: left; width: 190px; overflow:hidden; padding-top: 10px;}
 
 .userRows { width:302px; float:left; }
 
@@ -131,7 +131,7 @@ input.userBusinessCard {
   </div>
 <?php else: ?>
   <?php $prefix = $form_prefix.'[attributes]' ?>
-  
+
 <div class="userTabs">
   <div id="htab1">
 
@@ -148,7 +148,7 @@ input.userBusinessCard {
 <form method="post" action="#" class="oe_custom_edit_form" id="catalogs_Employees_item" enctype="multipart/form-data">
   <input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
   <input type="hidden" value="<?php echo $attrs["Person"]["_id"]?>" name="<?php echo $prefix."[_id]"; ?>" />
-  
+
   <div class="userLeft">
     <div class="userPhoto">
       <?php if (isset($attrs["Person"]["Photo"]) ): ?>
@@ -157,12 +157,17 @@ input.userBusinessCard {
         <center>No image</center>
       <?php endif;?>
     </div>
+     <div class="userActions" >
+        <input type="button" id="userEdit1" class="userProfileEdit" onclick="openForm(1)" />
+        <input type="button" id="userSubmit1" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
+        <input type="button" id="userCancel1" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />
+      </div>
   </div>
 
   <div class="userRight">
     <div id="tab1">
       <div class="userRows userFields">
-        
+
         <div class="userRow">
           <div class="userRowLeft">First Name:</div>
           <div class="userRowRight">
@@ -226,17 +231,13 @@ input.userBusinessCard {
         <div class="userRow"></div>
         <div class="userRow"></div>
       </div>
-      
-      <div class="userActions">
-        <input type="button" id="userEdit1" class="userProfileEdit" onclick="openForm(1)" />
-        <input type="button" id="userSubmit1" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
-        <input type="button" id="userCancel1" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />
-      </div>
-      
+
+
+
     </div>
     <div id="tab2" style="display:none;">
       <div class="userRows userFields">
-      
+
         <div class="userRow">
           <div class="userRowLeft">Organization:</div>
           <div class="userRowRight" >
@@ -356,9 +357,9 @@ function openForm(mode) {
 
 function show(num){
     hideMessages();
-    
+
     var isHired = <?php echo (empty($attrs["StaffRecord"]) ? 'false' : 'true') ?>;
-    
+
     if (num == 'tab2')
     {
     	if (isHired)
@@ -375,10 +376,10 @@ function show(num){
         	var msg = 'The section is emply because this person is not currently employed. ' +
         		'You can employ him/her by submitting a "<a href="?uid=documents.RecruitingOrder&actions=displayListForm">Recruitment Order</a>" document';
     	}
-    	
+
         displayMessage('info', msg, 2);
     }
-    
+
     document.getElementById(num).style.display='block';
 
     document.getElementById("h"+num).style.display='block';
