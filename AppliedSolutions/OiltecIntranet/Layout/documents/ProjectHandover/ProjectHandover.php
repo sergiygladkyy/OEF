@@ -2,619 +2,693 @@
 <html>
 <head>
   <title>Project Resources</title>
-  <style>
-    
+  <style></style>
+  <style type="text/css">
     table {
        border-collapse: collapse;
        padding: 0px;
     }
-    th {
-       background-color: #DDDDDD;
-       border-collapse: collapse;
-       border: 1px solid #000000;
+	td {
        font-family: Times New Roman, Times, serif;
-       font-weight: bold;
-       font-size: 12px;
-       text-align: left;
-       vertical-align: bottom;
+       font-size: 17px;
        padding: 1px 8px;
     }
-    th.head { border: 0 none; padding-top: 10px;}
+	td.border {
+	    border: 1px solid #000000;
+	    border-collapse: collapse;
+	}
+	td.label_1 {
+	    font-family: Verdana,Arial,Sans-Serif;
+        font-variant: normal;
+        font-weight: bold;
+        font-size: 9px;
+        text-align: center;
+        vertical-align: top;
+        padding: 8px 8px;
+	}
+	td.label_2 {
+	    font-family: Times New Roman, Times, serif;
+        text-align: left;
+        vertical-align: top;
+        padding: 6px 8px;
+        font-weight: bold;
+        font-size: 13px;
+	}
+	td.text_1 {
+	    font-family: Times New Roman, Times, serif;
+        text-align: left;
+        vertical-align: top;
+        padding: 6px 8px;
+        font-size: 18px;
+	}
+	td.text_2 {
+	    font-family: Times New Roman, Times, serif;
+        font-size: 17px;
+        text-align: left;
+        vertical-align: top;
+        padding: 1px 8px;
+	}
+	td.text_3 {
+	    font-family: Times New Roman, Times, serif;
+        font-size: 17px;
+        text-align: left;
+        vertical-align: top;
+        padding: 1px 8px;
+	}
+	td.header_1 {
+	    border-collapse: collapse;
+        border: 1px solid #000000;
+        font-family: Times New Roman, Times, serif;
+        font-size: 17px;
+        text-align: left;
+        vertical-align: top;
+        padding: 1px 8px;
+	}
+	td.bold {
+	    font-weight: bold;
+	}
+	
+	.padding_1 {
+	    height: 45px;
+	}
+	.gray {
+	    background-color: #D0D0D0;
+	}
+	
+	th {
+        background-color: #DDDDDD;
+        border-collapse: collapse;
+        border: 1px solid #000000;
+        font-family: Times New Roman, Times, serif;
+        font-weight: bold;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: bottom;
+        padding: 1px 8px;
+    }
+    th.head {
+        border: 0 none;
+        padding-top: 10px;
+    }
     th.bold {
-       font-variant: normal;
-       font-weight: bold;
-       font-size: 18px;
+        font-variant: normal;
+        font-weight: bold;
+        font-size: 18px;
     }
     th.normal {
-       font-variant: normal;
-       font-weight: normal;
-       font-size: 17px;
+        font-variant: normal;
+        font-weight: normal;
+        font-size: 17px;
     }
-    th.center {
-       text-align: center;
+    th.align_1 {
+        text-align: center;
     }
-    
-    #ProjectHandover {
-       width: 760px;
-    }
-    #ProjectHandover table {
-       width: 100%;
-    }
-    #ProjectHandover td {
-       padding: 45px 0 0 55px;
-    }
-    
-    #header {
-       padding: 0 !important;
-    }
-    #header td {
-       border-collapse: collapse;
-       border: 1px solid #000000;
-       font-family: Verdana,Arial,Sans-Serif;
-       font-variant: small-caps;
-       font-weight: bold;
-       font-size: 11px;
-       text-align: center;
-       vertical-align: top;
-       padding: 8px 8px;
-    }
-    #header .last_col td {
-       border-bottom: 0 none;
-    }
-    
-    #header_1 td {
-       border-collapse: collapse;
-       border: 1px solid #000000;
-       font-family: Times New Roman, Times, serif;
-       font-size: 18px;
-       text-align: left;
-       vertical-align: top;
-       padding: 6px 8px;
-    }
-    #header_1 .label {
-       font-weight: bold;
-       font-size: 13px;
-    }
-    
-    #project_info td {
-       border-collapse: collapse;
-       border: 1px solid #000000;
-       font-family: Times New Roman, Times, serif;
-       font-size: 17px;
-       text-align: left;
-       vertical-align: top;
-       padding: 1px 8px;
-    }
-    
-    table.info td {
-       border-collapse: collapse;
-       border: 1px solid #000000;
-       font-family: Times New Roman, Times, serif;
-       font-size: 17px;
-       text-align: left;
-       vertical-align: top;
-       padding: 1px 8px !important;
-    }
-     
 	
-	
-	
-	*[area=total]    { background-color: #ffdeed; }
-	*[area=employee] { background-color: #dedeed; }
-	*[area=hours]    { background-color: #eeffc9; }
   </style>
 </head>
 <body>
   <!-- BEG Макет -->
-  <table id="DocumentProjectHandover">
+  <table style="width: 816px;">
   <tr>
-    <td style="padding: 30px 30px 30px 50px;">
+    <td style="width: 50px; padding: 0 !important; height: 30px; "> </td>
     
-    <table id="ProjectHandover">
-    <tr>
-      <td id="header">
-        <table>
-        <tr style="height: 7em;">
-          <td colspan="2"> </td>
-          <td>project:</td>
-          <td colspan="2">project title</td>
-          <td>document ref</td>
-        </tr>
-        <tr style="height: 2em;" class="last_col">
-          <td style="width: 75px">checked:</td>
-          <td style="width: 75px">approved:</td>
-          <td style="width: 75px">procedure:</td>
-          <td style="width: 125px">rev. no:</td>
-          <td style="width: 125px">date:</td>
-          <td>page:</td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="header_1">
-        <table>
-        <tr>
-          <td style="width: 80px" class="label">Purpose:</td>
-          <td style="width: 330px">Quality check on handover form sales to project manager.</td>
-          <td style="width: 60px" class="label">Date:</td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td class="label">Initiator:</td>
-          <td> </td>
-          <td class="label">Place:</td>
-          <td>Sandnes</td>
-        </tr>
-        <tr>
-          <td class="label">Participants:</td>
-          <td colspan="3"> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="project_info">
-        <table>
-        <tr style="background-color: #D0D0D0;">
-          <td style="width: 280px; font-weight: bold;">Project information</td>
-          <td style="width: 2px"> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Project sales responsible:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Project Manager:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Technical tender responsible (SACA):</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Project code:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Project name:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Main project:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Contract number:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Customer:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Customer main contact:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Selling price:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Materials cost:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Total Indirect labor Cost:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Number of hours:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Gross Margin (Dekningsbidrag-DB1):</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Added value pr. Hour (Verdiskapning pr.time):</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Estimated start date:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Estimated end date:</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="review_of_contract">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">1. REVIEW OF CONTRACT</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Sales/Technical</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Do we have a contract or purchase order from customer?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is report format and documentation feedback agreed upon by Customer?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is payment schedule, guarantees and insurance clarified?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Does the contract have a penalty paragraph?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is the delivery conditions clarified?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is the demand for documentation clarified?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is there a total budget?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is price strategy used?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="offer">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">2. OFFER/QUOTE REVIEW</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Sales/Technical</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Have all necessary descriptions, drawings, specifications etc. been received from the customer?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is anything missing from Oiltec Solutions? (necessary resources, etc.)</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is there a hardware delivery in the project?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="clarifications">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">3. BID CLARIFICATIONS (BC)</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Sales/Technical</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Do we have the BC minutes of meeting?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is all BC correspondence archived?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="economy">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">4. ECONOMY</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Sales</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Do the contract contain bank guarantees, advances or special insurances?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is there a SACA sheet?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>What are the demands for reporting with regards to economy?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="organizing">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">5. ORGANIZING</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Project manager</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Has the workforce been selected and approved?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Will the project need new employments?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Has resources in the manufacturing plant been allocated? (local or overseas)</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="technical_solution">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">7. TECHNICAL SOLUTION</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Project manager</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Has the techical solution been accepted by the Lead Engineer?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>Is the project an internal development project?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="critical_factors">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">10. CRITICAL FACTORS</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Sales/Technical</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>
-            Identify:
-            <ul>
-              <li>Critical items</li>
-              <li>Demands</li>
-              <li>Solutions</li>
-              <li>Timing</li>
-            </ul>
-          </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="experience">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="4">13. EXPERIENCE</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Project manager/Sales</th>
-          <th style="width: 20px;" class="center">YES</th>
-          <th style="width: 20px;" class="center">NO</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td>Is this a project with nearly <i>replica-like</i> conditions compared to previous projects of the same kind?</td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="misc">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="2">14. MISC</th>
-        </tr>
-        <tr>
-          <th style="width: 230px;" class="normal">Responsible: Everybody</th>
-          <th>COMMENTS</th>
-        </tr>
-        <tr>
-          <td style="height: 1000px;">Other issues:</td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="pr_mang_declaration">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="2">15. PROJECT MANAGERS DECLARATION OF ACCEPTANCE</th>
-        </tr>
-        <tr>
-          <th style="width: 560px;" class="bold">Statements:</th>
-          <th class="bold center">Signature</th>
-        </tr>
-        <tr>
-          <td>The project is satisfying and I accept the responsibility for carrying out the project.</td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>The project is not completely satisfying, but I accept the responsibility for carrying out the project under the conditions specified below.</td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td>The project is not satisfying because of the causes listed below and I cannot accept the responsibility for carrying out this project.</td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="conditions">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="2">16. CONDITION / CAUSES</th>
-        </tr>
-        <tr>
-          <th style="width: 50%;" class="bold">Description</th>
-          <th>Comments</th>
-        </tr>
-        <tr>
-          <td style="height: 85px;"> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td style="height: 85px;"> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td style="height: 85px;"> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td style="height: 85px;"> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td id="witness">
-        <table class="info">
-        <tr>
-          <th class="head" colspan="3">17. WITNESS</th>
-        </tr>
-        <tr>
-          <th style="width: 145px;" class="bold">Funksjon</th>
-          <th style="width: 200px;" class="bold">Navn and Title</th>
-          <th class="bold">Signature and Date</th>
-        </tr>
-        <tr>
-          <td style="height: 40px; vertical-align: middle;">Project Manager</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td style="height: 40px; vertical-align: middle;">Sales Responsible</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td style="height: 100px; vertical-align: middle;">Witnesses</td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        </table>
-      </td>
-    </tr>
-	</table>
-	
-	</td>
+    <td style="width: 40px; padding: 0 !important;"> </td>
+    <td style="width: 50px; padding: 0 !important;"> </td>
+     
+    <td style="width: 45px; padding: 0 !important;"> </td>
+    <td style="width: 45px; padding: 0 !important;"> </td>
+    
+    <td style="width: 15px; padding: 0 !important;"> </td>
+    <td style="width: 75px; padding: 0 !important;"> </td>
+    
+    <td style="width: 10px; padding: 0 !important;"> </td>
+    <td style="width: 50px; padding: 0 !important;"> </td>
+    <td style="width: 16px; padding: 0 !important;"> </td>
+    <td style="width: 16px; padding: 0 !important;"> </td>
+    <td style="width: 16px; padding: 0 !important;"> </td>
+    <td style="width: 5px;  padding: 0 !important;"> </td>
+    <td style="width: 18px; padding: 0 !important;"> </td>
+    <td style="width: 7px;  padding: 0 !important;"> </td>
+    
+    <td style="width: 55px; padding: 0 !important;"> </td>
+    <td style="width: 73px; padding: 0 !important;"> </td>
+    <td style="width: 10px; padding: 0 !important;"> </td>
+    
+    <td style="width: 80px; padding: 0 !important;"> </td>
+    <td style="width: 85px; padding: 0 !important;"> </td>
+    <td style="width: 25px; padding: 0 !important;"> </td>
+    <td style="width: 30px; padding: 0 !important;"> </td>
   </tr>
+  
+  <tr style="height: 110px;">
+    <td> </td>
+    <td colspan="4"  class="border label_1"> </td>
+    <td colspan="2"  class="border label_1">PROJECT:</td>
+    <td colspan="11" class="border label_1">PROJECT TITLE</td>
+    <td colspan="3"  class="border label_1">DOCUMENT REF</td>
+    <td> </td>
+  </tr>
+  <tr style="height: 110px;">
+    <td> </td>
+    <td colspan="2" class="border label_1">CHECKED:</td>
+    <td colspan="2" class="border label_1">APPROVED:</td>
+    <td colspan="2" class="border label_1">PROCEDURE:</td>
+    <td colspan="8" class="border label_1">REV. NO:</td>
+    <td colspan="3" class="border label_1">DATE:</td>
+    <td colspan="3" class="border label_1">PAGE:</td>
+    <td> </td>
+  </tr>
+  
+  <tr>
+    <td rowspan="93"> </td>
+    <td colspan="20" class="padding_1"> </td>
+    <td rowspan="92"> </td>
+  </tr>
+  
+  <tr>
+    <td rowspan="3"> </td>
+    <td colspan="2"  class="border label_2">Purpose:</td>
+    <td colspan="12" class="border text_1">Quality check on handover form sales to project manager.</td>
+    <td colspan="1"  class="border label_2">Date:</td>
+    <td colspan="3"  class="border text_1"> </td>
+    <td rowspan="2"> </td>
+   </tr>
+   <tr>
+     <td colspan="2"  class="border label_2">Initiator:</td>
+     <td colspan="12" class="border text_1"> </td>
+     <td colspan="1"  class="border label_2">Place:</td>
+     <td colspan="3"  class="border text_1">Sandnes</td>
+   </tr>
+   <tr>
+     <td colspan="2"  class="border label_2">Participants:</td>
+     <td colspan="16" class="border text_1"> </td>
+     <td> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="18" class="padding_1"> </td>
+     <td> </td>
+   </tr>
+   
+   <!-- Project infoormation -->
+   
+   <tr>
+     <td rowspan="18"> </td>
+     <td colspan="8" class="header_1 bold gray">Project information</td>
+     <td colspan="1" class="border gray"> </td>
+     <td colspan="9" class="border gray"> </td>
+     <td rowspan="17"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Project sales responsible:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Project Manager:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Technical tender responsible (SACA):</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Project code:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Project name:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Main project:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Contract number:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Customer:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Customer main contact:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Selling price:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Materials cost:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Total Indirect labor Cost:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Number of hours:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Gross Margin (Dekningsbidrag-DB1):</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Added value pr. Hour (Verdiskapning pr.time):</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Estimated start date:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+   </tr>
+   <tr>
+     <td colspan="8" class="border text_2">Estimated end date:</td>
+     <td colspan="1" class="border"> </td>
+     <td colspan="9" class="border text_2"> </td>
+     <td> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="18" class="padding_1"> </td>
+     <td> </td>
+   </tr>
+   
+   <!-- 1. REVIEW OF CONTRACT -->
+   
+   <tr>
+     <td rowspan="10"> </td>
+     <th colspan="19" class="head">1. REVIEW OF CONTRACT</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Sales/Technical</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Do we have a contract or purchase order from customer?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is report format and documentation feedback agreed upon by Customer?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is payment schedule, guarantees and insurance clarified?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Does the contract have a penalty paragraph?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is the delivery conditions clarified?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is the demand for documentation clarified?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is there a total budget?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is price strategy used?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 2. OFFER/QUOTE REVIEW -->
+   
+   <tr>
+     <td rowspan="5"> </td>
+     <th colspan="19" class="head">2. OFFER/QUOTE REVIEW</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Sales/Technical</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Have all necessary descriptions, drawings, specifications etc. been received from the customer?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is anything missing from Oiltec Solutions? (necessary resources, etc.)</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is there a hardware delivery in the project?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 3. BID CLARIFICATIONS (BC) -->
+   
+   <tr>
+     <td rowspan="4"> </td>
+     <th colspan="19" class="head">3. BID CLARIFICATIONS (BC)</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Sales/Technical</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Do we have the BC minutes of meeting?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is all BC correspondence archived?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 4. ECONOMY -->
+   
+   <tr>
+     <td rowspan="5"> </td>
+     <th colspan="19" class="head">4. ECONOMY</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Sales</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Do the contract contain bank guarantees, advances or special insurances?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is there a SACA sheet?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">What are the demands for reporting with regards to economy?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 5. ORGANIZING -->
+   
+   <tr>
+     <td rowspan="5"> </td>
+     <th colspan="19" class="head">5. ORGANIZING</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Project manager</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Has the workforce been selected and approved?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Will the project need new employments?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Has resources in the manufacturing plant been allocated? (local or overseas)</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 7. TECHNICAL SOLUTION -->
+   
+   <tr>
+     <td rowspan="4"> </td>
+     <th colspan="19" class="head">7. TECHNICAL SOLUTION</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Project manager</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Has the techical solution been accepted by the Lead Engineer?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is the project an internal development project?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 10. CRITICAL FACTORS -->
+   
+   <tr>
+     <td rowspan="3"> </td>
+     <th colspan="19" class="head">10. CRITICAL FACTORS</th>
+   </tr>
+   <tr>
+     <th colspan="6"  class="normal">Responsible: Sales/Technical</th>
+     <th colspan="13">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border">
+       Identify:
+       <ul>
+         <li>Critical items</li>
+         <li>Demands</li>
+         <li>Solutions</li>
+         <li>Timing</li>
+       </ul>
+     </td>
+     <td colspan="13" class="border"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 13. EXPERIENCE -->
+
+   <tr>
+     <td rowspan="3"> </td>
+     <th colspan="19" class="head">13. EXPERIENCE</th>
+   </tr>
+   <tr>
+     <th colspan="6" class="normal">Responsible: Project manager/Sales</th>
+     <th colspan="1" class="align_1">YES</th>
+     <th colspan="3" class="align_1">NO</th>
+     <th colspan="9">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6" class="border text_3">Is this a project with nearly <i>replica-like</i> conditions compared to previous projects of the same kind?</td>
+     <td colspan="1" class="border text_3"> </td>
+     <td colspan="3" class="border text_3"> </td>
+     <td colspan="9" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 14. MISC -->
+   
+   <tr>
+     <td rowspan="3"> </td>
+     <th colspan="19" class="head">14. MISC</th>
+   </tr>
+   <tr>
+     <th colspan="6"  class="normal">Responsible: Everybody</th>
+     <th colspan="13">COMMENTS</th>
+   </tr>
+   <tr>
+     <td colspan="6"  class="border text_3" style="height: 1000px;">Other issues:</td>
+     <td colspan="13" class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 15. PROJECT MANAGERS DECLARATION OF ACCEPTANCE -->
+   
+   <tr>
+     <td rowspan="5"> </td>
+     <th colspan="19" class="head">15. PROJECT MANAGERS DECLARATION OF ACCEPTANCE</th>
+   </tr>
+   <tr>
+     <th colspan="17" class="bold">Statements:</th>
+     <th colspan="2"  class="bold align_1">Signature</th>
+   </tr>
+   <tr>
+     <td colspan="17" class="border text_3">The project is satisfying and I accept the responsibility for carrying out the project.</td>
+     <td colspan="2"  class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="17" class="border text_3">The project is not completely satisfying, but I accept the responsibility for carrying out the project under the conditions specified below.</td>
+     <td colspan="2"  class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="17" class="border text_3">The project is not satisfying because of the causes listed below and I cannot accept the responsibility for carrying out this project.</td>
+     <td colspan="2"  class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 16. CONDITION / CAUSES -->
+   
+   <tr>
+     <td rowspan="6"> </td>
+     <th colspan="19" class="head">16. CONDITION / CAUSES</th>
+   </tr>
+   <tr>
+     <th colspan="11" class="bold">Description</th>
+     <th colspan="8"  class="bold">Comments</th>
+   </tr>
+   <tr>
+     <td colspan="11" class="border text_3" style="height: 85px;"> </td>
+     <td colspan="8"  class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="11" class="border text_3" style="height: 85px;"> </td>
+     <td colspan="8"  class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="11" class="border text_3" style="height: 85px;"> </td>
+     <td colspan="8"  class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="11" class="border text_3" style="height: 85px;"> </td>
+     <td colspan="8"  class="border text_3"> </td>
+   </tr>
+   
+   <tr>
+     <td> </td>
+     <td colspan="19" class="padding_1"> </td>
+   </tr>
+   
+   <!-- 17. WITNESS -->
+   
+   <tr>
+     <td rowspan="5"> </td>
+     <th colspan="19" class="head">17. WITNESS</th>
+   </tr>
+   <tr>
+     <th colspan="4" class="bold">Funksjon</th>
+     <th colspan="9" class="bold">Navn and Title</th>
+     <th colspan="6" class="bold">Signature and Date</th>
+   </tr>
+   <tr>
+     <td colspan="4" class="border" style="height: 40px; vertical-align: middle;">Project Manager</td>
+     <td colspan="9" class="border text_3"> </td>
+     <td colspan="6" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="4" class="border" style="height: 40px; vertical-align: middle;">Sales Responsible</td>
+     <td colspan="9" class="border text_3"> </td>
+     <td colspan="6" class="border text_3"> </td>
+   </tr>
+   <tr>
+     <td colspan="4" class="border" style="height: 100px; vertical-align: middle;">Witnesses</td>
+     <td colspan="9" class="border text_3"> </td>
+     <td colspan="6" class="border text_3"> </td>
+     <td> </td>
+   </tr>
+   <tr>
+     <td colspan="22" style="height: 30px;"> </td>
+   </tr>
   </table>
   <!-- END Макет -->
 </body>

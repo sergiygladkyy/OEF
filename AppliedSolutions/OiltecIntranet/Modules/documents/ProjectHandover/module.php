@@ -84,7 +84,16 @@ function onUnpost($event)
  */
 function onPrint($event)
 {
-   //$mockup = new Mockup(self::$layout_dir.'ProjectHandover.php');
+   $mockup   = new Mockup(self::$layout_dir.'ProjectHandover.php');
+   $document = new TabularDoc();
    
-   include(self::$layout_dir.'ProjectHandover.php');
+   $area = $mockup->getArea('C1.R1:C22.R97');
+   //$area->parameters['header'] = 'Project ManHours report ('.date('d-m-Y H:i:s').')';
+
+   $document->put($area);
+   
+   $document->setGridAttributes($mockup->getGridAttributes());
+   $document->addCSS($mockup->getCSS());
+   
+   echo $document->show();
 }
