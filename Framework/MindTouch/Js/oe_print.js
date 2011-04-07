@@ -185,7 +185,7 @@ function oefPrint(kind, type, id, layout)
 		
 		var content = oPrint.getContent(kind, type, id, template);
 		
-		oPrint.displayPrintWindow(content);
+		if (content !== false) oPrint.displayPrintWindow(content);
 		
 		appActive();
 	}
@@ -202,7 +202,7 @@ function oefPrint(kind, type, id, layout)
 	 */
 	this.getContent = function (kind, type, id, template, options)
 	{
-		var content = '', prefix;
+		var content = false, prefix;
 		
 		prefix  = kind.replace('.', '_');
 		prefix += '_' + type;
