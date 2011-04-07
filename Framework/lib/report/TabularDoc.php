@@ -151,8 +151,26 @@ class TabularDoc extends Grid
     */
    public function show()
    {
-      $html = "<table class=\"oef_report\">\n<tbody>";
+      $html = '';
       
+      // CSS
+      foreach ($this->css as $css)
+      {
+         $html .= "\n<style type=\"text/css\">\n".$css."\n</style>";
+      }
+      
+      // Grid attributes
+      $attr = $this->attributes;
+      
+      if (!isset($attr['class']))
+      {
+         $attr['class'] = 'oef_report';
+      }
+      
+      $attr  = $this->renderAttributes($attr);
+      $html .= "\n<table".$attr.">\n<tbody>";
+      
+      // Grid
       foreach ($this->grid as $row => $cols)
       {
          // Render row

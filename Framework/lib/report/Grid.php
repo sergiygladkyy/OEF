@@ -16,13 +16,27 @@ abstract class Grid
    protected $grid = array();
    
    /**
+    * Grid attributes
+    * 
+    * @var array
+    */
+   protected $attributes = array();
+   
+   /**
     * $area[name][coord] = array(C1, R1, C2, R2)
     *
     * @var array
     */
    protected $area = array();
    
-   protected $size   = array('C' => 0, 'R' => 0);
+   /**
+    * STYLE tags content
+    *  
+    * @var array
+    */
+   protected $css   = array();
+   
+   protected $size  = array('C' => 0, 'R' => 0);
    protected $cache = array();
    
    
@@ -336,5 +350,71 @@ abstract class Grid
       }
       
       return true;
+   }
+   
+   /**
+    * Get grid attributes
+    * 
+    * @return array
+    */
+   public function getGridAttributes()
+   {
+      return $this->attributes;
+   }
+   
+   /**
+    * Set grid attributes
+    * 
+    * @param array $attrs
+    * @return boolean
+    */
+   public function setGridAttributes(array $attrs)
+   {
+      $this->attributes = $attrs;
+      
+      return true;
+   }
+   
+   /**
+    * Get CSS style
+    * 
+    * @return array
+    */
+   public function getCSS()
+   {
+      return $this->css;
+   }
+   
+   /**
+    * Add css
+    * 
+    * @param mixed $css - array or string
+    * @return boolean
+    */
+   public function addCSS($css)
+   {
+      if (empty($css)) return true;
+   
+      if (is_string($css))
+      {
+         $this->css[] = $css;
+         
+         return true;
+      }
+      
+      if (!is_array($css)) return false;
+      
+      $ret = true;
+      
+      foreach ($css as $content)
+      {
+         if (is_string($content))
+         {
+            $this->css[] = $content;
+         }
+         else $ret = false;
+      }
+      
+      return $ret;
    }
 }

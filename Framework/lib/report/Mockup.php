@@ -9,6 +9,7 @@ class Mockup extends Grid
    {
       $this->parseMockup($filepath);
       
+      //echo '<hr><pre>'.print_r($this->css, true).'</pre>';
       //echo '<hr><pre>'.print_r($this->area, true).'</pre>';
       //echo '<hr><pre>'.print_r($this->grid, true).'</pre>';
       //echo '<hr><pre>'.print_r($this->size, true).'</pre>';
@@ -22,9 +23,24 @@ class Mockup extends Grid
     */
    protected function parseMockup($filepath)
    {
-      $sxml = simplexml_load_file($filepath);
-      $xml  = $sxml->body->table[0];
+      if (!($sxml = simplexml_load_file($filepath))) return;
       
+      $i = 0;
+      
+      while (isset($sxml->head->style[$i]))
+      {
+         if (!isset($sxml->head->style[$i]['type']) || $sxml->head->style[$i]['type'] == 'text/css')
+         {
+            $this->css[$i] = $this->getContent($sxml->head->style[$i]);
+         }
+         
+         $i++;
+      }
+      
+      if (!($xml = $sxml->body->table[0])) return;
+      
+      $this->setGridAttributes($this->getAttributes($xml));
+       
       $index = 0;
       $current_col = 0;
 
