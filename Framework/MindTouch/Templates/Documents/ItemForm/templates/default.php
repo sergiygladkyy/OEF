@@ -7,6 +7,7 @@
    var fields = {};
    var field_type = {};
    var references = {}; 
+   var layout     = [];
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
@@ -34,11 +35,23 @@
       else {
          let kind = puid.kind;
       }
+      
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
-      var tab_s      = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      
+      var tab_s = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      
+      var class = string.replace(kind, '.', '_')..'_'..type;
   }}
+  <div class="{{ class..'_message systemmsg' }}" style="display: none;">
+    <div class="inner">
+      <ul class="flashMsg">
+        <li>&nbsp;</li>
+      </ul>
+    </div>
+  </div>
   <eval:if test="item._deleted != 0">
   <div  style="float: right; margin: 30px 20px 0px 10px; font-size:12px; font-weight: bold; color: rgb(218, 6, 32);">Mark for deletion</div>
   </eval:if>
@@ -100,7 +113,13 @@
       </tr>
     </eval:foreach>
       <tr>
-        <td class="ae_edit" colspan="2"><a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a></td>
+        <td class="ae_edit" colspan="2">
+          <a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a>&nbsp;|
+          <eval:if test="#layout &gt; 0">
+            <a href="#" onclick="{{ 'if (!onPrint(this, \''..kind..'\', \''..type..'\', '..item._id..', '..Json.Emit(layout)..')) return false;' }}">Print</a>&nbsp;|
+          </eval:if>
+          <a href="#" onclick="{{ 'window.self.close(); if (window.opener && window.opener.length) { window.opener.focus(); } return false;' }}">Close</a>
+        </td>
       </tr>
     </tbody>
   </table>

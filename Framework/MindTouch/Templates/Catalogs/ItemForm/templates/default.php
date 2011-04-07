@@ -9,7 +9,8 @@
    var field_use  = {};
    var hierarchy  = {};
    var owners     = {};
-   var references = {}; 
+   var references = {};
+   var layout     = []; 
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
@@ -37,12 +38,14 @@
       else {
          let kind = puid.kind;
       }
+      
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
+      let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       var htype = hierarchy.type is num ? hierarchy.type : 0;
       
@@ -54,9 +57,18 @@
          let fields = field_use[1];
          var use_tabulars = true;
       }
+      
+      var class = string.replace(kind, '.', '_')..'_'..type;
   }}
+  <div class="{{ class..'_message systemmsg' }}" style="display: none;">
+    <div class="inner">
+      <ul class="flashMsg">
+        <li>&nbsp;</li>
+      </ul>
+    </div>
+  </div>
   <eval:if test="item._deleted != 0">
-  <div  style="float: right; margin: 30px 20px 0px 10px; font-size:12px; font-weight: bold; color: rgb(218, 6, 32);">Mark for deletion</div>
+    <div style="float: right; margin: 30px 20px 0px 10px; font-size:12px; font-weight: bold; color: rgb(218, 6, 32);">Mark for deletion</div>
   </eval:if>
   <div style="clear: both; height: 0;">&nbsp;</div>
   <table>
@@ -124,7 +136,13 @@
       </eval:foreach>
     </eval:if>
       <tr>
-        <td class="ae_edit" colspan="2"><a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a></td>
+        <td class="ae_edit" colspan="2">
+          <a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a>&nbsp;|
+          <eval:if test="#layout &gt; 0">
+            <a href="#" onclick="{{ 'if (!onPrint(this, \''..kind..'\', \''..type..'\', '..item._id..', '..Json.Emit(layout)..')) return false;' }}">Print</a>&nbsp;|
+          </eval:if>
+          <a href="#" onclick="{{ 'window.self.close(); if (window.opener && window.opener.length) { window.opener.focus(); } return false;' }}">Close</a>
+        </td>
       </tr>
   </tbody>
   </table>
