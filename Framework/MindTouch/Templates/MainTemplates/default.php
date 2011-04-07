@@ -135,7 +135,7 @@
                 &lt;body&gt;&lt;/body&gt;
                 &lt;tail&gt;
                   &lt;script type="text/javascript"&gt;"
-                    setInterval(\"updateListForm('"..page.api.."', null, 3000)\", 5000);
+                    setInterval(\"updateListForm('"..page.api.."', null, 5000)\", 30000);
                   "&lt;/script&gt;
                 &lt;/tail&gt;
               &lt;/html&gt;
@@ -192,7 +192,7 @@
                &lt;body&gt;&lt;/body&gt;
                &lt;tail&gt;
                  &lt;script type="text/javascript"&gt;"
-                   jQuery(document).ready(function() { setInterval(\"updateItemForm('"..page.api.."', null, 3000)\", 5000); });
+                   jQuery(document).ready(function() { setInterval(\"updateItemForm('"..page.api.."', null, 5000)\", 30000); });
                  "&lt;/script&gt;
                &lt;/tail&gt;
              &lt;/html&gt;
