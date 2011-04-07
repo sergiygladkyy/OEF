@@ -268,7 +268,7 @@ function oefPrint(kind, type, id, layout)
 		
 		if (!OPENED_TO_PRINT[this.kind][this.type] || OPENED_TO_PRINT[this.kind][this.type].closed)
 		{
-			OPENED_TO_PRINT[this.kind][this.type] = window.open(null, '_blank', 'width=810,height=600,menubar=1,toolbar=0,scrollbars=1');
+			OPENED_TO_PRINT[this.kind][this.type] = window.open(null, '_blank', 'width=810,height=600,menubar=1,toolbar=0,scrollbars=1,resizable=1');
 		}
 		
 		pWin = OPENED_TO_PRINT[this.kind][this.type];
@@ -276,7 +276,7 @@ function oefPrint(kind, type, id, layout)
 		doc  = pWin.document.open("text/html", "replace");
 		
 		txt += '<html><body style="padding: 0; margin: 0;">';
-		txt += '<table id="oef_print_container" style="width: 100%; background-color: #444444; border: 0 none;"><tr><td align="center">';
+		txt += '<table id="oef_print_container" style="width: 100%; height: 100%; background-color: #444444; border: 0 none;"><tr><td align="center" valign="top">';
 		txt += '<table style="width: 0; height: 0; background-color: #FFFFFF;"><tr><td>' + content + '</td></tr></table>';
 		txt += '</td></tr></table></body></html>';
 		
