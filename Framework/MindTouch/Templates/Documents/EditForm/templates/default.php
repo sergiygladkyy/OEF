@@ -164,3 +164,4 @@
     }}
   </eval:if>
 </eval:else>
+{{awpskin.hideAll();}}

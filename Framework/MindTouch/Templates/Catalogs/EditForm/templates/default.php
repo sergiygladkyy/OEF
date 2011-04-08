@@ -194,3 +194,4 @@
     {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..", {print: "..(#layout > 0 ? '\''..Json.Emit(layout)..'\'' : 'false').."});"&lt;/script&gt; }}
   </eval:if>
 </eval:else>
+{{awpskin.hideAll();}}
