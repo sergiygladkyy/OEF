@@ -67,3 +67,4 @@
   </tbody>
   </table>
 </eval:else>
+{{awpskin.hideAll();}}

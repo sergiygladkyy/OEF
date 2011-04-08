@@ -1,6 +1,6 @@
 <head>
-    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/ae_list_form.js"/>
-    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/ae_edit_form.js"/>
+    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/ae_edit_form.js"></script>
+    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/ae_list_form.js"></script>
 </head>
 <body>
 <style type="text/css">
@@ -120,8 +120,8 @@
 
 
 <div id="blanket" style="display:none;" onclick="popup('popUpDiv')"></div>
-	<div id="popUpDiv" style="display:none;width:800px;height:620px;" >
-                <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;"/>
+	<div id="popUpDiv" style="display:none;width:800px;height:680px;" >
+                <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;padding:10px;"/>
                 <div id="userProfilePopUp" style="padding: 20px;"></div>
 	</div>
 
@@ -308,13 +308,20 @@ function popup(windowname) {
            };
 
         /*var params = new Array();
-        
+
         params['employee'] = '1';
         params['form'] = 'UserProfile';
         params['uid'] = 'catalogs.Employees';
         params['tag_id'] = 'popUpDiv';*/
 
         displayCustomForm('catalogs.Employees','UserProfile' , params, 'userProfilePopUp');
+}
+function selectColumn(element, prefix)
+{
+	jQuery('#' + prefix + '_list_block .ae_current').removeClass('ae_current');
+	jQuery(element).parent().addClass('ae_current');
+
+	return false;
 }
 </script>
 <?php endif;?>

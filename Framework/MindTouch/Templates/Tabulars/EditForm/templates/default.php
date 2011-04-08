@@ -142,3 +142,4 @@
   </eval:if>
   <a class="tabulars_actions" href="#" onclick="{{ 'if (!jQuery(this).attr(\'disabled\') != \'true\') { deleteTabularSectionItems(\''..js_uid..'\', \''..class..'\'); } return false;' }}">Delete</a>
 </eval:else>
+{{awpskin.hideAll();}}
