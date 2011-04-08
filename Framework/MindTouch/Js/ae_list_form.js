@@ -6,68 +6,83 @@ self.childClose = function (data)
 	{
 		displayMessage(data.prefix, data.message, data.type);
 	}
-}
+};
 
 /************************************* Actions ******************************************/
 
 /**
  * Action new Item
  * 
- * @param element
- * @param href
- * @param prefix
- * @return
+ * @param DOMElements element
+ * @param string kind - entity kind
+ * @param string type - entity type
+ * @param object options
+ * 
+ * @return boolean
  */
-function newListItem(element, href, prefix)
+function newListItem(element, kind, type, options)
 {
-	jQuery(element).attr('href', href);
+	var param  = options && options.type ? {type: options.type} : {};
+	var popup  = new oefPopup(kind, type, param);
+	var target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
 	
-	return true;
+	return popup.displayWindow('displayEditForm', {id: 0});
 }
 
 /**
  * Action edit Item
  * 
- * @param element
- * @param href
- * @param prefix
- * @return
+ * @param DOMElements element
+ * @param string kind - entity kind
+ * @param string type - entity type
+ * 
+ * @return boolean
  */
-function editListItem(element, href, prefix, kind, type)
+function editListItem(element, kind, type)
 {
-	var res = true; 
-	var id  = getItemId(prefix);
+	var pref = getPrefix(kind, type);
+	var id   = getItemId(pref);
 	
 	if (!id) {
 		alert('Choose an list item');
 		return false;
 	}
 	
-	jQuery(element).attr('href', href + '&id=' + id);
-	
-	return res;
+	var popup  = new oefPopup(kind, type);
+	var target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
+    
+	return popup.displayWindow('displayEditForm', {id: id});
 }
 
 /**
  * Action view Item
  * 
- * @param element
- * @param href
- * @param prefix
- * @return
+ * @param DOMElements element
+ * @param string kind - entity kind
+ * @param string type - entity type
+ * 
+ * @return boolean
  */
-function viewListItem(element, href, prefix)
+function viewListItem(element, kind, type)
 {
-	var id = getItemId(prefix);
+	var pref = getPrefix(kind, type);
+	var id   = getItemId(pref);
 	
 	if (!id) {
 		alert('Choose an list item');
 		return false;
 	}
 	
-	jQuery(element).attr('href', href + '&id=' + id);
-	
-	return true;
+	var popup  = new oefPopup(kind, type);
+	var target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
+
+	return popup.displayWindow('displayItemForm', {id: id});
 }
 
 /**

@@ -137,7 +137,7 @@
     </eval:if>
       <tr>
         <td class="ae_edit" colspan="2">
-          <a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a>&nbsp;|
+          <a href="#" target="_self" onclick="{{ 'javascript: editItem(this, \''..kind..'\', \''..type..'\', '..item._id..'); return false;' }}">Edit</a>&nbsp;|
           <eval:if test="#layout &gt; 0">
             <a href="#" onclick="{{ 'if (!onPrint(this, \''..kind..'\', \''..type..'\', '..item._id..', '..Json.Emit(layout)..')) return false;' }}">Print</a>&nbsp;|
           </eval:if>

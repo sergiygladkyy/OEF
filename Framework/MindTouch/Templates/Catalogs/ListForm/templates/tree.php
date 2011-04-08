@@ -12,6 +12,7 @@
    var hierarchy  = {};
    var owners     = {};
    var references = {};
+   var basis_for  = {};
    var layout     = [];
    var kind   = '';
    var type   = puid.type;
@@ -49,6 +50,7 @@
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
+      let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
       
       var htype  = hierarchy.type is num ? hierarchy.type : 0;
@@ -105,16 +107,19 @@
     </table>
   </div>
   <eval:if test="htype == 2">
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New Item</a>&nbsp;|
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm&type=group'..'\', \''..class..'\');' }}" >New Group</a>&nbsp;|
+    <a href="#" target="_blank" onclick="{{ 'javascript: newListItem(this, \''..kind..'\', \''..type..'\');  return false;' }}" >New Item</a>&nbsp;|
+    <a href="#" target="_blank" onclick="{{ 'javascript: newListItem(this, \''..kind..'\', \''..type..'\', {type: \'group\'});  return false;' }}" >New Group</a>&nbsp;|
   </eval:if>
   <eval:else>
-    <a href="#" target="_blank" onclick="{{ 'javascript:newListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\');' }}" >New</a>&nbsp;|
+    <a href="#" target="_blank" onclick="{{ 'javascript: newListItem(this, \''..kind..'\', \''..type..'\');  return false;' }}">New</a>&nbsp;|
   </eval:else>
-  <a href="#" target="_blank" onclick="{{ 'javascript:if (!editListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayEditForm'..'\', \''..class..'\')) return false;' }}">Edit</a>&nbsp;|
-  <a href="#" target="_blank" onclick="{{ 'javascript:if (!viewListItem(this, \'/'..page.path..'?uid='..kind..'.'..type..'&actions=displayItemForm'..'\', \''..class..'\')) return false;' }}">View</a>&nbsp;|
+  <a href="#" target="_blank" onclick="{{ 'javascript: editListItem(this, \''..kind..'\', \''..type..'\'); return false;' }}">Edit</a>&nbsp;|
+  <a href="#" target="_blank" onclick="{{ 'javascript: viewListItem(this, \''..kind..'\', \''..type..'\'); return false;' }}">View</a>&nbsp;|
   <a href="#" onclick="{{ 'javascript:markForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\', true); return false;' }}">Mark for deletion</a>&nbsp;|
   <a href="#" onclick="{{ 'javascript:unmarkForDeletionListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Unmark for deletion</a>
+  <eval:if test="#basis_for &gt; 0">
+    |&nbsp;<a href="#" target="_blank" onclick="{{ 'javascript:if (!newOnBasis(this, \''..kind..'\', \''..type..'\', '..Json.Emit(basis_for)..')) return false;' }}">Create linked...</a>
+  </eval:if>
   <eval:if test="#layout &gt; 0">
     |&nbsp;<a href="#" onclick="{{ 'if (!printListItem(this, \''..kind..'\', \''..type..'\', '..Json.Emit(layout)..')) return false;' }}">Print</a>
   </eval:if>

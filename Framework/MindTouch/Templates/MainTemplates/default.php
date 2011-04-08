@@ -10,6 +10,8 @@
      var action   = __request.args.actions ?? args[2];
      var params   = args[3] ?? {};
      var prefix   = args[4] ?? 'default';
+     var isPopup  = __request.args.popup ?? 0;
+     let isPopup  = isPopup == 0 ? false : true;
      
      if (uid == 'Constants')
      {
@@ -87,6 +89,20 @@
         &lt;body&gt;&lt;/body&gt;
         &lt;tail&gt;&lt;/tail&gt;
       &lt;/html&gt;
+      
+      if (!isPopup)
+      {       
+        &lt;html&gt;
+          &lt;head&gt;
+            &lt;script type="text/javascript"&gt;"
+              jQuery(window).unload(function() {
+                 var popup = new oefPopup();
+	             popup.closeAllWindow();
+              });
+            "&lt;/script&gt;
+          &lt;/head&gt;
+        &lt;/html&gt;
+      }
     }}
     <div class="oef_content">
       <eval:if test="action == 'displayCustomForm'">

@@ -1,6 +1,18 @@
 var OEF_PAGE_PATH = null;
 
 /**
+ * Return prefix
+ * 
+ * @param string kind
+ * @param string type
+ * @return string
+ */
+function getPrefix(kind, type)
+{
+	return kind.replace('.', '_') + '_' + type;
+}
+
+/**
  * Display editform fields errors
  * 
  * @param prefix
@@ -189,5 +201,284 @@ function appDisplayLoader(flag)
 	else
 	{
 		jQuery('#TB_load').css("display", flag ? 'block' : 'none');
+	}
+}
+
+
+
+/************************************* Windows ***********************************************/
+
+var OEF_WINDS = {};
+var OEF_MAIN_WINDOW = window;
+
+// Initialize window
+while (true)
+{
+	if (!OEF_MAIN_WINDOW.opener || OEF_MAIN_WINDOW.opener == OEF_MAIN_WINDOW) break;
+	
+	OEF_MAIN_WINDOW = OEF_MAIN_WINDOW.opener;
+	
+	OEF_WINDS = OEF_MAIN_WINDOW.OEF_WINDS;
+}
+
+/**
+ * Constuctor oefPopup
+ *  
+ * @param string kind
+ * @param string type
+ * @param object params
+ * @param string options
+ */
+function oefPopup(kind, type, params, options)
+{
+	this.kind = kind ? kind : null;
+	this.type = type ? type : null;
+	
+	this.params  = params  ? params  : {};
+	this.options = options ? options : 'width=810,height=600,menubar=1,toolbar=0,scrollbars=1,resizable=1';
+	this.target  = '_blank';
+	
+	var required_params = {
+		'default': {kind: 'kind', type: 'type'},
+		'displayItemForm': {kind: 'kind', type: 'type', id: 'id'},
+		'displayEditForm': {kind: 'kind', type: 'type', id: 'id'}
+	};
+	
+	/**
+	 * Set current kind
+	 * 
+	 * @param string kind
+	 * @return void
+	 */
+	this.setKind = function(kind)
+	{
+		this.kind = kind;
+	};
+	
+	/**
+	 * Set current type
+	 * 
+	 * @param string type
+	 * @return void
+	 */
+	this.setType = function(type)
+	{
+		this.type = type;
+	};
+	
+	/**
+	 * Set default (common) parameters in query string
+	 * 
+	 * @param object params
+	 * @return void
+	 */
+	this.setDefaultQSParams = function(params)
+	{
+		this.params = params;
+	};
+	
+	/**
+	 * Set options string to window.open
+	 * 
+	 * @param string options
+	 * @return void
+	 */
+	this.setWindowOptionsString = function(options)
+	{
+		this.options = options;
+	};
+	
+	/**
+	 * Set target
+	 *  
+	 *  _blank  - URL is loaded into a new window. This is default
+     *  _parent - URL is loaded into the parent frame
+     *  _self   - URL replaces the current page
+     *  _top    - URL replaces any framesets that may be loaded
+     *  name    - The name of the window
+     *
+	 * @param string target
+	 * @return void
+	 */
+	this.setTarget = function(target)
+	{
+		this.target = target;
+	};
+	
+	/**
+	 * Display popup window
+	 * 
+	 * @param action
+	 * @param params
+	 * @return boolean
+	 */
+	this.displayWindow = function(action, params)
+	{
+		if (!action) return false;
+		
+		if (params)
+		{
+			params = array_merge(this.params, params);
+		}
+		else params = this.params;
+		
+		var win = this.openWindow(this.kind, this.type, action, params);
+		
+		if (win)
+		{
+			//win.onload = function() { onLoad(win); };
+			
+			win.focus();
+			
+			return true;
+		}
+		
+		return false;
+	};
+	
+	/**
+	 * Open popup window
+	 * 
+	 * @param string kind
+	 * @param string type
+	 * @param string action
+	 * @param object params
+	 * @return window object
+	 */
+	this.openWindow = function(kind, type, action, params)
+	{
+		var required, id, uri, win = false;
+		
+		// Check parameters
+		if (!kind || !type) return false;
+		
+		if (!action) action = false;
+		
+		required = required_params[action] ? required_params[action] : required_params['default'];
+		
+		id = required.id ? (params.id ? params.id : 0) : false;
+		
+		//if (id === 0) return false;
+		
+		// Generate URI
+		params.uid   = kind + '.' + type;
+		
+		if (action)
+		{
+			params.actions = action;
+		}
+		else if (params.actions)
+		{
+			params.actions = null;
+		}
+		
+		params.popup = 1;
+		
+		uri = generateUri(params);
+		
+		// Open window
+		if (!OEF_WINDS[kind]) OEF_WINDS[kind] = {};
+		
+		if (!OEF_WINDS[kind][type]) OEF_WINDS[kind][type] = {};
+		
+		if (id !== false)
+		{
+			if (!OEF_WINDS[kind][type][action]) OEF_WINDS[kind][type][action] = {};
+			
+			if (!OEF_WINDS[kind][type][action][id] || OEF_WINDS[kind][type][action][id].closed)
+			{
+				OEF_WINDS[kind][type][action][id] = window.open(uri, this.target, this.options);
+			}
+			
+			win = OEF_WINDS[kind][type][action][id];
+		}
+		else
+		{
+			if (!OEF_WINDS[kind][type][action] || OEF_WINDS[kind][type][action].closed)
+			{
+				OEF_WINDS[kind][type][action] = window.open(uri, this.target, this.options);
+			}
+			
+			win = OEF_WINDS[kind][type][action];
+		}
+		
+		return win;
+	};
+	
+	/**
+	 * Close all opened window
+	 */
+	this.closeAllWindow = function ()
+	{
+		for (var kind in OEF_WINDS)
+		{
+			for (var type in OEF_WINDS[kind])
+			{
+				for (var action in OEF_WINDS[kind][type])
+				{
+					if (required_params[action]['id'])
+					{
+						for (var id in OEF_WINDS[kind][type][action])
+						{
+							if (!OEF_WINDS[kind][type][action][id].closed)
+							{
+								OEF_WINDS[kind][type][action][id].close();
+							}
+						}
+					}
+					else if (!OEF_WINDS[kind][type][action].closed)
+					{
+						OEF_WINDS[kind][type][action].close();
+					}
+				}
+			}
+		}
+	};
+	
+	/**
+	 * Generate URI
+	 * 
+	 * @param object params - query string params
+	 * @return string
+	 */
+	function generateUri(params)
+	{
+		var qs = '';
+		
+		for (var name in params)
+		{
+			qs += '&' + name + '=' + params[name];
+		}
+		
+		if (qs.length) qs = '?' + qs.substr(1);
+		
+		return self.location.pathname + qs;
+	}
+	
+	/**
+	 * Merge two arrays
+	 * 
+	 * @param arr1
+	 * @param arr2
+	 * @return object
+	 */
+	function array_merge(arr1, arr2)
+	{
+		for (var name in arr2)
+		{
+			arr1[name] = arr2[name];
+		}
+			
+		return arr1;
+	}
+	
+	/**
+	 * Process onLoad event
+	 * 
+	 * @return void
+	 */
+	function onLoad(win)
+	{
+		jQuery(win.document).find('body').append('<h1>On load</h1>');
 	}
 }

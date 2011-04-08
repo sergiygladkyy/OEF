@@ -1,3 +1,27 @@
+/************************************* Actions ******************************************/
+
+/**
+ * Action edit item
+ * 
+ * @param DOMElements element
+ * @param string kind - entity kind
+ * @param string type - entity type
+ * @param int    id   - entity id
+ * 
+ * @return boolean
+ */
+function editItem(element, kind, type, id)
+{ 
+	if (!id || id < 1) return false;
+	
+	var popup  = new oefPopup(kind, type);
+    var target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
+    
+	return popup.displayWindow('displayEditForm', {id: id});
+}
+
 /**
  * Update ItemForm
  * 

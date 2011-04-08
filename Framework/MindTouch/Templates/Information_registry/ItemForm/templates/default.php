@@ -59,7 +59,10 @@
       </tr>
     </eval:foreach>
       <tr>
-        <td class="ae_edit" colspan="2"><a href="{{ page.path..'?uid='..uid..'&actions=displayEditForm&id='..item._id }}">Edit</a></td>
+        <td class="ae_edit" colspan="2">
+          <a href="#" target="_self" onclick="{{ 'javascript: editItem(this, \''..kind..'\', \''..type..'\', '..item._id..'); return false;' }}">Edit</a>&nbsp;|
+          <a href="#" onclick="{{ 'window.self.close(); if (window.opener && window.opener.length) { window.opener.focus(); } return false;' }}">Close</a>
+        </td>
       </tr>
   </tbody>
   </table>
