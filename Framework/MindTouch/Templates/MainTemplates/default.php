@@ -76,7 +76,8 @@
   <eval:else>
     {{
       var inst_conf = extconfig.Fetch('installer');
-      var js_path = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
+      var js_path   = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
+      var css_path  = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Css';
       
       &lt;html&gt;
         &lt;head&gt;
@@ -105,7 +106,13 @@
       }
       else
       {
-            awpskin.hideAll();
+        &lt;html&gt;
+          &lt;head&gt;
+            &lt;link href=(css_path..'/popup.css') media="screen" type="text/css" rel="stylesheet" /&gt;
+          &lt;/head&gt;
+        &lt;/html&gt;
+        
+        awpskin.hideAll();
       }
     }}
     <div class="oef_content">

@@ -1,0 +1,23 @@
+body {
+	background-image: none;
+	background-color: #FFFFFF;
+}
+
+#page {
+	background-color: #FFFFFF;
+	width: 751px;
+	float: left;
+}
+
+#pwrapper {
+	background-image: none;
+	background-color: #FFFFFF;
+	float: none;
+	min-height: 200px;
+	padding-bottom: 0;
+}
+
+#rightSide {
+	float: none;
+	width: 741px;
+}
