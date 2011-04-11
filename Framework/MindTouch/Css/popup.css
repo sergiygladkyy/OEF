@@ -9,7 +9,7 @@ body {
 	float: left;
 }
 
-#pwrapper {
+#pwrapper,#hwrapper {
 	background-image: none;
 	background-color: #FFFFFF;
 	float: none;
