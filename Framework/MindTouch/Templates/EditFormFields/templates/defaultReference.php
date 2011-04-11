@@ -2,7 +2,7 @@
     var name    = args[0];
     var value   = args[1];
     var params  = args[2];
-    var options = params.select ?? {};
+    var options = params.select ?? [];
     var attrs   = params.attrs ?? {};
     var reference  = params.reference ?? {};
     var precision  = params.precision ?? {};

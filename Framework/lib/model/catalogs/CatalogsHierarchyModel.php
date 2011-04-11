@@ -244,7 +244,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[$row[0]] = array('value' => $row[0], 'text' => $row[1]);
+      while ($row = $db->fetchArray($res)) $list[/*$row[0]*/] = array('value' => $row[0], 'text' => $row[1]);
       
       return $list;
    }
