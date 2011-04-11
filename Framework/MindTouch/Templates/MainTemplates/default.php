@@ -103,6 +103,10 @@
           &lt;/head&gt;
         &lt;/html&gt;
       }
+      else
+      {
+            awpskin.hideAll();
+      }
     }}
     <div class="oef_content">
       <eval:if test="action == 'displayCustomForm'">

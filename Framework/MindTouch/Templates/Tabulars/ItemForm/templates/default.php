@@ -98,4 +98,3 @@
 </eval:if>
 {{ &lt;script type="text/javascript"&gt;" jQuery('.ae_tabular_section tr:nth-child(even)').addClass('ae_even'); "&lt;/script&gt; }}
 </eval:else>
-{{awpskin.hideAll();}}

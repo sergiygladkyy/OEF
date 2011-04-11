@@ -111,4 +111,3 @@
   </form>
   {{ &lt;script type="text/javascript"&gt;" ae_name_prefix[\'"..js_uid.."\'] = \'"..name_prefix.."[attributes]\';"&lt;/script&gt; }}
 </eval:else>
-{{awpskin.hideAll();}}
