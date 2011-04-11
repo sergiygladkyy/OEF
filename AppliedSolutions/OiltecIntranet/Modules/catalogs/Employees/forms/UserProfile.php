@@ -17,14 +17,14 @@ function onGenerate($event)
       'Person'      => array(),
       'StaffRecord' => array()
    );
-   
+
    $uploadDir   = Utility::getUploadDir($kind, 'NaturalPersons', 'Photo');
    $form_prefix = 'aeform['.$kind.']['.$type.']';
    $container   = Container::getInstance();
-   
+
    $gender = $container->getConfigManager()->getInternalConfigurationByKind('catalogs.field_prec', 'NaturalPersons');
    $gender = $gender['Gender']['in'];
-    
+
    // Retrieve employee
    if (!empty($params['employee']))
    {
@@ -34,14 +34,13 @@ function onGenerate($event)
    else
    {
       $empId = MEmployees::retrieveCurrentEmployee();
-      $user  = $container->getUser();
       $isCurrentEmployee = true;
    }
-   
+
    if ($empId > 0)
    {
       $employee = $container->getModel('catalogs', 'Employees');
-      
+
       if (!$employee->load($empId))
       {
          throw new Exception('Database error');
@@ -74,16 +73,11 @@ function onGenerate($event)
          }
 
          $attrs['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
-         
-         $doc['type'] = $attrs['StaffRecord']['_rec_type'];
-         $doc['id']   = $attrs['StaffRecord']['_rec_id'];
-         $doc['desc'] = $container->getCModel('documents', $doc['type'])->retrieveLinkData($doc['id']);
-         $doc['desc'] = $doc['desc'][$doc['id']]['text'];
       }
-      
+
       $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
    }
-
+   $tag_id=isset($params["tag_id"])?$params["tag_id"]:"oef_custom_form";
    include(self::$templates_dir.$name.'.php');
 }
 
@@ -103,22 +97,22 @@ function onProcess($event)
       $event->setReturnValue(array('status' => false, 'result' => array('msg' => 'Unknow employee')));
       return;
    }
-   
+
    $id = (int) $values['_id'];
-   
+
    import('lib.model.base.BaseModel');
-   
+
    if (!BaseModel::hasEntity('catalogs', 'NaturalPersons', $id))
    {
       $event->setReturnValue(array('status' => false, 'result' => array('msg' => 'Employee not exists')));
       return;
    }
-   
+
    $controller = Container::getInstance()->getController('catalogs', 'NaturalPersons');
-      
+
    $return = $controller->update($values);
-   
+
    if ($return['status']) unset($return['result']['_id']);
-   
+
    $event->setReturnValue($return);
 }
