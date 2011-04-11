@@ -329,7 +329,7 @@ function oefPopup(kind, type, params, options)
 			//win.onload = function() { onLoad(win); };
 			
 			win.focus();
-			
+
 			return true;
 		}
 		
@@ -347,7 +347,7 @@ function oefPopup(kind, type, params, options)
 	 */
 	this.openWindow = function(kind, type, action, params)
 	{
-		var required, id, uri, win = false;
+		var required, id, uri, index, cache;
 		
 		// Check parameters
 		if (!kind || !type) return false;
@@ -381,28 +381,28 @@ function oefPopup(kind, type, params, options)
 		
 		if (!OEF_WINDS[kind][type]) OEF_WINDS[kind][type] = {};
 		
+		index = action;
+		cache = OEF_WINDS[kind][type];
+		
 		if (id !== false)
 		{
-			if (!OEF_WINDS[kind][type][action]) OEF_WINDS[kind][type][action] = {};
+			if (!cache[index]) cache[index] = {};
 			
-			if (!OEF_WINDS[kind][type][action][id] || OEF_WINDS[kind][type][action][id].closed)
-			{
-				OEF_WINDS[kind][type][action][id] = window.open(uri, this.target, this.options);
-			}
-			
-			win = OEF_WINDS[kind][type][action][id];
-		}
-		else
-		{
-			if (!OEF_WINDS[kind][type][action] || OEF_WINDS[kind][type][action].closed)
-			{
-				OEF_WINDS[kind][type][action] = window.open(uri, this.target, this.options);
-			}
-			
-			win = OEF_WINDS[kind][type][action];
+			cache = cache[index];
+			index = id;
 		}
 		
-		return win;
+		if (!cache[index] || cache[index].closed)
+		{
+			if (this.target != '_blank')
+			{
+				removeFromCache(window);
+			}
+			
+			cache[index] = window.open(uri, this.target, this.options);
+		}
+		
+		return cache[index];
 	};
 	
 	/**
@@ -480,5 +480,38 @@ function oefPopup(kind, type, params, options)
 	function onLoad(win)
 	{
 		jQuery(win.document).find('body').append('<h1>On load</h1>');
+	}
+	
+	/**
+	 * Remove window from cache
+	 * 
+	 * @param object win - window object
+	 * @return boolean
+	 */
+	function removeFromCache(win)
+	{
+		for (var kind in OEF_WINDS)
+		{
+			for (var type in OEF_WINDS[kind])
+			{
+				for (var action in OEF_WINDS[kind][type])
+				{
+					if (required_params[action]['id'])
+					{
+						for (var id in OEF_WINDS[kind][type][action])
+						{
+							if (OEF_WINDS[kind][type][action][id] == win)
+							{
+								OEF_WINDS[kind][type][action][id] = null;
+							}
+						}
+					}
+					else if (OEF_WINDS[kind][type][action] == win)
+					{
+						OEF_WINDS[kind][type][action] = null;
+					}
+				}
+			}
+		}
 	}
 }
