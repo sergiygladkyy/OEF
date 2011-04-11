@@ -24,12 +24,37 @@
        let content ..= '&lt;option class="oef_edit_form_field_add_new" value="new"&gt;add new&lt;/option&gt;';
     }
     
-    foreach (var param in options) {
-       let content ..= '&lt;option value="'..param.value..'"';
-       if (param.value == value) {
-          let content ..= ' selected="selected" current="true"';
+    if (options is map)
+    {
+       let groups = map.Keys(options);
+       let groups = list.Sort(groups);
+       
+       foreach (var group in groups)
+       {
+          let content ..= '&lt;optgroup label="'..group..'"&gt;';
+          
+          foreach (var param in options[group])
+          {
+             let content ..= '&lt;option value="'..param.value..'"';
+             if (param.value == value) {
+                let content ..= ' selected="selected" current="true"';
+             }
+             let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+          }
+          
+          let content ..= '&lt;/optgroup&gt;';
        }
-       let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+    }
+    else
+    {
+       foreach (var param in options)
+       {
+          let content ..= '&lt;option value="'..param.value..'"';
+          if (param.value == value) {
+             let content ..= ' selected="selected" current="true"';
+          }
+          let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+       }
     }
     
     &lt;select id=(attrs.id) name=(name) class=(attrs.class) rkind=(reference.kind) rtype=(reference.type)&gt;
