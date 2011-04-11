@@ -37,6 +37,9 @@
 	height:300px;
 	z-index: 9002; /*ooveeerrrr nine thoussaaaannnd*/
 }
+.userTabs {
+width: 515px !important;
+}
 </style>
 <div class="catalogs_Employees_message systemmsg" style="display: none;">
   <div class="inner">
@@ -120,8 +123,8 @@
 
 
 <div id="blanket" style="display:none;" onclick="popup('popUpDiv')"></div>
-	<div id="popUpDiv" style="display:none;width:800px;height:680px;" >
-                <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;padding:10px;"/>
+	<div id="popUpDiv" style="display:none;width:600px;height:640px;" >
+                <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;margin-top: -15px;margin-right: -15px;"/>
                 <div id="userProfilePopUp" style="padding: 20px;"></div>
 	</div>
 

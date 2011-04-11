@@ -1,7 +1,7 @@
 <style type="text/css">
 
 /************************************* UserProfile ********************************************/
-.userTabs { width:715px; padding:0 5px; height:28px; border-bottom:1px solid #d2d2d2; }
+.userTabs { padding:0 5px; height:28px; border-bottom:1px solid #d2d2d2; }
 img { border:0; }
 .userTabs a, .userTabs a:visited { text-decoration:none; border-top:1px solid #d2d2d2; border-right:1px solid #d2d2d2; border-left:1px solid #d2d2d2; float:left; height:15px; position:relative; margin-right:4px; padding:6px 8px; margin-bottom:-1px; -moz-border-radius-topleft:3px; -moz-border-radius-topright:3px; line-height:1em;}
 .userTabs a:hover, .userTabs a.active { border-bottom:1px solid #ffffff; }
