@@ -157,11 +157,14 @@ input.userBusinessCard {
         <center>No image</center>
       <?php endif;?>
     </div>
-     <div class="userActions" >
+     <div class="userActions" id="userActions" >
         <input type="button" id="userEdit1" class="userProfileEdit" onclick="openForm(1)" />
         <input type="button" id="userSubmit1" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
         <input type="button" id="userCancel1" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />
-      </div>
+     </div>
+      <div class="userActions" id="userLink" style="display:none;"  >
+        <a  href="" >Click to change selected user profile</a>
+     </div>
   </div>
 
   <div class="userRight">
@@ -402,11 +405,11 @@ function onEndProcess(params)
 {
 	if (Context.getLastStatus())
     {
-	    var systemmsg = jQuery('#oef_custom_form .catalogs_Employees_message').get(0).cloneNode(true);
+	    var systemmsg = jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').get(0).cloneNode(true);
 
-    	displayCustomForm('catalogs.Employees', 'UserProfile', {employee: '<?php echo $attrs["Person"]["_id"]?>'}, 'oef_custom_form');
+    	displayCustomForm('catalogs.Employees', 'UserProfile', {employee: '<?php echo $attrs["Person"]["_id"]?>'}, '<?php echo $tag_id?>');
 
-    	jQuery('#oef_custom_form .catalogs_Employees_message').replaceWith(systemmsg);
+    	jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').replaceWith(systemmsg);
     }
 }
 </script>
