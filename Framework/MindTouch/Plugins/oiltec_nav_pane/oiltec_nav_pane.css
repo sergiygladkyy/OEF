@@ -28,20 +28,20 @@
 	line-height: 13px !important;
 	padding: 8px 10px 0;
 	text-decoration: none;
-	width: 166px;
+	width: 168px;
 	border-bottom: 0 none;
 }
 #siteNavTree #oefSubMenu .node.selected a {}
 #siteNavTree #oefSubMenu .childNode a {
 	background: url(images/lnav_bg_gray.png) repeat-x;
 	display: block;
-	width: 166px;
+	width: 168px;
 }
 #siteNavTree #oefSubMenu .parentOpen  a{
 	background: url(images/lnav_bg_black.png) repeat-x !important;
 	display: block;
 	font-weight: normal;
-	width: 166px;
+	width: 168px;
 	color: #fff !important;
 	font-weight: bold;
 }
@@ -54,10 +54,11 @@
 	padding: 8px 9px 0 !important;
 	color: #535252;
 	font-weight: normal;
-	width: 166px !important;
+	width: 168px !important;
 }
 #oefSubMenu div.selectedChild a span {
-	background: #fff url(images/picon.png) no-repeat left top !important;
+	background: url(images/picon.png) no-repeat left top !important;
+	background-color: #fff; 
 	padding-left: 16px !important;
 	display: block;
 	margin-left: 6px !important;
@@ -78,4 +79,8 @@
 }
 #oefSubMenu div.node a span {
     padding-left: 16px !important;
+}
+
+#oefSubMenu .oef_selected a, #oefSubMenu .oef_selected span {
+	background-color: #DDDDDD !important;
 }

@@ -220,7 +220,7 @@ Deki.nav = function()
 
 			//Get previously selected node
 			prevSelectedNode = Deki.$("#" + navDivID + " div.selected").get(0);
-
+			
 			//Currently selected node
 			selectedNode = this;
 
@@ -254,7 +254,7 @@ Deki.nav = function()
 			{
 				redirectTime = redirectDelay;
 			}
-
+			
 			//Get missing data, animate, redirect
 			Deki.nav.getData();
 
@@ -347,7 +347,32 @@ Deki.nav = function()
 				allSiblings = true;
 				request.push("siblings");
 			}
-
+			
+			// Check node
+			var res, appName = '', nPath = Deki.$(selectedNode).find('a').attr("href");
+			
+			for (var app in _appSolutionRoot)
+			{
+			    var root = '/' + _appSolutionRoot[app];
+				var code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '$/gi);';
+				
+				eval(code);
+				
+				if (!res)
+				{
+					code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '\\//gi);';
+					
+					eval(code);
+				}
+				
+				if (res)
+				{
+					appName = app;
+					
+					break;
+				}
+			}
+			
 			//Ajax call for missing nodes
 			if(request.length)
 			{
@@ -370,18 +395,6 @@ Deki.nav = function()
 						{
 							//Evaluate response
 							eval("var response = " + obj.responseText);
-							
-							var appName = '', nPath = Deki.$(selectedNode).attr("path");
-							
-							for (var app in _appSolutionRoot)
-							{
-								if ((_appSolutionRoot[app] + '/') == nPath)
-								{
-									appName = app;
-									
-									break;
-								}
-							}
 							
 							if (!appName)
 							{
@@ -472,10 +485,17 @@ Deki.nav = function()
 					}
 				);
 			}
-			else
+			else if (!appName)
 			{
 				//Start animation
 				Deki.nav.startAnim();
+			}
+			else
+			{
+				Deki.$('#oefSubMenu .oef_selected').removeClass('oef_selected');
+				Deki.$(selectedNode).addClass('oef_selected');
+				
+				document.location.href = nPath;
 			}
 		},
 

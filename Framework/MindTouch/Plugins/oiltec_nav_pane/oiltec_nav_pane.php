@@ -86,12 +86,17 @@ function wfSkinNavigationPane($Title, &$html)
 	      if (false !== ($pos = strpos($pageTitle, $root)))
 	      {
 	         if ($pos > 1) $pos--;
-	          
-	         $pageTitle = substr($pageTitle, 0, $pos);
-	          
-	         $appName = $app;
-	          
-	         break;
+	         
+	         $end = strlen($root) + $pos;
+	         
+	         if ($end == strlen($pageTitle) || $pageTitle{$end} == '/')
+	         {
+	            $pageTitle = substr($pageTitle, 0, $pos);
+	            
+	            $appName = $app;
+	            
+	            break;
+	         }
 	      }
 	   }
 	}
@@ -143,14 +148,13 @@ function wfSkinNavigationPane($Title, &$html)
  */
 function _oefPrepareMenu($Title, &$html, $appName)
 {
-   $path = 'path="'.($Title->isHomepage() ? '' : $Title->getPrefixedText()).'/"';
+   $conf = ExternalConfig::$extconfig['installer'];
+   $path = 'path="'.$conf['root_path'][$appName].'/"';
    
    if (false === ($pos = strpos($html, $path))) return $html;
    if (false === ($pos = strpos($html, '</div>', $pos))) return $html;
    
-   $pos += 6;
-   
-   $conf  = ExternalConfig::$extconfig['installer'];
+   $pos  += 6;
    $fname = $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$appName.'/MindTouch/Menu/menu.xml';
    
    if (!is_readable($fname))
@@ -211,7 +215,7 @@ function ShowFixedVMenuItem($title, $link)
 function _oefShow1LevelVMenuItem($title, $link)
 {
    // selected
-   $html  = "<div class=\"node childNode sibling \">";
+   $html  = '<div class="node childNode sibling'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
    $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
@@ -227,7 +231,7 @@ function _oefShow1LevelVMenuItem($title, $link)
  */
 function _oefShow2LevelVMenuItem($title, $link)
 {
-   $html  = "<div class=\"node childNode selectedChild\">";
+   $html  = '<div class="node childNode selectedChild'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
    $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
