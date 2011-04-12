@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+	<item title="About us" url="/About_us">
+		<item title="Career" url="/About_us/Career" />
+		<item title="Partners" url="/About_us/Partners" />
+		<item title="Simulator Track Record" url="/About_us/Simulator_Track_Record" />
+		<item title="Locations" url="/Company/Office_Locations" />
+	</item>
+	<item title="Academy" url="/Academy" />
+	<item title="Hitec Group" url="/Hitec_Group">
+		<item title="Office and workshop facilities" url="/Hitec_Group/Group_office_and_workshop_facilities" />
+		<item title="QHSE " url="/Hitec_Group/QHSE" />
+	</item>
+	<item title="Solutions" url="/Solutions">
+		<item title="3D Rig Life Cycle Management" url="/Solutions/3D_Rig_Life_Cycle_Management" />
+		<item title="Drilling Simulation" url="/Solutions/Drilling_Simulation" />
+		<item title="Offshore Crane" url="/Solutions/Offshore_Crane" />
+	</item>
+	<item title="Showreels" url="/Showreels" />
+	<item title="References" url="/References" />
+	<item title="News" url="/News" />
+	<item title="Contact us" url="/Contact_us" />
+</menu>
