@@ -68,7 +68,7 @@ function wfSkinNavigationPane($Title, &$html)
 	$enabled = isset($wgNavPaneEnabled) ? $wgNavPaneEnabled : true;
 	$type    = strtolower(wfGetConfig('ui/nav-type', 'compact'));
 	$roots   = array_combine(ExternalConfig::$extconfig['installer']['root_path'], array_keys(ExternalConfig::$extconfig['installer']['root_path']));
-	$appName = '';
+	$appRoot = '';
 	
 	// check if nav is disabled
 	if ($type === 'none') 
@@ -81,7 +81,7 @@ function wfSkinNavigationPane($Title, &$html)
 	// Check page title
 	if (!$wgUser->isGroupMember('StandardMenu', true))
 	{
-	   foreach ($roots as $app => $root)
+	   foreach ($roots as $root => $app)
 	   {
 	      if (false !== ($pos = strpos($pageTitle, $root)))
 	      {
@@ -93,7 +93,7 @@ function wfSkinNavigationPane($Title, &$html)
 	         {
 	            $pageTitle = substr($pageTitle, 0, $pos);
 	            
-	            $appName = $app;
+	            $appRoot = $root;
 	            
 	            break;
 	         }
@@ -112,7 +112,7 @@ function wfSkinNavigationPane($Title, &$html)
 	{
 	    $html =
 		'<div id="siteNavTree">'.
-			($appName ? _oefPrepareMenu($Title, $Result->getVal('body/tree'), $appName) : $Result->getVal('body/tree')).
+			($appRoot ? _oefPrepareMenu($Title, $Result->getVal('body/tree'), $appRoot) : $Result->getVal('body/tree')).
 		'</div>';
 		
 		if ($enabled)
@@ -143,19 +143,19 @@ function wfSkinNavigationPane($Title, &$html)
  * 
  * @param object $Title
  * @param string $html
- * @param string $appName
+ * @param string $appRoot
  * @return string
  */
-function _oefPrepareMenu($Title, &$html, $appName)
+function _oefPrepareMenu($Title, &$html, $appRoot)
 {
    $conf = ExternalConfig::$extconfig['installer'];
-   $path = 'path="'.$conf['root_path'][$appName].'/"';
+   $path = 'path="'.$appRoot.'/"';
    
    if (false === ($pos = strpos($html, $path))) return $html;
    if (false === ($pos = strpos($html, '</div>', $pos))) return $html;
    
    $pos  += 6;
-   $fname = $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$appName.'/MindTouch/Menu/menu.xml';
+   $fname = $conf['root'].$conf['base_dir'].$conf['applied_solutions_dir'].'/'.$conf['root_path'][$appRoot].'/MindTouch/Menu/menu.xml';
    
    if (!is_readable($fname))
    {
