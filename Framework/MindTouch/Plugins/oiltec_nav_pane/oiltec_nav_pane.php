@@ -81,7 +81,7 @@ function wfSkinNavigationPane($Title, &$html)
 	// Check page title
 	if (!$wgUser->isGroupMember('StandardMenu', true))
 	{
-	   foreach ($roots as $root => $app)
+	   foreach ($roots as $app => $root)
 	   {
 	      if (false !== ($pos = strpos($pageTitle, $root)))
 	      {
@@ -216,7 +216,7 @@ function _oefShow1LevelVMenuItem($title, $link)
 {
    // selected
    $html  = '<div class="node childNode sibling'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
-   $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
+   $html .= "<a title=\"$title\" ".($link ? 'href="'.$link.'"' : '')."><span>$title</span></a>";
    $html .= "</div>\n";
    
    return $html;
@@ -232,7 +232,7 @@ function _oefShow1LevelVMenuItem($title, $link)
 function _oefShow2LevelVMenuItem($title, $link)
 {
    $html  = '<div class="node childNode selectedChild'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
-   $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
+   $html .= "<a title=\"$title\" ".($link ? 'href="'.$link.'"' : '')."><span>$title</span></a>";
    $html .= "</div>\n";
    
    return $html;
