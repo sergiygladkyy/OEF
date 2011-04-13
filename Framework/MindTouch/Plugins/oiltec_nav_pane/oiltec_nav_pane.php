@@ -216,7 +216,7 @@ function ShowFixedVMenuItem($title, $link)
 function _oefShow1LevelVMenuItem($title, $link)
 {
    // selected
-   $html  = '<div class="node childNode sibling'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
+   $html  = '<div class="node childNode sibling'.($_SERVER['SCRIPT_URL'] == $link ? ' oef_selected' : '').'">';
    $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
@@ -232,7 +232,7 @@ function _oefShow1LevelVMenuItem($title, $link)
  */
 function _oefShow2LevelVMenuItem($title, $link)
 {
-   $html  = '<div class="node childNode selectedChild'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
+   $html  = '<div class="node childNode selectedChild'.($_SERVER['SCRIPT_URL'] == $link ? ' oef_selected' : '').'">';
    $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
