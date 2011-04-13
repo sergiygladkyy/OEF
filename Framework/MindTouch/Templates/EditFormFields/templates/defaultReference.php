@@ -60,7 +60,7 @@
        if (!generate_success) let content = '';
     }
     
-    if (!generate_success)
+    if (options is list || !generate_success)
     {
        let generate_success = true;
        
