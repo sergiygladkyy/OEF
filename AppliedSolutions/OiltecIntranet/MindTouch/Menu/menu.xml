@@ -21,7 +21,7 @@
 	    <item title="Project Assignment"   url="%root_path%/Document_ProjectAssignment" />
 	    <item title="TimeCard"             url="%root_path%/Document_TimeCard" />
 	    <item title="Contract"             url="%root_path%/Document_Contract" />
-	    <item title="ProjectHandover"      url="%root_path%/Document_ProjectHandover" />
+	    <item title="Project Handover"     url="%root_path%/Document_ProjectHandover" />
 	    <item title="Invoice"              url="%root_path%/Document_Invoice" />
 	</item>
 	<item title="Reports" url="">
@@ -29,9 +29,10 @@
 	    <item title="TimeCards"     url="%root_path%/Report_TimeCards" />
 	</item>
 	<item title="Other" url="">
-		<item title="User Profile"      url="%root_path%/UserProfile" />
-		<item title="User Browser"      url="%root_path%/User_Browser" />
-		<item title="Constants"         url="%root_path%/Constants" />
-	    <item title="Divisional Chiefs" url="%root_path%/IR_DivisionalChiefs" />
+		<item title="User Profile"       url="%root_path%/UserProfile" />
+		<item title="User Browser"       url="%root_path%/User_Browser" />
+		<item title="Constants"          url="%root_path%/Constants" />
+	    <item title="Divisional Chiefs"  url="%root_path%/IR_DivisionalChiefs" />
+	    <item title="Delete Marked For Deletion" url="%root_path%/Delete_Marked_For_Delition" />
 	</item>
 </menu>
