@@ -30,46 +30,51 @@ function onGenerate($event)
 
       // Retrieve last record
       $query = "SELECT * FROM catalogs.NaturalPersons ";
+      $isEmpty=false;
       if (null === ($rows = $odb->loadAssocList($query)))
       {
-         throw new Exception('Database error');
+          $isEmpty=true;
+         //throw new Exception('Database error');
       }
       $i=0;
-      foreach($rows as $row)
+      if(!$isEmpty)
       {
-          $employee = $container->getModel('catalogs', 'Employees');
-          if (!$employee->load($row['_id']))
+          foreach($rows as $row)
           {
-            throw new Exception('Database error');
-          }
-          $person = $employee->getAttribute('NaturalPerson');
-
-          $attrs[$i]['Person'] = $person->toArray(array('with_link_desc' => true));
-
-          $attrs[$i]['Employee'] = $employee->toArray(array('with_link_desc' => true));
-
-          $query = "SELECT * FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee`=".$attrs[$i]['Employee'][_id]." AND `Period` <= '".date('Y-m-d H:i:s')."'".
-               "ORDER BY `Period` DESC LIMIT 1";
-          
-          $odb = Container::getInstance()->getODBManager();
-          if (null === ($rowStaff = $odb->loadAssoc($query)))
-          {
-             throw new Exception('Database error');
-          }
-
-          if ($rowStaff && $rowStaff['RegisteredEvent'] != 'Firing')
-          {
-             $staff = $container->getModel('information_registry', 'StaffHistoricalRecords');
-
-             if (!$staff->load($rowStaff['_id']))
-             {
+              $employee = $container->getModel('catalogs', 'Employees');
+              if (!$employee->load($row['_id']))
+              {
                 throw new Exception('Database error');
-             }
+              }
+              $person = $employee->getAttribute('NaturalPerson');
 
-             $attrs[$i]['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
+              $attrs[$i]['Person'] = $person->toArray(array('with_link_desc' => true));
+
+              $attrs[$i]['Employee'] = $employee->toArray(array('with_link_desc' => true));
+
+              $query = "SELECT * FROM information_registry.StaffHistoricalRecords ".
+                   "WHERE `Employee`=".$attrs[$i]['Employee'][_id]." AND `Period` <= '".date('Y-m-d H:i:s')."'".
+                   "ORDER BY `Period` DESC LIMIT 1";
+
+              $odb = Container::getInstance()->getODBManager();
+              if (null === ($rowStaff = $odb->loadAssoc($query)))
+              {
+                 throw new Exception('Database error!');
+              }
+
+              if ($rowStaff && $rowStaff['RegisteredEvent'] != 'Firing')
+              {
+                 $staff = $container->getModel('information_registry', 'StaffHistoricalRecords');
+
+                 if (!$staff->load($rowStaff['_id']))
+                 {
+                    throw new Exception('Database error!!');
+                 }
+
+                 $attrs[$i]['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
+              }
+              $i++;
           }
-          $i++;
       }
 
 
