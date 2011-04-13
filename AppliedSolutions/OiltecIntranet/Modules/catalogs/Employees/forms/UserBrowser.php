@@ -44,7 +44,8 @@ function onGenerate($event)
               $employee = $container->getModel('catalogs', 'Employees');
               if (!$employee->load($row['_id']))
               {
-                throw new Exception('Database error');
+                  break;
+                //throw new Exception('Database error');
               }
               $person = $employee->getAttribute('NaturalPerson');
 
