@@ -8,7 +8,7 @@
     var precision  = params.precision ?? {};
     var dynamic = params.dynamic ?? false;
     var select  = '';
-    var content = '&lt;option value="0"&gt;&amp;nbsp;&lt;/option&gt;';
+    var content = '';
     
     if (#attrs.class != 0) {
       let attrs ..= {class: attrs.class..' oef_'..reference.kind..'_'..reference.type};
@@ -24,6 +24,8 @@
        let content ..= '&lt;option class="oef_edit_form_field_add_new" value="new"&gt;add new&lt;/option&gt;';
     }
     
+    var generate_success = true;
+    
     if (options is map)
     {
        let groups = map.Keys(options);
@@ -31,31 +33,60 @@
        
        foreach (var group in groups)
        {
-          let content ..= '&lt;optgroup label="'..group..'"&gt;';
-          
-          foreach (var param in options[group])
+          if (generate_success)
           {
-             let content ..= '&lt;option value="'..param.value..'"';
-             if (param.value == value) {
-                let content ..= ' selected="selected" current="true"';
+             if (options[group]['text'] is nil)
+             {
+                let content ..= '&lt;optgroup label="'..group..'"&gt;';
+                
+                foreach (var param in options[group])
+                {
+                   let content ..= '&lt;option value="'..param.value..'"';
+                   if (param.value == value) {
+                      let content ..= ' selected="selected" current="true"';
+                   }
+                   let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+                }
+                
+                let content ..= '&lt;/optgroup&gt;';
              }
-             let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+             else
+             {
+                let generate_success = false;
+             }
           }
-          
-          let content ..= '&lt;/optgroup&gt;';
        }
+       
+       if (!generate_success) let content = '';
     }
-    else
+    
+    if (!generate_success)
     {
+       let generate_success = true;
+       
        foreach (var param in options)
        {
-          let content ..= '&lt;option value="'..param.value..'"';
-          if (param.value == value) {
-             let content ..= ' selected="selected" current="true"';
+          if (generate_success)
+          {
+             if (param.text is nil)
+             {
+                let generate_success = false;
+             }
+             else
+             {
+                let content ..= '&lt;option value="'..param.value..'"';
+                if (param.value == value) {
+                   let content ..= ' selected="selected" current="true"';
+                }
+                let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+             }
           }
-          let content ..= '&gt;'..param.text..'&lt;/option&gt;';
        }
+       
+       if (!generate_success) let content = '';
     }
+    
+    let content = '&lt;option value="0"&gt;&amp;nbsp;&lt;/option&gt;'..content;
     
     &lt;select id=(attrs.id) name=(name) class=(attrs.class) rkind=(reference.kind) rtype=(reference.type)&gt;
       web.html(content);
