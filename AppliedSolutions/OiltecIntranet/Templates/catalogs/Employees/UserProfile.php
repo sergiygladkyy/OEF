@@ -151,10 +151,10 @@ input.userBusinessCard {
 
   <div class="userLeft">
     <div class="userPhoto">
-      <?php if (isset($attrs["Person"]["Photo"]) ): ?>
+      <?php if (!empty($attrs["Person"]["Photo"]) ): ?>
         <a href="<?php echo $uploadDir.$attrs["Person"]["Photo"] ?>"><img src="<?php echo $uploadDir.'preview'.$attrs["Person"]["Photo"] ?>" /></a>
       <?php else: ?>
-        <center>No image</center>
+        <img src="/skins/common/icons/mrab_no_profile_image.png" alt="Photo" />
       <?php endif;?>
     </div>
      <div class="userActions" id="userActions" >
@@ -368,7 +368,7 @@ function show(num){
     	if (isHired)
     	{
         	var msg = "The information you see is read only since it is contributed by the following document: " +
-        		'<?php echo '<a target="_blank" href="\' + location.pathname + \'?uid=documents.'.$doc['type'].'&actions=displayEditForm&id='.$doc['id'].'">'.$doc['desc'].'</a>' ?>' +
+        		'<?php echo '<a target="_blank" href="#" onclick="_dispalyEF(this, \\\'documents\\\', \\\''.$doc['type'].'\\\', '.$doc['id'].'); return false;">'.$doc['desc'].'</a>' ?>' +
         		" If you want to update the information you may need to re-submit the document." +
             	" For making so, click the link above, perform \"Clear Posting\", then update the data and perform \"Post\"." +
             	" Attention, that you must have the sufficient access rights for this"
@@ -411,6 +411,28 @@ function onEndProcess(params)
 
     	jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').replaceWith(systemmsg);
     }
+}
+
+/**
+ * Action edit item
+ * 
+ * @param DOMElements element
+ * @param string kind - entity kind
+ * @param string type - entity type
+ * @param int    id   - entity id
+ * 
+ * @return boolean
+ */
+function _dispalyEF(element, kind, type, id)
+{ 
+	if (!id || id < 1) return false;
+	
+	var popup  = new oefPopup(kind, type);
+    var target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
+    
+	return popup.displayWindow('displayEditForm', {id: id});
 }
 </script>
 <?php endif;?>

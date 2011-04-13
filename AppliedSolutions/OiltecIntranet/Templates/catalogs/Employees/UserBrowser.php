@@ -123,7 +123,7 @@ width: 515px !important;
 
 
 <div id="blanket" style="display:none;" onclick="popup('popUpDiv')"></div>
-	<div id="popUpDiv" style="display:none;width:600px;height:640px;" >
+	<div id="popUpDiv" style="display:none;width:600px;height:675px;" >
                 <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;margin-top: -15px;margin-right: -15px;"/>
                 <div id="userProfilePopUp" style="padding: 20px;"></div>
 	</div>
