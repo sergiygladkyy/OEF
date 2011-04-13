@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu>
 	<item title="Catalogs" url="">
-		<item title="Organizational Units" url="/OiltecIntranet/Catalogs_OrganizationalUnits" />
-		<item title="Organizational Positions" url="/OiltecIntranet/Catalogs_OrganizationalPositions" />
-		<item title="Natural Persons" url="/OiltecIntranet/Catalogs_NaturalPersons" />
-		<item title="Employees" url="/OiltecIntranet/Catalogs_Employees" />
-		<item title="Projects" url="/OiltecIntranet/Catalogs_Projects" />
-		<item title="SubProjects" url="/OiltecIntranet/Catalogs_SubProjects" />
-		<item title="Counteragents" url="/OiltecIntranet/Catalogs_Counteragents" />
-		<item title="Nomenclature" url="/OiltecIntranet/Catalogs_Nomenclature" />
-		<item title="Schedules" url="/OiltecIntranet/Catalogs_Schedules" />
+		<item title="Organizational Units"     url="%root_path%/Catalogs_OrganizationalUnits" />
+		<item title="Organizational Positions" url="%root_path%/Catalogs_OrganizationalPositions" />
+		<item title="Natural Persons"          url="%root_path%/Catalogs_NaturalPersons" />
+		<item title="Employees"                url="%root_path%/Catalogs_Employees" />
+		<item title="Projects"                 url="%root_path%/Catalogs_Projects" />
+		<item title="SubProjects"              url="%root_path%/Catalogs_SubProjects" />
+		<item title="Counteragents"            url="%root_path%/Catalogs_Counteragents" />
+		<item title="Nomenclature"             url="%root_path%/Catalogs_Nomenclature" />
+		<item title="Schedules"                url="%root_path%/Catalogs_Schedules" />
 	</item>
 	<item title="Documents" url="">
-	    <item title="Recruiting Order" url="/OiltecIntranet/Document_RecruitingOrder" />
-	    <item title="Dismissal Order" url="/OiltecIntranet/Document_DismissalOrder" />
-	    <item title="Vacation Order" url="/OiltecIntranet/Document_VacationOrder" />
-	    <item title="Periodic Closing" url="/OiltecIntranet/Document_PeriodicClosing" />
-	    <item title="Project Registration" url="/OiltecIntranet/Document_ProjectRegistration" />
-	    <item title="Project Closure" url="/OiltecIntranet/Document_ProjectClosure" />
-	    <item title="Project Assignment" url="/OiltecIntranet/Document_ProjectAssignment" />
-	    <item title="TimeCard" url="/OiltecIntranet/Document_TimeCard" />
-	    <item title="Contract" url="/OiltecIntranet/Document_Contract" />
-	    <item title="ProjectHandover" url="/OiltecIntranet/Document_ProjectHandover" />
-	    <item title="Invoice" url="/OiltecIntranet/Document_Invoice" />
+	    <item title="Recruiting Order"     url="%root_path%/Document_RecruitingOrder" />
+	    <item title="Dismissal Order"      url="%root_path%/Document_DismissalOrder" />
+	    <item title="Vacation Order"       url="%root_path%/Document_VacationOrder" />
+	    <item title="Periodic Closing"     url="%root_path%/Document_PeriodicClosing" />
+	    <item title="Project Registration" url="%root_path%/Document_ProjectRegistration" />
+	    <item title="Project Closure"      url="%root_path%/Document_ProjectClosure" />
+	    <item title="Project Assignment"   url="%root_path%/Document_ProjectAssignment" />
+	    <item title="TimeCard"             url="%root_path%/Document_TimeCard" />
+	    <item title="Contract"             url="%root_path%/Document_Contract" />
+	    <item title="ProjectHandover"      url="%root_path%/Document_ProjectHandover" />
+	    <item title="Invoice"              url="%root_path%/Document_Invoice" />
 	</item>
 	<item title="Reports" url="">
-		<item title="Resource Load" url="/OiltecIntranet/Report_ResourceLoad" />
-	    <item title="TimeCards" url="/OiltecIntranet/Report_" />
+		<item title="Resource Load" url="%root_path%/Report_ResourceLoad" />
+	    <item title="TimeCards"     url="%root_path%/Report_TimeCards" />
 	</item>
 	<item title="Other" url="">
-		<item title="User Profile" url="/OiltecIntranet/UserProfile" />
-		<item title="User Browser" url="/OiltecIntranet/User_Browser" />
-		<item title="Constants" url="/OiltecIntranet/Constants" />
-	    <item title="Divisional Chiefs" url="/OiltecIntranet/IR_DivisionalChiefs" />
+		<item title="User Profile"      url="%root_path%/UserProfile" />
+		<item title="User Browser"      url="%root_path%/User_Browser" />
+		<item title="Constants"         url="%root_path%/Constants" />
+	    <item title="Divisional Chiefs" url="%root_path%/IR_DivisionalChiefs" />
 	</item>
 </menu>

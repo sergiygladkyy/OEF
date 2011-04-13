@@ -351,6 +351,8 @@ Deki.nav = function()
 			// Check node
 			var res, appName = '', nPath = Deki.$(selectedNode).find('a').attr("href");
 			
+			if (!nPath) return;
+			
 			for (var app in _appSolutionRoot)
 			{
 			    var root = '/' + _appSolutionRoot[app];

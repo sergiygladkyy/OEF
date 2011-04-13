@@ -162,7 +162,7 @@ function _oefPrepareMenu($Title, &$html, $appRoot)
       return $html;
    }
    
-   $html = substr($html, 0, $pos).'<div id="oefSubMenu">'._oefGenerateSubMenu($fname).'</div>'.substr($html, $pos);
+   $html = substr($html, 0, $pos).'<div id="oefSubMenu">'._oefGenerateSubMenu($fname, '/'.$appRoot).'</div>'.substr($html, $pos);
    
    return $html;
 }
@@ -170,10 +170,11 @@ function _oefPrepareMenu($Title, &$html, $appRoot)
 /**
  * Generate submenu
  * 
- * @param string $path - path to menu.xml
+ * @param string $path    - path to menu.xml
+ * @param string $appRoot - path to root page
  * @return string
  */
-function _oefGenerateSubMenu($path)
+function _oefGenerateSubMenu($path, $appRoot)
 {
    require_once(dirname(__FILE__)."/navmenu.php");
    
@@ -184,11 +185,11 @@ function _oefGenerateSubMenu($path)
    {
       foreach ($menu->menuItems as $item1)
       {
-         $html .= _oefShow1LevelVMenuItem($item1->title, $item1->url);
+         $html .= _oefShow1LevelVMenuItem($item1->title, str_replace('%root_path%', $appRoot, $item1->url));
          
          foreach ($item1->menuItems as $item2)
          {
-            $html .= _oefShow2LevelVMenuItem($item2->title, $item2->url);
+            $html .= _oefShow2LevelVMenuItem($item2->title, str_replace('%root_path%', $appRoot, $item2->url));
          }
       }
    }
@@ -216,7 +217,7 @@ function _oefShow1LevelVMenuItem($title, $link)
 {
    // selected
    $html  = '<div class="node childNode sibling'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
-   $html .= "<a title=\"$title\" ".($link ? 'href="'.$link.'"' : '')."><span>$title</span></a>";
+   $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
    return $html;
@@ -232,7 +233,7 @@ function _oefShow1LevelVMenuItem($title, $link)
 function _oefShow2LevelVMenuItem($title, $link)
 {
    $html  = '<div class="node childNode selectedChild'.($_SERVER['REQUEST_URI'] == $link ? ' oef_selected' : '').'">';
-   $html .= "<a title=\"$title\" ".($link ? 'href="'.$link.'"' : '')."><span>$title</span></a>";
+   $html .= "<a title=\"$title\" href=\"$link\"><span>$title</span></a>";
    $html .= "</div>\n";
    
    return $html;
