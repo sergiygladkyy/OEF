@@ -12,14 +12,13 @@
    var fields     = data.fields;
    var field_type = data.field_type;
    var field_prec = data.field_prec;
-   var field_use  = data.field_use[item._folder ? 2 : 1];
+   var field_use  = data.field_use[(item._folder == 1 ? 2 : 1)];
    var hierarchy  = data.hierarchy;
    var owners     = data.owners;
    var references = data.references;
    var params     = data.params ?? {};
    var htype      = hierarchy.type is num ? hierarchy.type : 0;
 }}
-
 <tr class="{{ class..'_list_item ae_list_item'..(item._deleted != 0  ? ' ae_deleted_col' : '') }}">
   <eval:if test="item._id &gt; 0">
     <td style="display: none;">
