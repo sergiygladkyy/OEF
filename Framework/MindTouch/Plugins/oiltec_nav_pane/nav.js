@@ -349,29 +349,34 @@ Deki.nav = function()
 			}
 			
 			// Check node
-			var res, appName = '', nPath = Deki.$(selectedNode).find('a').attr("href");
+			var appName = '';
 			
-			if (!nPath) return;
-			
-			for (var app in _appSolutionRoot)
+			if (!_isStandardMenu)
 			{
-			    var root = '/' + _appSolutionRoot[app];
-				var code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '$/gi);';
+				var res, nPath = Deki.$(selectedNode).find('a').attr("href");
 				
-				eval(code);
+				if (!nPath) return;
 				
-				if (!res)
+				for (var app in _appSolutionRoot)
 				{
-					code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '\\//gi);';
+					var root = '/' + _appSolutionRoot[app];
+					var code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '$/gi);';
 					
 					eval(code);
-				}
-				
-				if (res)
-				{
-					appName = app;
 					
-					break;
+					if (!res)
+					{
+						code = 'res = nPath.match(/' + root.replace(/\//g, '\\/')+ '\\//gi);';
+						
+						eval(code);
+					}
+					
+					if (res)
+					{
+						appName = app;
+						
+						break;
+					}
 				}
 			}
 			
@@ -400,7 +405,7 @@ Deki.nav = function()
 							
 							if (!appName)
 							{
-								Deki.$('#oefSubMenu').hide(200);
+								if (!_isStandardMenu) Deki.$('#oefSubMenu').hide(200);
 								
 								//Children data
 								if(response.children)
@@ -487,7 +492,7 @@ Deki.nav = function()
 					}
 				);
 			}
-			else if (!appName)
+			else if (_isStandardMenu || !appName)
 			{
 				//Start animation
 				Deki.nav.startAnim();

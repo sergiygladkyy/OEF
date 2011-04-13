@@ -100,6 +100,7 @@ function wfSkinNavigationPane($Title, &$html)
 	      }
 	   }
 	}
+	else $standard = true;
 	
 	// get the nav pane html... from the api... (sad)
 	$Result = DekiPlug::getInstance()
@@ -117,16 +118,22 @@ function wfSkinNavigationPane($Title, &$html)
 		
 		if ($enabled)
 		{
-		   global $IP;
-
-           require_once($IP.'/includes/JSON.php');
-		   
-           $JSON = new Services_JSON();
+		   if (empty($standard))
+		   {
+		      global $IP;
+              
+              require_once($IP.'/includes/JSON.php');
+		      
+              $JSON = new Services_JSON();
+              
+              $addToJS = 'var _isStandardMenu = false; var _appSolutionRoot = '.$JSON->encode($roots).';';
+		   }
+		   else $addToJS = 'var _isStandardMenu = true;';
 
 			// add the javascript
 			// add the pane width via javascript
 			$html .= '<script type="text/javascript">'.
-			    'var _appSolutionRoot = '.$JSON->encode($roots).';'.
+			    $addToJS.
 				'var navMaxWidth = '.(int)$width .';'.
 				(($type === 'compact') ? 'YAHOO.util.Event.onAvailable("siteNavTree", ((typeof Deki.nav != "undefined") ? Deki.nav.init : null), Deki.nav, true);' : '').
 			'</script>';
