@@ -27,7 +27,7 @@
     <!-- Employee -->
     <area shape="poly" coords="412,530, 471,530, 494,552, 494,632, 412,632" href="" onclick="openPopup(this, 'documents', 'TimeCard', 'EditForm'); return false;" alt="Time Card">
     <!-- HR -->
-    <area shape="poly" coords="162,697, 222,697, 245,720, 245,799, 162,799" href="" onclick="openPopup(this, 'documents', 'RecruitmentOrder', 'EditForm'); return false;" alt="Recruitment Order">
+    <area shape="poly" coords="162,697, 222,697, 245,720, 245,799, 162,799" href="" onclick="openPopup(this, 'documents', 'RecruitingOrder', 'EditForm'); return false;" alt="Recruiting Order">
     <area shape="poly" coords="307,697, 366,697, 389,720, 389,799, 307,799" href="" onclick="openPopup(this, 'documents', 'VacationOrder', 'EditForm'); return false;" alt="Vacation Order">
     <area shape="poly" coords="448,697, 507,697, 530,720, 530,799, 448,799" href="" onclick="openPopup(this, 'documents', 'DismissalOrder', 'EditForm'); return false;" alt="Dismissal Order">
     <area shape="poly" coords="558,689, 637,689, 660,712, 660,752, 558,752" href="{{ page.path..'/Calendar' }}" alt="Calendar">
