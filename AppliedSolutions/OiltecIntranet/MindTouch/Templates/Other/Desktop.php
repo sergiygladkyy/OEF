@@ -9,7 +9,7 @@
    var dir = params.dir ?? '/';
 }}
 <div class="oe_oiltec_intranet_desktop">
-  <img src="{{ dir..'/Resources/Desktop/oiltec_intranet_desktop.png' }}" width="792" height="1158" alt="Desktop" usemap="#OiltecIntranetDesktop">
+  <img src="{{ dir..'/Resources/Desktop/oiltec_intranet_desktop.png' }}" width="695" height="1061" alt="Desktop" usemap="#OiltecIntranetDesktop">
   <map name="OiltecIntranetDesktop">
     <!-- Sales -->
     <area shape="poly" coords="74,46, 131,46, 154,70, 154,148, 74,148"   href="" onclick="openPopup(this, 'documents', 'Contract', 'EditForm'); return false;" alt="Contract">
