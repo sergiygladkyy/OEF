@@ -892,6 +892,10 @@ $_dictionary = array(
             'information_registry.ProjectHandoverRecords'
          ),
          
+         'basis_for' => array(
+            'documents.ProjectRegistration'
+         ),
+         
          'fields' => array(
             'SalesManager' => array(
                'reference' => 'catalogs.Employees',

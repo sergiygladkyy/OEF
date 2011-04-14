@@ -16,13 +16,13 @@
 	    <item title="Dismissal Order"      url="%root_path%/Document_DismissalOrder" />
 	    <item title="Vacation Order"       url="%root_path%/Document_VacationOrder" />
 	    <item title="Periodic Closing"     url="%root_path%/Document_PeriodicClosing" />
-	    <item title="Project Registration" url="%root_path%/Document_ProjectRegistration" />
-	    <item title="Project Closure"      url="%root_path%/Document_ProjectClosure" />
-	    <item title="Project Assignment"   url="%root_path%/Document_ProjectAssignment" />
-	    <item title="TimeCard"             url="%root_path%/Document_TimeCard" />
 	    <item title="Contract"             url="%root_path%/Document_Contract" />
 	    <item title="Project Handover"     url="%root_path%/Document_ProjectHandover" />
+	    <item title="Project Registration" url="%root_path%/Document_ProjectRegistration" />
+	    <item title="Project Assignment"   url="%root_path%/Document_ProjectAssignment" />
+	    <item title="Project Closure"      url="%root_path%/Document_ProjectClosure" />
 	    <item title="Invoice"              url="%root_path%/Document_Invoice" />
+	    <item title="TimeCard"             url="%root_path%/Document_TimeCard" />
 	</item>
 	<item title="Reports" url="">
 		<item title="Resource Load" url="%root_path%/Report_ResourceLoad" />
