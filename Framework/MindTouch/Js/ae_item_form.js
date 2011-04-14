@@ -14,12 +14,7 @@ function editItem(element, kind, type, id)
 { 
 	if (!id || id < 1) return false;
 	
-	var popup  = new oefPopup(kind, type);
-    var target = element.getAttribute('target');
-    
-    if (target) popup.setTarget(target);
-    
-	return popup.displayWindow('displayEditForm', {id: id});
+	return openPopup(element, kind, type, 'EditForm', {id: id});
 }
 
 /**

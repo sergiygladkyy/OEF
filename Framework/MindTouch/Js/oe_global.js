@@ -515,3 +515,49 @@ function oefPopup(kind, type, params, options)
 		}
 	}
 }
+
+/**
+ * Open OEF form in popup window
+ * 
+ * @param DOMElements element
+ * @param string kind
+ * @param string type
+ * @param int    id
+ * @param string form
+ * @param object params
+ * @return
+ */
+function openPopup(element, kind, type, form, params)
+{
+	var action, popup, target;
+	
+	switch(form)
+	{
+		case 'ListForm':
+			action = 'displayListForm';
+			break;
+			
+		case 'ItemForm':
+			action = 'displayItemForm';
+			break;
+			
+		case 'EditForm':
+			action = 'displayEditForm';
+			break;
+			
+		default:
+			return false;
+	}
+	
+	popup  = new oefPopup(kind, type, params);
+	target = element.getAttribute('target');
+    
+    if (target) popup.setTarget(target);
+    
+	return popup.displayWindow(action);
+}
+/*
+function openEditForm(kind, type, id, params);
+function openItemForm(kind, type, id, params);
+function openListForm(kind, type, id, params);
+*/

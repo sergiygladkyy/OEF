@@ -19,6 +19,8 @@ $_templates_map = array(
 
    'Reports/ReportForm/defaultProjectManHours'  => '/Reports/ReportForm/templates/defaultProjectManHours.php',
    'Reports/ReportForm/defaultProjectResources' => '/Reports/ReportForm/templates/defaultProjectResources.php',
-   'Reports/ReportForm/defaultProjectManHours'  => '/Reports/ReportForm/templates/defaultProjectManHours.php'
-    )
+   'Reports/ReportForm/defaultProjectManHours'  => '/Reports/ReportForm/templates/defaultProjectManHours.php',
+   
+   'Other/Desktop' => '/Other/Desktop.php'
+);
 ?>

@@ -13,7 +13,13 @@
      var isPopup  = __request.args.popup ?? 0;
      let isPopup  = isPopup == 0 ? false : true;
      
-     if (uid == 'Constants')
+     if (uid == 'Desktop')
+     {
+        let action   = 'displayDesktop';
+        var tpl_name = 'Desktop';
+        var puid     = {kind: 'Other', type: nil};
+     }
+     else if (uid == 'Constants')
      {
         let action   = 'displayConstantForm';
         var tpl_name = 'EditForm';
@@ -78,6 +84,13 @@
       var inst_conf = extconfig.Fetch('installer');
       var js_path   = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Js';
       var css_path  = inst_conf['base_dir']..inst_conf['framework_dir']..'/MindTouch/Css';
+      
+      if (uid == 'Desktop')
+      {
+         var appName  = entities.getAppliedSolutionName();
+         let appName  = (appName.status != True) ? false : appName.result;
+         let params ..= {dir: inst_conf['base_dir']..inst_conf['applied_solutions_dir']..'/'..appName};
+      }
       
       &lt;html&gt;
         &lt;head&gt;

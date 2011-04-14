@@ -22,13 +22,9 @@ self.childClose = function (data)
  */
 function newListItem(element, kind, type, options)
 {
-	var param  = options && options.type ? {type: options.type} : {};
-	var popup  = new oefPopup(kind, type, param);
-	var target = element.getAttribute('target');
-    
-    if (target) popup.setTarget(target);
+	var params = options && options.type ? {type: options.type} : {};
 	
-	return popup.displayWindow('displayEditForm', {id: 0});
+	return openPopup(element, kind, type, 'EditForm', params);
 }
 
 /**
@@ -50,12 +46,7 @@ function editListItem(element, kind, type)
 		return false;
 	}
 	
-	var popup  = new oefPopup(kind, type);
-	var target = element.getAttribute('target');
-    
-    if (target) popup.setTarget(target);
-    
-	return popup.displayWindow('displayEditForm', {id: id});
+	return openPopup(element, kind, type, 'EditForm', {id: id});
 }
 
 /**
@@ -77,12 +68,7 @@ function viewListItem(element, kind, type)
 		return false;
 	}
 	
-	var popup  = new oefPopup(kind, type);
-	var target = element.getAttribute('target');
-    
-    if (target) popup.setTarget(target);
-
-	return popup.displayWindow('displayItemForm', {id: id});
+	return openPopup(element, kind, type, 'ItemForm', {id: id});
 }
 
 /**
