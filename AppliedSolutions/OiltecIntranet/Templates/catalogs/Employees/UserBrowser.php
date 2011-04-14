@@ -84,10 +84,11 @@ width: 515px !important;
     </thead>
     <tbody id="catalogs_UserBrowser_list_block" class="ae_list_block">
 <?php foreach ($attrs as $value ): ?>
+   <?php $prewiev = empty($value['Person']['Photo']) ? '/skins/common/icons/mrab_no_profile_image.png' : $uploadDir.'preview'.$value['Person']['Photo'] ?>
     <tr class="catalogs_UserBrowser_list_item ae_list_item">
         <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
-            <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>', '<?php echo $uploadDir.'preview'.$value["Person"]["Photo"]?>'); return true;"
-               onmouseout="HideABPhotoDialog('<?php echo $uploadDir.'preview'.$value["Person"]["Photo"]?>'); return true;">
+            <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>', '<?php echo $prewiev ?>'); return true;"
+               onmouseout="HideABPhotoDialog('<?php echo $prewiev ?>'); return true;">
                 <img id="photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>" width="23" height="16" src="/skins/aconawellpro/images/photo_icn.gif">
             </a>
         </td>
