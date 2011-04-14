@@ -668,7 +668,7 @@ function oefNewOnBasis(kind, type, basis_for)
 			{
 				var rtype = basis_for[rkind][i];
 				
-				submenu += '<div class="oef_menu_item" uid="' + rkind + '.' + rtype + '">' + rtype + '</div>';
+				submenu += '<div class="oef_menu_item" rkind="' + rkind + '" rtype="' + rtype + '">' + rtype + '</div>';
 			}
 		}
 		
@@ -679,11 +679,20 @@ function oefNewOnBasis(kind, type, basis_for)
 			event = event || window.event;
 			
 			var node  = event.target || event.srcElement;
-			var uid   = jQuery(node).attr('uid');
+			var rkind = jQuery(node).attr('rkind');
+			var rtype = jQuery(node).attr('rtype');
 			var basis = kind + '.' + type;
-			var href  = location.href + '?uid=' + uid + '&actions=displayEditForm&basis=' + basis + '&bid=' + bid;
 			
-			jQuery(link).attr('href', href);
+			// Open popup window
+			openPopup(node, rkind, rtype, 'EditForm', {basis: basis, bid: bid});
+			
+			/* 
+			 * Open by link
+			 * 
+			 * var uid   = rkind + '.' + rtype;
+			 * var href  = location.pathname + '?uid=' + uid + '&actions=displayEditForm&basis=' + basis + '&bid=' + bid;
+			 * jQuery(link).attr('href', href);
+			 */
 		});
 		
 		jQuery('body').bind('click', bodyClick);

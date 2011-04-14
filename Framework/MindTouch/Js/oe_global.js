@@ -235,7 +235,7 @@ function oefPopup(kind, type, params, options)
 	this.type = type ? type : null;
 	
 	this.params  = params  ? params  : {};
-	this.options = options ? options : 'width=768,height=600,menubar=1,toolbar=0,scrollbars=1,resizable=0';
+	this.options = options ? options : 'width=768,height=600,menubar=1,toolbar=0,scrollbars=1,resizable=1';
 	this.target  = '_blank';
 	
 	var required_params = {
