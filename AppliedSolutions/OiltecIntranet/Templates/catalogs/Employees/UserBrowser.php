@@ -86,25 +86,25 @@ width: 515px !important;
 <?php foreach ($attrs as $value ): ?>
    <?php $prewiev = empty($value['Person']['Photo']) ? '/skins/common/icons/mrab_no_profile_image.png' : $uploadDir.'preview'.$value['Person']['Photo'] ?>
     <tr class="catalogs_UserBrowser_list_item ae_list_item">
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>', '<?php echo $prewiev ?>'); return true;"
                onmouseout="HideABPhotoDialog('<?php echo $prewiev ?>'); return true;">
                 <img id="photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>" width="23" height="16" src="/skins/aconawellpro/images/photo_icn.gif">
             </a>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <?php echo $value["Person"]["Name"];?>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <?php echo $value["Person"]["Surname"];?>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <?php echo $value["Person"]["Phone"];?>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <?php echo $value["StaffRecord"]["OrganizationalUnit"]["text"];?>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Person"]["_id"];?>';">
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
             <?php echo $value["StaffRecord"]["OrganizationalPosition"]["text"];?>
         </td>
     </tr>
@@ -116,7 +116,9 @@ width: 515px !important;
 </form>
 <div style="display: none;" id="divShowABPhotoDialog" class="popup_photo">
     <div class="popup_padd">
-        <img id="divShowABPhotoDialogImg" height="80" width="80" src="./" alt="Фото" />
+        <div style="width: 82px; height:82px; overflow: hidden; text-align: center; vertical-align: middle;">
+            <img id="divShowABPhotoDialogImg" style="max-height: 80px; max-width: 80px;" src="./" alt="Photo" />
+        </div>
     </div>
 </div>
 
@@ -129,7 +131,7 @@ width: 515px !important;
                 <div id="userProfilePopUp" style="padding: 20px;"></div>
 	</div>
 
-<h1><a href="#" onclick="popup('popUpDiv')">Show selected user profile</a></h1>
+<h1><a href="#" onclick="popup('popUpDiv'); return false;">Show selected user profile</a></h1>
 
 
 <!--
