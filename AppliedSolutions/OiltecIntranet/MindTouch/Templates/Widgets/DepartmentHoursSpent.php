@@ -1,17 +1,21 @@
-var zone = $0?? 'zone_0' ;
-var period = $1?? 'Today' ;
-var department = $2?? '' ;
-<html>
-  <head>
-    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"></script>
-    <script type="text/javascript">
-      "jQuery(document).ready(function() { jQuery('#"..zone.."').html('<div class=\"oef_content\"><h3 style=\"clear:both\">Department hours spent</h3><div id=\"oef_department_hours_spent\">&nbsp;</div></div>'); });"
-    </script>
-  </head>
-  <body></body>
-  <tail>
-    <script type="text/javascript">
-	  "Widgets.showWidget({
+{{
+  var zone   = $0 ?? 'zone_0';
+  var period = $1 ?? 'Today';
+  var department = $2?? '';
+  
+  &lt;html&gt;
+    &lt;head&gt;
+      &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
+      &lt;script type="text/javascript"&gt;"
+        jQuery(document).ready(function() {
+           jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;Department hours spent&lt;/h3&gt;&lt;div id=\"oef_department_hours_spent\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+        });
+      "&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;&lt;/body&gt;
+    &lt;tail&gt;
+      &lt;script type="text/javascript"&gt;"
+	    Widgets.showWidget({
 	        'load': {
 		       'solution': 'OiltecIntranet',
 		       'service':  'Pm',
@@ -28,7 +32,8 @@ var department = $2?? '' ;
 		       'tag_id':  'oef_department_hours_spent',
 		       'options': {}
 	        }
-      });"
-    </script>
-  </tail>
-</html>
+        });
+      "&lt;/script&gt;
+    &lt;/tail&gt;
+  &lt;/html&gt;
+}}

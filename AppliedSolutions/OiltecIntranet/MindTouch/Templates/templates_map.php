@@ -21,6 +21,24 @@ $_templates_map = array(
    'Reports/ReportForm/defaultProjectResources' => '/Reports/ReportForm/templates/defaultProjectResources.php',
    'Reports/ReportForm/defaultProjectManHours'  => '/Reports/ReportForm/templates/defaultProjectManHours.php',
    
-   'Other/Desktop' => '/Other/Desktop.php'
+   'Other/Desktop' => '/Other/Desktop.php',
+
+   'Dashboard/Horizontal' => '/Widgets/Dashboard/DashboardHorizontal.php',
+   'Dashboard/Vertical'   => '/Widgets/Dashboard/DashboardVertical.php',
+   'Dashboard/Table'      => '/Widgets/Dashboard/DashboardTable.php',
+
+   'Widgets/DepartmentHoursSpent'            => '/Widgets/DepartmentHoursSpent.php',
+   'Widgets/EmployeeHours'                   => '/Widgets/EmployeeHours.php',
+   'Widgets/EmployeeProjects'                => '/Widgets/EmployeeProjects.php',
+   'Widgets/EmployeeVacationDays'            => '/Widgets/EmployeeVacationDays.php',
+   'Widgets/ProjectMilestones'               => '/Widgets/ProjectMilestones.php',
+   'Widgets/ProjectOverview'                 => '/Widgets/ProjectOverview.php',
+   'Widgets/ProjectsOngoing'                 => '/Widgets/ProjectsOngoing.php',
+   'Widgets/ResourcesAvailable'              => '/Widgets/ResourcesAvailable.php',
+   'Widgets/ResourcesSpentVsBudgetedHrs'     => '/Widgets/ResourcesSpentVsBudgetedHrs.php',
+   'Widgets/ResourcesSpentVsBudgetedNok'     => '/Widgets/ResourcesSpentVsBudgetedNok.php',
+   'Widgets/ResourcesWorkload'               => '/Widgets/ResourcesWorkload.php',
+   'Widgets/WorkingOnMyProjects'             => '/Widgets/WorkingOnMyProjects.php',
+   'Widgets/WorkingOnProjectsInMyDepartment' => '/Widgets/WorkingOnProjectsInMyDepartment.php'
 );
 ?>

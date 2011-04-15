@@ -1,9 +1,11 @@
-var zone = $0?? 'zone_0' ;
-<html>
-  <head>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"></script>
-    <script type="text/javascript">"
+{{
+  var zone = $0 ?? 'zone_0';
+  
+  &lt;html&gt;
+    &lt;head&gt;
+      &lt;script type="text/javascript" src="https://www.google.com/jsapi"&gt;&lt;/script&gt;
+      &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
+      &lt;script type="text/javascript"&gt;"
 		Widgets.showWidget({
 	        'load': {
 		       'solution': 'OiltecIntranet',
@@ -19,9 +21,10 @@ var zone = $0?? 'zone_0' ;
 	        }
          });
 
-         jQuery(document).ready(function() { jQuery('#"..zone.."').html('<div class=\"oef_content\"> <h3 style=\"clear:both\">Employee Vacations Days</h3><div id=\"chart\" style=\"float: left;\">&nbsp;</div><div id=\"table_chart\" style=\"float: left;\">&nbsp;</div></div>'); });
-    "</script>
-  </head>
-  <body></body>
-  <tail></tail>
-</html>
+         jQuery(document).ready(function() { jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt; &lt;h3 style=\"clear:both\"&gt;Employee Vacations Days&lt;/h3&gt;&lt;div id=\"chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;div id=\"table_chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;'); });
+      "&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;&lt;/body&gt;
+    &lt;tail&gt;&lt;/tail&gt;
+  &lt;/html&gt;
+}}

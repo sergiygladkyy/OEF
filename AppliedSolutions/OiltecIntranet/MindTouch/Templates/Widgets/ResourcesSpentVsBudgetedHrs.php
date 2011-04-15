@@ -1,13 +1,17 @@
-var zone = $0?? 'zone_0' ;
-var project = $1?? '0' ;
-<html>
-  <head>
-    <script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"></script>
-    <script type="text/javascript">
-	  "jQuery(document).ready(function() { jQuery('#"..zone.."').html('<div class=\"oef_content\"><h3 style=\"clear:both\">ResourcesSpentVsBudgeted HRS</h3><div id=\"oef_resources_spent_vs_budgeted_hrs\">&nbsp;</div></div>'); });"
-    </script>
-    <script type="text/javascript">
-	  "Widgets.showWidget({
+{{
+  var zone    = $0 ?? 'zone_0';
+  var project = $1 ?? '0';
+  
+  &lt;html&gt;
+    &lt;head&gt;
+      &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
+      &lt;script type="text/javascript"&gt;"
+        jQuery(document).ready(function() {
+           jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;ResourcesSpentVsBudgeted HRS&lt;/h3&gt;&lt;div id=\"oef_resources_spent_vs_budgeted_hrs\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+        });
+      "&lt;/script&gt;
+      &lt;script type="text/javascript"&gt;"
+	    Widgets.showWidget({
 	        'load': {
 		       'solution': 'OiltecIntranet',
 		       'service':  'Pm',
@@ -29,9 +33,10 @@ var project = $1?? '0' ;
                   vAxis: {title: 'HRS', titleTextStyle: {color: 'red'}, minValue: 0}
                }
 	        }
-      });"
-    </script>
-  </head>
-  <body></body>
-  <tail></tail>
-</html>
+        });
+      "&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;&lt;/body&gt;
+    &lt;tail&gt;&lt;/tail&gt;
+  &lt;/html&gt;
+}}
