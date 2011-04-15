@@ -17,6 +17,7 @@ function onGenerate($event)
       'Person'      => array(),
       'StaffRecord' => array()
    );
+   $doc['desc'] = 'not exists';
 
    $uploadDir   = Utility::getUploadDir($kind, 'NaturalPersons', 'Photo');
    $form_prefix = 'aeform['.$kind.']['.$type.']';
@@ -73,11 +74,18 @@ function onGenerate($event)
          }
 
          $attrs['StaffRecord'] = $staff->toArray(array('with_link_desc' => true));
+         
+         $doc['type'] = $attrs['StaffRecord']['_rec_type'];
+         $doc['id']   = $attrs['StaffRecord']['_rec_id'];
+         $doc['desc'] = $container->getCModel('documents', $doc['type'])->retrieveLinkData($doc['id']);
+         $doc['desc'] = $doc['desc'][$doc['id']]['text'];
       }
 
       $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
    }
-   $tag_id=isset($params["tag_id"])?$params["tag_id"]:"oef_custom_form";
+   
+   $tag_id = isset($params["tag_id"]) ? $params["tag_id"] : "oef_custom_form";
+   
    include(self::$templates_dir.$name.'.php');
 }
 
