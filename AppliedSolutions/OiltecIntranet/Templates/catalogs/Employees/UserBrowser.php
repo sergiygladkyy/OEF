@@ -41,7 +41,7 @@
 width: 515px !important;
 }
 </style>
-<div class="catalogs_Employees_message systemmsg" style="display: none;">
+<div class="catalogs_UserBrowser_message systemmsg" style="display: none;">
   <div class="inner">
     <ul class="flashMsg">
       <li>&nbsp;</li>
@@ -49,29 +49,11 @@ width: 515px !important;
   </div>
 </div>
 
-<!--<div class="info_message systemmsg" style="display: none; clear: both; margin-bottom: 20px !important; width: 528px;">
-  <div style="padding: 0 6px;">
-    <ul class="flashMsg">
-      <li>&nbsp;</li>
-    </ul>
-  </div>
-</div>-->
-<?php if (empty($attrs)): ?>
-  <div style="height: 250px; border: 1px solid #DDDDDD; background-color: #F8F8F8; margin-bottom: 10px;">
-
-      <script>
-        displayMessage('catalogs_Employees', 'Employees not exists. You can create a new employees with a document <a href="?uid=documents.RecruitingOrder&actions=displayListForm">RecruitingOrder</a>.', 2);
-      </script>
-
-  </div>
-<?php else: ?>
-  <?php $prefix = $form_prefix.'[attributes]' ?>
-
+<?php $prefix = $form_prefix.'[attributes]' ?>
 
 <form method="post" action="#" class="oe_custom_edit_form" id="catalogs_Employees_item" enctype="multipart/form-data">
   <input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
-  <input type="hidden" value="<?php echo $attrs["Person"]["_id"]?>" name="<?php echo $prefix."[_id]"; ?>" />
-<table>
+  <table>
     <thead>
     <tr>
         <th>Photo</th>
@@ -83,29 +65,29 @@ width: 515px !important;
     </tr>
     </thead>
     <tbody id="catalogs_UserBrowser_list_block" class="ae_list_block">
-<?php foreach ($attrs as $value ): ?>
-   <?php $prewiev = empty($value['Person']['Photo']) ? '/skins/common/icons/mrab_no_profile_image.png' : $uploadDir.'preview'.$value['Person']['Photo'] ?>
+<?php foreach ($data as $pid => $values): ?>
+   <?php $prewiev = empty($values['Photo']) ? '/skins/common/icons/mrab_no_profile_image.png' : $uploadDir.'preview'.$values['Photo'] ?>
     <tr class="catalogs_UserBrowser_list_item ae_list_item">
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>', '<?php echo $prewiev ?>'); return true;"
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
+            <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $values['NaturalPerson'] ?>', '<?php echo $prewiev ?>'); return true;"
                onmouseout="HideABPhotoDialog('<?php echo $prewiev ?>'); return true;">
-                <img id="photo_img_ctl_<?php echo $uploadDir.$value["Person"]["_id"]?>" width="23" height="16" src="/skins/aconawellpro/images/photo_icn.gif">
+                <img id="photo_img_ctl_<?php echo $values['NaturalPerson'] ?>" width="23" height="16" src="/skins/aconawellpro/images/photo_icn.gif">
             </a>
         </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo $value["Person"]["Name"];?>
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
+            <?php echo $values['Name'] ?>
+        </td>
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
+            <?php echo $values['Surname'] ?>
+        </td>
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
+            <?php echo $values['Phone'] ?>
+        </td>
+        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
+            <?php echo isset($values['OrganizationalUnit']['text']) ? $values['OrganizationalUnit']['text'] : '&nbsp;' ?>
         </td>
         <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo $value["Person"]["Surname"];?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo $value["Person"]["Phone"];?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo $value["StaffRecord"]["OrganizationalUnit"]["text"];?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo $value["StaffRecord"]["OrganizationalPosition"]["text"];?>
+            <?php echo isset($values['OrganizationalPosition']['text']) ? $values['OrganizationalPosition']['text'] : '&nbsp;' ?>
         </td>
     </tr>
 <?php endforeach; ?>
@@ -122,9 +104,6 @@ width: 515px !important;
     </div>
 </div>
 
-
-
-
 <div id="blanket" style="display:none;" onclick="popup('popUpDiv')"></div>
 	<div id="popUpDiv" style="display:none;width:600px;height:675px;" >
                 <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;margin-top: -15px;margin-right: -15px;"/>
@@ -134,15 +113,6 @@ width: 515px !important;
 <h1><a href="#" onclick="popup('popUpDiv'); return false;">Show selected user profile</a></h1>
 
 
-<!--
-<a href="#"  class="poplink" onclick="toggle('div1');return false;" id="link">Link</a><br />
-<a href="#"  class="poplink" onclick="toggle('tst');return false;" id="link">Link2</a>
-
-<div id="div1" class="pop" style="position: relative; margin: 0 auto; width: 800px; display: none; border: dotted;">
-	<div style="width: 800px; height: 35px; background-color: #000;"></div><br /><br /><br /><br />
-<input id="tst"  class="pop" type="button" name="" value="TEST" />
-
-</div>-->
 <script type="text/javascript">
 function FindElementPos(element)
 {
@@ -307,9 +277,9 @@ function popup(windowname) {
 	toggle('blanket');
 	toggle(windowname);
         var params = {
-           "employee": document.getElementById('selectedUser').value,
-           "form": "UserProfile",
-           "uid": "catalogs.Employees",
+           "person": document.getElementById('selectedUser').value,
+           "form":   "UserProfile",
+           "uid":    "catalogs.Employees",
            "tag_id": 'userProfilePopUp'
            };
 
@@ -330,5 +300,4 @@ function selectColumn(element, prefix)
 	return false;
 }
 </script>
-<?php endif;?>
 </body>

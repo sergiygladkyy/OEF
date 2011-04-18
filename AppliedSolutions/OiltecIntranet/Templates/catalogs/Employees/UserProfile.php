@@ -113,9 +113,10 @@ input.userBusinessCard {
     </ul>
   </div>
 </div>
-<?php if (empty($attrs['Employee'])): ?>
+
+<?php if (empty($attrs['Employee']) && $isCurrentEmployee): ?>
+
   <div style="height: 250px; border: 1px solid #DDDDDD; background-color: #F8F8F8; margin-bottom: 10px;">
-    <?php if ($isCurrentEmployee): ?>
       <script>
         var msg = "The System couldn't find an association between the currently logged user ";
         msg += '<?php echo $user->getUsername() ?> and a Natural Person catalog item. So, we cannot identify which Person/Employee you are. ';
@@ -123,15 +124,16 @@ input.userBusinessCard {
 
         displayMessage('catalogs_Employees', msg, 2);
       </script>
-    <?php else: ?>
-      <script>
-        displayMessage('catalogs_Employees', 'Employee not exists. You can create a new employee with a document <a href="?uid=documents.RecruitingOrder&actions=displayListForm">RecruitingOrder</a>.', 2);
-      </script>
-    <?php endif; ?>
   </div>
+
 <?php else: ?>
   <?php $prefix = $form_prefix.'[attributes]' ?>
-
+  <?php if (empty($attrs['Employee'])): ?>
+    <?php $_msg = 'This person not employed. You can employ him/her by submitting a "<a href="?uid=documents.RecruitingOrder&actions=displayListForm">RecruitingOrder</a>" document.' ?>
+    <script>
+      displayMessage('info', '<?php echo $_msg ?>', 2);
+    </script>
+  <?php endif; ?>
 <div class="userTabs">
   <div id="htab1">
 
@@ -163,7 +165,7 @@ input.userBusinessCard {
         <input type="button" id="userCancel1" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />
      </div>
       <div class="userActions" id="userLink" style="display:none;"  >
-        <a  href="" >Click to change selected user profile</a>
+        <a  href="">Click to change selected user profile</a>
      </div>
   </div>
 
@@ -244,35 +246,35 @@ input.userBusinessCard {
         <div class="userRow">
           <div class="userRowLeft">Organization:</div>
           <div class="userRowRight" >
-            <div id="left6" class="userValue"><?php echo Constants::get('OrganizationName') ?></div>
+            <div id="left6" class="userValue"><?php echo $attrs['Employee'] ? Constants::get('OrganizationName') : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Unit:</div>
           <div class="userRowRight" >
-            <div id="left7" class="userValue"><?php echo $attrs["StaffRecord"]["OrganizationalUnit"]["text"]?></div>
+            <div id="left7" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalUnit"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Position:</div>
           <div class="userRowRight" >
-            <div id="left8" class="userValue"><?php echo $attrs["StaffRecord"]["OrganizationalPosition"]["text"]?></div>
+            <div id="left8" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalPosition"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Schedule:</div>
           <div class="userRowRight" >
-            <div id="left9" class="userValue"><?php echo $attrs["StaffRecord"]["Schedule"]["text"]?></div>
+            <div id="left9" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["Schedule"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Vacation Days:</div>
           <div class="userRowRight" >
-            <div id="left10" class="userValue"><?php echo $attrs["StaffRecord"]["YearlyVacationDays"]?></div>
+            <div id="left10" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["YearlyVacationDays"] : '&nbsp;' ?></div>
           </div>
         </div>
         <div class="userRowClear">   </div>
@@ -281,7 +283,7 @@ input.userBusinessCard {
         <div class="userRow"></div>
         <div class="userRow"></div>
         <div class="userRow"></div>
-
+     
      </div>
    </div>
   </div>
@@ -382,6 +384,13 @@ function show(num){
 
         displayMessage('info', msg, 2);
     }
+  <?php if (empty($attrs['Employee'])): ?>
+    else if (num == 'tab1')
+    {  
+      displayMessage('info', '<?php echo $_msg ?>', 2);
+    }
+  <?php endif; ?>
+    
 
     document.getElementById(num).style.display='block';
 

@@ -18,42 +18,66 @@ function onGenerate($event)
       'StaffRecord' => array()
    );
    $doc['desc'] = 'not exists';
-
+   
+   $container   = Container::getInstance();
+   $user        = $container->getUser();
    $uploadDir   = Utility::getUploadDir($kind, 'NaturalPersons', 'Photo');
    $form_prefix = 'aeform['.$kind.']['.$type.']';
-   $container   = Container::getInstance();
-
-   $gender = $container->getConfigManager()->getInternalConfigurationByKind('catalogs.field_prec', 'NaturalPersons');
-   $gender = $gender['Gender']['in'];
-
-   // Retrieve employee
-   if (!empty($params['employee']))
+   
+   // Retrieve NaturalPerson and Employee
+   $person = $employee = array();
+   
+   if (!empty($params['person']))
    {
-      $empId = (int) $params['employee'];
-      $isCurrentEmployee = false;
-   }
-   else
-   {
-      $empId = MEmployees::retrieveCurrentEmployee();
-      $isCurrentEmployee = true;
-   }
+      $pid = (int) $params['person'];
+      $employee = $container->getCModel('catalogs', 'Employees')->getEntities($pid, array('attributes' => 'NaturalPerson'));
 
-   if ($empId > 0)
-   {
-      $employee = $container->getModel('catalogs', 'Employees');
-
-      if (!$employee->load($empId))
+      if ($employee === null || isset($employee['error']))
       {
          throw new Exception('Database error');
       }
+      
+      $employee = isset($employee[0]) ? $employee[0] : array();
+      $person   = $container->getModel('catalogs', 'NaturalPersons');
+      
+      if (!$person->load($pid))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $empId = $employee ? $employee['_id'] : 0;
+      
+      $isCurrentEmployee = ($empId && $empId == MEmployees::retrieveCurrentEmployee() ? true : false);
+   }
+   else
+   {
+      $isCurrentEmployee = true;
+      
+      $empId = MEmployees::retrieveCurrentEmployee();
+      
+      if ($empId > 0)
+      {
+         $employee = $container->getModel('catalogs', 'Employees');
 
-      $person = $employee->getAttribute('NaturalPerson');
+         if (!$employee->load($empId))
+         {
+            throw new Exception('Database error');
+         }
 
-      $attrs['Person'] = $person->toArray(array('with_link_desc' => true));
-
+         $person = $employee->getAttribute('NaturalPerson');  
+      }
+   }
+   
+   $gender = $container->getConfigManager()->getInternalConfigurationByKind('catalogs.field_prec', 'NaturalPersons');
+   $gender = $gender['Gender']['in'];
+   
+   $attrs['Person'] = is_object($person) ? $person->toArray(array('with_link_desc' => true)) : $person;
+   
+   if ($empId)
+   {
       // StaffHistoricalRecords
-      $odb = Container::getInstance()->getODBManager();
-
+      $odb = $container->getODBManager();
+      
       // Retrieve last record
       $query = "SELECT * FROM information_registry.StaffHistoricalRecords ".
                "WHERE `Employee`=".$empId." AND `Period` <= '".date('Y-m-d H:i:s')."'".
@@ -80,11 +104,11 @@ function onGenerate($event)
          $doc['desc'] = $container->getCModel('documents', $doc['type'])->retrieveLinkData($doc['id']);
          $doc['desc'] = $doc['desc'][$doc['id']]['text'];
       }
-
-      $attrs['Employee'] = $employee->toArray(array('with_link_desc' => true));
+      
+      $attrs['Employee'] = is_object($employee) ? $employee->toArray() : $employee;
    }
    
-   $tag_id = isset($params["tag_id"]) ? $params["tag_id"] : "oef_custom_form";
+   $tag_id = isset($params['tag_id']) ? $params['tag_id'] : 'oef_custom_form';
    
    include(self::$templates_dir.$name.'.php');
 }
