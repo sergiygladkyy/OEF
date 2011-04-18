@@ -21,6 +21,8 @@ img { border:0; }
 
 .userRight { float:left; margin: 20px 0px 20px 8px;  }
 
+.userDesc { margin: 20px 0 10px 20px; color: #5f5f5f; text-align: left; font-weight: 600;}
+
 .userActions { float: left; width: 190px; overflow:hidden; padding-top: 10px;}
 
 .userRows { width:302px; float:left; }
@@ -159,7 +161,8 @@ input.userBusinessCard {
         <img src="/skins/common/icons/mrab_no_profile_image.png" alt="Photo" />
       <?php endif;?>
     </div>
-     <div class="userActions" id="userActions" >
+    <div class="userDesc"><?php echo $attrs['Person']['Name'].' '.$attrs['Person']['Surname'] ?></div>
+    <div class="userActions" id="userActions" >
         <input type="button" id="userEdit1" class="userProfileEdit" onclick="openForm(1)" />
         <input type="button" id="userSubmit1" onclick="_submit(this)" class="userProfileSubmit" style="display:none;" value="" command="save"/>
         <input type="button" id="userCancel1" onclick="openForm(0)" style="display:none;" class="userProfileCancel" />

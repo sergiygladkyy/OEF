@@ -29,6 +29,7 @@
    top:0px;
    left:0px;
    width:100%;
+   min-width: 938px;
 }
 #popUpDiv {
 	position:absolute;
@@ -241,12 +242,10 @@ function blanket_size(popUpDivVar) {
 	}
 	var blanket = document.getElementById('blanket');
 	blanket.style.height = blanket_height+ 'px';
-
+	
 	var popUpDiv = document.getElementById(popUpDivVar);
 	popUpDiv_height=blanket_height/2-480;//150 is half popup's height
-	popUpDiv.style.top = popUpDiv_height + 'px';
-
-
+	popUpDiv.style.top = jQuery(window).scrollTop() + Math.floor(0.1*jQuery(window).height()) + 'px';
 }
 function window_pos(popUpDivVar) {
 	if (typeof window.innerWidth != 'undefined') {
@@ -265,7 +264,8 @@ function window_pos(popUpDivVar) {
 	}
 	var popUpDiv = document.getElementById(popUpDivVar);
 	window_width=window_width/2-380;//150 is half popup's width
-	popUpDiv.style.left = window_width + 'px';
+	popUpDiv.style.left = '50%';
+	popUpDiv.style.margin = '0 0 0 -220px';
 }
 function popup(windowname) {
         var value = document.getElementById('selectedUser').value;
