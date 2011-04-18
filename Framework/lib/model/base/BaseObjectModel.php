@@ -244,7 +244,7 @@ class BaseObjectModel extends BaseEntityModel
          $this->isModified = false;
          $this->modified   = array();
          
-         $this->attributes['Code'] = $this->generateCode($options);
+         $this->setAttribute('Code', $this->generateCode($options));
       }
       else if (!$this->load($values[$pkey], $options)) // Load by id
       {
