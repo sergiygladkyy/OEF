@@ -1393,6 +1393,53 @@ class MEmployees
       
       return $select;
    }
+   
+   /**
+    * Return true if employee is Project Manager
+    * 
+    * @param int $employee
+    * @param string $date
+    * @return boolean
+    */
+   static public function isPM($employee, $date = null)
+   {
+      if (!$date) $date = date('Y-m-d H:i:s');
+      
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Retrieve last record
+      $query = "SELECT MAX(`Period`) AS `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `InternalHourlyRate`, `YearlyVacationDays`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$date."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      if ($row['RegisteredEvent'] != 'Firing' && $row['OrganizationalPosition'] == Constants::get('ProjectManagerPosition'))
+      {
+         return true;
+      }
+      
+      return false;
+   }
+   
+   /**
+    * Return true if current user is Project Manager
+    * 
+    * @param string $date
+    * @return boolean
+    */
+   static public function currentIsPM($date = null)
+   {
+      if (!($employee = self::retrieveCurrentEmployee()))
+      {
+         return false;
+      }
+      
+      return self::isPM($employee, $date);
+   }
 }
 
 
