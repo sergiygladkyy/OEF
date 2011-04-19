@@ -3800,7 +3800,7 @@ class PersistentLayer
             $q .= ', `'.$field.'` '.$sql_def;
          }
 
-         if ($kind == 'catalogs')
+         if (in_array($kind, $this->getObjectTypes()))
          {
             $uKey = ', UNIQUE KEY `Code` (`Code`)';
             
