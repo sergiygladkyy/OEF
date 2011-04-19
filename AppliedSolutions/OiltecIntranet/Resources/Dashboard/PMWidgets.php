@@ -5,8 +5,9 @@
    wiki.template(d_root..'/Vertical');
    
    wiki.template(w_root..'/WorkingOnMyProjects',         ['zone_0']);
-   wiki.template(w_root..'/ResourcesAvailable',          ['zone_1']);
-   wiki.template(w_root..'/ResourcesSpentVsBudgetedHrs', ['zone_2']);
-   wiki.template(w_root..'/ResourcesSpentVsBudgetedNok', ['zone_3']);
-   wiki.template(w_root..'/ProjectMilestones',           ['zone_4']);
+   wiki.template(w_root..'/ProjectOverview',             ['zone_1', '0001']);
+   wiki.template(w_root..'/ResourcesAvailable',          ['zone_2']);
+   wiki.template(w_root..'/ResourcesSpentVsBudgetedHrs', ['zone_3', '0001']);
+   wiki.template(w_root..'/ResourcesSpentVsBudgetedNok', ['zone_4', '0001']);
+   wiki.template(w_root..'/ProjectMilestones',           ['zone_5', '0001']);
 }}
