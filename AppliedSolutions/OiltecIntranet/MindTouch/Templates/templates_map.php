@@ -26,6 +26,9 @@ $_templates_map = array(
    'Dashboard/Horizontal' => '/Widgets/Dashboard/DashboardHorizontal.php',
    'Dashboard/Vertical'   => '/Widgets/Dashboard/DashboardVertical.php',
    'Dashboard/Table'      => '/Widgets/Dashboard/DashboardTable.php',
+   'Dashboard/Employee'   => '/Widgets/Dashboard/EmployeeWidgets.php',
+   'Dashboard/PM'         => '/Widgets/Dashboard/PMWidgets.php',
+   'Dashboard/Department' => '/Widgets/Dashboard/DepartmentWidgets.php',
 
    'Widgets/DepartmentHoursSpent'            => '/Widgets/DepartmentHoursSpent.php',
    'Widgets/EmployeeHours'                   => '/Widgets/EmployeeHours.php',
