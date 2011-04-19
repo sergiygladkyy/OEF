@@ -31,8 +31,10 @@ class UserOiltecDepartmentWidgetsPage extends UserOEFPage
     * Constructor
     * 
     */
-   public function __construct()
+   public function __construct($User)
    {
+      parent::__construct($User);
+      
       $this->setAppliedSolutionName(self::OEF_APP_NAME);
    }
    
@@ -46,11 +48,11 @@ class UserOiltecDepartmentWidgetsPage extends UserOEFPage
 
       if (!is_null($this->User) && $wgUser->getId() == $this->User->getId())
       {
-         $this->displayTitle = 'Departmant';
+         $this->displayTitle = 'Department';
       }
       else
       {
-         $this->displayTitle = 'Departmant';
+         $this->displayTitle = 'Department';
       }
 
       $path = 'Template:OEF/OiltecIntranet/Dashboard/Department';

@@ -79,6 +79,13 @@ class UserOEFPage extends UserDashboardPage
     */
    public function isVisible($User)
    {
+      global $wgUser;
+      
+      if (is_null($this->User) || $wgUser->getId() != $this->User->getId())
+      {
+         return false;
+      }
+      
       if (!$this->oefInitialized)
       {
          try

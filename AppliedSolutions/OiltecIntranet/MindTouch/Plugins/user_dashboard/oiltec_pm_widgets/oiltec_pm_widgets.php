@@ -31,8 +31,10 @@ class UserOiltecPMWidgetsPage extends UserOEFPage
     * Constructor
     * 
     */
-   public function __construct()
+   public function __construct($User)
    {
+      parent::__construct($User);
+      
       $this->setAppliedSolutionName(self::OEF_APP_NAME);
    }
    
