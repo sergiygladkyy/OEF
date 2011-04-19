@@ -1,6 +1,6 @@
 {{
-  var zone   = $0 ?? 'zone_0' ;
-  var period = $1 ?? 'This Month' ;
+  var zone   = $0 ?? 'zone_0';
+  var period = $1 ? $1 : 'This Month';
   
   &lt;html&gt;
     &lt;head&gt;

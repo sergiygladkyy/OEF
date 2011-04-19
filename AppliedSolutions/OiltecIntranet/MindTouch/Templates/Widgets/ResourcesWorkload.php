@@ -1,7 +1,7 @@
 {{
   var zone   = $0 ?? 'zone_0';
-  var period = $1 ?? 'this week';
-  var department = $2 ?? '';
+  var period = $1 ? $1 : 'This Week';
+  var department = $2 ? $2 : false;
   
   &lt;html&gt;
     &lt;head&gt;
@@ -23,9 +23,9 @@
 		       'authMethod': 'MTAuth',
 		       'authtoken' : '"..user.authtoken.."',
 		       'attributes': {
-		          'Period': '"..period.."',
-		          'Department': '"..department.."'
-		       }
+                  "..(period ? '\'Period\': \''..period..'\'' : '').."
+                  "..(department ? (period ? ',' : '')..'\'Department\': \''..department..'\'' : '').."
+               }
 	        },
 	        'view': {
 		       'widget':  'Grid',

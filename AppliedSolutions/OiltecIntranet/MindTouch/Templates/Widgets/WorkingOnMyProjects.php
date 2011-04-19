@@ -1,5 +1,6 @@
 {{
-  var zone = $0 ?? 'zone_0';
+  var zone  = $0 ?? 'zone_0';
+  var dateD = $1 ?? false;
   
   &lt;html&gt;
     &lt;head&gt;
@@ -20,7 +21,9 @@
 		       'method':   'WorkingOnMyProjects',
 		       'authMethod': 'MTAuth',
 		       'authtoken' : '"..user.authtoken.."',
-		       'attributes': {}
+		       'attributes': {
+		          "..(dateD ? '\'Date\': \''..dateD..'\'' : '').."
+		       }
 	        },
 	        'view': {
 		       'widget':  'Grid',

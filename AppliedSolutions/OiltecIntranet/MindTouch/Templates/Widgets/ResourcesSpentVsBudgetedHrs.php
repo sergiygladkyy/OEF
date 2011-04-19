@@ -1,6 +1,7 @@
 {{
   var zone    = $0 ?? 'zone_0';
-  var project = $1 ?? '0';
+  var project = $1 ? $1 : false;
+  var dateD   = $2 ?? false;
   
   &lt;html&gt;
     &lt;head&gt;
@@ -19,8 +20,9 @@
 		       'authMethod': 'MTAuth',
 		       'authtoken' : '"..user.authtoken.."',
 		       'attributes': {
-		          'Project': '"..project.."'
-		       }
+                   "..(project ? '\'Project\': \''..project..'\'' : '').."
+                   "..(dateD ? (project ? ',' : '')..'\'Date\': \''..dateD..'\'' : '').."
+               }
 	        },
 	        'view': {
 		       'widget':  'ColumnChart',

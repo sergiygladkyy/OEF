@@ -1,7 +1,7 @@
 {{
   var zone  = $0 ?? 'zone_0';
-  var dateD = $1 ?? '';
-  var department = $2 ?? '';
+  var dateD = $1 ?? false;
+  var department = $2 ? $2 : false;
   
   &lt;html&gt;
     &lt;head&gt;
@@ -23,9 +23,9 @@
 		       'authMethod': 'MTAuth',
 		       'authtoken' : '"..user.authtoken.."',
 		       'attributes': {
-		          'Date': '"..dateD.."',
-		          'Department': '"..department.."'
-		       }
+                  "..(dateD ? '\'Date\': \''..dateD..'\'' : '').."
+                  "..(department ? (dateD ? ',' : '')..'\'Department\': \''..department..'\'' : '').."
+               }
 	        },
 	        'view': {
 		       'widget':  'Grid',

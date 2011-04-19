@@ -1,6 +1,6 @@
 {{
   var zone  = $0 ?? 'zone_0';
-  var dateD = $1 ?? '';
+  var dateD = $1 ?? false;
   
   &lt;html&gt;
     &lt;head&gt;
@@ -22,7 +22,7 @@
 		       'authMethod': 'MTAuth',
 		       'authtoken' : '"..user.authtoken.."',
 		       'attributes': {
-		          'Date': '"..dateD.."'
+		          "..(dateD ? '\'Date\': \''..dateD..'\'' : '').."
 		       }
 	        },
 	        'view': {
