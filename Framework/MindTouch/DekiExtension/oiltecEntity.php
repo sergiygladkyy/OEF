@@ -189,26 +189,27 @@
 
      $options['with_link_desc'] = true;
 
-     if (is_a($controller, 'ObjectsController'))
+     if (is_a($controller, 'ObjectsController') && empty($params['show_marked_for_deletion']))
      {
-        if (!empty($params['show_marked_for_deletion']))
+        $options['criteria']['attributes'][] = '%deleted';
+        $options['criteria']['values']['%deleted'] = 0;
+        $options['criteria']['criterion'] = '%deleted = %%deleted%%';
+     }
+     
+     if (!empty($params['ids']))
+     {
+        $options['criteria']['values']['%pkey'] = $params['ids'];
+        $options['criteria']['attributes'][] = '%pkey';
+        $options['criteria']['criterion'] = (empty($options['criteria']['criterion']) ? '' : $options['criteria']['criterion'].' AND ').'%pkey IN (%%pkey%%)';
+     }
+     
+     if (!empty($params['sort']) && is_string($params['sort']))
+     {
+        $pattern = '/^(?:[\s]*(?:(?:`[^\s`\,]+`)|(?:[^\s`\,]+))[\s]*?(?:\sASC|\sDESC|)[\s]*?(?:,(?=[\s]*\S)|\z))+$/i';
+        
+        if (preg_match($pattern, $params['sort']))
         {
-           $options['criteria']['values'] = empty($params['ids']) ? array() : $params['ids'];
-        }
-        else
-        {
-           $options['criteria']['attributes'][] = '%deleted';
-
-           if (!empty($params['ids']))
-           {
-              $options['criteria']['values']['%pkey'] = $params['ids'];
-              $options['criteria']['attributes'][] = '%pkey';
-              $options['criteria']['criterion'] = '%deleted = 0 AND %pkey IN (%%pkey%%)';
-           }
-           else {
-              $options['criteria']['values']['%deleted'] = 0;
-              $options['criteria']['criterion'] = '%deleted = %%deleted%%';
-           }
+           $options['criteria']['criterion'] = (empty($options['criteria']['criterion']) ? '' : $options['criteria']['criterion'].' ').'ORDER BY '.$params['sort'];
         }
      }
 
