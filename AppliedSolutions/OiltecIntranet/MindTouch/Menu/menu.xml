@@ -29,11 +29,10 @@
 	    <item title="TimeCards"     url="%root_path%/Report_TimeCards" />
 	</item>
 	<item title="Other" url="">
-	    <item title="Calendar"           url="%root_path%/Calendar" />
-		<item title="User Profile"       url="%root_path%/UserProfile" />
-		<item title="User Browser"       url="%root_path%/User_Browser" />
-		<item title="Constants"          url="%root_path%/Constants" />
-	    <item title="Divisional Chiefs"  url="%root_path%/IR_DivisionalChiefs" />
+	    <item title="User Profile" url="%root_path%/UserProfile" />
+		<item title="User Browser" url="%root_path%/User_Browser" />
+		<item title="Calendar"     url="%root_path%/Calendar" />
+		<item title="Constants"    url="%root_path%/Constants" />
 	    <item title="Delete Marked For Deletion" url="%root_path%/Delete_Marked_For_Deletion" />
 	</item>
 </menu>
