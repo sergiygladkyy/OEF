@@ -81,8 +81,8 @@ function onBeforeOpening($event)
       'tabulars' => array(
          'Resources' => array(
             'select' => array(
-               'Employee' => $employees,
-               'SubProject' => $subprojs
+               'Employee' => array_values($employees),
+               'SubProject' => array_values($subprojs)
             )
          )
       )
