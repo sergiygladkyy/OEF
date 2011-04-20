@@ -144,11 +144,12 @@ abstract class BaseNotStorageEntityModel extends BaseModel
             break;
          
          case 'float':
-            $val = (float) $value;
-            
-            if ($value != (string) $val) return false;
-            
-            $value = $val;
+            if (!is_float($value))
+            {
+               if (!is_numeric($value)) return false;
+               
+               $value = (float) $value;
+            }
             break;
 
          // Types having string value
