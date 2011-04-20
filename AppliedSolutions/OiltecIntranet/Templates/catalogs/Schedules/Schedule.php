@@ -1,7 +1,7 @@
   <h3>Schedule</h3>
   <input type="hidden" name="<?php echo $attr_prefix."[name]"; ?>" value="<?php echo $name ?>" />
   <div style="padding: 0 0 7px 0;">
-    Choise year:&nbsp;<select name="<?php echo $attr_prefix."[year]" ?>" onChange="onChange(this);" class="oe_year">
+    Year:&nbsp;<select name="<?php echo $attr_prefix."[year]" ?>" onChange="onChange(this);" class="oe_year">
   <?php for ($i = $year_start; $i <= $year_end; $i++): ?>
     <?php if ($i == $year_cur): ?>
       <option value="<?php echo $i ?>" selected><?php echo $i ?></option>
