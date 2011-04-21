@@ -2109,7 +2109,10 @@ $_dictionary = array(
                'precision' => array(
                   'required' => true
                )
-            ),
+            )
+         ),
+         
+         'fields' => array(
             'Employee' => array(
                'reference' => 'catalogs.Employees',
                'precision' => array(

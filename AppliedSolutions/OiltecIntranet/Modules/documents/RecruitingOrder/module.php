@@ -213,7 +213,21 @@ function onPost($event)
       {
          if ($err = $dIR->save())
          {
-            throw new Exception('Can\'t add record in DivisionalChiefs');
+            if (in_array('Record with this dimensions already exists', $err))
+            {
+               $orgUnit = $container->getModel('catalogs', 'OrganizationalUnits');
+               $desc    = '';
+               
+               if ($orgUnit->load($values['OrganizationalUnit']))
+               {
+                  $desc = $orgUnit->getAttribute('Description');
+               }
+               
+               $msg = 'Department manager for <i>'.$desc.'</i> already assigned';
+            }
+            else $msg = 'Can\'t add record in DivisionalChiefs';
+            
+            throw new Exception($msg);
          }
       }
       else throw new Exception('Invalid attributes for DivisionalChiefs');
