@@ -300,7 +300,8 @@ $_dictionary = array(
       'RecruitingOrder' => array(
          'recorder_for' => array(
             'information_registry.StaffEmploymentPeriods',
-            'information_registry.StaffHistoricalRecords'
+            'information_registry.StaffHistoricalRecords',
+            'information_registry.DivisionalChiefs'
          ),
 
          'fields' => array(
@@ -2109,12 +2110,16 @@ $_dictionary = array(
                   'required' => true
                )
             ),
-            'DivisionalChief' => array(
-               'reference' => 'catalogs.OrganizationalPositions',
+            'Employee' => array(
+               'reference' => 'catalogs.Employees',
                'precision' => array(
                   'required' => true
                )
             )
+         ),
+         
+         'recorders' => array(
+            'RecruitingOrder'
          )
       ),
 

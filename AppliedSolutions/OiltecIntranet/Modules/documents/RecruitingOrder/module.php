@@ -121,10 +121,11 @@ function onPost($event)
    $emplClass = get_class($container->getModel('catalogs', 'Employees'));
    $persModel = $container->getModel('information_registry', 'StaffEmploymentPeriods');
    $histModel = $container->getModel('information_registry', 'StaffHistoricalRecords');
+   $divcModel = $container->getModel('information_registry', 'DivisionalChiefs');
    $return = true;
    $errors = array();
    
-   if (!$histModel->setRecorder($type, $id) || !$persModel->setRecorder($type, $id))
+   if (!$histModel->setRecorder($type, $id) || !$persModel->setRecorder($type, $id) || !$divcModel->setRecorder($type, $id))
    {
       throw new Exception('Invalid recorder');
    }
@@ -199,6 +200,23 @@ function onPost($event)
          }
       }
       else throw new Exception('Invalid attributes for StaffHistoricalRecords');
+      
+      // DivisionalChiefs
+      if ($values['Position'] != Constants::get('DivisionalChiefPosition')) continue;
+      
+      $dIR = clone $divcModel;
+      
+      if (!$dIR->setAttribute('OrganizationalUnit', $values['OrganizationalUnit'])) $err[] = 'Invalid value for attribute OrganizationalUnit';
+      if (!$dIR->setAttribute('Employee', $employee)) $err[] = 'Invalid value for attribute Employee';
+      
+      if (!$err)
+      {
+         if ($err = $dIR->save())
+         {
+            throw new Exception('Can\'t add record in DivisionalChiefs');
+         }
+      }
+      else throw new Exception('Invalid attributes for DivisionalChiefs');
    }
    
    // Update NowEmployed flag for Employees
@@ -228,6 +246,7 @@ function onUnpost($event)
    
    $persModel = $container->getCModel('information_registry', 'StaffEmploymentPeriods');
    $histModel = $container->getCModel('information_registry', 'StaffHistoricalRecords');
+   $divcModel = $container->getCModel('information_registry', 'DivisionalChiefs');
    
    $options = array(
       'attributes' => array('%recorder_type', '%recorder_id'),
@@ -255,8 +274,9 @@ function onUnpost($event)
    // Unpost document
    $pRes = $persModel->delete(true, $options);
    $hRes = $histModel->delete(true, $options);
+   $dRes = $divcModel->delete(true, $options);
    
-   $return = (empty($pRes) && empty($hRes)) ? true : false;
+   $return = (empty($pRes) && empty($hRes) && empty($dRes)) ? true : false;
    
    $event->setReturnValue($return);
 }

@@ -992,7 +992,7 @@ class MEmployees
    /**
     * Return id (link) to current Department
     * 
-    * @return int
+    * @return int - department id
     */
    public static function retrieveCurrentDepartment()
    {
@@ -1001,6 +1001,7 @@ class MEmployees
          return 0;
       }
       
+      // Check current employee
       $odb   = Container::getInstance()->getODBManager();
       $query = "SELECT MAX(`Period`) AS `Period`, `OrganizationalUnit`, `OrganizationalPosition`, `RegisteredEvent` ".
                "FROM information_registry.StaffHistoricalRecords ".
@@ -1013,16 +1014,17 @@ class MEmployees
       
       if ($row['RegisteredEvent'] == 'Firing') return 0;
       
-      $query = "SELECT `DivisionalChief` ".
+      // Retrieve department
+      $query = "SELECT `OrganizationalUnit` ".
                "FROM information_registry.DivisionalChiefs ".
-               "WHERE `OrganizationalUnit`=".$row['OrganizationalUnit'];
+               "WHERE `Employee`=".$employee;
       
       if (null === ($chief = $odb->loadAssoc($query)))
       {
          throw new Exception('Database error');
       }
       
-      return (!empty($chief) && $chief['DivisionalChief'] == $row['OrganizationalPosition']) ? $row['OrganizationalUnit'] : 0;
+      return empty($chief) ? 0 : $chief['OrganizationalUnit'];
    }
    
    /**
@@ -1265,6 +1267,32 @@ class MEmployees
    }
    
    /**
+    * Get last Historical record 
+    * 
+    * @param int $employee
+    * @param string $date
+    * @return array
+    */
+   public static function getLastHistoricalRecord($employee, $date = null)
+   {
+      if (!$date) $date = date('Y-m-d H:i:s');
+      
+      $odb = Container::getInstance()->getODBManager();
+      
+      // Retrieve last record
+      $query = "SELECT MAX(`Period`) AS `Period`, `OrganizationalUnit`, `Schedule`, `OrganizationalPosition`, `InternalHourlyRate`, `YearlyVacationDays`, `RegisteredEvent` ".
+               "FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` <= '".$date."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $row ? $row : array();
+   }
+   
+   /**
     * Get last Hiring record 
     * 
     * @param int $employee
@@ -1376,6 +1404,43 @@ class MEmployees
       $query = "SELECT c.`Description`, ir.`Employee`, MAX(ir.`Period`) AS `Period` ".
                "FROM information_registry.StaffHistoricalRecords AS ir, catalogs.Employees AS c ".
                "WHERE ir.`OrganizationalPosition`=".(int) $PMPos." AND ir.`RegisteredEvent` <> 'Firing' AND ".
+               "ir.`Period` <= '".$date."' AND ir.`Employee` = c.`_id` ".
+               "GROUP BY `Employee` ORDER BY c.`Description`";
+      
+      if (null === ($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $select = array();
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         $select[$row['Employee']] = array('text' => $row['Description'], 'value' => $row['Employee']);
+      }
+      
+      return $select;
+   }
+   
+   /**
+    * Get employees with DivisionalChief position
+    * 
+    * @param string $date
+    * @return array
+    */
+   public static function getListOfDivisionalChiefsForSelect($date)
+   {
+      $pos = Constants::get('DivisionalChiefPosition');
+      
+      if (empty($pos)) return array();
+      
+      if (!$date) $date = date('Y-m-d');
+      
+      $odb = Container::getInstance()->getODBManager();
+      
+      $query = "SELECT c.`Description`, ir.`Employee`, MAX(ir.`Period`) AS `Period` ".
+               "FROM information_registry.StaffHistoricalRecords AS ir, catalogs.Employees AS c ".
+               "WHERE ir.`OrganizationalPosition`=".(int) $pos." AND ir.`RegisteredEvent` <> 'Firing' AND ".
                "ir.`Period` <= '".$date."' AND ir.`Employee` = c.`_id` ".
                "GROUP BY `Employee` ORDER BY c.`Description`";
       
