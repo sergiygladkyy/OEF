@@ -82,7 +82,8 @@ function onGenerate($event)
    $msday   = 24*60*60;
    $week    = 1;
    $exists  = array();
-
+   $wassign = array();
+   
    if ($day != 1)
    {
       if ($day == 0) $day = 7;
@@ -90,16 +91,33 @@ function onGenerate($event)
       $ctime += (8 - $day)*$msday;
    }
    
-   if (!$id && $employee > 0)
+   if ($employee > 0)
    {
+      // Retrieve list of existing documents
       $cmodel = $container->getCModel($kind, $type);
       $criter = "WHERE `Employee` = ".$employee." AND `StartDate` >= '".date('Y-m-d', $ctime)."' AND `EndDate` <= '".date('Y-m-d', $ts)."'";
+      
+      if ($id) $criter .= ' AND `_id`<>'.$id; 
       
       if (null !== ($docs = $cmodel->getEntities(null, array('criterion' => $criter))) && !isset($docs['errors']))
       {
          foreach ($docs as $doc)
          {
             $exists[$doc['StartDate'].'|'.$doc['EndDate']] = true;
+         }
+      }
+      
+      // Retrieve assignment for current employee
+      $assign_p = MProjects::getEmployeeProjects($employee, date('Y-m-d', $ctime), date('Y-m-d', $ts), false);
+      
+      foreach ($assign_p as $key => $row)
+      {
+         $_fweek = MGlobal::getWeekNumber($row['DateFrom']);
+         $_tweek = MGlobal::getWeekNumber($row['DateTo']);
+         
+         for ($i = $_fweek; $i <= $_tweek; $i++)
+         {
+            $wassign[$i] = true;
          }
       }
    }
@@ -117,7 +135,7 @@ function onGenerate($event)
       
       $periods[] = array(
          'value'    => $value,
-         'text'     => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)),
+         'text'     => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)).($disab ? ' - Time card exists' : (empty($wassign[$week]) ? ' - No assignments' : '')),
          'disabled' => $disab 
       );
       
@@ -137,10 +155,9 @@ function onGenerate($event)
    $end     = $start + 6*24*60*60;
    $period  = date('Y-m-d', $start).'|'.date('Y-m-d', $end);
    
-   
    if ($employee)
    {
-      $assign = MProjects::getEmployeeProjects($employee, date('Y-m-d', $start), date('Y-m-d', $end));
+      $assign = MProjects::getEmployeeAssignmentInfo($employee, date('Y-m-d', $start), date('Y-m-d', $end+$msday));
    }
    else $assign = array();
    
@@ -171,27 +188,33 @@ function onGenerate($event)
    
    foreach ($assign as $row)
    {
-      if (isset($card[$row['Project']][$item['SubProject']])) continue;
-      
-      if (isset($card[$row['Project']]))
+      if (!isset($card[$row['Project']][$row['SubProject']]))
       {
-         $ids['SubProject'][$row['SubProject']] = $row['SubProject'];
-      }
-      else
-      {
-         $ids['Project'][$row['Project']]       = $row['Project'];
-         $ids['SubProject'][$row['SubProject']] = $row['SubProject'];
+
+         if (isset($card[$row['Project']]))
+         {
+            $ids['SubProject'][$row['SubProject']] = $row['SubProject'];
+         }
+         else
+         {
+            $ids['Project'][$row['Project']]       = $row['Project'];
+            $ids['SubProject'][$row['SubProject']] = $row['SubProject'];
+         }
+
+         $card[$row['Project']][$row['SubProject']] = array(
+            0 => array('Planed' => 0, 'Hours' => 0),
+            1 => array('Planed' => 0, 'Hours' => 0),
+            2 => array('Planed' => 0, 'Hours' => 0),
+            3 => array('Planed' => 0, 'Hours' => 0),
+            4 => array('Planed' => 0, 'Hours' => 0),
+            5 => array('Planed' => 0, 'Hours' => 0),
+            6 => array('Planed' => 0, 'Hours' => 0)
+         );
       }
       
-      $card[$row['Project']][$row['SubProject']] = array(
-         0 => array('Hours' => 0),
-         1 => array('Hours' => 0),
-         2 => array('Hours' => 0),
-         3 => array('Hours' => 0),
-         4 => array('Hours' => 0),
-         5 => array('Hours' => 0),
-         6 => array('Hours' => 0)
-      );
+      $day = MGlobal::getDayNumber($row['Date']);
+      
+      $card[$row['Project']][$row['SubProject']][$day]['Planed'] = $row['Hours'];
    }
    
    foreach ($tabulars/*['list']*/ as $item)
@@ -203,13 +226,13 @@ function onGenerate($event)
       if (!isset($card[$item['Project']][$item['SubProject']]))
       {
          $card[$item['Project']][$item['SubProject']] = array(
-            0 => array('Hours' => 0),
-            1 => array('Hours' => 0),
-            2 => array('Hours' => 0),
-            3 => array('Hours' => 0),
-            4 => array('Hours' => 0),
-            5 => array('Hours' => 0),
-            6 => array('Hours' => 0)
+            0 => array('Planed' => 0, 'Hours' => 0),
+            1 => array('Planed' => 0, 'Hours' => 0),
+            2 => array('Planed' => 0, 'Hours' => 0),
+            3 => array('Planed' => 0, 'Hours' => 0),
+            4 => array('Planed' => 0, 'Hours' => 0),
+            5 => array('Planed' => 0, 'Hours' => 0),
+            6 => array('Planed' => 0, 'Hours' => 0)
          );
          
          $ids['Project'][$item['Project']]       = $item['Project'];

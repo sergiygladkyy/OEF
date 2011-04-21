@@ -80,7 +80,7 @@
               <ul class="<?php echo $class.'_tabulars_TimeRecords_'.$i.'_Project_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
               <?php echo $links['Project'][$project]['text'] ?>
             </td>
-            <td>
+            <td class="oe_subproject">
               <ul class="<?php echo $class.'_tabulars_TimeRecords_'.$i.'_SubProject_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
               <?php echo $links['SubProject'][$subproject]['text'] ?>
             </td>
@@ -88,13 +88,20 @@
                 <?php $cprefix = $tprefix.'['.(7*$i + $j).']' ?>
             <td class="oe_hours" id="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_item' ?>">
               <ul class="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_Hours_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
-              <span class="oe_text"><?php printf("%01.2f", $vals[$j]['Hours']) ?></span>
-              <input class="oe_value" type="text" name="<?php echo $cprefix.'[Hours]' ?>" value="<?php printf("%01.2f", $vals[$j]['Hours']) ?>" style="display: none;">
-                <?php if (isset($vals[$j]['_id'])): ?>
-              <input type="hidden" name="<?php echo $cprefix.'[_id]' ?>" value="<?php echo $vals[$j]['_id'] ?>" />
+                <?php if ($vals[$j]['Planed']): ?>
+              <div class="oe_planed" title="your planned time">
+                  <?php printf("%01.1f", $vals[$j]['Planed']) ?>
+              </div>
                 <?php endif; ?>
-              <input type="hidden" name="<?php echo $cprefix.'[Project]' ?>" value="<?php echo $project ?>" />
-              <input type="hidden" name="<?php echo $cprefix.'[SubProject]' ?>" value="<?php echo $subproject ?>" />
+              <div class="oe_attribute" title="your real time">
+                <span class="oe_text"><?php printf("%01.1f", $vals[$j]['Hours']) ?></span>
+                <input class="oe_value" type="text" name="<?php echo $cprefix.'[Hours]' ?>" value="<?php printf("%01.1f", $vals[$j]['Hours']) ?>" style="display: none;">
+                  <?php if (isset($vals[$j]['_id'])): ?>
+                <input type="hidden" name="<?php echo $cprefix.'[_id]' ?>" value="<?php echo $vals[$j]['_id'] ?>" />
+                  <?php endif; ?>
+                <input type="hidden" name="<?php echo $cprefix.'[Project]' ?>" value="<?php echo $project ?>" />
+                <input type="hidden" name="<?php echo $cprefix.'[SubProject]' ?>" value="<?php echo $subproject ?>" />
+              </div>
             </td>
               <?php endfor; ?>
           </tr>
@@ -193,10 +200,15 @@
    .oe_time_card td
    {
       vertical-align: bottom;
+      border-bottom: 1px solid #AAAAAA;
    }
    
    .oe_time_card td.oe_hours, .oe_time_card th {
       text-align: center;
+   }
+   
+   .oe_time_card tr:hover {
+      background-color: #F8F8F8;
    }
    
    .oe_time_card .oe_hours {
@@ -216,6 +228,11 @@
    
    .oe_project {
       width: 150px !important;
+      vertical-align: middle !important;
+   }
+   
+   .oe_subproject {
+      vertical-align: middle !important;
    }
    
    td.oe_attribute
@@ -269,5 +286,24 @@
    #<?php echo $class.'_post_flag' ?> td
    {
       padding-bottom: 9px;
+   }
+   
+   .oe_attribute {
+      height: 19px !important;
+      overflow: hidden;
+   }
+   
+   .oe_planed {
+      vertical-align: top;
+      line-height: 10px;
+      height: 14px !important;
+      font-size: 10px;
+      font-weight: normal;
+      margin-top: 4px;
+      /*color: #208020;*/
+   }
+   
+   .oe_text {
+      color: #208020;
    }
 </style>

@@ -182,6 +182,7 @@ class MGlobal
    }
    
    /**
+    * Get first day in week
     * 
     * @param string $date
     * @return int
@@ -208,6 +209,40 @@ class MGlobal
       }
       
       return $ts;
+   }
+   
+   /**
+    * Return week number
+    * 
+    * @param string $date
+    * @return int
+    */
+   public static function getWeekNumber($date)
+   {
+      if (($ts = strtotime($date)) === -1)
+      {
+         throw new Exception('Invalid date format');
+      }
+      
+      return date('W', $ts);
+   }
+   
+   /**
+    * Return day number
+    * 
+    * @param string $date
+    * @return int
+    */
+   public static function getDayNumber($date)
+   {
+      if (($ts = strtotime($date)) === -1)
+      {
+         throw new Exception('Invalid date format');
+      }
+
+      $day = date('w', $ts);
+      
+      return ($day == 0) ? 6 : --$day;
    }
    
    /**
@@ -1705,6 +1740,49 @@ class MProjects
       $query = "SELECT `Project`, `DateFrom`, `DateTo`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
                "FROM information_registry.ProjectAssignmentPeriods ".
                "WHERE `Employee` = ".(int) $employee.$proj." AND `DateFrom` <= '".$to."' AND `DateTo` >= '".$from."'";
+      
+      if (null === ($projects = $odb->loadAssocList($query, $options)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      return $projects;
+   }
+   
+   /**
+    * Get projects assignment info by employee
+    * 
+    * @param int    $employee
+    * @param string $from
+    * @param string $to
+    * @param bool   $notClosed
+    * @return array
+    */
+   public static function getEmployeeAssignmentInfo($employee, $from, $to, $notClosed = true, array $options = array())
+   {
+      $container = Container::getInstance();
+      
+      $proj = '';
+      $odb  = $container->getODBManager();
+      
+      if ($notClosed)
+      {
+         $query = "SELECT `Project` FROM information_registry.ProjectClosureRecords ".
+                  "WHERE `ClosureDate` <= '".date('Y-m-d')."'";
+         
+         if (null === ($closed = $odb->loadAssocList($query, array('key' => 'Project'))))
+         {
+            throw new Exception('Database error');
+         }
+         elseif (!empty($closed))
+         {
+            $proj = " AND `Project` NOT IN (".implode(',', array_keys($closed)).") ";
+         }
+      }
+      
+      $query = "SELECT * FROM information_registry.ProjectAssignmentRecords ".
+               "WHERE `Employee` = ".(int) $employee.$proj." AND `Date` < '".$to."' AND `Date` >= '".$from."' ".
+               "ORDER BY `Project`, `Date`";
       
       if (null === ($projects = $odb->loadAssocList($query, $options)))
       {
