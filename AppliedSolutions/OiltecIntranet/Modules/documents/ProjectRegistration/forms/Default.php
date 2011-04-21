@@ -110,7 +110,7 @@ function onBeforeOpening($event)
    
    if ($pmPos = Constants::get('ProjectManagerPosition'))
    {
-      $crit = "ir.OrganizationalPosition = ".$pmPos;
+      $crit[] = "ir.OrganizationalPosition = ".$pmPos;
    }
    
    $pms = array();
@@ -135,7 +135,8 @@ function onBeforeOpening($event)
          'StartDate' => date('Y-m-d')
       ),
       'select' => array(
-         'ProjectManager' => $pms 
+         'ProjectManager' => $pms,
+         'Customer'       => MGlobal::getCustomersForSelect($options)
       ),
       'tabulars' => array(
          'Subprojects' => array(
