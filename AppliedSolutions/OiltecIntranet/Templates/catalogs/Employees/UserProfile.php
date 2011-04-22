@@ -219,10 +219,18 @@ input.userBusinessCard {
         </div>
 
         <div class="userRow">
+          <div class="userRowLeft">E-mail:</div>
+          <div class="userRowRight" >
+            <div id="left5" class="userValue"><?php echo $attrs["Person"]["Email"]?></div>
+            <div id="right5" style="display:none;"><input type="text"  onfocus="focusF(this);"  value="<?php echo $attrs["Person"]["Email"]?>" name="<?php echo $prefix."[Email]"; ?>"/></div>
+          </div>
+        </div>
+        
+        <div class="userRow">
           <div class="userRowLeft">Phone:</div>
           <div class="userRowRight" >
-            <div id="left5" class="userValue"><?php echo $attrs["Person"]["Phone"]?></div>
-            <div id="right5" style="display:none;"><input type="text"  onfocus="focusF(this);"  value="<?php echo $attrs["Person"]["Phone"]?>" name="<?php echo $prefix."[Phone]"; ?>"/></div>
+            <div id="left6" class="userValue"><?php echo $attrs["Person"]["Phone"]?></div>
+            <div id="right6" style="display:none;"><input type="text"  onfocus="focusF(this);"  value="<?php echo $attrs["Person"]["Phone"]?>" name="<?php echo $prefix."[Phone]"; ?>"/></div>
           </div>
         </div>
 
@@ -249,35 +257,35 @@ input.userBusinessCard {
         <div class="userRow">
           <div class="userRowLeft">Organization:</div>
           <div class="userRowRight" >
-            <div id="left6" class="userValue"><?php echo $attrs['Employee'] ? Constants::get('OrganizationName') : '&nbsp;' ?></div>
+            <div id="left7" class="userValue"><?php echo $attrs['Employee'] ? Constants::get('OrganizationName') : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Unit:</div>
           <div class="userRowRight" >
-            <div id="left7" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalUnit"]["text"] : '&nbsp;' ?></div>
+            <div id="left8" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalUnit"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Position:</div>
           <div class="userRowRight" >
-            <div id="left8" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalPosition"]["text"] : '&nbsp;' ?></div>
+            <div id="left9" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalPosition"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Schedule:</div>
           <div class="userRowRight" >
-            <div id="left9" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["Schedule"]["text"] : '&nbsp;' ?></div>
+            <div id="left10" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["Schedule"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
 
         <div class="userRow">
           <div class="userRowLeft">Vacation Days:</div>
           <div class="userRowRight" >
-            <div id="left10" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["YearlyVacationDays"] : '&nbsp;' ?></div>
+            <div id="left11" class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["YearlyVacationDays"] : '&nbsp;' ?></div>
           </div>
         </div>
         <div class="userRowClear">   </div>
