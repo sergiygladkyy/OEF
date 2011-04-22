@@ -181,26 +181,13 @@ abstract class BaseNotStorageEntityModel extends BaseModel
 
          // Enumeration (int number >= 0)
          case 'enum':
-            if (!is_int($value))
+            $val = (int) $value;
+            
+            if ((string) $value === (string) $val)
             {
-               $val = (int) $value;
-               
-               if ($value != (string) $val)
-               {
-                  $val = array_search($value, $this->conf['precision'][$name]['in']);
-                  $val = ($val === false ? null : (int) $val);
-               }
+               $val = (isset($this->conf['precision'][$name]['in'][$val]) ? (string) $this->conf['precision'][$name]['in'][$val] : null);
                
                $value = $val;
-            }
-            
-            if ($val < 0)
-            {
-               return false;
-            }
-            elseif ($val == 0)
-            {
-               $val = null;
             }
             break;
          

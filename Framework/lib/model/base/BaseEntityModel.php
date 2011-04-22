@@ -122,14 +122,15 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
             case 'time':
             case 'year':
             case 'file':
+            case 'enum':
                $this->attributes[$name] = empty($this->attributes[$name]) ? null : (string) $this->attributes[$name];
                break;
-            
+            /*
             case 'enum':
                $val = array_search($this->attributes[$name], $this->conf['precision'][$name]['in']);
                $this->attributes[$name] = ($val === false ? null : (int) $val);
                break;
-
+            */
             default:
                throw new Exception(__METHOD__.': Not supported internal type "'.$type.'"');
          }
