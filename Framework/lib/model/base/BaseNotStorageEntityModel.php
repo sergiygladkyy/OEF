@@ -185,7 +185,11 @@ abstract class BaseNotStorageEntityModel extends BaseModel
             {
                $val = (int) $value;
                
-               if ($value != (string) $val) return false;
+               if ($value != (string) $val)
+               {
+                  $val = array_search($value, $this->conf['precision'][$name]['in']);
+                  $val = ($val === false ? null : (int) $val);
+               }
                
                $value = $val;
             }
