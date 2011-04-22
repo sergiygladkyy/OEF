@@ -19,7 +19,7 @@
       <td><?php echo $vals['Description'] ?></td>
       <td><?php echo $vals['AuthType'] ?></td>
       <td>
-        <a href="?uid=catalogs.NaturalPersons&actions=displayEditForm&id=<?php echo $vals['NaturalPerson'] ?>">
+        <a href="#" target="_self" onclick="openPopup(this, 'catalogs', 'NaturalPersons', 'EditForm', {id: <?php echo $vals['NaturalPerson'] ?>}); return false;">
           <?php echo $plinks[$vals['NaturalPerson']]['text'] ?>
         </a>
       </td>
