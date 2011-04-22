@@ -427,7 +427,7 @@ function onEndProcess(params)
     {
 	    var systemmsg = jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').get(0).cloneNode(true);
 
-    	displayCustomForm('catalogs.Employees', 'UserProfile', {employee: '<?php echo $attrs["Person"]["_id"]?>'}, '<?php echo $tag_id?>');
+    	displayCustomForm('catalogs.Employees', 'UserProfile', {person: '<?php echo $attrs["Person"]["_id"]?>'}, '<?php echo $tag_id?>');
 
     	jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').replaceWith(systemmsg);
     }
