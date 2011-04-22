@@ -13,5 +13,5 @@
     let name ..= attributes;
   }
   
-  web.html('&lt;input type="checkbox" name="'..name..'" value="1"'..(#value > 0 && value != '0' ? ' checked' : '')..' /&gt;');
+  web.html('&lt;input type="checkbox" name="'..name..'" value="1"'..(value > 0 ? ' checked' : '')..' /&gt;');
 }}

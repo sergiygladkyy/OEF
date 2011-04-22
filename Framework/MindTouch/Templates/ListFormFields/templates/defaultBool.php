@@ -8,7 +8,7 @@
        var text = value;
     }
     else {
-       var text = options['not_used'] ? '&nbsp;' : (#value > 0 && value != '0' ? 'yes' : 'no');
+       var text = options['not_used'] ? '&nbsp;' : (value > 0 ? 'yes' : 'no');
     }
     
     var attributes = '';
