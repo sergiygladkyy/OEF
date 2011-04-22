@@ -8,7 +8,7 @@
      var root     = args[0];
      var uid      = __request.args.uid ?? args[1];
      var action   = __request.args.actions ?? args[2];
-     var params   = args[3] ?? {};
+     var params   = __request.args.uid != args[1] ? {} : (args[3] ?? {});
      var prefix   = args[4] ?? 'default';
      var isPopup  = __request.args.popup ?? 0;
      let isPopup  = isPopup == 0 ? false : true;

@@ -1617,10 +1617,10 @@ function oefDynamicUpdate()
 				maxW = (winW - 150) < minW ? minW : winW - 150;
 				maxH = (winH - 100) < minH ? minH : winH - 100;
 				posT = Math.floor((maxH - divH)/2);
-				posL = Math.floor((maxW - divW)/2);
+				posL = Math.floor((winW - divW)/2);
 				
 				posT = posT > 0 ? (posT > maxH*0.2 ? Math.floor(maxH*0.2) : posT < 50 ? 50 : posT) : 50;
-				posL = posL > 0 ? posL + 75 : 15;
+				posL = posL > 10 ? posL - 5 : 5;
 				
 				if (maxH < divH)
 				{
