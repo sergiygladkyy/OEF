@@ -175,7 +175,7 @@ class CatalogsModel extends BaseObjectsModel
          unset($fields['OwnerType']);
       }
       
-      if (!($owner && empty($fields)))
+      if (!(!empty($owner) && empty($fields)))
       {
          $result = parent::retrieveSelectDataForRelated($fields, $options);
       }

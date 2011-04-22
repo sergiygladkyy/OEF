@@ -70,7 +70,12 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       }
       
       if (!$this->checkAttributeValueType($name, $value)) return false;
-      if (isset($this->attributes[$name]) && $this->attributes[$name] == $value) return true;
+      
+      if (isset($this->attributes[$name]))
+      {
+         if ($this->attributes[$name] === $value) return true;
+      }
+      elseif (is_null($value)) return true;
       
       $this->isModified = true;
       $this->modified[$name]   = true;
@@ -128,6 +133,13 @@ abstract class BaseNotStorageEntityModel extends BaseModel
    {
       $type = strtolower($this->conf['types'][$name]);
       
+      if ($type != 'bool' && $type != 'reference' && $value === '')
+      {
+         $value = null;
+         
+         return true;
+      }
+      
       switch($type)
       {
          case 'bool':
@@ -136,11 +148,14 @@ abstract class BaseNotStorageEntityModel extends BaseModel
          
          case 'int':
          case 'timestamp':
-            $val = (int) $value;
-            
-            if ($value != (string) $val) return false;
-            
-            $value = $val;
+            if (!is_int($value))
+            {
+               $val = (int) $value;
+               
+               if ($value != (string) $val) return false;
+               
+               $value = $val;
+            }
             break;
          
          case 'float':
@@ -164,20 +179,25 @@ abstract class BaseNotStorageEntityModel extends BaseModel
             $value = (string) $value;
             break;
 
-         // Enumeration (int number >= 0 or string)
+         // Enumeration (int number >= 0)
          case 'enum':
-            $val = (int) $value;
-            
-            if ($value != (string) $val)
+            if (!is_int($value))
             {
-               $value = (string) $value;
-            }
-            elseif ($val >= 0)
-            {
+               $val = (int) $value;
+               
+               if ($value != (string) $val) return false;
+               
                $value = $val;
             }
-            else return false;
             
+            if ($val < 0)
+            {
+               return false;
+            }
+            elseif ($val == 0)
+            {
+               $val = null;
+            }
             break;
          
          // Link (object or int >= 0)
@@ -218,7 +238,10 @@ abstract class BaseNotStorageEntityModel extends BaseModel
       foreach ($names as $attr)
       {
          // Validation
-         if (empty($this->conf['precision'][$attr])) continue;
+         if (empty($this->conf['precision'][$attr]) || !isset($this->attributes[$attr]))
+         {
+            continue;
+         }
          
          foreach ($this->conf['precision'][$attr] as $prec => $params)
          {

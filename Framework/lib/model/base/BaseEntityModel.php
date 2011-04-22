@@ -73,14 +73,68 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
       
       $values = $db->loadAssoc($query);
       
-      if (empty($values)) return false;
+      if (empty($values))
+      {
+         return false;
+      }
       
-      $this->id = $values[$pkey];
+      return $this->loadAttributes($values, $options);
+   }
+   
+   /**
+    * Set entity attributes from array
+    * 
+    * @param array& $values
+    * @param array& $options
+    * @return boolean
+    */
+   protected function loadAttributes(array& $values, array& $options = array())
+   {
+      $pkey  =  $this->conf['db_map']['pkey'];
+      $types =& $this->conf['types'];
+      
+      $this->id = (int) $values[$pkey];
+      
       unset($values[$pkey]);
       
       $this->attributes = $values;
-      unset($values);
-         
+      
+      foreach ($types as $name => $type)
+      {
+         switch ($type)
+         {
+            case 'bool':
+            case 'int':
+            case 'timestamp':
+            case 'reference':
+               $this->attributes[$name] = (int) $this->attributes[$name];
+               break; 
+            
+            case 'float':
+               $this->attributes[$name] = (float) $this->attributes[$name];
+               break;
+
+            case 'string':
+            case 'password':
+            case 'text':
+            case 'date': 
+            case 'datetime':
+            case 'time':
+            case 'year':
+            case 'file':
+               $this->attributes[$name] = empty($this->attributes[$name]) ? null : (string) $this->attributes[$name];
+               break;
+            
+            case 'enum':
+               $val = array_search($this->attributes[$name], $this->conf['precision'][$name]['in']);
+               $this->attributes[$name] = ($val === false ? null : (int) $val);
+               break;
+
+            default:
+               throw new Exception(__METHOD__.': Not supported internal type "'.$type.'"');
+         }
+      }
+      
       $this->isNew = false;
       $this->isDeleted  = false;
       $this->isModified = false;
@@ -327,11 +381,11 @@ abstract class BaseEntityModel extends BaseNotStorageEntityModel
          case 'int':
          case 'float':
          case 'reference':
-            return $value;
+            return is_null($value) ? 0 : $value;
             break;
             
          case 'enum':
-            return is_string($value) ? "'".$value."'" : $value;
+            return is_string($value) ? "'".$value."'" : (int) $value;
             break;
             
          default:

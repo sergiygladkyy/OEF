@@ -319,19 +319,11 @@ class BaseRegisterModel extends BaseEntityModel
       
       $values = $db->loadAssoc($query);
       
-      if (empty($values)) return false;
+      if (empty($values))
+      {
+         return false;
+      }
       
-      $this->id = $values[$pkey];
-      unset($values[$pkey]);
-      
-      $this->attributes = $values;
-      unset($values);
-         
-      $this->isNew = false;
-      $this->isDeleted  = false;
-      $this->isModified = false;
-      $this->modified   = array();
-      
-      return true;
+      return $this->loadAttributes($values, $options);
    }
 }
