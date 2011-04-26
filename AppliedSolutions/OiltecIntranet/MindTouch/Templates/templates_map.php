@@ -16,6 +16,7 @@ $_templates_map = array(
    'Tabulars/TabularItem/defaultDocumentsProjectHandoverMisc' => '/Tabulars/TabularItem/templates/defaultDocumentsProjectHandoverMisc.php',
    'Tabulars/EditForm/defaultDocumentsProjectHandoverConditions'    => '/Tabulars/EditForm/templates/defaultDocumentsProjectHandoverConditions.php',
    'Tabulars/TabularItem/defaultDocumentsProjectHandoverConditions' => '/Tabulars/TabularItem/templates/defaultDocumentsProjectHandoverConditions.php',
+   'Tabulars/EditForm/defaultDocumentsProjectAssignmentResources'   => '/Tabulars/EditForm/templates/defaultDocumentsProjectAssignmentResources.php',
 
    'Reports/ReportForm/defaultProjectManHours'  => '/Reports/ReportForm/templates/defaultProjectManHours.php',
    'Reports/ReportForm/defaultProjectResources' => '/Reports/ReportForm/templates/defaultProjectResources.php',

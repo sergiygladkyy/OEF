@@ -233,6 +233,16 @@ div.errormsg div.inner a:hover {
     background: url("/skins/common/icons/icon-32-error.gif") no-repeat scroll 4px 3px transparent;
 }
 
+.oef_content div.infomsg {
+	background: url("/skins/common/icons/silk/information.png") no-repeat scroll 5px 5px transparent;
+	padding: 4px 4px 3px 27px;
+	min-height: 19px;
+	color: #3366CC;
+	border: 1px solid #AAAAAA;
+	background-color: #F5F5F5;
+	margin: 7px 0;
+}
+
 /************************************** Dynamic update ***************************************/
 
 .oef_edit_form_field_add_new {
