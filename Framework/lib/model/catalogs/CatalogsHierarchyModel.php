@@ -76,7 +76,14 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
    {
       unset($options['attributes'], $options['values']);
       
-      $options['criterion'] = "WHERE `Parent`=".(empty($nodeId) ? 0 : (int) $nodeId).' ORDER BY `Description` ASC';
+      $options['criterion'] = "WHERE `Parent`=".(empty($nodeId) ? 0 : (int) $nodeId).' ORDER BY ';
+      
+      if (isset($this->conf['db_map']['folder']))
+      {
+         $options['criterion'] .=  '`'.$this->conf['db_map']['folder'].'` DESC, ';
+      }
+      
+      $options['criterion'] .= '`Description` ASC';
       
       return $this->getEntities(null, $options);
    }
