@@ -114,7 +114,8 @@ function getActiveEmployees()
 
    $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
             "FROM catalogs.Employees AS e, catalogs.NaturalPersons AS np ".
-            "WHERE e.`_id` IN (".implode(',', $empIDS).") AND e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0";
+            "WHERE e.`_id` IN (".implode(',', $empIDS).") AND e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0 ".
+            "ORDER BY np.`Name`";
 
    if (!($res = $odb->executeQuery($query)))
    {
@@ -169,7 +170,8 @@ function getAllEmployees()
    
    $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
             "FROM catalogs.Employees AS e, catalogs.NaturalPersons AS np ".
-            "WHERE e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0";
+            "WHERE e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0 ".
+            "ORDER BY np.`Name`";
 
    if (!($res = $odb->executeQuery($query)))
    {
@@ -257,7 +259,8 @@ function getAllNaturalPersons()
     
    $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
             "FROM catalogs.NaturalPersons AS np LEFT JOIN catalogs.Employees AS e ".
-            "ON (e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0)";
+            "ON (e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0) ".
+            "ORDER BY np.`Name`";
 
    if (!($res = $odb->executeQuery($query)))
    {
