@@ -74,33 +74,127 @@ function onPost($event)
    // Check - employee is Firing?
    $errors  = array();
    $odb     = $container->getODBManager();
-
-   $query = "SELECT `Employee`, `RegisteredEvent`, `Period` FROM information_registry.StaffHistoricalRecords ".
-            "WHERE `Employee` IN (".implode(",", $emplIDS).") ".
-            "GROUP BY `Employee`, `Period` ORDER BY `Employee` ASC, `Period` ASC";
-
-   if (null === ($res = $odb->loadAssocList($query, array('key' => 'Employee'))))
+   
+   foreach ($emplIDS as $employee)
    {
-      throw new Exception('DataBase error');
-   }
-
-   foreach ($res as $employee => $row)
-   {
+      $disD  = date('Y-m-d H:i:s', $records[$employee]['DismissalDate']);
+      
+      // Check - employee is Hiring before..?
+      $query = "SELECT `Employee`, `RegisteredEvent`, MAX(`Period`) AS `Period` FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".$employee." AND `Period` <= '".$disD."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      if (empty($row['Employee']))
+      {
+         $errors[] = 'The employee '.$employees[$employee]['Description'].' was not hired.';
+         continue;
+      }
+      
       if (($period = strtotime($row['Period'])) === -1)
       {
          throw new Exception('Invalid date format');
       }
        
-      if ($period >= $records[$employee]['DismissalDate'])
+      if ($period == $records[$employee]['DismissalDate'])
       {
-         $errors[] = 'Record about '.$employees[$employee]['Description'].' for that date already exists';
+         $errors[] = 'Record about '.$employees[$employee]['Description'].' for that date already exists.';
          continue;
       }
        
       if ($row['RegisteredEvent'] == 'Firing')
       {
-         $errors[] = 'The '.$employees[$employee]['Description'].' is fired';
+         $errors[] = 'The employee '.$employees[$employee]['Description'].' is fired.';
+         continue;
       }
+      
+      // Check - employee is Firing after..?
+      $query = "SELECT `Employee`, `RegisteredEvent`, MIN(`Period`) AS `Period` FROM information_registry.StaffHistoricalRecords ".
+               "WHERE `Employee`=".$employee." AND `Period` > '".$disD."'";
+      
+      if (null === ($row = $odb->loadAssoc($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      if (!empty($row['Employee']))
+      {
+         if ($row['RegisteredEvent'] == 'Firing')
+         {
+            $errors[] = 'The employee '.$employees[$employee]['Description'].' has been fired after this date.';
+            continue;
+         }
+         elseif ($row['RegisteredEvent'] == 'Move')
+         {
+            $errors[] = 'The employee '.$employees[$employee]['Description'].' has been moved after this date.';
+            continue;
+         }
+         
+         if (($nHirihg = strtotime($row['Period'])) === -1)
+         {
+            throw new Exception('Invalid date format');
+         }
+      }
+      else $nHirihg = null;
+      
+      // Check - project assignment
+      $query = "SELECT * FROM information_registry.ProjectAssignmentPeriods ".
+               "WHERE `Employee`=".$employee." AND DateTo > '".$disD."'".($nHirihg ? " AND `DateFrom` < '".$nHirihg."'" : '');
+      
+      if (null === ($arec = $odb->loadAssocList($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      elseif (!empty($arec))
+      {
+         $errors[] = 'The employee '.$employees[$employee]['Description'].' has assignments.';
+         continue;
+      }
+      
+      // Check time cards
+      /*if (!($hrec = MEmployees::getLastHiringRecord($employee, $disD)))
+      {
+         throw new Exception('Wrong data');
+      }
+      
+      $query = "SELECT * FROM information_registry.TimeReportingRecords ".
+               "WHERE `Employee`=".$employee." AND `Date` >= '".$hrec['Period']."' AND `Date` <= '".$disD."'";
+      
+      if (null === ($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      $trec = array();
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         $trec[$row['Employee'].$row['Project'].$row['Date']] = $row['Date'];
+      }
+      
+      $query = "SELECT * FROM information_registry.ProjectAssignmentRecords ".
+               "WHERE `Employee`=".$employee." AND `Date` >= '".$hrec['Period']."' AND `Date` <= '".$disD."'";
+      
+      if (null === ($res = $odb->executeQuery($query)))
+      {
+         throw new Exception('DataBase error');
+      }
+      
+      $_dates = array();
+      
+      while ($row = $odb->fetchAssoc($res))
+      {
+         if (isset($trec[$row['Employee'].$row['Project'].$row['Date']])) continue;
+         
+         $_dates[$row['Date']] = $row['Date'];
+      }
+      
+      if (empty($_dates)) continue;
+      
+      $errors[] = 'The employee '.$employees[$employee]['Description'].' Week'.implode(', Week', MGlobal::getListWeeksByDates($_dates));*/
    }
 
    if ($errors)

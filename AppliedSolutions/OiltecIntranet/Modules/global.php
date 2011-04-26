@@ -246,6 +246,29 @@ class MGlobal
    }
    
    /**
+    * Get list of week's numbers by list of dates
+    * 
+    * @param array $dates
+    * @param array $options
+    * @return array
+    */
+   public static function getListWeeksByDates($dates, array& $options = array())
+   {
+      $res = array();
+      
+      foreach ($dates as $date)
+      {
+         $week = self::getWeekNumber($date);
+         
+         $res[$week] = $week;
+      }
+      
+      sort($res);
+      
+      return $res;
+   }
+   
+   /**
     * Get document links
     * 
     * [
@@ -1403,7 +1426,7 @@ class MEmployees
          throw new Exception('Database error');
       }
       
-      return $row ? $row : array();
+      return $row['Period'] ? $row : array();
    }
    
    /**
