@@ -59,6 +59,9 @@
     </tr>
     <tr>
       <td colspan="4">
+        <div class="infomsg">
+          Input sample: ‘7.5’, what means 7 hrs 30 min
+        </div>
         <div class="oe_time_card" style="width: 702px;">
           <table>
           <tr>
