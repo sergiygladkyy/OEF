@@ -50,7 +50,7 @@ class ReportsController extends BaseController
       {
          $default =& $default['result'];
          
-         $result['item'] = $default['attributes'];
+         $result['item'] = empty($default['attributes']) ? array() : $default['attributes'];
          
          if (isset($default['select']) && is_array($default['select']))
          {
@@ -111,7 +111,7 @@ class ReportsController extends BaseController
       
       if (empty($errors))
       {
-         $msg = 'Generated succesfully';
+         $msg = 'Generated successfully';
          $status = true;
       }
       else
