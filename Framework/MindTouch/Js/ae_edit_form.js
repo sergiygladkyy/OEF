@@ -416,20 +416,20 @@ function processObjectResponse(data, status, options)
 	
 	var state = true;
 	
-	for(var main_kind in data)
+	for (var main_kind in data)
 	{
-		for(var main_type in data[main_kind])
+		for (var main_type in data[main_kind])
 		{
 			var m_data = data[main_kind][main_type];
 			var msg = '';
 			
 			/* Check object result */
 			
-			if(m_data['status'] != true) // Print main errors
+			if (m_data['status'] != true) // Print main errors
 			{
 				Context.setLastStatus(false);
 				
-				for(var field in m_data['errors'])
+				for (var field in m_data['errors'])
 				{
 					if (!displayErrors(main_kind + '_' + main_type + '_' + field, m_data['errors'][field])) {
 						msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + m_data['errors'][field];
@@ -492,7 +492,14 @@ function processObjectResponse(data, status, options)
 			}
 			
 			// Print main message
-			displayMessage(main_kind + '_' + main_type,  msg.length > 0 ? msg : m_data['result']['msg'], m_data['status']);
+			if (m_data['status'] && !state)
+			{
+				displayMessage(main_kind + '_' + main_type, 'There were errors during the update', false);
+			}
+			else
+			{
+				displayMessage(main_kind + '_' + main_type, msg.length > 0 ? msg : m_data['result']['msg'], m_data['status']);
+			}
 			
 			if (m_data['status'] && state)
 			{

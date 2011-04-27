@@ -39,6 +39,11 @@ function onPost($event)
       throw new Exception('DataBase error');
    }
    
+   if (empty($result))
+   {
+      throw new Exception('The document cannot be posted because it’s empty');
+   }
+   
    $varModel = $container->getModel('information_registry', 'ScheduleVarianceRecords');
    $vacModel = $container->getModel('AccumulationRegisters', 'EmployeeVacationDays');
    

@@ -326,7 +326,7 @@ class MGlobal
             $prosessed[$doc_type][$link['value']] = true;
 
             $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">';
-            $msg .= '<a href="?uid=documents.'.$doc_type.'&actions=displayEditForm&id='.$link['value'].'" target="_blank" class="oef_msg_link">'.$link['text'].'</a>';
+            $msg .= '<a href="#" onclick="openPopup(this, \'documents\', \''.$doc_type.'\', \'EditForm\', {id: '.$link['value'].'}); return false;" target="_blank" class="oef_msg_link">'.$link['text'].'</a>';
             $msg .= '</li>';
          }
       }
@@ -557,12 +557,12 @@ class MVacation
       }
       elseif ($end <= $start)
       {
-         return array('EndDate' => 'EndDate must be larger the StartDate');
+         return array('EndDate' => 'End date cannot go before the start date. Check the period');
       }
       elseif ($end > $maxEnd)
       {
          return array('EndDate' => 'The employee has '.$total['VacationDays'].
-            ' vacation days excluding weekends and holidays. EndDate should not exceed '.date('Y-m-d', $maxEnd)
+            ' vacation days excluding weekends and holidays. End date should not exceed '.date('Y-m-d', $maxEnd)
          );
       }
       
@@ -591,7 +591,7 @@ class MVacation
             throw new Exception('Database error');
          }
          
-         MGlobal::returnMessageByLinks($links);
+         MGlobal::returnMessageByLinks($links, false, 'Vacation cannot be given because there are assignment for that period. See the following document:');
       }
    }
    
