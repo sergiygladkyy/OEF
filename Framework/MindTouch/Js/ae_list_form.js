@@ -42,7 +42,7 @@ function editListItem(element, kind, type)
 	var id   = getItemId(pref);
 	
 	if (!id) {
-		alert('Choose an list item');
+		alert('Choose an item');
 		return false;
 	}
 	
@@ -64,7 +64,7 @@ function viewListItem(element, kind, type)
 	var id   = getItemId(pref);
 	
 	if (!id) {
-		alert('Choose an list item');
+		alert('Choose an item');
 		return false;
 	}
 	
@@ -273,7 +273,7 @@ function printListItem(element, kind, type, layout)
 	var id     = getItemId(prefix);
 	
 	if (!id) {
-		alert('Choose an list item');
+		alert('Choose an item');
 		return false;
 	}
 	
@@ -304,7 +304,7 @@ function executeDeleteListItem(kind, type, prefix)
 	var id  = getItemId(prefix);
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an item', false);
 		return false;
 	}
 	
@@ -360,7 +360,7 @@ function executeMarkForDeletionListItem(kind, type, prefix, show_deleted)
 	var id  = getItemId(prefix);
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an item', false);
 		return false;
 	}
 	
@@ -424,7 +424,7 @@ function executeUnmarkForDeletionListItem(kind, type, prefix)
 	var id  = getItemId(prefix);
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an item', false);
 		return false;
 	}
 	
@@ -650,7 +650,7 @@ function oefNewOnBasis(kind, type, basis_for)
 		
 		if (!bid)
 		{
-			alert('Choose an list item');
+			alert('Choose an item');
 			return;
 		}
 		
