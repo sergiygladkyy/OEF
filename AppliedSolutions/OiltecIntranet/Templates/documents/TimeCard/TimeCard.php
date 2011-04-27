@@ -92,11 +92,11 @@
             <td class="oe_hours" id="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_item' ?>">
               <ul class="<?php echo $class.'_tabulars_TimeRecords_'.(7*$i + $j).'_Hours_errors ae_editform_field_errors' ?>" style="display: none;"><li>&nbsp;</li></ul>
                 <?php if ($vals[$j]['Planed']): ?>
-              <div class="oe_planed" title="your planned time">
+              <div class="oe_planed" title="Planned amount of hours">
                   <?php printf("%01.1f", $vals[$j]['Planed']) ?>
               </div>
                 <?php endif; ?>
-              <div class="oe_attribute" title="your real time">
+              <div class="oe_attribute" title="Actual amount of hours">
                 <span class="oe_text"><?php printf("%01.1f", $vals[$j]['Hours']) ?></span>
                 <input class="oe_value" type="text" name="<?php echo $cprefix.'[Hours]' ?>" value="<?php printf("%01.1f", $vals[$j]['Hours']) ?>" style="display: none;">
                   <?php if (isset($vals[$j]['_id'])): ?>
