@@ -22,11 +22,11 @@
 	    <item title="Project Assignment"   url="%root_path%/Document_ProjectAssignment" />
 	    <item title="Project Closure"      url="%root_path%/Document_ProjectClosure" />
 	    <item title="Invoice"              url="%root_path%/Document_Invoice" />
-	    <item title="TimeCard"             url="%root_path%/Document_TimeCard" />
+	    <item title="Time Card"            url="%root_path%/Document_TimeCard" />
 	</item>
 	<item title="Reports" url="">
 		<item title="Resource Load" url="%root_path%/Report_ResourceLoad" />
-	    <item title="TimeCards"     url="%root_path%/Report_TimeCards" />
+	    <item title="Time Cards"    url="%root_path%/Report_TimeCards" />
 	</item>
 	<item title="Other" url="">
 	    <item title="User Profile" url="%root_path%/UserProfile" />
