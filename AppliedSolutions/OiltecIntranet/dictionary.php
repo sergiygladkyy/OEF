@@ -86,7 +86,7 @@ $_dictionary = array(
                   'type' => "varchar(255) NOT NULL default ''"
                ),
                'precision' => array(
-                  'regexp' => '/^[A-Za-z0-9_]+@[A-Za-z0-9_]+\.[A-Za-z]+$/i'
+                  'regexp' => '/^[A-Za-z0-9_.]+@[A-Za-z0-9_]+\.[A-Za-z]+$/i'
                )
             ),
             'Phone' => array(
