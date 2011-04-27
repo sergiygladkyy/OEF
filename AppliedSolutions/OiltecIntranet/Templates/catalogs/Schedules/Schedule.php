@@ -21,7 +21,7 @@
         <td><input type="text" name="week_hours" value="" /></td>
       </tr>
       <tr>
-        <td>With the holidays:</td>
+        <td>Consider holidays non-working:</td>
         <td><input type="checkbox" name="day_off" value="1" /></td>
       </tr>
       <tr>

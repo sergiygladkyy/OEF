@@ -80,7 +80,7 @@ function onProcess($event)
    {
       $event->setReturnValue(array(
          'status' => true,
-         'result' => array('msg' => 'Updated sucessfully'),
+         'result' => array('msg' => 'Updated successfully'),
          'errors' => array()
       ));
    }
