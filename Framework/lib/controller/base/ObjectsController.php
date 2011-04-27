@@ -31,7 +31,7 @@ abstract class ObjectsController extends EntityController
       {
          $def =& $default['result'];
          
-         $result['item'] = $def['attributes'];
+         $result['item'] = empty($def['attributes']) ? array() : $def['attributes'];
          
          if (isset($def['select']) && is_array($def['select']))
          {
