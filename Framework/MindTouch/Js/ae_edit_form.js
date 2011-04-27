@@ -557,7 +557,7 @@ function processTabularResponce(kind, data, options)
 		/* Print main message */
 		
 		if (!msg) {
-			msg = m_data['status'] ? 'Tabular section updated succesfully' : 'At updating Tabular section there were some errors';
+			msg = m_data['status'] ? 'Tabular section updated successfully' : 'At updating Tabular section there were some errors';
 		}
 		
 		displayMessage(kind + '_' + type,  msg, m_data['status']);
@@ -813,7 +813,7 @@ function executePost(kind, type, id, prefix)
 				jQuery(element).addClass('ae_field_posted');
 				jQuery(element).find('span.ae_field_posted_text').css('display', 'block');
 				jQuery(element).find('span.ae_field_not_posted_text').css('display', 'none');
-				displayMessage(pref, 'Post succesfully', true);
+				displayMessage(pref, 'Posted successfully', true);
 				disabledForm('#' + pref + '_item');
 			}
 	    }
@@ -866,7 +866,7 @@ function executeClearPosting(kind, type, id, prefix)
 				jQuery(element).addClass('ae_field_not_posted');
 				jQuery(element).find('span.ae_field_posted_text').css('display', 'none');
 				jQuery(element).find('span.ae_field_not_posted_text').css('display', 'block');
-				displayMessage(pref, 'Clear posting succesfully', true);
+				displayMessage(pref, 'Cleared posting successfully', true);
 				enabledForm('#' + pref + '_item');
 			}
 	    }
