@@ -395,7 +395,7 @@ function executeMarkForDeletionListItem(kind, type, prefix, show_deleted)
 			
 			if (!msg)
 			{
-				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Mark for deletion succesfully' : 'Not marked for deletion');
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Mark for deletion successfully' : 'Not marked for deletion');
 			}
 			
 			displayMessage(kind + '_' + type, msg, data['status']);
@@ -454,7 +454,7 @@ function executeUnmarkForDeletionListItem(kind, type, prefix)
 			
 			if (!msg)
 			{
-				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Unmarked for deletion succesfully' : 'Not unmarked for deletion');
+				msg = (data['result'] && data['result']['msg']) ? data['result']['msg'] : (data['status'] ? 'Unmarked for deletion successfully' : 'Not unmarked for deletion');
 			}
 			
 			displayMessage(kind + '_' + type, msg, data['status']);
@@ -478,7 +478,7 @@ function executePostListItem(kind, type, prefix)
 	var id  = getItemId(prefix);
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Select an item to post', false);
 		return false;
 	}
 	
@@ -505,7 +505,7 @@ function executePostListItem(kind, type, prefix)
 				var element = jQuery('#' + prefix + '_list_block .ae_current').find('.ae_not_posted');
 				jQuery(element).removeClass('ae_not_posted');
 				jQuery(element).addClass('ae_posted');
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Post succesfully', true);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Posted successfully', true);
 			}
 	    }
 	});
@@ -527,7 +527,7 @@ function executeClearPostingListItem(kind, type, prefix)
 	var id  = getItemId(prefix);
 	
 	if (!id) {
-		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Choose an list item', false);
+		displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Select an item to clear posting', false);
 		return false;
 	}
 	
@@ -554,7 +554,7 @@ function executeClearPostingListItem(kind, type, prefix)
 				var element = jQuery('#' + prefix + '_list_block .ae_current').find('.ae_posted');
 				jQuery(element).removeClass('ae_posted');
 				jQuery(element).addClass('ae_not_posted');
-				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Clear posting succesfully', true);
+				displayMessage(kind.replace(/\./g, '_') + '_' + type, 'Cleared posting successfully', true);
 			}
 	    }
 	});
