@@ -58,7 +58,7 @@ jQuery(document).ready(function() {
     		break;
     		
     		case 'delete':
-    			if (!confirm('Are you soure?')) return;
+    			if (!confirm('Are you sure?')) return;
     			options = delete_options;
     		break;
     		
