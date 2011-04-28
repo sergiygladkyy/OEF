@@ -6,6 +6,22 @@ $_dictionary = array(
    // Catalogs Section
    ////////////////////
    'catalogs' => array(
+      // List of locations
+      'Locations' => array(
+         'fields' => array(
+            'Code' => array(
+               'precision' => array(
+                  'max_length' => 8
+               )
+            ),
+            'Address' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            )
+         )
+      ),
 
       // List of Departments of the Enterprise (Organization)
       'OrganizationalUnits' => array(
@@ -15,6 +31,9 @@ $_dictionary = array(
                   'max_length' => 8
                )
             ),
+            'Location' => array(
+               'reference' => 'catalogs.Locations'
+            )
          )
       ),
 
@@ -144,6 +163,25 @@ $_dictionary = array(
                )
             )
          ),
+         
+         'tabular_sections' => array(
+            'Locations' => array(
+               'fields' => array(
+                  'Location' => array(
+                     'reference' => 'catalogs.Locations',
+                     'precision' => array(
+                        'required' => true
+                     )
+                  ),
+                  'Comment' => array(
+                     'type' => 'string',
+                     'sql'  => array(
+                        'type' => "varchar(255) NOT NULL default ''"
+                     )
+                  )
+               )
+            )
+         ), 
 
          'Forms' => array(
             'UserProfile','UserBrowser'
