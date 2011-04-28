@@ -298,7 +298,7 @@ abstract class ObjectsController extends EntityController
          $status = false;
          $result['msg'] = 'Not marked for deletion';
       }
-      else $result['msg'] = 'Marked for deletion succesfully';
+      else $result['msg'] = 'Marked for deletion successfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
@@ -322,7 +322,7 @@ abstract class ObjectsController extends EntityController
          $status = false;
          $result['msg'] = 'Not unmarked for deletion';
       }
-      else $result['msg'] = 'Unmarked for deletion succesfully';
+      else $result['msg'] = 'Unmarked for deletion successfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }

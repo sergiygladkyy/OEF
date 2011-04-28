@@ -148,7 +148,7 @@ abstract class EntityController extends BaseController
          $status = false;
          $result['msg'] = 'Not deleted';
       }
-      else $result['msg'] = 'Deleted succesfully';
+      else $result['msg'] = 'Deleted successfully';
       
       return array('status' => $status, 'result' => $result, 'errors' => $errors);
    }
@@ -167,7 +167,7 @@ abstract class EntityController extends BaseController
 
       if ($return['status'])
       {
-         $return['result']['msg'] = 'Created succesfully';
+         $return['result']['msg'] = 'Created successfully';
       }
       else
       {
@@ -191,7 +191,7 @@ abstract class EntityController extends BaseController
       
       if ($return['status'])
       { 
-         $return['result']['msg'] = 'Updated succesfully';
+         $return['result']['msg'] = 'Updated successfully';
       }
       else
       {

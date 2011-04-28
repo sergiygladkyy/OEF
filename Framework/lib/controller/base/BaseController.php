@@ -151,7 +151,7 @@ abstract class BaseController
       
       if (empty($errors))
       {
-         $msg = 'Generated succesfully';
+         $msg = 'Generated successfully';
          $status = true;
       }
       else
