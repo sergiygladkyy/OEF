@@ -567,10 +567,10 @@ function processTabularResponce(kind, data, options)
 		/* Print main message */
 		
 		if (!msg) {
-			msg = m_data['status'] ? 'Tabular section updated successfully' : 'At updating Tabular section there were some errors';
+			msg = flag ? 'Tabular section updated successfully' : 'At updating Tabular section there were some errors';
 		}
 		
-		displayMessage(kind + '_' + type,  msg, m_data['status']);
+		displayMessage(kind + '_' + type,  msg, flag);
 	}
 	
 	if (!flag) Context.setLastStatus(false);
