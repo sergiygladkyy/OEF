@@ -270,30 +270,30 @@ function window_pos(popUpDivVar) {
 	popUpDiv.style.left = '50%';
 	popUpDiv.style.margin = '0 0 0 -220px';
 }
-function popup(windowname) {
-        var value = document.getElementById('selectedUser').value;
-        if(value=="")
-            return false;
+function popup(windowname)
+{
+	var value = document.getElementById('selectedUser').value;
+
+	if(value == "") return false;
+
+	var params = {
+		"person": value,
+		"form":   'UserProfile',
+		"uid":    'catalogs.Employees',
+		"tag_id": 'userProfilePopUp'
+	};
+
+	appInactive();
+	appAddLoader();
+	
+	displayCustomForm('catalogs.Employees','UserProfile' , params, 'userProfilePopUp');
 
 	blanket_size(windowname);
 	window_pos(windowname);
 	toggle('blanket');
 	toggle(windowname);
-        var params = {
-           "person": document.getElementById('selectedUser').value,
-           "form":   "UserProfile",
-           "uid":    "catalogs.Employees",
-           "tag_id": 'userProfilePopUp'
-           };
 
-        /*var params = new Array();
-
-        params['employee'] = '1';
-        params['form'] = 'UserProfile';
-        params['uid'] = 'catalogs.Employees';
-        params['tag_id'] = 'popUpDiv';*/
-
-        displayCustomForm('catalogs.Employees','UserProfile' , params, 'userProfilePopUp');
+	appActive(); 
 }
 function selectColumn(element, prefix)
 {

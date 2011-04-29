@@ -9,6 +9,7 @@
 		<item title="SubProjects"              url="%root_path%/Catalogs_SubProjects" />
 		<item title="Counteragents"            url="%root_path%/Catalogs_Counteragents" />
 		<item title="Nomenclature"             url="%root_path%/Catalogs_Nomenclature" />
+		<item title="Locations"                url="%root_path%/Catalogs_Locations" />
 		<item title="Schedules"                url="%root_path%/Catalogs_Schedules" />
 	</item>
 	<item title="Documents" url="">
