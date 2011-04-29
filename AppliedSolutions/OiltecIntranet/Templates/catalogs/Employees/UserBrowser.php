@@ -39,7 +39,10 @@
 	z-index: 9002; /*ooveeerrrr nine thoussaaaannnd*/
 }
 .userTabs {
-width: 515px !important;
+    width: 515px !important;
+}
+#popUpDiv .locFooter {
+    background-color: #eeeeee;
 }
 </style>
 <div class="catalogs_UserBrowser_message systemmsg" style="display: none;">
