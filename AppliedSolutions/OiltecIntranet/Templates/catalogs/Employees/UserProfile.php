@@ -534,7 +534,7 @@ function openForm(mode)
  */
 function processCancel()
 {
-	hideMessages();
+	hideMessages(['catalogs_Employees']);
 	hideFieldErrors('ae_editform_field');
 	
 	var selector, fid = getFormId();
@@ -678,8 +678,6 @@ function deleteLocation(elem)
  */
 function _submit(elem)
 {
-	hideMessages();
-
 	var button = document.getElementById('save_' + _ACTIVE_TAB);
 
 	processFormCommand(button);

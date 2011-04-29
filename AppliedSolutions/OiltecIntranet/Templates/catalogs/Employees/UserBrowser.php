@@ -32,10 +32,10 @@
    min-width: 938px;
 }
 #popUpDiv {
-	position:absolute;
-	background-color:#eeeeee;
-	width:300px;
-	height:300px;
+	position: absolute;
+	background-color: #eeeeee;
+	width: 600px;
+	padding-bottom: 10px;
 	z-index: 9002; /*ooveeerrrr nine thoussaaaannnd*/
 }
 .userTabs {
@@ -106,9 +106,9 @@ width: 515px !important;
 </div>
 
 <div id="blanket" style="display:none;" onclick="popup('popUpDiv')"></div>
-	<div id="popUpDiv" style="display:none;width:600px;height:675px;" >
-                <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;margin-top: -15px;margin-right: -15px;"/>
-                <div id="userProfilePopUp" style="padding: 20px;"></div>
+	<div id="popUpDiv" style="display:none;">
+        <img src="/skins/aconawellpro/images/close.png"  onclick="popup('popUpDiv')" style="float:right;cursor: pointer;margin-top: -15px;margin-right: -15px;"/>
+        <div id="userProfilePopUp" style="padding: 20px 20px 0 20px;"></div>
 	</div>
 
 <h1><a href="#" onclick="popup('popUpDiv'); return false;">Show selected user profile</a></h1>

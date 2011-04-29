@@ -88,9 +88,16 @@ function displayMessage(prefix, message, type)
  * 
  * @return void
  */
-function hideMessages()
+function hideMessages(types)
 {
-	jQuery('.systemmsg').css('display', 'none');
+	if (types)
+	{
+		for (var i in types)
+		{
+			jQuery('.' + types[i] + '_message').css('display', 'none');
+		}
+	}
+	else jQuery('.systemmsg').css('display', 'none');
 }
 
 /**

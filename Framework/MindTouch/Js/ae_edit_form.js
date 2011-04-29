@@ -197,7 +197,6 @@ function submitForm(form, options)
 	appInactive();
 	appAddLoader();
 	
-	hideMessages();
 	hideFieldErrors('ae_editform_field');
 	
 	var fid = jQuery(form).attr('id');
@@ -593,7 +592,6 @@ function processTabularResponce(kind, data, options)
  */
 function beforeSubmit(form)
 {
-	hideMessages();
 	hideFieldErrors('ae_editform_field');
 	jQuery(form).find(".tabular_item:hidden .tabular_col").remove();
 	jQuery(form).find('.tabular_item:hidden').each(function(index) {
