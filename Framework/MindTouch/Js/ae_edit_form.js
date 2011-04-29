@@ -176,10 +176,20 @@ jQuery(document).ready(function() {
 function submitObjectForm(form, options)
 {
 	appInactive();
-	
+
 	if (beforeSubmit(form))
 	{
-		jQuery(form).ajaxSubmit(options);
+		var fid = jQuery(form).attr('id');
+		
+		Context.setLastStatus(true);
+		
+		if (fid) Context.notify(fid + '_before_submit');
+		
+		if (Context.getLastStatus())
+		{
+			jQuery(form).ajaxSubmit(options);
+		}
+		else appActive();
 	}
 	else Context.setLastStatus(false);
 	

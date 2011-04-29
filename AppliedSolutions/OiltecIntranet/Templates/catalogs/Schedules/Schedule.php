@@ -34,12 +34,35 @@
 <?php $formID = $kind.'_'.$type.'_item' ?>
 
   <script type="text/javascript">
+	var isNewSchedule = <?php echo $isNew ? 'true' : 'false' ?>;
+	
+	Context.addListener('<?php echo $formID ?>_before_submit', onBeforeSubmit<?php echo $formID ?>);
+	Context.addListener('<?php echo $kind.'_'.$type ?>_end_process', onEndProcess);
+	
+	function onBeforeSubmit<?php echo $formID ?>(params)
+	{
+		appDisplayLoader(false);
+		
+		var status = isNewSchedule || confirm('You are about to change the schedule. This change will not only affect your future documents. If the schedule changes affect past dates, it requires you to re-post the earlier project assignments and time-cards.\nDo this carefully since you might have changes in the already reported information.');
+
+		appDisplayLoader(true); 
+
+		Context.setLastStatus(status);
+	}
+	
+	function onEndProcess(params)
+	{
+		if (!isNewSchedule || !params.status) return;
+
+		isNewSchedule = false;
+	}
+	
     var schedule_options = {
       attr_prefix: '<?php echo $attr_prefix."[attributes][Schedule]" ?>',
       calendar:     <?php echo $calendar ?>,
       data:         <?php echo $data ?>
     };
-
+    
     function displaySchedule(options)
     {
     	var schedule = new oeSchedule('schedule', schedule_options);
