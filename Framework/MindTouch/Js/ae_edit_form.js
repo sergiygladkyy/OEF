@@ -515,7 +515,7 @@ function processObjectResponse(data, status, options)
 				Context.setFormChangedFlag(main_kind + '_' + main_type + '_item', false);
 			}
 			
-			Context.notify(main_kind + '_' + main_type + '_end_process');
+			Context.notify(main_kind + '_' + main_type + '_end_process', {status: m_data['status']});
 		}
 	}
 	
@@ -561,6 +561,8 @@ function processTabularResponce(kind, data, options)
 			{
 				insertId(kind + '_' + type, m_data['result']['_id'], i);
 			}
+			
+			Context.notify(kind + '_' + type + '_end_process', {status: m_data['status'], index: i});
 		}
 		
 		/* Print main message */

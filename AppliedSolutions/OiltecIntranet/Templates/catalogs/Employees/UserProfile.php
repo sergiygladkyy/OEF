@@ -544,27 +544,69 @@ function processCancel()
 	selector = '#' + fid;
 
 	jQuery(selector + ' .new').remove();
-	jQuery(selector + ' .userRowRight').each(function(index)
-	{
-		var input = jQuery(this).find('.input').get(0);
 
-		if (input)
+	updateFormValues(selector, true);
+}
+
+/**
+ * Copied values from item form to edit form if mode == true, and
+ * from edit form to item form if mode == false
+ *
+ * @param string  selector
+ * @param boolean mode
+ * @return void
+ */
+function updateFormValues(selector, mode)
+{
+	if (mode) // from item to edit
+	{
+		jQuery(selector + ' .userRowRight').each(function(index)
 		{
-			switch (input.nodeName)
+			var input = jQuery(this).find('.input').get(0);
+
+			if (input)
 			{
-				case 'INPUT':
-					if (input.type == 'text')
-					{
-						input.value = jQuery(this).find('.values').text().match(/[\S]{1}.*[\S]{1}/i, '');
-					}
-					break;
-					
-				case 'SELECT':
-					jQuery(input).find('option[current="true"]').attr('selected', true);
-					break;
+				switch (input.nodeName)
+				{
+					case 'INPUT':
+						if (input.type == 'text')
+						{
+							input.value = jQuery(this).find('.values').text().match(/[\S]{1}.*[\S]{1}/i, '');
+						}
+						break;
+						
+					case 'SELECT':
+						jQuery(input).find('option[current="true"]').attr('selected', true);
+						break;
+				}
 			}
-		}
-	});
+		});
+	}
+	else // from edit to item
+	{
+		jQuery(selector + ' .userRowRight').each(function(index)
+		{
+			var input = jQuery(this).find('.input').get(0);
+
+			if (input)
+			{
+				switch (input.nodeName)
+				{
+					case 'INPUT':
+						if (input.type == 'text')
+						{
+							 jQuery(this).find('.values').text(input.value);
+						}
+						break;
+						
+					case 'SELECT':
+						var value = jQuery(input).find('option:selected').text();
+						jQuery(this).find('.values').text(value);
+						break;
+				}
+			}
+		});
+	}
 }
 
 /**
@@ -647,7 +689,8 @@ function _submit(elem)
  * Add listeners
  */
 Context.addListener('tab2_form_before_submit', onBeforeSubmitTab2);
-Context.addListener('catalogs_Employees_end_process', onEndProcess);
+Context.addListener('catalogs_Employees_end_process', onEmployeesEndProcess);
+Context.addListener('catalogs_Employees_tabulars_Locations_end_process', onEmployeesLocationsEndProcess);
 
 /**
  * Called before submit tab2_form
@@ -668,7 +711,7 @@ function onBeforeSubmitTab2(params)
 /**
  * Called after standard process catalog_Employees item
  */
-function onEndProcess(params)
+function onEmployeesEndProcess(params)
 {
 	if (Context.getLastStatus())
     {
@@ -680,6 +723,18 @@ function onEndProcess(params)
     	
     	jQuery('#<?php echo $tag_id?> .catalogs_Employees_message').replaceWith(systemmsg);
     }
+}
+
+/**
+ * Called after standard process catalog_Employees_tabulars_Locations item
+ */
+function onEmployeesLocationsEndProcess(params)
+{
+	if (!params.status) return;
+
+	var tid = '#catalogs_Employees_tabulars_Locations_' + params.index + '_item';
+
+	updateFormValues(tid, false);
 }
 
 
