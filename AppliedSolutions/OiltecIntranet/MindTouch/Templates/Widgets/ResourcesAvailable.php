@@ -8,7 +8,7 @@
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
         jQuery(document).ready(function() {
-           jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;ResourcesAvailable&lt;/h3&gt;&lt;div id=\"oef_resources_available\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+           jQuery('#"..zone.."').html('&lt;div id=\"oef_resources_available\"&gt;&nbsp;&lt;/div&gt;');
         });
       "&lt;/script&gt;
     &lt;/head&gt;
@@ -30,7 +30,9 @@
           'view': {
 	         'widget':  'Grid',
 	         'tag_id':  'oef_resources_available',
-	         'options': {}
+	         'options': {
+	            header: 'Resources Available'
+	         }
           }
         });
       "&lt;/script&gt;

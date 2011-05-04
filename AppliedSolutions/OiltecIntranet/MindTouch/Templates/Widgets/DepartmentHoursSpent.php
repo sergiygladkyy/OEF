@@ -8,7 +8,7 @@
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
         jQuery(document).ready(function() {
-           jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;Department hours spent&lt;/h3&gt;&lt;div id=\"oef_department_hours_spent\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+           jQuery('#"..zone.."').html('&lt;div id=\"oef_department_hours_spent\"&gt;&nbsp;&lt;/div&gt;');
         });
       "&lt;/script&gt;
     &lt;/head&gt;
@@ -30,7 +30,9 @@
 	        'view': {
 		       'widget':  'List',
 		       'tag_id':  'oef_department_hours_spent',
-		       'options': {}
+		       'options': {
+		          header: 'Department hours spent'
+		       }
 	        }
         });
       "&lt;/script&gt;

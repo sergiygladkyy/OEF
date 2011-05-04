@@ -1,3 +1,5 @@
+if (!OEF_WIDGET_NUM) var OEF_WIDGET_NUM = 0;
+
 /**
  * Widgets object constructor
  * 
@@ -72,8 +74,17 @@ function oeWidgets(loader, viewer)
      */
     this.drawWidget = function(parameters)
     {
+    	// Draw Layout
+    	var view    = this.Viewer;
+    	var options = parameters['options'];
     	var tag_id  = parameters['tag_id'];
     	
+    	if (typeof view.drawLayout == 'function')
+    	{
+    		tag_id = view.drawLayout(tag_id, options);
+    	}
+    	
+    	// Draw widget content
     	if (this.errors)
     	{
     		var errors = '<ul class="oe_widget_errors">';
@@ -88,9 +99,7 @@ function oeWidgets(loader, viewer)
     		return false;
     	}
     	
-    	var method  = 'draw' + parameters['widget'];
-    	var view    =  this.Viewer;
-    	var options = parameters['options'];
+    	var method = 'draw' + parameters['widget'];
     	
     	if (typeof view[method] != 'function')
     	{
@@ -99,7 +108,7 @@ function oeWidgets(loader, viewer)
     		return false;
     	}
     	
-    	return viewer[method](tag_id, this.data, options);
+    	return view[method](tag_id, this.data, options);
     };
 }
 
@@ -230,6 +239,68 @@ function oeLoader(parameters)
 function oeWidgetsView()
 {
 	/**
+	 * Draw layout
+	 * 
+	 * @param string tag_id
+	 * @param array  options
+	 * @return tag_id
+	 */
+	this.drawLayout = function(tag_id, options)
+	{
+		var header = '&nbsp;';
+		var style  = '', html = '';
+		var wTagId = 'oef_w' + (OEF_WIDGET_NUM++) + '_content';
+		
+		if (options)
+		{
+			if (options.header) header = options.header;
+			if (options.width)  style += 'width: ' + (options.width  + 14) + 'px;';
+			if (options.height) style += 'height:' + (options.height + 56) + 'px;';
+		}
+		
+		html += '<div class="oef_w_layout" style="' + style + '">\n';
+		html += '  <div class="oef_w_header">\n';
+		html += '    <div class="oef_w_headstr">\n';
+		html += '      <table><tr><td>\n';
+		html += '        <div class="oef_w_title">' + header + '</div>\n';
+		html += '      </td><td class="oef_w_h_actions">\n';
+		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_1.png" alt="settings"></div>\n';
+		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_2.png" alt="full"></div>\n';
+		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_3.png" alt="close"></div>\n';
+		html += '      </td></tr></table>\n';
+		html += '    </div>\n';
+		html += '  </div>\n';
+		html += '  <div id="' + wTagId + '" class="oef_w_content">%%content%%</div>\n';
+		html += '</div>\n';
+		
+		if (jQuery('#' + tag_id).size() == 0) // For Google widgets
+		{
+			jQuery(document).ready(function() {
+				insertLayout(tag_id, html);
+			});
+		}
+		else insertLayout(tag_id, html);
+		
+		return wTagId;
+	};
+	
+	/**
+	 * Insert layout
+	 * 
+	 * @param string tag_id
+	 * @param string layout
+	 * @return void
+	 */
+	function insertLayout(tag_id, layout)
+	{
+		var content = jQuery('#' + tag_id).html();
+		
+		layout = layout.replace('%%content%%', content);
+		
+		jQuery('#' + tag_id).html(layout);
+	}
+	
+	/**
 	 * Grid
 	 * 
 	 * @param string tag_id
@@ -244,66 +315,29 @@ function oeWidgetsView()
 			jQuery('#' + tag_id).html('<span>Data is empty</span>');
 			return;
 		}
-		var list   = data['list']  ? data['list']  : [];
-		var links  = data['links'] ? data['links'] : [];
-		var fields = data['fields'];
-		var numb_f = 0;
-		var html   = "<table>\n<thead>\n\t<tr>";
 		
-		for (var key in fields)
-		{
-			html += "\n\t\t<th>" + fields[key] + "</th>";
-			numb_f++;
-		}
-		
-		html += '\n\t</tr>\n</thead>\n<tbody>';
-		
-		for (var key in list)
-		{
-			var row = list[key];
-			
-			html += "\n\t<tr>";
-			
-			for (var i = 0; i < numb_f; i++)
-			{
-				var name = fields[i];
-				var text = row[i];
-				
-				if (links[name] && links[name][text])
-				{
-					text = links[name][text]['text'];
-				}
-				
-				html += "\n\t\t<td>" + text + "</td>";
-			}
-			
-			html += "\n\t</tr>";
-		}
-		
-		html += '\n</tbody>\n</table>';
+		var html = createGrid(data);
 		
 		jQuery('#' + tag_id).html(html);
 	};
 	
 	/**
-	 * Data Table
+	 * Grid
 	 *
 	 * @param array data
 	 * @return void
 	 */
-	function createDataTable(data)
-        {
-
-            if (!data || !data['fields'])
+	function createGrid(data)
+    {
+		if (!data || !data['fields'])
 		{
-			//jQuery('#' + tag_id).html('<span>Data is empty</span>');
 			return "";
 		}
 		var list   = data['list']  ? data['list']  : [];
 		var links  = data['links'] ? data['links'] : [];
 		var fields = data['fields'];
 		var numb_f = 0;
-		var html   = "<table>\n<thead>\n\t<tr>";
+		var html   = '<table>\n<thead>\n\t<tr>';
 
 		for (var key in fields)
 		{
@@ -312,11 +346,15 @@ function oeWidgetsView()
 		}
 
 		html += '\n\t</tr>\n</thead>\n<tbody>';
+		
+		var _class, cnt = 0;
 
 		for (var key in list)
 		{
+			_class = (cnt++)%2 == 0 ? 'even' : 'uneven';
+			
 			var row = list[key];
-
+			
 			html += "\n\t<tr>";
 
 			for (var i = 0; i < numb_f; i++)
@@ -329,58 +367,66 @@ function oeWidgetsView()
 					text = links[name][text]['text'];
 				}
 
-				html += "\n\t\t<td>" + text + "</td>";
+				html += '\n\t\t<td class="' + _class + '">' + text + '</td>';
 			}
 
 			html += "\n\t</tr>";
 		}
 
 		html += '\n</tbody>\n</table>';
-                return html;
-        }
-        /**
-         * Data Table with no border
-         *
-         */
-         function createDataTableWithNoBorder(data)
-         {
-             if (!data )
-             {
-                    //jQuery('#' + tag_id).html('<span>Data is empty</span>');
-                    return "";
-             }
-             var list   = data['list']  ? data['list']  : [];
-             var html   = "<table>\n";
-             
-             for (var key in list)
-		{
-                    var row = list[key];
-
-                    html += "\n\t<tr>";
-
-                    for (var key2 in row)
-                    {
-                            var value = row[key2];
-                            html += "<td>\n";
-                            if (value['label'] != undefined)
-                            {
-                                html += value['label'];
-                            }
-                            html +="\n\t</td>";
-                            html += "<td>\n";
-                            if( value['value']!= undefined)
-                            {
-                                html += value['value'];
-                            }
-                            html +="\n\t</td>";
-                    }
-
-                    html += "\n\t</tr>";
-             }
-             html += '\n</table>';
-             return html;  
-         }
-     /**
+		
+		return html;
+	}
+	
+    /**
+     * List of pair - key: value
+     *
+     */
+    function createList(data)
+    {
+    	if (!data)
+    	{
+    		return "";
+    	}
+    	var list = data['list'] ? data['list'] : [];
+    	var html = '<table class="oef_widget_list">\n';
+    	
+    	for (var key in list)
+    	{
+    		var row = list[key];
+    		
+    		html += "\n\t<tr>";
+    		
+    		for (var key2 in row)
+    		{
+    			var value = row[key2];
+    			html += '<td class="oef_widget_list_label">\n';
+    			
+    			if (value['label'] != undefined)
+    			{
+    				html += value['label'];
+    			}
+    			
+    			html += '\n\t</td>';
+    			html += '<td class="oef_widget_list_value">\n';
+    			
+    			if ( value['value']!= undefined)
+    			{
+    				html += value['value'];
+    			}
+    			
+    			html +="\n\t</td>";
+    		}
+    		
+    		html += "\n\t</tr>";
+    	}
+    	
+    	html += '\n</table>';
+    	
+    	return html;
+    }
+    
+    /**
 	 * Project Overview
 	 * 
 	 * @param string tag_id
@@ -388,22 +434,23 @@ function oeWidgetsView()
 	 * @param array options
 	 * @return void
 	 */
-         this.drawProjectOverview = function(tag_id, data, options)
-         {
-             
-             if (!data /*|| !data['fields']*/)
-             {
-                    jQuery('#' + tag_id).html('<span>Data is empty</span>');
-                    return;
-             }
-
-             var html = createDataTableWithNoBorder(data['ProjectOverview']);
-             html += "<hr>";
-             html += createDataTable(data['Employees']);
-             html += createDataTable(data['Milestones']);
-             jQuery('#' + tag_id).html(html);
-             
-         }
+    this.drawProjectOverview = function(tag_id, data, options)
+    {
+    	if (!data)
+    	{
+    		jQuery('#' + tag_id).html('<span>Data is empty</span>');
+    		return;
+    	}
+    	
+    	var html = createList(data['ProjectOverview']);
+    	html += '<div style="height: 0px; margin-bottom: 20px;">&nbsp;</div>';
+    	html += createGrid(data['Employees']);
+    	html += '<div style="height: 0px; margin-bottom: 20px;">&nbsp;</div>';
+    	html += createGrid(data['Milestones']);
+    	
+    	jQuery('#' + tag_id).html(html);
+    };
+    
 	/**
 	 * Draw List
 	 * 
@@ -412,16 +459,19 @@ function oeWidgetsView()
 	 * @param array options
 	 * @return void
 	 */
-	 this.drawList = function(tag_id, data, options)
-	 {
-	 	 if (!data )
-         {
-                    jQuery('#' + tag_id).html('<span>Data is empty</span>');
-                    return;
-         }
-         var html = createDataTableWithNoBorder(data);
-         jQuery('#' + tag_id).html(html);
-	 }
+	this.drawList = function(tag_id, data, options)
+	{
+		if (!data)
+		{
+			jQuery('#' + tag_id).html('<span>Data is empty</span>');
+			return;
+		}
+		
+		var html = createList(data);
+		
+		jQuery('#' + tag_id).html(html);
+	};
+	
 	/**
 	 * Column Chart
 	 * 
@@ -469,7 +519,7 @@ function oeWidgetsView()
 			chart.draw(gdata, options);
 		});
 	};
-        /**
+    /**
 	 * Speedometer
 	 * 
 	 * @param string tag_id
@@ -527,7 +577,7 @@ function oeWidgetsView()
                     chart2.draw(data2, options2);
                 }
 
-                if(data['Overtime'])
+                if(data['Extra'])
                 {
                     var data3 = new google.visualization.DataTable();
                     data3.addColumn('string', 'Label');
@@ -543,7 +593,8 @@ function oeWidgetsView()
               });
               /*var html   = "<div id='chart1_div'></div><div id='chart2_div'></div><div id='chart3_div'></div>";
               jQuery('#' + tag_id).html(html);*/
-        }
+        };
+        
         /**
 		 * Employee Vacation Days
 		 *

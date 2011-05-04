@@ -9,7 +9,7 @@
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
         jQuery(document).ready(function() {
-           jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;ResourcesSpentVsBudgeted HRS&lt;/h3&gt;&lt;div id=\"oef_resources_spent_vs_budgeted_hrs\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+           jQuery('#"..zone.."').html('&lt;div id=\"oef_resources_spent_vs_budgeted_hrs\"&gt;&nbsp;&lt;/div&gt;');
         });
       "&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
@@ -29,6 +29,7 @@
 		       'widget':  'ColumnChart',
 		       'tag_id':  'oef_resources_spent_vs_budgeted_hrs',
 		       'options': {
+		          header: 'ResourcesSpentVsBudgeted HRS',
 		          width:  400,
 		          height: 240,
 		          title: 'Project "..project.."',

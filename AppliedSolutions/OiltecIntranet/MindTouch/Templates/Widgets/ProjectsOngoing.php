@@ -8,7 +8,7 @@
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
 	    jQuery(document).ready(function() {
-		   jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt;&lt;h3 style=\"clear:both\"&gt;Projects ongoing&lt;/h3&gt;&lt;div id=\"oef_projects_ongoing\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+		   jQuery('#"..zone.."').html('&lt;div id=\"oef_projects_ongoing\"&gt;&nbsp;&lt;/div&gt;');
 		});
       "&lt;/script&gt;
     &lt;/head&gt;
@@ -30,7 +30,9 @@
 	        'view': {
 		       'widget':  'Grid',
 		       'tag_id':  'oef_projects_ongoing',
-		       'options': {}
+		       'options': {
+		          header: 'Projects ongoing'
+		       }
 	        }
         });
       "&lt;/script&gt;

@@ -6,6 +6,10 @@
       &lt;script type="text/javascript" src="https://www.google.com/jsapi"&gt;&lt;/script&gt;
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
+        jQuery(document).ready(function() {
+            jQuery('#"..zone.."').html('&lt;div id=\"oef_employee_vacation_days\"&gt;&lt;div id=\"chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;div id=\"table_chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;div style=\"clear:both\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;');
+        });
+        
 		Widgets.showWidget({
 	        'load': {
 		       'solution': 'OiltecIntranet',
@@ -17,11 +21,11 @@
 	        'view': {
 		       'widget':  'EmployeeVacationDays',
 		       'tag_id':  'oef_employee_vacation_days',
-		       'options': {}
+		       'options': {
+		          header: 'Employee Vacations Days'
+		       }
 	        }
-         });
-
-         jQuery(document).ready(function() { jQuery('#"..zone.."').html('&lt;div class=\"oef_content\"&gt; &lt;h3 style=\"clear:both\"&gt;Employee Vacations Days&lt;/h3&gt;&lt;div id=\"chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;div id=\"table_chart\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;'); });
+         }); 
       "&lt;/script&gt;
     &lt;/head&gt;
     &lt;body&gt;&lt;/body&gt;

@@ -309,8 +309,89 @@ div.errormsg div.inner a:hover {
 
 /***************************************** Widgets *******************************************/
 
-table.oef_widget_table_no_border {border: 0 none !important;}
-.oef_widget_table_no_border td {border-right: 0 none !important;}
+.oef_w_layout {
+	border-left: 1px solid #E0E0E0;
+	border-top:  1px solid #E0E0E0;
+	border-bottom: 2px solid #CCCCCC;
+	border-right:  2px solid #CCCCCC;
+	margin: 0 10px 20px 0;
+	padding: 2px;
+}
+.oef_w_header {
+	background-image: url("/skins/common/icons/w_header_1.png");
+	height: 33px;
+	padding: 7px;
+}
+.oef_w_headstr {
+	background-color: #FFFFFF;
+	height: 28px;
+	overflow: hidden;
+	-moz-border-radius: 7px;
+	border: 1px solid #BBBBBB;
+}
+.oef_w_title {
+	float: left;
+	overflow: hidden;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 0 7px;
+	color: /*#B58228*/#555555;
+	line-height: 28px;
+}
+.oef_w_headstr table, .oef_w_headstr td  {
+	border: 0 none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.oef_w_headstr table {
+	width: 100%;
+}
+td.oef_w_h_actions {
+	width: 69px;
+}
+.oef_w_button {
+	float: right;
+	padding: 4px 5px 4px 0;
+	width: 18px;
+	height: 19px;
+}
+.oef_w_content {
+	padding: 5px;
+}
+
+
+.oef_w_content table {
+	border: 0 none;
+	border-collapse: separate;
+	border-spacing: 2px 0px;
+}
+.oef_w_content td, .oef_w_content th {
+	padding: 2px 8px;
+	font-family: Verdana,Arial,Sans-Serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 1.6em;
+    margin: 0;
+    text-align: left;
+    white-space: nowrap;
+}
+.oef_w_content th {
+	background-color: #dfeddc;
+    color: #84aa05;
+    font-weight: bold;
+}
+.oef_w_content td {
+	color: #222222;
+    font-weight: normal;
+}
+.oef_w_content td.uneven {
+	background-color: #f0f7ef;
+}
+
+.oef_w_content td.oef_widget_list_label {
+	font-weight: bold;
+}
 
 
 /******************************** Delete marked for deletion *********************************/ 
