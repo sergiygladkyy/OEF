@@ -5,6 +5,7 @@
   
   &lt;html&gt;
     &lt;head&gt;
+      &lt;script type="text/javascript" src="https://www.google.com/jsapi"&gt;&lt;/script&gt;
       &lt;script type="text/javascript" src="/ext/OEF/Framework/MindTouch/Js/oe_widgets.js"&gt;&lt;/script&gt;
       &lt;script type="text/javascript"&gt;"
         jQuery(document).ready(function() {
