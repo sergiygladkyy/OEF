@@ -150,7 +150,7 @@
 	          }
             </style>
             <div id="oe_fill_by_department" style="display: none;">
-              <div class="oe_label">Choise department:</div>
+              <div class="oe_label">Choose department:</div>
               <div class="oe_select">
                 <pre class="script">
                   var name   = name_prefix..'[department]';
