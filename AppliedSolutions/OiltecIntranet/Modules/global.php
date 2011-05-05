@@ -530,7 +530,7 @@ class MVacation
       // Calculate
       if (!isset($total[0]))
       {
-         return array('StartDate' => 'Vacation days are not charged. Perhaps you didn\'t posted a document PeriodicClosing');
+         return array('StartDate' => 'Vacation days cannot be charge. You have probably not posted Periodic Closing Document');
       }
       
       $total = $total[0];

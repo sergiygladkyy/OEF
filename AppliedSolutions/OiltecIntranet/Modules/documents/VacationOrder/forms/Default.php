@@ -142,7 +142,7 @@ function fill(& $event)
             )
          )
       ),
-      'msg' => 'Filled sucessfuly'
+      'msg' => 'Filled successfully'
    ));
 }
 
@@ -196,6 +196,6 @@ function calculate(& $event)
             )
          )
       ),
-      'msg' => 'Calculated sucessfuly'
+      'msg' => 'Calculated successfully'
    ));
 }
