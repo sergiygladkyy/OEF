@@ -43,7 +43,7 @@
 	{
 		appDisplayLoader(false);
 		
-		var status = isNewSchedule || confirm('You are about to change the schedule. This change will not only affect your future documents. If the schedule changes affect past dates, it requires you to re-post the earlier project assignments and time-cards.\nDo this carefully since you might have changes in the already reported information.');
+		var status = isNewSchedule || confirm('You are about to change the Schedule. This change will affect all the future documents. If the changes are also made for the past dates, it is required that you repost the already existing project assignments and time cards.\nAttention! This change might result in changes for the already reported information.');
 
 		appDisplayLoader(true); 
 
