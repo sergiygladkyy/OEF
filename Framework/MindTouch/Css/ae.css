@@ -321,7 +321,7 @@ div.errormsg div.inner a:hover {
     overflow: hidden;
 }
 .rnd1 {
-    background: none repeat scroll 0 50% #BDCAD8;
+    background: none repeat scroll 0 50% #BDBDBD;
     margin: 0 4px;
 }
 .rnd1, .rnd2, .rnd3 {
@@ -333,14 +333,14 @@ div.errormsg div.inner a:hover {
     line-height: 1px;
 }
 .rnd_modtitle .rnd2, .rnd_modtitle .rnd3 {
-    background-color: #D4E6FC;
+    background-color: #ddddee;
 }
 .rnd_modtitle .rnd2, .rnd_modtitle .rnd3 {
-    background: none repeat scroll 0 50% #D4E6FC;
+    background: none repeat scroll 0 50% #ddddee;
 }
 .rnd2, .rnd3 {
-    background: none repeat scroll 0 50% #FFFFFF;
-    border-color: #BDCAD8;
+    background: none repeat scroll 0 50% #F7F7F7;
+    border-color: #BDBDBD;
 }
 .rnd2 {
     border-width: 0 2px;
@@ -356,12 +356,10 @@ div.errormsg div.inner a:hover {
     color: #3366CC;
     position: relative;
     z-index: 1;
-    border-color: #7AA5D6 #C5D7EF -moz-use-text-color;
-    border-left: 1px solid #C5D7EF;
-    border-right: 1px solid #C5D7EF;
+    border-color: #ACACAC #ACACAC -moz-use-text-color;
     border-style: none solid none;
     border-width: 1px 1px medium;
-    background: none repeat scroll 0 0 #D4E6FC;
+    background: none repeat scroll 0 0 #ddddee;
     line-height: 19px;
     padding: 0 7px 2px !important;
 }
@@ -385,16 +383,17 @@ div.errormsg div.inner a:hover {
 }
 .modtitle .modtitle_text {
     font-weight: bold;
-    color: #224499;
+    color: #444444;
     font-size: 12px;
     text-decoration: none;
     line-height: 19px;
 }
 .modboxin {
-    border: 1px solid #C5D7EF;
+	background-color: #F8F8F8;
     clear: both;
     overflow: hidden;
-    border-color: #ACC3DF #BDCAD8;
+    border-width: 1px;
+    border-color: #ACACAC #BDBDBD;
     border-style: solid solid none !important;
     padding: 0 !important;
     margin: 0;   
@@ -448,8 +447,11 @@ a.v2ddbox {
 	color: #222222;
     font-weight: normal;
 }
+.oef_w_content td.even {
+	background-color: #ffffff;
+}
 .oef_w_content td.uneven {
-	background-color: #f0f7ef;
+	background-color: #ecefF7;
 }
 
 .oef_w_content td.oef_widget_list_label {
