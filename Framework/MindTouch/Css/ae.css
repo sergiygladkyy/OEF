@@ -391,7 +391,7 @@ div.errormsg div.inner a:hover {
 .modboxin {
 	background-color: #F8F8F8;
     clear: both;
-    overflow: auto;
+    overflow: hidden;
     border-width: 1px;
     border-color: #ACACAC #BDBDBD;
     border-style: solid solid none !important;
@@ -419,7 +419,7 @@ a.v2ddbox {
 
 .oef_w_container {
 	margin: 5px 9px 7px !important;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .oef_w_content table {
