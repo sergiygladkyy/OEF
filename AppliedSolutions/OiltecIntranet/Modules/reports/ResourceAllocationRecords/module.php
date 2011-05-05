@@ -98,7 +98,7 @@ function onGenerate($event)
    
    /* Generate report */
    
-   $mockup = new Mockup($_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/reports/ResourceAllocationRecords/ResourceAllocationRecords.htm');
+   $mockup = new Mockup(self::$templates_dir.'ResourceAllocationRecords.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');

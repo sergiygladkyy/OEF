@@ -112,7 +112,7 @@ function onGenerate($event)
    
    /* Generate report */
    
-   $mockup = new Mockup($_SERVER['DOCUMENT_ROOT'].'/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/reports/ResourceLoad/ResourceLoad.htm');
+   $mockup = new Mockup(self::$templates_dir.'ResourceLoad.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');
