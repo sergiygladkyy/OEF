@@ -23,6 +23,11 @@ function onPost($event)
       throw new Exception('DataBase error');
    }
    
+   if (empty($result))
+   {
+      throw new Exception('The Document cannot be posted because it is empty');
+   }
+   
    // Check records
    $records = array();
    $NaturalPersons = array();
