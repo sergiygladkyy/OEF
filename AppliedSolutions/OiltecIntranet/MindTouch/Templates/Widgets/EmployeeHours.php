@@ -35,7 +35,7 @@
               'tag_id': 'oef_employee_hours',
               'options': {
                  header: 'Employee Hours',
-                 width:  596
+                 width:  600
               }
           }
         });
