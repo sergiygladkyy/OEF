@@ -83,6 +83,9 @@
           
             content;
           </pre>
+          <eval:if test="field == 'Period'">
+            <img src="/skins/common/icons/silk/help.png" style="position: relative; left: 13px; top: 2px;" title="You can use periods: “This Week”, “Last Week”, “This Month”, “Last Month”, “This Quarter”, “Last Quarter”, “This Year”, “Last Year”">
+          </eval:if>
         </td>
       </tr>
     </eval:foreach>
@@ -90,7 +93,7 @@
         <td class="ae_submit" colspan="2"><input type="submit" name="submit" value="Generate" /></td>
       </tr>
     </tbody>
-    </table>
+    </table> 
   </form>
   {{ 
      &lt;div class="ae_report" type=(type)&gt;
