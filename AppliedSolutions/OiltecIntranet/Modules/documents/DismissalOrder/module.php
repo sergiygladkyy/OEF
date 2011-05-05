@@ -90,7 +90,7 @@ function onPost($event)
       
       if (empty($row['Employee']))
       {
-         $errors[] = 'The employee '.$employees[$employee]['Description'].' was not hired.';
+         $errors[] = 'The document cannot be posted because the employee '.$employees[$employee]['Description'].' was not hired.';
          continue;
       }
       
@@ -107,7 +107,7 @@ function onPost($event)
        
       if ($row['RegisteredEvent'] == 'Firing')
       {
-         $errors[] = 'The employee '.$employees[$employee]['Description'].' is fired.';
+         $errors[] = 'The document cannot be posted because the employee '.$employees[$employee]['Description'].' is fired.';
          continue;
       }
       
@@ -124,12 +124,12 @@ function onPost($event)
       {
          if ($row['RegisteredEvent'] == 'Firing')
          {
-            $errors[] = 'The employee '.$employees[$employee]['Description'].' has been fired after this date.';
+            $errors[] = 'The document cannot be posted because the employee '.$employees[$employee]['Description'].' has been fired after this date.';
             continue;
          }
          elseif ($row['RegisteredEvent'] == 'Move')
          {
-            $errors[] = 'The employee '.$employees[$employee]['Description'].' has been moved after this date.';
+            $errors[] = 'The document cannot be posted because the employee '.$employees[$employee]['Description'].' has been moved after this date.';
             continue;
          }
          
@@ -150,7 +150,7 @@ function onPost($event)
       }
       elseif (!empty($arec))
       {
-         $errors[] = 'The employee '.$employees[$employee]['Description'].' has assignments.';
+         $errors[] = 'The document cannot be posted because the employee '.$employees[$employee]['Description'].' has assignments.';
          continue;
       }
       
