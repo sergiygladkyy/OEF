@@ -391,7 +391,7 @@ div.errormsg div.inner a:hover {
 .modboxin {
 	background-color: #F8F8F8;
     clear: both;
-    overflow: hidden;
+    overflow: auto;
     border-width: 1px;
     border-color: #ACACAC #BDBDBD;
     border-style: solid solid none !important;
