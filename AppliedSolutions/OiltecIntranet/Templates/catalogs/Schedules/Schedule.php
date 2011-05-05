@@ -91,7 +91,7 @@
     
   <?php if (!empty($isNew)): ?>
     jQuery(document).ready(function() {
-        displayMessage('<?php echo $kind.'_'.$type ?>', 'Schedule for this year not exists. In order to generate a schedule, click <a href="#" onclick="displayScheduleSettings(\'<?php echo $formID ?>\'); return false;">generate</a>', 2);
+        displayMessage('<?php echo $kind.'_'.$type ?>', 'Schedule for this year does not exist. In order to generate a schedule, click <a href="#" onclick="displayScheduleSettings(\'<?php echo $formID ?>\'); return false;">generate</a>', 2);
 
         if (jQuery('#<?php echo $formID ?> input[name="dgenerate"]').size() == 0)
         {
