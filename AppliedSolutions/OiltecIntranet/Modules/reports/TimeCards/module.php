@@ -132,7 +132,7 @@ function onGenerate($event)
    
    /* Generate report */
    
-   $mockup = new Mockup('/var/www/dekiwiki/ext/OEF/AppliedSolutions/AWPAnalytics/Templates/reports/TimeCards/TimeCards.htm');
+   $mockup = new Mockup(self::$templates_dir.'TimeCards.htm');
    $report = new TabularDoc();
 
    $area = $mockup->getArea('header');
@@ -159,7 +159,7 @@ function onGenerate($event)
       }
       
       $a_card->parameters['Period']   = $row['Period'];
-      $a_card->parameters['Posted']   = $row['Posted'] == '1' ? 'posted' : 'no posted';
+      $a_card->parameters['Posted']   = $row['Posted'] == '1' ? 'posted' : 'not posted';
       $a_card->parameters['Hours']    = $row['Hours'];
       $a_card->parameters['Overtime'] = $row['Overtime'];
       $a_card->parameters['Extra']    = $row['Extra'];
