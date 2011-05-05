@@ -310,61 +310,124 @@ div.errormsg div.inner a:hover {
 /***************************************** Widgets *******************************************/
 
 .oef_w_layout {
-	border-left: 1px solid #E0E0E0;
-	border-top:  1px solid #E0E0E0;
-	border-bottom: 2px solid #CCCCCC;
-	border-right:  2px solid #CCCCCC;
-	margin: 0 10px 20px 0;
-	padding: 2px;
+	font: 13px arial,sans-serif;
+    font-family: arial;
+    font-size: 100%;
+    text-align: left;
+	border: 0 none;
+	margin: 0 0 10px 10px;
 }
-.oef_w_header {
-	background-image: url("/skins/common/icons/w_header_1.png");
-	height: 33px;
-	padding: 7px;
+.rnd1, .rnd2, .rnd3 {
+    overflow: hidden;
 }
-.oef_w_headstr {
-	background-color: #FFFFFF;
-	height: 28px;
-	overflow: hidden;
-	-moz-border-radius: 7px;
-	border: 1px solid #BBBBBB;
+.rnd1 {
+    background: none repeat scroll 0 50% #BDCAD8;
+    margin: 0 4px;
 }
-.oef_w_title {
-	float: left;
-	overflow: hidden;
-	font-family: Arial,Helvetica,sans-serif;
-	font-size: 15px;
-	font-weight: bold;
-	padding: 0 7px;
-	color: /*#B58228*/#555555;
-	line-height: 28px;
+.rnd1, .rnd2, .rnd3 {
+    border-style: solid;
+    border-width: 0;
+    display: block;
+    font-size: 1px;
+    height: 1px;
+    line-height: 1px;
 }
-.oef_w_headstr table, .oef_w_headstr td  {
-	border: 0 none !important;
-	margin: 0 !important;
-	padding: 0 !important;
+.rnd_modtitle .rnd2, .rnd_modtitle .rnd3 {
+    background-color: #D4E6FC;
 }
-.oef_w_headstr table {
-	width: 100%;
+.rnd_modtitle .rnd2, .rnd_modtitle .rnd3 {
+    background: none repeat scroll 0 50% #D4E6FC;
 }
-td.oef_w_h_actions {
-	width: 69px;
+.rnd2, .rnd3 {
+    background: none repeat scroll 0 50% #FFFFFF;
+    border-color: #BDCAD8;
 }
-.oef_w_button {
-	float: right;
-	padding: 4px 5px 4px 0;
-	width: 18px;
-	height: 19px;
+.rnd2 {
+    border-width: 0 2px;
+    margin: 0 2px;
 }
-.oef_w_content {
-	padding: 5px;
+.rnd3 {
+    border-width: 0 1px;
+    height: 2px;
+    margin: 0 1px;
+}
+.modtitle {
+    font-size: 12px;
+    color: #3366CC;
+    position: relative;
+    z-index: 1;
+    border-color: #7AA5D6 #C5D7EF -moz-use-text-color;
+    border-left: 1px solid #C5D7EF;
+    border-right: 1px solid #C5D7EF;
+    border-style: none solid none;
+    border-width: 1px 1px medium;
+    background: none repeat scroll 0 0 #D4E6FC;
+    line-height: 19px;
+    padding: 0 7px 2px !important;
+}
+.modtitle .lnk {
+    position: relative;
+    z-index: 3;
+}
+.modtitle h2 {
+    float: left;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    color: #3366CC;
+    border-style: none;
+    line-height: 19px;
+    text-align: left;
+    font: 13px arial,sans-serif;
+    font-family: arial;
+    letter-spacing: normal;
+}
+.modtitle .modtitle_text {
+    font-weight: bold;
+    color: #224499;
+    font-size: 12px;
+    text-decoration: none;
+    line-height: 19px;
+}
+.modboxin {
+    border: 1px solid #C5D7EF;
+    clear: both;
+    overflow: hidden;
+    border-color: #ACC3DF #BDCAD8;
+    border-style: solid solid none !important;
+    padding: 0 !important;
+    margin: 0;   
+}
+a.v2ddbox, a.v2enlargebox {
+    height: 12px;
+    width: 13px;
+    float: right;
+    margin-left: 3px;
+    margin-top: 3px;
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+    background-image: url("/skins/common/icons/sprite0_classic.gif");
+    background-repeat: no-repeat;
+}
+a.v2enlargebox {
+    background-position: -78px 0;
+}
+a.v2ddbox {
+    background-position: -26px 0;
 }
 
+.oef_w_container {
+	margin: 5px 9px 7px !important;
+	overflow: hidden;
+}
 
 .oef_w_content table {
 	border: 0 none;
 	border-collapse: separate;
 	border-spacing: 2px 0px;
+	width: 100%;
 }
 .oef_w_content td, .oef_w_content th {
 	padding: 2px 8px;
@@ -392,6 +455,7 @@ td.oef_w_h_actions {
 .oef_w_content td.oef_widget_list_label {
 	font-weight: bold;
 }
+
 
 
 /******************************** Delete marked for deletion *********************************/ 

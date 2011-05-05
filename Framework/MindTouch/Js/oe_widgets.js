@@ -254,23 +254,26 @@ function oeWidgetsView()
 		if (options)
 		{
 			if (options.header) header = options.header;
-			if (options.width)  style += 'width: ' + (options.width  + 14) + 'px;';
-			if (options.height) style += 'height:' + (options.height + 56) + 'px;';
+			if (options.width)  style += 'width: ' + (options.width  /*+ 20*/) + 'px;';
+			if (options.height) style += 'height:' + (options.height /*+ 42*/) + 'px;';
 		}
 		
-		html += '<div class="oef_w_layout" style="' + style + '">\n';
-		html += '  <div class="oef_w_header">\n';
-		html += '    <div class="oef_w_headstr">\n';
-		html += '      <table><tr><td>\n';
-		html += '        <div class="oef_w_title">' + header + '</div>\n';
-		html += '      </td><td class="oef_w_h_actions">\n';
-		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_1.png" alt="settings"></div>\n';
-		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_2.png" alt="full"></div>\n';
-		html += '        <div class="oef_w_button"><img src="/skins/common/icons/w_button_3.png" alt="close"></div>\n';
-		html += '      </td></tr></table>\n';
+		html += '<div class="oef_w_layout">\n';
+		html += '  <b class="rnd_modtitle"><b class="rnd1"></b><b class="rnd2"></b><b class="rnd3"></b></b>\n';
+		html += '  <div class="modtitle">\n';
+		html += '    <h2 class="lnk"><span class="modtitle_text">' + header + '</span></h2>\n';
+		html += '    <div style="display: block;">\n';
+		html += '      <a class="v2enlargebox" href="javascript:void(0);"></a>\n';
+		html += '      <a class="v2ddbox" href="javascript:void(0);"></a>\n';
+		html += '    </div>\n';
+		html += '    <div style="clear: both;"></div>\n';
+		html += '  </div>\n';
+		html += '  <div class="modboxin">\n';
+		html += '    <div class="oef_w_container">\n';
+		html += '      <div id="' + wTagId + '" class="oef_w_content" style="' + style + '">%%content%%</div>\n';
 		html += '    </div>\n';
 		html += '  </div>\n';
-		html += '  <div id="' + wTagId + '" class="oef_w_content">%%content%%</div>\n';
+		html += '  <b class="rnd_modboxin"><b class="rnd3"></b><b class="rnd2"></b><b class="rnd1"></b></b>\n';
 		html += '</div>\n';
 		
 		if (jQuery('#' + tag_id).size() == 0) // For Google widgets
@@ -337,7 +340,7 @@ function oeWidgetsView()
 		var links  = data['links'] ? data['links'] : [];
 		var fields = data['fields'];
 		var numb_f = 0;
-		var html   = '<table>\n<thead>\n\t<tr>';
+		var html   = '<table class="oef_widget_grid">\n<thead>\n\t<tr>';
 
 		for (var key in fields)
 		{
