@@ -151,11 +151,11 @@ input.userBusinessCard {
 
 <?php if (empty($attrs['Employee']) && $isCurrentEmployee): ?>
 
-  <div style="height: 250px; border: 1px solid #DDDDDD; background-color: #F8F8F8; margin-bottom: 10px;">
+  <div style="height: 450px; border: 1px solid #DDDDDD; background-color: #F8F8F8; margin-bottom: 10px;">
       <script>
-        var msg = "The System couldn't find an association between the currently logged user ";
-        msg += '<?php echo $user->getUsername() ?> and a Natural Person catalog item. So, we cannot identify which Person/Employee you are. ';
-        msg += 'Please, open the catalog "<a href="?uid=catalogs.NaturalPersons&actions=displayListForm">Natural Persons</a>" and set up this association';
+        var msg = "System could not find an association between the currently logged on user ";
+        msg += '<?php echo $user->getUsername() ?> and a Natural Person Catalog item. Thus, we cannot identify you as a Person/Employee. ';
+        msg += 'Please, open Catalog "<a href="?uid=catalogs.NaturalPersons&actions=displayListForm">Natural Persons</a>" and set up the association';
 
         displayMessage('catalogs_Employees', msg, 2);
       </script>
@@ -462,11 +462,11 @@ function show(num)
     {
     	if (isHired)
     	{
-        	var msg = "The information you see is read only since it is contributed by the following document: " +
+        	var msg = "The information you see is available only since it is contributed by the following document: " +
         		'<?php echo '<a target="_blank" href="#" onclick="_dispalyEF(this, \\\'documents\\\', \\\''.$doc['type'].'\\\', '.$doc['id'].'); return false;">'.$doc['desc'].'</a>' ?>' +
         		" If you want to update the information you may need to re-submit the document." +
             	" For making so, click the link above, perform \"Clear Posting\", then update the data and perform \"Post\"." +
-            	" Attention, that you must have the sufficient access rights for this"
+            	" Attention, you must have the sufficient access rights for this"
             ;
         }
     	else
