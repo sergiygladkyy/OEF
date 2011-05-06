@@ -112,8 +112,8 @@ function onGenerate($event)
       
       foreach ($assign_p as $key => $row)
       {
-         $_fweek = MGlobal::getWeekNumber($row['DateFrom']);
-         $_tweek = MGlobal::getWeekNumber($row['DateTo']);
+         $_fweek = (int) MGlobal::getWeekNumber($row['DateFrom']);
+         $_tweek = (int) MGlobal::getWeekNumber($row['DateTo']);
          
          for ($i = $_fweek; $i <= $_tweek; $i++)
          {
@@ -135,7 +135,7 @@ function onGenerate($event)
       
       $periods[] = array(
          'value'    => $value,
-         'text'     => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)).($disab ? ' - Time card exists' : (empty($wassign[$week]) ? ' - No assignments' : '')),
+         'text'     => sprintf("Week %02d (%s - %s)", $week, date('d.m.Y', $from), date('d.m.Y', $to)).($disab ? ' - Time card exists' : (!isset($wassign[$week]) ? ' - No assignments' : '')),
          'disabled' => $disab 
       );
       
