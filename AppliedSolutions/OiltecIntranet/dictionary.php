@@ -2986,7 +2986,7 @@ $_dictionary = array(
                   'regexp' => '/(\d{4}-\d{2}-\d{2})|This\sWeek|Next\sWeek|Last\sWeek|'.
                      'This\sMonth|Next\sMonth|Last\sMonth|'.
                      'This\sQuarter|Next\sQuarter|Last\sQuarter|'.
-                     'This\sYear|Next\sYear|Last\sYear/i',
+                     'This\sYear|Next\sYear|Last\sYear|Today/i',
                   'required' => true
                )
             ),
