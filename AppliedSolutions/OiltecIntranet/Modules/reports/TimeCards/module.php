@@ -102,7 +102,7 @@ function onGenerate($event)
    {
       $cards[$id] = array(
          'Employee' => $row['Employee'],
-         'Period'   => date('d.m.Y', strtotime($row['StartDate'])).' - '.date('d.m.Y', strtotime($row['EndDate'])),
+         'Period'   => 'Week '.MGlobal::getWeekNumber($row['StartDate']).' ('.date('d.m.Y', strtotime($row['StartDate'])).' - '.date('d.m.Y', strtotime($row['EndDate'])).')',
          'Posted'   => $row['Posted'],
          'Hours'    => 0,
          'Overtime' => 0,
