@@ -1,4 +1,6 @@
 {{
+   awpskin.hideAllStandardPanes();
+
    var d_root = 'Template:OEF/OiltecIntranet/Dashboard';
    var w_root = 'Template:OEF/OiltecIntranet/Widgets';
    
