@@ -17,7 +17,7 @@
     <h3>Schedule settings</h3>
     <table>
       <tr>
-        <td>Hours in week:</td>
+        <td>Hours per week:</td>
         <td><input type="text" name="week_hours" value="" /></td>
       </tr>
       <tr>
