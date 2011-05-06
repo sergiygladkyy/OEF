@@ -356,7 +356,7 @@ div.errormsg div.inner a:hover {
     color: #3366CC;
     position: relative;
     z-index: 1;
-    border-color: #ACACAC #ACACAC -moz-use-text-color;
+    border-color: #ACACAC #ACACAC !important;
     border-style: none solid none;
     border-width: 1px 1px medium;
     background: none repeat scroll 0 0 #ddddee;

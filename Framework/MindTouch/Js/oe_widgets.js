@@ -522,6 +522,7 @@ function oeWidgetsView()
 			chart.draw(gdata, options);
 		});
 	};
+	
     /**
 	 * Speedometer
 	 * 
@@ -530,83 +531,90 @@ function oeWidgetsView()
 	 * @param array options
 	 * @return void
 	 */
-        this.drawSpeedometer = function(tag_id, data, options)
-        {
-              if (!data )
-              {
-                   jQuery('#' + tag_id).html('<span>Data is empty</span>');
-                  return;
-              }
-
-              var max1 = data['Hours']['max']  ? data['Hours']['max']  : 100;
-              var max2 = data['Overtime']['max']  ? data['Overtime']['max']  : 100;
-              var max3 = data['Extra']['max']  ? data['Extra']['max']  : 100;
-
-              var val1 = data['Hours']['actual']  ? data['Hours']['actual']  : 0;
-              var val2 = data['Overtime']['actual']   ? data['Overtime']['actual']  : 0;
-              var val3 = data['Extra']['actual']   ? data['Extra']['actual']  : 0;
-
-              google.load('visualization', '1', {packages:['gauge']});
-              google.setOnLoadCallback(function () {
-                if(data['Hours'])
-                {
-                    var data1 = new google.visualization.DataTable();
-                    data1.addColumn('string', 'Label');
-                    data1.addColumn('number', 'Value');
-                    data1.addRows(1);
-                    data1.setValue(0, 0, 'HRS');
-                    data1.setValue(0, 1, val1);
-                    var chart1 = new google.visualization.Gauge(document.getElementById('chart1_div'));
-                    var redLine = max1;
-                    if(val1>max1)
-                    {
-                        max1 = val1;
-                    }
-                    var options = {width: 200, height: 200,minorTicks: 7, max: max1,
-                        redFrom: redLine, redTo: max1};
-                    chart1.draw(data1, options);
-                }
-                if(data['Overtime'])
-                {
-                    var data2 = new google.visualization.DataTable();
-                    data2.addColumn('string', 'Label');
-                    data2.addColumn('number', 'Value');
-                    data2.addRows(1);
-                    data2.setValue(0, 0, 'Overtime');
-                    data2.setValue(0, 1, val2);
-                    
-                    var chart2 = new google.visualization.Gauge(document.getElementById('chart2_div'));
-                    var options2 = {width: 200, height: 200,minorTicks: 7, max: max2};
-                    chart2.draw(data2, options2);
-                }
-
-                if(data['Extra'])
-                {
-                    var data3 = new google.visualization.DataTable();
-                    data3.addColumn('string', 'Label');
-                    data3.addColumn('number', 'Value');
-                    data3.addRows(1);
-                    data3.setValue(0, 0, 'Extra');
-                    data3.setValue(0, 1, val3);
-
-                    var chart3 = new google.visualization.Gauge(document.getElementById('chart3_div'));
-                    var options3 = {width: 200, height: 200,minorTicks: 7, max: max3};
-                    chart3.draw(data3, options3);
-                }
-              });
-              /*var html   = "<div id='chart1_div'></div><div id='chart2_div'></div><div id='chart3_div'></div>";
-              jQuery('#' + tag_id).html(html);*/
-        };
-        
-        /**
-		 * Employee Vacation Days
-		 *
-		 * @param string tag_id
-		 * @param array data
-		 * @param array options
-		 * @return void
-		 */
-        this.drawEmployeeVacationDays = function(tag_id, data, options)
+	this.drawSpeedometer = function(tag_id, data, options)
+	{
+		if (!data)
+		{
+			jQuery('#' + tag_id).html('<span>Data is empty</span>');
+			return;
+		}
+		
+		var max1 = data['Hours']['max']    ? data['Hours']['max']    : 100;
+		var max2 = data['Overtime']['max'] ? data['Overtime']['max'] : 100;
+		var max3 = data['Extra']['max']    ? data['Extra']['max']    : 100;
+		
+		var val1 = data['Hours']['actual']    ? data['Hours']['actual']    : 0;
+		var val2 = data['Overtime']['actual'] ? data['Overtime']['actual'] : 0;
+		var val3 = data['Extra']['actual']    ? data['Extra']['actual']    : 0;
+		
+		var h_opt = options && options.hours    ? options.hours    : {};
+		var o_opt = options && options.overtime ? options.overtime : {};
+		var e_opt = options && options.extra    ? options.extra    : {};
+		
+		google.load('visualization', '1', {packages:['gauge']});
+		google.setOnLoadCallback(function () {
+			if (data['Hours'])
+			{
+				var data1 = new google.visualization.DataTable();
+				data1.addColumn('string', 'Label');
+				data1.addColumn('number', 'Value');
+				data1.addRows(1);
+				data1.setValue(0, 0, h_opt.label ? h_opt.label : 'Worked');
+				data1.setValue(0, 1, val1);
+				
+				var chart1  = new google.visualization.Gauge(document.getElementById('hours_div'));
+				var redLine = max1;
+				if (val1 > max1)
+				{
+					max1 = val1;
+				}
+				
+				h_opt.max     = max1;
+				h_opt.redFrom = redLine;
+				h_opt.redTo   = max1;
+				
+				chart1.draw(data1, h_opt);
+			}
+			if (data['Overtime'])
+			{
+				var data2 = new google.visualization.DataTable();
+				data2.addColumn('string', 'Label');
+				data2.addColumn('number', 'Value');
+				data2.addRows(1);
+				data2.setValue(0, 0, o_opt.label ? o_opt.label : 'Overtime');
+				data2.setValue(0, 1, val2);
+				
+				var chart2 = new google.visualization.Gauge(document.getElementById('overtime_div'));
+				o_opt.max  = max2;
+				
+				chart2.draw(data2, o_opt);
+			}
+			if (data['Extra'])
+			{
+				var data3 = new google.visualization.DataTable();
+				data3.addColumn('string', 'Label');
+				data3.addColumn('number', 'Value');
+				data3.addRows(1);
+				data3.setValue(0, 0, 'Extra');
+				data3.setValue(0, 1, val3);
+				
+				var chart3 = new google.visualization.Gauge(document.getElementById('extra_div'));
+				e_opt.max  = max3;
+				
+				chart3.draw(data3, e_opt);
+			}
+		});
+	};
+	
+	/**
+	 * Employee Vacation Days
+	 * 
+	 * @param string tag_id
+	 * @param array data
+	 * @param array options
+	 * @return void
+	 */
+	this.drawEmployeeVacationDays = function(tag_id, data, options)
         {
               if (!data )
               {

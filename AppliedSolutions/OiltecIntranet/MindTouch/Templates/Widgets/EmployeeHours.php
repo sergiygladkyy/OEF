@@ -10,9 +10,9 @@
         jQuery(document).ready(function() {
            var html;
            html  = '&lt;div id=\"oef_employee_hours\"&gt;';
-           html += '&lt;div id=\"chart1_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
-           html += '&lt;div id=\"chart2_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
-           html += '&lt;div id=\"chart3_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
+           html += '&lt;div id=\"hours_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
+           html += '&lt;div id=\"overtime_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
+           html += '&lt;div id=\"extra_div\" style=\"float: left;\"&gt;&nbsp;&lt;/div&gt;';
            html += '&lt;div style=\"clear:both\"&gt;&nbsp;&lt;/div&gt;&lt;/div&gt;';
            
            jQuery('#"..zone.."').html(html);
@@ -35,7 +35,25 @@
               'tag_id': 'oef_employee_hours',
               'options': {
                  header: 'Employee Hours',
-                 width:  600
+                 width:  510,
+                 hours: {
+                    width:  170,
+                    height: 170,
+                    minorTicks: 7,
+                    label: 'Worked'
+                 },
+                 overtime: {
+                    width:  170,
+                    height: 170,
+                    minorTicks: 7,
+                    label: 'Overtime'
+                 },
+                 extra: {
+                    width:  170,
+                    height: 170,
+                    minorTicks: 7,
+                    label: 'Extra'
+                 }
               }
           }
         });
