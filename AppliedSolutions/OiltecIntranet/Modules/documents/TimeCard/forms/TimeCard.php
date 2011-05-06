@@ -368,7 +368,7 @@ function onProcess($event)
    }
    else
    {
-      $result['msg'] = 'Time Records not updated<pre>'.print_r($tabular, true).'</pre>';
+      $result['msg'] = 'Time Records not updated';
    }
    
    $event->setReturnValue(array(

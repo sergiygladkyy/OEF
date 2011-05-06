@@ -729,7 +729,8 @@ $_dictionary = array(
                      ),
                      'precision' => array(
                         'required' => true,
-                        'min' => 0
+                        'min' => 0,
+                        'max' => 24
                      )
                   ),
                   'Comment' => array(
@@ -804,7 +805,8 @@ $_dictionary = array(
                         'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                      ),
                      'precision' => array(
-                        'min' => 0
+                        'min' => 0,
+                        'max' => 24
                      )
                   ),
                   'Comment' => array(
@@ -1988,7 +1990,8 @@ $_dictionary = array(
                ),
                'precision' => array(
                   'required' => true,
-                  'min' => 0
+                  'min' => 0,
+                  'max' => 24
                )
             ),
             'SubProject' => array(
@@ -2116,7 +2119,8 @@ $_dictionary = array(
                   'type' => "float(8,2) UNSIGNED NOT NULL default 0.00"
                ),
                'precision' => array(
-                  'min' => 0
+                  'min' => 0,
+                  'max' => 24
                )
             ),
             'SubProject' => array(
