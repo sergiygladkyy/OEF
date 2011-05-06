@@ -557,7 +557,7 @@ class MVacation
       }
       elseif ($end <= $start)
       {
-         return array('EndDate' => 'End date cannot go before the start date. Check the period');
+         return array('EndDate' => 'The End Date occurs before the Start Date');
       }
       elseif ($end > $maxEnd)
       {
@@ -591,7 +591,7 @@ class MVacation
             throw new Exception('Database error');
          }
          
-         MGlobal::returnMessageByLinks($links, false, 'Vacation cannot be given because there are assignment for that period. See the following document:');
+         MGlobal::returnMessageByLinks($links, false, 'Vacation cannot be given because there are assignments for this period. See the following document:');
       }
    }
    

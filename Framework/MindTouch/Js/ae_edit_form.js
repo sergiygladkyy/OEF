@@ -270,7 +270,7 @@ function processConstantsResponse(result, status, options)
 		for(var field in result['errors'])
 		{
 			if (!displayErrors(prefix + '_' + field, result['errors'][field])) {
-				msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + result['errors'][field];
+				msg += (msg.length > 0 ? ",&nbsp;" : ''/*"&nbsp;"*/) + result['errors'][field];
 			}
 		}
 		
@@ -357,7 +357,7 @@ function processResponse(data, status, options)
 				for(var field in result['errors'])
 				{
 					if (!displayErrors(kind + '_' + type + '_' + field, result['errors'][field])) {
-						msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + result['errors'][field];
+						msg += (msg.length > 0 ? ",&nbsp;" : ''/*"&nbsp;"*/) + result['errors'][field];
 					}
 				}
 				
@@ -450,7 +450,7 @@ function processObjectResponse(data, status, options)
 				for (var field in m_data['errors'])
 				{
 					if (!displayErrors(main_kind + '_' + main_type + '_' + field, m_data['errors'][field])) {
-						msg += (msg.length > 0 ? ",&nbsp;" : "&nbsp;") + m_data['errors'][field];
+						msg += (msg.length > 0 ? ",&nbsp;" : ''/*"&nbsp;"*/) + m_data['errors'][field];
 					}
 				}
 				
@@ -562,7 +562,7 @@ function processTabularResponce(kind, data, options)
 				for (var field in m_data['errors'])
 				{
 					if (!displayErrors(kind + '_' + type + '_' + i + '_' + field, m_data['errors'][field])) {
-						msg += (msg.length > 0 ? "&nbsp;" : "&nbsp;") + m_data['errors'][field];
+						msg += (msg.length > 0 ? "&nbsp;" : ''/*"&nbsp;"*/) + m_data['errors'][field];
 					}
 				}
 			}
