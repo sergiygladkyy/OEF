@@ -39,18 +39,18 @@
 	z-index: 9002; /*ooveeerrrr nine thoussaaaannnd*/
 }
 .userTabs {
-    width: 515px !important;
+    width: 96% !important;
 }
 #popUpDiv .locFooter {
     background-color: #eeeeee;
 }
-#popUpDiv .userTabs {
-    border-bottom: 1px solid #b0b0b0;
+#popUpDiv .userTabs td {
+    border-color: #b0b0b0;
 }
 #popUpDiv .userTabs a {
-    border: 1px solid #b0b0b0;
+    border-color: #b0b0b0;
 }
-#popUpDiv .userTabs a.active {
+#popUpDiv .userTabs td.active {
     border-bottom: 1px solid #eeeeee;
 }
 </style>

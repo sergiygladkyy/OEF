@@ -1,16 +1,32 @@
 <style type="text/css">
 
 /************************************* UserProfile ********************************************/
-.userTabs { padding:0 5px; height:28px; border-bottom:1px solid #d2d2d2; }
+.userTabs { height:28px; width: 100%; }
 img { border:0; }
-.userTabs a, .userTabs a:visited { text-decoration:none; border-top:1px solid #d2d2d2; border-right:1px solid #d2d2d2; border-left:1px solid #d2d2d2; float:left; height:15px; position:relative; margin-right:4px; padding:6px 8px; margin-bottom:-1px; -moz-border-radius-topleft:3px; -moz-border-radius-topright:3px; line-height:1em;}
-.userTabs a:hover, .userTabs a.active { border-bottom:1px solid #ffffff; }
+.userTabs a, .userTabs a:visited {
+    text-decoration: none;
+    border: 1px solid #b0b0b0;
+    border-bottom: 0 none;
+    padding: 8px 8px 6px 8px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    line-height: 1em !important;
+    position: relative;
+    top: 1px;
+}
+.userTabs a { border-bottom: 0px none; }
 .userTabs span.icon { background-image:url(/skins/aconawellpro/images/userTabs.png); float:left; height:16px; width:16px; margin-right:3px; }
 .userTabs span.info { background-position:0 0; }
 .userTabs span.blog { background-position:-16px 0; }
 .userTabs span.proj { background-position:-32px 0; }
 .userTabs b { font-size:12px;  text-decoration:none; }
 .userTabs b span { color:#646464; padding-left:5px; }
+
+.userTabs table { border: 0 none !important; padding: 0; margin: 0; }
+.userTabs td { border: 0 none; padding: 0; margin: 0; border-bottom: 1px solid #b0b0b0; }
+.userTabs td.space { width: 5px; }
+.userTabs td.bspace { width: 99%; }
+.userTabs td.active { border-bottom: 0 none !important;}
 
 .userLeft { width:220px; margin: 20px 0; float: left; }
 .userPhoto {  width:200px; overflow:hidden; /*-moz-border-radius:3px;*/ text-align: center; border: 1px solid #d2d2d2; padding:8px;}
@@ -171,14 +187,24 @@ input.userBusinessCard {
   <?php endif; ?>
 
 <div class="userTabs">
-  <div id="htab1">
-    <a href="#"  class="active"  onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
-    <a href="#" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
-  </div>
-  <div id="htab2" style="display:none;">
-    <a href="#" onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b>Personal info</b></a>
-    <a href="#" class="active" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a>
-  </div>
+  <table id="htab1" width="100%">
+  <tr>
+    <td class="space">&nbsp;</td>
+    <td class="active"><a href="#" onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b><nobr>Personal info</nobr></b></a></td>
+    <td class="space">&nbsp;</td>
+    <td><a href="#" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a></td>
+    <td class="bspace">&nbsp;</td>
+  </tr>
+  </table>
+  <table id="htab2" width="100%" style="display:none;">
+  <tr>
+    <td class="space">&nbsp;</td>
+    <td><a href="#" onclick="show('tab1'); return false;" style="color: #93B52D !important;" ><b><nobr>Personal info</nobr></b></a></td>
+    <td class="space">&nbsp;</td>
+    <td class="active"><a href="#" onclick="show('tab2'); return false;" style="color: #93B52D !important;" ><b>Organization</b></a></td>
+    <td class="bspace">&nbsp;</td>
+  </tr>
+  </table>
 </div>
 
 <div class="userLeft">
