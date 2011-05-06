@@ -84,7 +84,7 @@
             content;
           </pre>
           <eval:if test="field == 'Period'">
-            <img src="/skins/common/icons/silk/help.png" style="position: relative; left: 13px; top: 2px;" title="You can use periods: “Today”, “Last Week”, “This Week”, “Next Week”, “Last Month”, “This Month”, “Next Month”, “Last Quarter”, “This Quarter”, “Next Quarter”, “Last Year”, “This Year”, “Next Year”">
+            <img src="/skins/common/icons/silk/help.png" style="position: relative; left: 13px; top: 2px;" title="You can use periods: “Last Year”, “Last Month”, “Last Quarter”, “Last Week”, “This Year”, “This Month”, “This Quarter”, “This Week”, “Today”, “Next Week”, “Next Month”, “Next Quarter”, “Next Year”">
           </eval:if>
         </td>
       </tr>
