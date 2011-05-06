@@ -16,12 +16,12 @@
    var periods  = [
       {value: '',             text: ' &nbsp;'},
       {value: 'This Week',    text: 'This Week'},
-      {value: 'Last Week',    text: 'Last Week'},
       {value: 'This Month',   text: 'This Month'},
-      {value: 'Last Month',   text: 'Last Month'},
       {value: 'This Quarter', text: 'This Quarter'},
-      {value: 'Last Quarter', text: 'Last Quarter'},
       {value: 'This Year',    text: 'This Year'},
+      {value: 'Last Week',    text: 'Last Week'},
+      {value: 'Last Month',   text: 'Last Month'},
+      {value: 'Last Quarter', text: 'Last Quarter'},
       {value: 'Last Year',    text: 'Last Year'}
    ];
 }}
@@ -48,7 +48,7 @@
       
       var class = string.replace(kind, '.', '_')..'_'..type;
   }}
-  <h3 id="{{ class..'_header' }}">{{ string.ToUpperFirst(string.remove(puid.kind, string.length(puid.kind)-1, 1))..' "'..type..'"' }}</h3>
+  <h3 id="{{ class..'_header' }}">{{ string.ToUpperFirst(string.remove(puid.kind, string.length(puid.kind)-1, 1))..' '..type }}</h3>
   <form method="post" action="#" class="ae_report_form" id="{{ class..'_report' }}">
     <div class="{{ class..'_message systemmsg' }}" style="display: none;">
       <div class="inner">

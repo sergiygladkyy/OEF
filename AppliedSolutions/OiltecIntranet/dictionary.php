@@ -2950,12 +2950,12 @@ $_dictionary = array(
                'precision' => array(
                   'in' => array(
                      'This Week'    => 'This Week',
-                     'Last Week'    => 'Last Week',
                      'This Month'   => 'This Month',
-                     'Last Month'   => 'Last Month',
                      'This Quarter' => 'This Quarter',
-                     'Last Quarter' => 'Last Quarter',
                      'This Year'    => 'This Year',
+                     'Last Week'    => 'Last Week',
+                     'Last Month'   => 'Last Month',
+                     'Last Quarter' => 'Last Quarter',
                      'Last Year'    => 'Last Year'
                   ),
                   'required' => true

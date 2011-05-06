@@ -10,7 +10,7 @@ function onGenerate($event)
    $headline  = $event['headline'];
    $container = Container::getInstance();
    $criterion = array();
-   $header    = 'Time cards';
+   $header    = 'Time Cards';
    
    /* Get data */
 
