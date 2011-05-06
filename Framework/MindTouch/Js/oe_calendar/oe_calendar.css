@@ -11,6 +11,11 @@
    height: 195px;
 }
 
+select.oe_year {
+   margin-left: 5px;
+   width: auto !important;
+}
+
 .oe_month table {
    border-collapse: separate;
    border: 0 none;

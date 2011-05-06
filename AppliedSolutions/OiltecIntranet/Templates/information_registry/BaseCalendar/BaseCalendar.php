@@ -9,7 +9,7 @@
 <form action="#" method="post" class="oe_custom_edit_form" id="<?php echo $kind.'_'.$type.'_item' ?>">
   <input type="hidden" name="<?php echo $attr_prefix."[name]"; ?>" value="<?php echo $name ?>" />
   <div style="padding: 10px 0 7px 0;">
-    Year:&nbsp;<select name="<?php echo $attr_prefix."[year]" ?>" onChange="onChange(this);">
+    Year:<select class="oe_year" name="<?php echo $attr_prefix."[year]" ?>" onChange="onChange(this);">
   <?php for ($i = $year_start; $i <= $year_end; $i++): ?>
     <?php if ($i == $year_cur): ?>
       <option value="<?php echo $i ?>" selected><?php echo $i ?></option>
