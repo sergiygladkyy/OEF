@@ -44,6 +44,15 @@
 #popUpDiv .locFooter {
     background-color: #eeeeee;
 }
+#popUpDiv .userTabs {
+    border-bottom: 1px solid #b0b0b0;
+}
+#popUpDiv .userTabs a {
+    border: 1px solid #b0b0b0;
+}
+#popUpDiv .userTabs a.active {
+    border-bottom: 1px solid #eeeeee;
+}
 </style>
 <div class="catalogs_UserBrowser_message systemmsg" style="display: none;">
   <div class="inner">
