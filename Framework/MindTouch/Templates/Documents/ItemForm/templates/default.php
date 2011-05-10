@@ -59,7 +59,7 @@
   <table>
     <tbody>
       <tr>
-        <td class="ae_itemform_field_name">Posted:</td>
+        <td class="ae_itemform_field_name">Status:</td>
         <td class="ae_itemform_field_value">
           <div class="{{ item._post &gt; 0 ? 'ae_field_posted' : 'ae_field_not_posted' }}">
             <span class="ae_field_posted_text" style="{{ item._post &gt; 0 ? 'display: block;' : 'display: none;' }}">This document is posted.</span>
