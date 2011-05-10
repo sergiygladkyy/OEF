@@ -15,14 +15,14 @@
    var report   = data.report ?? nil;
    var periods  = [
       {value: '',             text: ' &nbsp;'},
-      {value: 'This Week',    text: 'This Week'},
-      {value: 'This Month',   text: 'This Month'},
-      {value: 'This Quarter', text: 'This Quarter'},
-      {value: 'This Year',    text: 'This Year'},
       {value: 'Last Week',    text: 'Last Week'},
       {value: 'Last Month',   text: 'Last Month'},
       {value: 'Last Quarter', text: 'Last Quarter'},
-      {value: 'Last Year',    text: 'Last Year'}
+      {value: 'Last Year',    text: 'Last Year'},
+      {value: 'This Week',    text: 'This Week'},
+      {value: 'This Month',   text: 'This Month'},
+      {value: 'This Quarter', text: 'This Quarter'},
+      {value: 'This Year',    text: 'This Year'}
    ];
 }}
 <eval:if test="puid is nil">
