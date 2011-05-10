@@ -1997,3 +1997,48 @@ class MSchedules
       return $result;
    }
 }
+
+/**
+ * Department functions
+ * 
+ * @author alexander.yemelianov
+ */
+class MDepartment
+{
+   /**
+    * Return Department Chief
+    * 
+    * @param int  $unit - organizational unit id
+    * @param bool $only_id
+    * @return mixed
+    */
+   public static function getDepartmentChief($unit, $only_id = true)
+   {
+      $container = Container::getInstance();
+      
+      $odb   = $container->getODBManager();
+      $query = "SELECT `Employee` ".
+               "FROM information_registry.DivisionalChiefs ".
+               "WHERE `OrganizationalUnit`=".$unit;
+      
+      if (null === ($chief = $odb->loadAssoc($query)))
+      {
+         throw new Exception('Database error');
+      }
+      
+      $employee = empty($chief) ? 0 : $chief['Employee'];
+      
+      if ($only_id) return $employee;
+      
+      $model = $container->getModel('catalogs', 'Employees');
+      
+      if ($employee == 0) return $model;
+      
+      if (!$model->load($employee))
+      {
+         throw new Exception('Unknow employee');
+      }
+      
+      return $model;
+   }
+}

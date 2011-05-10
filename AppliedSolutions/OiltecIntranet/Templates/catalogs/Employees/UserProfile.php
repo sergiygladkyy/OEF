@@ -358,6 +358,23 @@ input.userBusinessCard {
             <div class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["OrganizationalPosition"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
+        
+        <div class="userRow">
+          <div class="errors_msg"> </div>
+          <div class="userRowLeft">Manager:</div>
+          <div class="userRowRight">
+            <div class="userValue">
+              <?php
+                 if ($attrs["StaffRecord"])
+                 {
+                    $manager = MDepartment::getDepartmentChief($attrs["StaffRecord"]["OrganizationalUnit"]["value"], false);
+                    $manager = $manager->getAttribute('Description');
+                 }
+                 echo empty($manager) ? '&nbsp;' : $manager;
+              ?>
+            </div>
+          </div>
+        </div>
 
         <div class="userRow">
           <div class="errors_msg"> </div>
