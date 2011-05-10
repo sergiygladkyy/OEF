@@ -8,8 +8,8 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
-   var references = {}; 
-   var recorders  = {};
+   var references = {};
+   var reg_type   = '';
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -43,9 +43,8 @@
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
-      let recorders  = entities.getInternalConfiguration(kind..'.recorders', type);
+      let reg_type   = entities.getInternalConfiguration(kind..'.register_type', type);
       
-      var hasRec = #recorders > 0;
       let class  = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
@@ -60,11 +59,13 @@
   <thead>
     <tr>
       <th style="display: none;">ID</th>
-      <eval:if test="hasRec == true">
-        <th width="200">Recorder</th>
-      </eval:if>
+      <th>Period</th>
+      <th>Recorder</th>
+      <th>Line</th>
       <eval:foreach var="field" in="fields">
-        <th>{{ string.ToUpperFirst(field); }}</th>
+        <eval:if test="field != 'Period'">
+          <th>{{ string.ToUpperFirst(field); }}</th>
+        </eval:if>
       </eval:foreach>
     </tr>
   </thead>
@@ -75,34 +76,55 @@
           <td style="display: none;">
             <span class="{{ class..'_item_id ae_item_id' }}" style="display: none;">{{ item._id }}</span>
           </td>
-          <eval:if test="hasRec == true">
-            <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
-              <span><nobr>{{ links['_rec_id'][item._rec_type][item._rec_id]['text'] }}</nobr></span>
-            </td>
-          </eval:if>
+          <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+            <div class="oef_accum_reg_period">
+              <eval:if test="reg_type == 'Balances'">
+                <eval:if test="item._operation == 1">
+                  <div class="oef_accum_reg_plus">&nbsp;</div>
+                </eval:if>
+                <eval:else>
+                  <div class="oef_accum_reg_minus">&nbsp;</div>
+                </eval:else>
+              </eval:if>
+              <eval:else>
+                <div class="oef_accum_reg_dot">&nbsp;</div>
+              </eval:else>
+              <div class="oef_accum_reg_period_value"><nobr>{{ item.Period }}</nobr></div>
+            </div>
+          </td>
+          <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+            <span><nobr>{{ links['_rec_id'][item._rec_type][item._rec_id]['text'] }}</nobr></span>
+          </td>
+          <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+            <span>{{ item._line }}</span>
+          </td>
           <eval:foreach var="field" in="fields">
-            <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
-              <pre class="script">
-                var value  = '';
-                if (!(references[field] is nil)) {
-                   let value = links[field][item[field]];
-                }
-                else {
-                   let value = item[field];
-                }
-              
-                var tpl_params = {reference: references[field], precision: field_prec[field]};
-              
-                var template = root..'/ListFormFields';
-                var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
-              
-                if (string.contains(content, 'href="'..template..'"')) {
-                  let content = 'Template not found';
-                }
-              
-                content;
-              </pre>
-            </td>
+            <eval:if test="field != 'Period'">
+              <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
+                <nobr>
+                <pre class="script">
+                  var value  = '';
+                  if (!(references[field] is nil)) {
+                     let value = links[field][item[field]];
+                  }
+                  else {
+                     let value = item[field];
+                  }
+                  
+                  var tpl_params = {reference: references[field], precision: field_prec[field]};
+                  
+                  var template = root..'/ListFormFields';
+                  var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
+                  
+                  if (string.contains(content, 'href="'..template..'"')) {
+                     let content = 'Template not found';
+                  }
+                  
+                  content;
+                </pre>
+                </nobr>
+              </td>
+            </eval:if>
           </eval:foreach>
         </eval:if>
         <eval:else>
@@ -127,10 +149,10 @@
     }}
     </div>
   </eval:if>
-  <eval:if test="hasRec != true">
-    <a href="#" target="_blank" onclick="{{ 'javascript: newListItem(this, \''..kind..'\', \''..type..'\');  return false;' }}">New</a>&nbsp;|
-  </eval:if>
+  <!--
+  <a href="#" target="_blank" onclick="{{ 'javascript: newListItem(this, \''..kind..'\', \''..type..'\');  return false;' }}">New</a>&nbsp;|
   <a href="#" target="_blank" onclick="{{ 'javascript: editListItem(this, \''..kind..'\', \''..type..'\'); return false;' }}">Edit</a>&nbsp;|
   <a href="#" target="_blank" onclick="{{ 'javascript: viewListItem(this, \''..kind..'\', \''..type..'\'); return false;' }}">View</a>&nbsp;|
   <a href="#" onclick="{{ 'javascript:deleteListItem(\''..kind..'\', \''..type..'\', \''..class..'\'); return false;' }}">Delete</a>
+  -->
 </eval:else>

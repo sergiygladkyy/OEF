@@ -208,7 +208,7 @@ abstract class BaseEntitiesModel extends BaseModel
       {
          foreach ($this->conf['references'] as $field => $param)
          {
-            if ($entity[$field] > 0) $ids[$field][] = $entity[$field];
+            if ($entity[$field] > 0) $ids[$field][$entity[$field]] = $entity[$field];
          }
       }
       
@@ -219,7 +219,6 @@ abstract class BaseEntitiesModel extends BaseModel
       {
          if (empty($ids[$field])) continue;
          
-         $ids[$field] = array_unique($ids[$field]);
          $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
          
          $result[$field] = $cmodel->retrieveLinkData($ids[$field]);

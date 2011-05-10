@@ -515,6 +515,35 @@ a.v2ddbox {
 	color: red !important;
 }
 
+
+/***************************** AccumulationRegisters View ************************************/
+
+.oef_accum_reg_plus {
+	width: 16px;
+	height: 1.6em;
+	float: left;
+	cursor: default;
+	background: url("/skins/common/icons/AccumRegPlus.png") no-repeat scroll left 60% transparent;
+}
+.oef_accum_reg_minus {
+	width: 16px;
+	height: 1.6em;
+	float: left;
+	cursor: default;
+	background: url("/skins/common/icons/AccumRegMinus.png") no-repeat scroll left 60% transparent;
+}
+.oef_accum_reg_dot {
+	width: 16px;
+	height: 1.6em;
+	float: left;
+	cursor: default;
+	background: url("/skins/common/icons/AccumRegDot.png") no-repeat scroll left 80% transparent;
+}
+.oef_accum_reg_period_value {
+	padding-left: 22px;
+}
+
+
 /************************************* Tree View *********************************************/
 
 .oef_tree_not_active {

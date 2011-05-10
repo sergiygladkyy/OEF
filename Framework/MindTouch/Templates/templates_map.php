@@ -34,6 +34,7 @@ $_templates_map = array(
    'EditFormFields/defaultOwnerReference' => '/EditFormFields/templates/defaultOwnerReference.php',
    'EditFormFields/defaultPassword'       => '/EditFormFields/templates/defaultPassword.php',
    'EditFormFields/defaultReference'      => '/EditFormFields/templates/defaultReference.php',
+   'EditFormFields/defaultYear'           => '/EditFormFields/templates/defaultYear.php',
    'EditFormFields/defaultString'         => '/EditFormFields/templates/defaultString.php',
    
    'Information_registry' => null,
@@ -44,6 +45,10 @@ $_templates_map = array(
    'Information_registry/ListForm'         => '/Information_registry/ListForm/ListForm.php',
    'Information_registry/ListForm/default' => '/Information_registry/ListForm/templates/default.php',
    
+   'AccumulationRegisters' => null,
+   'AccumulationRegisters/ListForm'         => '/AccumulationRegisters/ListForm/ListForm.php',
+   'AccumulationRegisters/ListForm/default' => '/AccumulationRegisters/ListForm/templates/default.php',
+   
    'ItemFormFields' => '/ItemFormFields/ItemFormFields.php',
    'ItemFormFields/defaultBool'      => '/ItemFormFields/templates/defaultBool.php',
    'ItemFormFields/defaultDate'      => '/ItemFormFields/templates/defaultDate.php',
@@ -53,6 +58,7 @@ $_templates_map = array(
    'ItemFormFields/defaultFloat'     => '/ItemFormFields/templates/defaultFloat.php',
    'ItemFormFields/defaultInt'       => '/ItemFormFields/templates/defaultInt.php',
    'ItemFormFields/defaultReference' => '/ItemFormFields/templates/defaultReference.php',
+   'ItemFormFields/defaultYear'      => '/ItemFormFields/templates/defaultYear.php',
    'ItemFormFields/defaultString'    => '/ItemFormFields/templates/defaultString.php',
    
    'ListFormFields' => '/ListFormFields/ListFormFields.php',
@@ -64,6 +70,7 @@ $_templates_map = array(
    'ListFormFields/defaultFloat'     => '/ListFormFields/templates/defaultFloat.php',
    'ListFormFields/defaultInt'       => '/ListFormFields/templates/defaultInt.php',
    'ListFormFields/defaultReference' => '/ListFormFields/templates/defaultReference.php',
+   'ListFormFields/defaultYear'      => '/ListFormFields/templates/defaultYear.php',
    'ListFormFields/defaultString'    => '/ListFormFields/templates/defaultString.php',
    
    'MainTemplates' => null,

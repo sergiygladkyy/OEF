@@ -45,7 +45,11 @@
         
         if (puid.status is nil)
         {
-           if (action is nil)
+           if (puid.kind == 'AccumulationRegisters')
+           {
+              let action = 'displayListForm';
+           }
+           else if (action is nil)
            {
               if (puid.kind == 'reports')
               {
