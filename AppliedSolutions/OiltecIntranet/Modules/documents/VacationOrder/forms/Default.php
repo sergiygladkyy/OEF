@@ -40,6 +40,10 @@ function onBeforeOpening($event)
    $departments = Container::getInstance()->getCModel('catalogs', 'OrganizationalUnits')->retrieveSelectData();
    
    $event->setReturnValue(array(
+      'attributes' => array(
+         'Date'        => date('Y-m-d H:i:s'),
+         'Responsible' => Container::getInstance()->getUser()->getId()
+      ),
       'select' => array(
          'department' => $departments
       )

@@ -73,7 +73,8 @@ function onBeforeOpening($event)
    
    $event->setReturnValue(array(
       'attributes' => array(
-         'Date' => date('Y-m-d H:i:s')
+         'Date'        => date('Y-m-d H:i:s'),
+         'Responsible' => Container::getInstance()->getUser()->getId()
       ),
       'select' => array(
          'Project' => $projects

@@ -684,6 +684,12 @@ $_dictionary = array(
          ),
 
          'fields' => array(
+            'Responsible' => array(
+               'reference' => 'catalogs.SystemUsers',
+               'precision' => array(
+                  'required' => true
+               )
+            ),
             'Project' => array(
                'reference' => 'catalogs.Projects',
                'precision' => array(
