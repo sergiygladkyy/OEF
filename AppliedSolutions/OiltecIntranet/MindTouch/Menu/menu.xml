@@ -36,4 +36,25 @@
 		<item title="Constants"    url="%root_path%/Constants" />
 	    <item title="Delete Marked For Deletion" url="%root_path%/Delete_Marked_For_Deletion" />
 	</item>
+	<item title="Registers" url="">
+	    <item title="Base Calendar" url="%root_path%/BaseCalendar" />
+		<item title="Schedules"     url="%root_path%/Schedules" />
+		<item title="Staff Employment Periods"      url="%root_path%/StaffEmploymentPeriods" />
+		<item title="Staff Historical Records"      url="%root_path%/StaffHistoricalRecords" />
+	    <item title="Schedule Variance Records"     url="%root_path%/ScheduleVarianceRecords" />
+	    <item title="Project Registration Records"  url="%root_path%/ProjectRegistrationRecords" />
+	    <item title="SubprojectRegistrationRecords" url="%root_path%/SubprojectRegistrationRecords" />
+	    <item title="Milestone Records"          url="%root_path%/MilestoneRecords" />
+	    <item title="Project Closure Records"    url="%root_path%/ProjectClosureRecords" />
+	    <item title="Project Assignment Records" url="%root_path%/ProjectAssignmentRecords" />
+	    <item title="Project Assignment Periods" url="%root_path%/ProjectAssignmentPeriods" />
+	    <item title="Time Reporting Records"     url="%root_path%/TimeReportingRecords" />
+	    <item title="Divisional Chiefs"          url="%root_path%/DivisionalChiefs" />
+	    <item title="Login Records"              url="%root_path%/LoginRecords" />
+	    <item title="Contract Records"           url="%root_path%/ContractRecords" />
+	    <item title="Contract Milestone Records" url="%root_path%/ContractMilestoneRecords" />
+	    <item title="Project Handover Records"   url="%root_path%/ProjectHandoverRecords" />
+	    <item title="Employee Vacation Days"     url="%root_path%/EmployeeVacationDays" />
+	    <item title="Employee Hours Reported"    url="%root_path%/EmployeeHoursReported" />
+	</item>
 </menu>
