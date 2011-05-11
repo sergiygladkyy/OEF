@@ -40,33 +40,37 @@ function onPost($event)
    // Check milestones data
    $vals    = $document->toArray();
    $errors  = array();
-   $totalAm = 0;
+   
+   if (!empty($mils))
+   {
+      $totalAm = 0;
 
-   if (($dd = strtotime($vals['DeliveryDate'])) === -1)
-   {
-      $errors[] = "Invalid date format for 'DeliveryDate'";
-   }
-   
-   foreach ($mils as $row)
-   {
-      if (($mdl = strtotime($row['MilestoneDeadline'])) === -1)
+      if (($dd = strtotime($vals['DeliveryDate'])) === -1)
       {
-         $errors[] = $row['MilestoneName']." has invalid date format for 'MilestoneDeadline'.";
+         $errors[] = "Invalid date format for 'DeliveryDate'";
       }
-      elseif ($dd < $mdl)
+       
+      foreach ($mils as $row)
       {
-         $errors[] = '"'.$row['MilestoneName'].'" has invalid deadline. Milestone deadline should not be later than contract delivery date.';
+         if (($mdl = strtotime($row['MilestoneDeadline'])) === -1)
+         {
+            $errors[] = $row['MilestoneName']." has invalid date format for 'MilestoneDeadline'.";
+         }
+         elseif ($dd < $mdl)
+         {
+            $errors[] = '"'.$row['MilestoneName'].'" has invalid deadline. Milestone deadline should not be later than contract delivery date.';
+         }
+
+         $totalAm += $row['MilestoneAmountNOK'];
       }
-      
-      $totalAm += $row['MilestoneAmountNOK'];
+       
+      if ($totalAm != $vals['TotalAmountNOK'])
+      {
+         $errors[] = "The sum of all the MilestoneAmountNOK does not equal Contract TotalAmountNOK.";
+      }
+       
+      if ($errors) MGlobal::returnMessageByList($errors, false, 'Document not posted:');
    }
-   
-   if ($totalAm != $vals['TotalAmountNOK'])
-   {
-      $errors[] = "The sum of all the MilestoneAmountNOK does not equal Contract TotalAmountNOK.";
-   }
-   
-   if ($errors) MGlobal::returnMessageByList($errors, false, 'Document not posted:');
    
    // Post document
    $cReg = $container->getModel('information_registry', 'ContractRecords');
