@@ -106,7 +106,7 @@ function onPost($event)
          
          if ($row['RegisteredEvent'] != 'Firing')
          {
-            $errors[] = 'The '.$employees[$person]['Description'].' is hired';
+            $errors[] = $employees[$person]['Description'].' is hired already';
          }
       }
       
