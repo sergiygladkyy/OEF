@@ -339,6 +339,34 @@ class MGlobal
    }
    
    /**
+    * Generate message string by list of messages and get or throw it
+    * 
+    * @param array  $messages
+    * @param bool   $get
+    * @param string $main_msg
+    * @return void
+    */
+   public static function returnMessageByList($messages, $get = false, $main_msg = '')
+   {
+      $msg = $main_msg.'<ul style="margin: 0px 0px 0px 10px !important; padding: 0 !important;">';
+
+      $prosessed = array();
+
+      foreach ($messages as $message)
+      {
+         $msg .= '<li style="font-weight: 400; list-style-type: disc !important;">';
+         $msg .= $message;
+         $msg .= '</li>';
+      }
+      
+      $msg .= '</ul>';
+      
+      if ($get) return $msg;
+      
+      throw new Exception($msg);
+   }
+   
+   /**
     * Get list of customers for select box
     * 
     * @param array $options

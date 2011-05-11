@@ -821,9 +821,9 @@ function executePost(kind, type, id, prefix)
 			if(!data['status'])
 			{
 				var msg = '';
-				for(var index in data['errors'])
+				for (var index in data['errors'])
 				{
-					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
+					msg += (index > 0 ? ",&nbsp;" : ''/*"&nbsp;"*/) + data['errors'][index];
 				}
 				displayMessage(pref, msg, false);
 			}
@@ -874,9 +874,9 @@ function executeClearPosting(kind, type, id, prefix)
 			if(!data['status'])
 			{
 				var msg = '';
-				for(var index in data['errors'])
+				for (var index in data['errors'])
 				{
-					msg += (index > 0 ? ",&nbsp;" : "&nbsp;") + data['errors'][index];
+					msg += (index > 0 ? ",&nbsp;" : ''/*"&nbsp;"*/) + data['errors'][index];
 				}
 				displayMessage(pref, msg, false);
 			}

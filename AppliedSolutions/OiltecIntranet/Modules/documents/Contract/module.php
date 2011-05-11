@@ -37,6 +37,38 @@ function onPost($event)
       throw new Exception('Database error');
    }
    
+   // Check milestones data
+   $vals    = $document->toArray();
+   $errors  = array();
+   $totalAm = 0;
+
+   if (($dd = strtotime($vals['DeliveryDate'])) === -1)
+   {
+      $errors[] = "Invalid date format for 'DeliveryDate'";
+   }
+   
+   foreach ($mils as $row)
+   {
+      if (($mdl = strtotime($row['MilestoneDeadline'])) === -1)
+      {
+         $errors[] = $row['MilestoneName']." has invalid date format for 'MilestoneDeadline'.";
+      }
+      elseif ($dd < $mdl)
+      {
+         $errors[] = '"'.$row['MilestoneName'].'" has invalid deadline. Milestone deadline should not be later than contract delivery date.';
+      }
+      
+      $totalAm += $row['MilestoneAmountNOK'];
+   }
+   
+   if ($totalAm != $vals['TotalAmountNOK'])
+   {
+      $errors[] = "The sum of all the MilestoneAmountNOK does not equal Contract TotalAmountNOK.";
+   }
+   
+   if ($errors) MGlobal::returnMessageByList($errors, false, 'Document not posted:');
+   
+   // Post document
    $cReg = $container->getModel('information_registry', 'ContractRecords');
    $mReg = $container->getModel('information_registry', 'ContractMilestoneRecords');
 
@@ -45,12 +77,8 @@ function onPost($event)
       throw new Exception('Invalid recorder');
    }
    
-   // Post document
-   $errors = array();
-   
    // ContractRecords
-   $err  = array();
-   $vals = $document->toArray();
+   $err = array();
    
    if (!$cReg->setAttribute('ContractNumber',        $vals['ContractNumber']))        $err[] = 'Invalid value for ContractNumber';
    if (!$cReg->setAttribute('Kind',                  $vals['Kind']))                  $err[] = 'Invalid value for Kind';
@@ -60,10 +88,10 @@ function onPost($event)
    
    if (!$err)
    {
-      if ($err = $cReg->save()) $err = array('Row not added');
+      if ($err = $cReg->save()) $err = array('Invalid values for Information Register ContractRecords');
    }
    
-   if ($err) throw new Exception(implode('<br>', $err));
+   if ($err) MGlobal::returnMessageByList($err, false, 'Document not posted:');
    
    // ContractMilestoneRecords
    foreach ($mils as $values)
@@ -77,12 +105,12 @@ function onPost($event)
       
       if (!$err)
       {
-         if ($err = $ir->save()) $errors[] = 'Row not added';
+         if ($err = $ir->save()) $errors[] = 'Invalid values for Information Register ContractMilestoneRecords';
       }
       else $errors = array_merge($errors, $err);
    }
    
-   if ($errors) throw new Exception(implode('<br>', $errors));
+   if ($errors) MGlobal::returnMessageByList($errors, false, 'Document not posted:');
    
    $event->setReturnValue(true);
 }
