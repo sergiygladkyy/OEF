@@ -41,12 +41,23 @@
 	
 	function onBeforeSubmit<?php echo $formID ?>(params)
 	{
+		hideMessages();
+		window.location = window.location.href + (location.hash ? '' : '#pageText');
 		appDisplayLoader(false);
 		
-		var status = isNewSchedule || confirm('You are about to change the Schedule. This change will affect all the future documents. If the changes are also made for the past dates, it is required that you repost the already existing project assignments and time cards.\nAttention! This change might result in changes for the already reported information.');
+		var status = _schedule.check();
 
-		appDisplayLoader(true); 
+		if (status)
+		{
+			status = isNewSchedule || confirm('You are about to change the Schedule. This change will affect all the future documents. If the changes are also made for the past dates, it is required that you repost the already existing project assignments and time cards.\nAttention! This change might result in changes for the already reported information.');
+		}
+		else
+		{
+			displayMessage('<?php echo $kind.'_'.$type ?>', 'Cannot <?php echo $isNew ? 'create' : 'update' ?>. Please check the highlighted fields.', 0);
+		}
 
+		appDisplayLoader(true);
+		
 		Context.setLastStatus(status);
 	}
 	
@@ -68,6 +79,8 @@
     	var schedule = new oeSchedule('schedule', schedule_options);
 
     	schedule.displayForYear(<?php echo $year_cur ?>);
+
+    	return schedule;
     }
 
     function displayScheduleSettings(form_id)
@@ -120,6 +133,6 @@
   <?php else: ?>
     hideMessages();
     jQuery('#<?php echo $formID ?> input[name="dgenerate"]').remove();
-    displaySchedule(schedule_options);
+    var _schedule = displaySchedule(schedule_options);
   <?php endif;?>
   </script>

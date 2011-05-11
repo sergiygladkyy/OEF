@@ -13,6 +13,11 @@
    padding: 6px 4px !important;
 }
 
+.oe_schedule .sched_invalid_value {
+	background: red;
+	color: white;
+}
+
 .oe_schedule th.oe_day {
    padding: 6px 18px !important;
 }

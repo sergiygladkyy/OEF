@@ -111,8 +111,10 @@ function oeSchedule(tag, options)
 			else var hours = '';
 			
 			ret += '\n\t\t<td class="oe_hours' + classes + '">';
+			ret += '<div class="oe_item">';
 			ret += '<span class="oe_text">' + hours + '</span>';
 			ret += '<input class="oe_value" type="text" name="' + this.attr_prefix + '[' + currentDate + ']" value="' + hours + '" style="display: none;">';
+			ret += '</div>';
 			ret += '</td>';
 				
 			date.setDate(cnt + 1);
@@ -167,7 +169,21 @@ function oeSchedule(tag, options)
 		var element = jQuery(event.target || event.srcElement).parent().get(0);
 		var input   = jQuery(element).find('.oe_value').css('display', 'none').get(0);
 		
-		jQuery(element).find('.oe_text').text(input.value).css('display', 'block');
+		// Validation
+		var value = parseInt(input.value, 10);
+		
+		if (isNaN(value) || value < 0 || value > 24)
+		{
+			jQuery(element).addClass('sched_invalid_value');
+		}
+		else
+		{
+			jQuery(element).removeClass('sched_invalid_value');
+			
+			input.value = value;
+		}
+		
+		jQuery(element).find('.oe_text').text(value).css('display', 'block');
 	};
 	
 	/**
@@ -212,5 +228,15 @@ function oeSchedule(tag, options)
 			
 			date.setDate(date.getDate() + 1);
 		}
+	};
+	
+	/**
+	 * Check values in current schedule
+	 * 
+	 * @return void
+	 */
+	this.check = function()
+	{
+		return jQuery('#' + this.tag).find('.sched_invalid_value').size() == 0;
 	};
 }
