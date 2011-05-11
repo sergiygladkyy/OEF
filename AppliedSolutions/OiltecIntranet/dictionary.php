@@ -2959,14 +2959,14 @@ $_dictionary = array(
                'type' => 'enum',
                'precision' => array(
                   'in' => array(
-                     'This Week'    => 'This Week',
-                     'This Month'   => 'This Month',
-                     'This Quarter' => 'This Quarter',
-                     'This Year'    => 'This Year',
-                     'Last Week'    => 'Last Week',
-                     'Last Month'   => 'Last Month',
-                     'Last Quarter' => 'Last Quarter',
-                     'Last Year'    => 'Last Year'
+                     1 => 'Last Week',
+                     2 => 'Last Month',
+                     3 => 'Last Quarter',
+                     4 => 'Last Year',
+                     5 => 'This Week',
+                     6 => 'This Month',
+                     7 => 'This Quarter',
+                     8 => 'This Year'
                   ),
                   'required' => true
                )
