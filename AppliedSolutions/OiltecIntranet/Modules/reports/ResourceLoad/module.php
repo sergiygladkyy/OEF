@@ -29,7 +29,7 @@ function onGenerate($event)
    $criterion[] = "`Date` >='".$period[0]."'";
    $criterion[] = "`Date` < '".$period[1]."'";
    
-   if (!empty($headline['ReportKind']) && $headline['ReportKind'] == '2')
+   if (!empty($headline['ReportType']) && $headline['ReportType'] == 'Project Workload')
    {
       $rkind  = 2;
       $header = 'Project Workload';

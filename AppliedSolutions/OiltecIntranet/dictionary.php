@@ -2971,7 +2971,7 @@ $_dictionary = array(
                   'required' => true
                )
             ),
-            'ReportKind' => array(
+            'ReportType' => array(
                'type' => 'enum',
                'precision' => array(
                   'in' => array(1 => 'Who does what', 2 => 'Project Workload'),
