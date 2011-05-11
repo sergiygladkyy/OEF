@@ -512,7 +512,7 @@ function processObjectResponse(data, status, options)
 			// Print main message
 			if (m_data['status'] && !state)
 			{
-				displayMessage(main_kind + '_' + main_type, 'There were errors during the update', false);
+				displayMessage(main_kind + '_' + main_type, 'Cannot update. Please check the highlighted fields', false);
 			}
 			else
 			{
