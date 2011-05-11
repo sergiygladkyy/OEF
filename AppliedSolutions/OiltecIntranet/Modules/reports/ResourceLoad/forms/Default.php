@@ -12,7 +12,7 @@ function onBeforeOpening($event)
    
    $event->setReturnValue(array(
       'select' => array(
-         'PM' => MEmployees::getListOfPMForSelect()
+         'PM' => array_values(MEmployees::getListOfPMForSelect())
       )
    ));
 }
