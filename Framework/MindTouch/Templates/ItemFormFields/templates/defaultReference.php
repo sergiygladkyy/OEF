@@ -16,6 +16,9 @@
 <eval:elseif test="value &lt; 1">
   <span>not set</span>
 </eval:elseif>
+<eval:elseif test="value &gt; 0 && !values.text">
+  <span class="ae_deleted">Element <{{ value }}> not found</span>
+</eval:elseif>
 <eval:else>
   {{
       var href = page.path..'?uid='..ref.kind..'.'..ref.type..'&actions=displayItemForm&id='..value;

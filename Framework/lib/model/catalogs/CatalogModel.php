@@ -436,7 +436,7 @@ class CatalogModel extends BaseObjectModel
       {
          $cmodel = $this->container->getCModel($this->kind, $item['OwnerType'], $options);
          $data   = $cmodel->retrieveLinkData($item['OwnerId']);
-         $item['OwnerId'] = $data[$item['OwnerId']];
+         $item['OwnerId'] = isset($data[$item['OwnerId']]) ? $data[$item['OwnerId']] : array('value' => $item['OwnerId']);
       }
       
       return $item;

@@ -85,7 +85,11 @@
               <pre class="script">
                 var value  = '';
                 if (!(references[field] is nil)) {
-                   let value = links[field][item[field]];
+                   if (links[field][item[field]])
+                   {
+                      let value = links[field][item[field]];
+                   }
+                   else let value = {value: item[field]};
                 }
                 else {
                    let value = item[field];

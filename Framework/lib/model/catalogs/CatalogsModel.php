@@ -43,7 +43,7 @@ class CatalogsModel extends BaseObjectsModel
       
       // Execute method
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 ORDER BY `Description` ASC";
+      $query  = "SELECT `".$db_map['pkey']."`, `Description`, `".$db_map['deleted']."` FROM `".$db_map['table']."` ORDER BY `Description` ASC";
       
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);
@@ -52,7 +52,7 @@ class CatalogsModel extends BaseObjectsModel
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $row[1]);
+      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $row[1], 'deleted' => $row[2]);
       
       return $list;
    }

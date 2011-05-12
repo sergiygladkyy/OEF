@@ -43,7 +43,7 @@ class DocumentsModel extends BaseObjectsModel
       
       // Execute method
       $db_map =& $this->conf['db_map'];
-      $query  = "SELECT `".$db_map['pkey']."`, `Date` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0 ORDER BY `Date` ASC";
+      $query  = "SELECT `".$db_map['pkey']."`, `Date`, `".$db_map['deleted']."` FROM `".$db_map['table']."` ORDER BY `Date` ASC";
       
       $db  = $this->container->getDBManager($options);
       $res = $db->executeQuery($query);
@@ -52,7 +52,7 @@ class DocumentsModel extends BaseObjectsModel
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $this->type.' '.date("Y-m-d H:i:s", strtotime($row[1])));
+      while ($row = $db->fetchArray($res)) $list[] = array('value' => $row[0], 'text' => $this->type.' '.date("Y-m-d H:i:s", strtotime($row[1])), 'deleted' => $row[2]);
       
       return $list;
    }

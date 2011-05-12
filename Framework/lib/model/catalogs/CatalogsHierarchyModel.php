@@ -242,7 +242,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
          $wh_add .= " AND `".$db_map['pkey']."` NOT IN(".implode(',', $ids).")";
       }
       
-      $query = "SELECT `".$db_map['pkey']."`, `Description` FROM `".$db_map['table']."` WHERE `".$db_map['deleted']."`=0".$wh_add." ORDER BY `Description` ASC";
+      $query = "SELECT `".$db_map['pkey']."`, `Description`, `".$db_map['deleted']."` FROM `".$db_map['table']."`".($wh_add ? ' WHERE '.$wh_add : '')." ORDER BY `Description` ASC";
       
       if (null === ($res = $db->executeQuery($query)))
       {
@@ -251,7 +251,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       
       $list = array();
       
-      while ($row = $db->fetchArray($res)) $list[/*$row[0]*/] = array('value' => $row[0], 'text' => $row[1]);
+      while ($row = $db->fetchArray($res)) $list[/*$row[0]*/] = array('value' => $row[0], 'text' => $row[1], 'deleted' => $row[2]);
       
       return $list;
    }

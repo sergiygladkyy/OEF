@@ -9,6 +9,7 @@
     var dynamic = params.dynamic ?? false;
     var select  = '';
     var content = '';
+    var containCurrent = false;
     
     if (#attrs.class != 0) {
       let attrs ..= {class: attrs.class..' oef_'..reference.kind..'_'..reference.type};
@@ -44,8 +45,9 @@
                    let content ..= '&lt;option value="'..param.value..'"';
                    if (param.value == value) {
                       let content ..= ' selected="selected" current="true"';
+                      let containCurrent = true;
                    }
-                   let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+                   let content ..= '&gt;'..param.text..(param.deleted is nil || param.deleted == 0 ? '' : '&nbsp;(marked for deletion)')..'&lt;/option&gt;';
                 }
                 
                 let content ..= '&lt;/optgroup&gt;';
@@ -57,7 +59,11 @@
           }
        }
        
-       if (!generate_success) let content = '';
+       if (!generate_success)
+       {
+          let content = '';
+          let containCurrent = false;
+       }
     }
     
     if (options is list || !generate_success)
@@ -77,13 +83,23 @@
                 let content ..= '&lt;option value="'..param.value..'"';
                 if (param.value == value) {
                    let content ..= ' selected="selected" current="true"';
+                   let containCurrent = true;
                 }
-                let content ..= '&gt;'..param.text..'&lt;/option&gt;';
+                let content ..= '&gt;'..param.text..(param.deleted is nil || param.deleted == 0 ? '' : '&nbsp;(marked for deletion)')..'&lt;/option&gt;';
              }
           }
        }
        
-       if (!generate_success) let content = '';
+       if (!generate_success)
+       {
+          let content = '';
+          let containCurrent = false;
+       }
+    }
+    
+    if (!containCurrent && value > 0)
+    {
+       let content = '&lt;option value="'..value..'" selected="selected" current="true"&gt;Element &lt;'..value..'&gt; not found&lt;/option&gt;'..content;
     }
     
     let content = '&lt;option value="0"&gt;&amp;nbsp;&lt;/option&gt;'..content;

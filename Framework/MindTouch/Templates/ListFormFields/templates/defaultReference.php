@@ -6,7 +6,7 @@
     var attributes = '';
     var value   = values.value ?? 0;
     var deleted = values.deleted ?? 0;
-    var text    = values.text;
+    var text    = values.text ?? '';
 }}
 <eval:if test="ref is nil">
   <ul class="ae_errors">
@@ -15,6 +15,9 @@
 </eval:if>
 <eval:elseif test="value &lt; 1">
   <span>not set</span>
+</eval:elseif>
+<eval:elseif test="value &gt; 0 && !values.text">
+  <span class="ae_deleted">Element <{{ value }}> not found</span>
 </eval:elseif>
 <eval:else>
   {{
@@ -35,6 +38,6 @@
          }
       }
   
-      web.html('&lt;span'..attributes..'&gt;'..text..'&lt;/span&gt;');
+      web.html('&lt;span'..attributes..'&gt;&lt;nobr&gt;'..text..'&lt;/nobr&gt;&lt;/span&gt;');
   }}
 </eval:else>

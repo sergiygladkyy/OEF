@@ -429,7 +429,7 @@ abstract class BaseNotStorageEntityModel extends BaseModel
             {
                $cmodel = $this->container->getCModel($param['kind'], $param['type'], $options);
                $data   = $cmodel->retrieveLinkData($result[$field]);
-               $result[$field] = $data[$result[$field]];
+               $result[$field] = isset($data[$result[$field]]) ? $data[$result[$field]] : array('value' => $result[$field]);
             }
             else $result[$field] = array();
          }
