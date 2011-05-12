@@ -170,7 +170,7 @@ function oeSchedule(tag, options)
 		var input   = jQuery(element).find('.oe_value').css('display', 'none').get(0);
 		
 		// Validation
-		var value = parseInt(input.value, 10);
+		var value = parseFloat(input.value, 10);
 		
 		if (isNaN(value) || value < 0 || value > 24)
 		{
