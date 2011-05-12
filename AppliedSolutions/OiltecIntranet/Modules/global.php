@@ -311,7 +311,7 @@ class MGlobal
     * @param string $main_msg
     * @return void
     */
-   public static function returnMessageByLinks($links, $get = false, $main_msg = 'You must unposted the following documents:')
+   public static function returnMessageByLinks($links, $get = false, $main_msg = 'You must clear the post for the following Document:')
    {
       $msg = $main_msg.'<ul style="margin: 0px 0px 0px 15px !important; padding: 0 !important;">';
 
@@ -597,7 +597,7 @@ class MVacation
       // Check Project Assignment Periods
       $query = "SELECT `DateFrom`, `DateTo`, `_rec_type`, `_rec_id` ".
                "FROM information_registry.ProjectAssignmentPeriods ".
-               "WHERE `Employee` = ".$employee." AND `DateFrom` < '".date('Y-m-d', $end)."' AND `DateTo` > '".$start."' ".
+               "WHERE `Employee` = ".$employee." AND `DateFrom` < '".date('Y-m-d', $end)."' AND `DateTo` > '".date('Y-m-d', $start)."' ".
                "ORDER BY `_rec_type` ASC";
       
       if (!($res = $odb->executeQuery($query)))
