@@ -77,7 +77,7 @@ class Constants
       
       if ($return['status'])
       { 
-         $return['result']['msg'] = 'Updated succesfully';
+         $return['result']['msg'] = 'Updated successfully';
       }
       else
       {
