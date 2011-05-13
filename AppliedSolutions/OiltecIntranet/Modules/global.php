@@ -641,7 +641,7 @@ class MVacation
     */
    public static function getEndDate($schedule, $start, $days)
    {
-      if ($days == 0) throw new Exception('Invalid attribute days');
+      if ($days == 0) return $start;
       
       $container = Container::getInstance();
       

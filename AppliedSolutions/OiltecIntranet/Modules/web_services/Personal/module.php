@@ -128,7 +128,7 @@ function getEmployeeVacationDays(array $attributes)
    $day = $day == 0 ? 6 : $day - 1;
    
    $start = mktime(0,0,0, date('m', $ts), date('d', $ts) + 7 - $day, date('Y'));
-   $end   = MVacation::getEndDate($hist['Schedule'], date('Y-m-d', $start), $total[0]['VacationDays']);
+   $end   = MVacation::getEndDate($hist['Schedule'], date('Y-m-d', $start), $tvd);
    
    $result['nextMondayVacationEnds'] = date('Y-m-d', $end);
    
