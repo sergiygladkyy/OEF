@@ -158,7 +158,7 @@ function onBeforeOpening($event)
 function getSubProjectsForSelect($project)
 {
    $odb   = Container::getInstance()->getODBManager();
-   $query = "SELECT `_id`, `Description` FROM catalogs.SubProjects WHERE `Project` = ".$project." AND `_deleted`=0 ORDER BY `Description` ASC";
+   $query = "SELECT `_id`, `Description`, `_deleted` FROM catalogs.SubProjects WHERE `Project` = ".$project." ORDER BY `Description` ASC";
    
    if (null === ($res = $odb->executeQuery($query)))
    {
@@ -169,7 +169,7 @@ function getSubProjectsForSelect($project)
    
    while ($row = $odb->fetchRow($res))
    {
-      $SubProjects[] = array('value' => $row[0], 'text' => $row[1]);
+      $SubProjects[] = array('value' => $row[0], 'text' => $row[1], 'deleted' => $row[2]);
    }
    
    return $SubProjects;

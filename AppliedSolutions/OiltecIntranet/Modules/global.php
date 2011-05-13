@@ -378,7 +378,7 @@ class MGlobal
       $select    = array();
        
       $cmodel = $container->getCModel('catalogs', 'Counteragents');
-      $crit   = 'WHERE `Parent`=0 AND `_folder`=1 AND `_deleted`=0 ORDER BY `Description`';
+      $crit   = 'WHERE `Parent`=0 AND `_folder`=1 ORDER BY `Description`';
        
       if (null === ($groups = $cmodel->getEntities(null, array('criterion' => $crit, 'key' => '_id'))) || isset($groups['errors']))
       {
@@ -387,7 +387,7 @@ class MGlobal
        
       if (!empty($groups))
       {
-         $crit  = 'WHERE `Parent` IN ('.implode(',', array_keys($groups)).') AND `_folder`=0 AND `_deleted`=0 ORDER BY `Parent`, `Description`';
+         $crit  = 'WHERE `Parent` IN ('.implode(',', array_keys($groups)).') AND `_folder`=0 ORDER BY `Parent`, `Description`';
 
          if (null === ($items = $cmodel->getEntities(null, array('criterion' => $crit, 'key' => '_id'))) || isset($items['errors']))
          {
@@ -414,7 +414,7 @@ class MGlobal
                continue;
             }
              
-            $select[$gname][] = array('text' => $item['Description'], 'value' => $id);
+            $select[$gname][] = array('text' => $item['Description'], 'value' => $id, 'deleted' => $item['_deleted']);
          }
       }
       
@@ -524,7 +524,7 @@ class MVacation
       // Check Variance Records
       $query = "SELECT `DateFrom`, `DateTo`, `VarianceKind`, `_rec_type`, `_rec_id` ".
                "FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee` = ".$employee." AND (`DateFrom` >= '".date('Y-m-d', $start)."' OR `DateTo` > '".date('Y-m-d', $start)."') ".
+               "WHERE `Employee` = ".$employee." AND (`DateFrom` >= '".date('Y-m-d', $start)."' OR `DateTo` >= '".date('Y-m-d', $start)."') ".
                "ORDER BY `_rec_type` ASC";
       
       if (!($res = $odb->executeQuery($query)))
@@ -570,7 +570,7 @@ class MVacation
 
       $maxEnd = self::getEndDate($schedule, date('Y-m-d', $start), $total['VacationDays']);
       
-      $vacatDays = 60*60*24*$total['VacationDays'];
+      /*$vacatDays = 60*60*24*$total['VacationDays'];*/
 
       if (empty($attrs['EndDate']))
       {
@@ -583,7 +583,7 @@ class MVacation
       {
          return array('EndDate' => 'Date must be in the format YYYY-MM-DD');
       }
-      elseif ($end <= $start)
+      elseif ($end < $start)
       {
          return array('EndDate' => 'The End Date occurs before the Start Date');
       }
@@ -597,7 +597,7 @@ class MVacation
       // Check Project Assignment Periods
       $query = "SELECT `DateFrom`, `DateTo`, `_rec_type`, `_rec_id` ".
                "FROM information_registry.ProjectAssignmentPeriods ".
-               "WHERE `Employee` = ".$employee." AND `DateFrom` < '".date('Y-m-d', $end)."' AND `DateTo` > '".date('Y-m-d', $start)."' ".
+               "WHERE `Employee` = ".$employee." AND `DateFrom` <= '".date('Y-m-d', $end)."' AND `DateTo` >= '".date('Y-m-d', $start)."' ".
                "ORDER BY `_rec_type` ASC";
       
       if (!($res = $odb->executeQuery($query)))
@@ -633,6 +633,8 @@ class MVacation
     */
    public static function getEndDate($schedule, $start, $days)
    {
+      if ($days == 0) throw new Exception('Invalid attribute days');
+      
       $container = Container::getInstance();
       
       if (($start = strtotime($start)) === -1)
@@ -644,6 +646,7 @@ class MVacation
       $smodel = $container->getCModel('information_registry', 'Schedules');
       
       $copt = array('attributes' => array('Date'));
+      $vacd = -1;
       
       while ($days > 0)
       {
@@ -681,8 +684,10 @@ class MVacation
             }
          }
          
-         $start += 24*60*60;
+         $vacd++;
       }
+      
+      if ($vacd) $start += 24*60*60*$vacd;
       
       return $start;
    }
@@ -711,7 +716,7 @@ class MVacation
          throw new Exception('Date must be in the format YYYY-MM-DD');
       }
       
-      if ($start >= $end)
+      if ($start > $end)
       {
          throw new Exception('EndDate must be larger the StartDate');
       }
@@ -721,7 +726,7 @@ class MVacation
       
       $copt = array('attributes' => array('Date'));
       
-      while ($start < $end)
+      while ($start <= $end)
       {
          $date = date('Y-m-d', $start);
          
@@ -824,7 +829,7 @@ class MVacation
       $values['DateTo'] = $from;
       
       $attributes[] = "DateTo";
-      $criterion[]  = "`DateTo` > %%DateTo%% GROUP BY `_rec_type`, `_rec_id`";
+      $criterion[]  = "`DateTo` >= %%DateTo%% GROUP BY `_rec_type`, `_rec_id`";
       
       $options = array(
          'attributes' => $attributes,
@@ -867,7 +872,7 @@ class MVacation
     * 
     * @param int $employee
     * @param date $from
-    * @param date $to
+    * @param date $to      - (not including)
     * @return array - errors
     */
    public static function checkByPeriod($employee, $from, $to)
@@ -875,7 +880,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND `DateFrom` <= '".$to."' AND `DateTo` >'".$from."'";
+               "WHERE `Employee`=".(int) $employee." AND `DateFrom` < '".$to."' AND `DateTo` >= '".$from."'";
       
       if (null === ($row = $odb->loadAssocList($query)))
       {
@@ -895,7 +900,7 @@ class MVacation
     * 
     * @param int $employee - employee id
     * @param string $from  - date from
-    * @param string $to    - date to
+    * @param string $to    - date to (not including)
     * @return array
     */
    public static function getScheduleVarianceDays($employee, $from, $to)
@@ -903,7 +908,7 @@ class MVacation
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
-               "WHERE `Employee`=".(int) $employee." AND `DateFrom` <= '".$to."' AND `DateTo` >'".$from."'";
+               "WHERE `Employee`=".(int) $employee." AND `DateFrom` < '".$to."' AND `DateTo` >= '".$from."'";
       
       if (!($res = $odb->executeQuery($query)))
       {
@@ -1018,7 +1023,7 @@ class MEmployees
        
       $odb   = $container->getODBManager();
        
-      $query = "SELECT empl._id AS `value`, empl.Description AS `text` ".
+      $query = "SELECT empl._id AS `value`, empl.Description AS `text`, empl._deleted AS `deleted` ".
                "FROM catalogs.Employees AS `empl` ".
                "WHERE empl.NowEmployed = 1 ".
                "ORDER BY empl.Description";
@@ -1036,7 +1041,7 @@ class MEmployees
     * 
     * @param int $employee
     * @param string $from
-    * @param string $to
+    * @param string $to (not including)
     * @return array - errors
     */
    public static function checkByPeriod($employee, $from, $to)
@@ -1065,7 +1070,7 @@ class MEmployees
       
       $query = "SELECT `Period`, `RegisteredEvent` ".
                "FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee`=".(int) $employee." AND `Period` > '".$from."' AND `Period` <= '".$to."' AND `RegisteredEvent` = 'Firing' ".
+               "WHERE `Employee`=".(int) $employee." AND `Period` > '".$from."' AND `Period` < '".$to."' AND `RegisteredEvent` = 'Firing' ".
                "GROUP BY `Period` DESC";
       
       if (null === ($row = $odb->loadAssoc($query)))
@@ -1264,7 +1269,7 @@ class MEmployees
     * 
     * @param int $employee - employee id
     * @param string $from  - date from
-    * @param string $to    - date to
+    * @param string $to    - date to (not including)
     * @return array ('date_1' => hours, .., 'date_N' => hours) 
     */
    public static function retrieveParametersInPeriod($employee, $from, $to)
@@ -1739,7 +1744,7 @@ class MProjects
       $container = Container::getInstance();
       
       $odb   = $container->getODBManager();
-      $query = "SELECT ir.Project AS `value`, pr.Description AS `text` ".
+      $query = "SELECT ir.Project AS `value`, pr.Description AS `text`, pr._deleted AS `deleted` ".
                "FROM catalogs.Projects AS `pr`, information_registry.ProjectRegistrationRecords AS `ir` ".
                "WHERE ir.Project = pr._id ".
                "ORDER BY pr.Description";
@@ -1763,7 +1768,7 @@ class MProjects
       $container = Container::getInstance();
       
       $odb   = $container->getODBManager();
-      $query = "SELECT ir.SubProject AS `value`, sub.Description AS `text` ".
+      $query = "SELECT ir.SubProject AS `value`, sub.Description AS `text`, sub._deleted AS `deleted` ".
                "FROM catalogs.SubProjects AS `sub`, information_registry.SubprojectRegistrationRecords AS `ir` ".
                "WHERE sub.Project = ".(int) $project." AND sub._id = ir.SubProject ".
                "ORDER BY sub.Description";
@@ -1860,7 +1865,7 @@ class MProjects
     * 
     * @param int    $employee
     * @param string $from
-    * @param string $to
+    * @param string $to        - (not including)
     * @param bool   $notClosed
     * @return array
     */
@@ -2007,7 +2012,7 @@ class MSchedules
       $odb = Container::getInstance()->getODBManager();
       
       $query = "SELECT * FROM information_registry.Schedules ".
-               "WHERE `Schedule` = ".(int) $id." AND `Date` >='".$from."' AND `Date` <'".$to."'".
+               "WHERE `Schedule` = ".(int) $id." AND `Date` >='".$from."' AND `Date` < '".$to."'".
                "ORDER BY `Date`";
       
       if (!($res = $odb->executeQuery($query)))

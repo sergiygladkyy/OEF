@@ -142,7 +142,7 @@ function onPost($event)
       
       // Check - project assignment
       $query = "SELECT * FROM information_registry.ProjectAssignmentPeriods ".
-               "WHERE `Employee`=".$employee." AND DateTo > '".$disD."'".($nHirihg ? " AND `DateFrom` < '".$nHirihg."'" : '');
+               "WHERE `Employee`=".$employee." AND `DateTo` >= '".$disD."'".($nHirihg ? " AND `DateFrom` <= '".$nHirihg."'" : '');
       
       if (null === ($arec = $odb->loadAssocList($query)))
       {

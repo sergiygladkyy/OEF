@@ -26,7 +26,7 @@ function onBeforeAddingRecord($event)
    {
       $errors['ClosureDate'] = 'Invalid date format';
    }
-   elseif (!($end > strtotime($ir->getAttribute('StartDate'))))
+   elseif (!($end >= strtotime($ir->getAttribute('StartDate'))))
    {
       $errors['ClosureDate'] = 'Should exceed Project StartDate ('.$ir->getAttribute('StartDate').')';
    }

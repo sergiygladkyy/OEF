@@ -73,7 +73,7 @@ function onBeforeAddingResourcesRecord($event)
    {
       $errors['EndDate'] = 'Invalid date format';
    }
-   elseif ($start != -1 && $start >= $end)
+   elseif ($start != -1 && $start > $end)
    {
       $errors['EndDate'] = 'Should exceed StartDate';
    }
@@ -142,14 +142,21 @@ function onPost($event)
    
    foreach ($result as $values)
    {
+      if (($_end = strtotime($values['EndDate'])) === -1)
+      {
+         throw new Exception('Invalid date format in EndDate');
+      }
+      
+      $_end = date('Y-m-d', $_end + 86400);
+      
       // Check Worked
-      if ($err = MEmployees::checkByPeriod($values['Employee'], $values['StartDate'], $values['EndDate']))
+      if ($err = MEmployees::checkByPeriod($values['Employee'], $values['StartDate'], $_end))
       {
          throw new Exception('Invalid record in document tabular section Resources:<br>'.implode('<br>', $err));
       }
       
       // Check Vacation
-      if ($err = MVacation::checkByPeriod($values['Employee'], $values['StartDate'], $values['EndDate']))
+      if ($err = MVacation::checkByPeriod($values['Employee'], $values['StartDate'], $_end))
       {
          throw new Exception('Invalid record in document tabular section Resources:<br>'.implode('<br>', $err));
       }
@@ -171,7 +178,7 @@ function onPost($event)
       $shed = $row['Schedule'];
       
       // Retrieve schedule
-      $criterion  = 'WHERE `Schedule`='.$shed." AND `Date` >= '".$values['StartDate']."' AND `Date` < '".$values['EndDate']."' ";
+      $criterion  = 'WHERE `Schedule`='.$shed." AND `Date` >= '".$values['StartDate']."' AND `Date` <= '".$values['EndDate']."' ";
       $criterion .= "ORDER BY `Date` ASC";
       
       if (null === ($schedule = $cmodel->getEntities(null, array('criterion' => $criterion))) || isset($schedule['errors']))

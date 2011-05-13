@@ -26,7 +26,7 @@ function onPost($event)
    // Retrieve worked Employees
    $cmodel = $container->getCModel('information_registry', 'StaffHistoricalRecords');
    
-   $criterion  = "WHERE `Period` < '".date('Y-m-d H:i:s', $end)."' AND `RegisteredEvent` = 'Hiring' ";
+   $criterion  = "WHERE `Period` <= '".date('Y-m-d H:i:s', $end)."' AND `RegisteredEvent` = 'Hiring' ";
    $criterion .= "GROUP BY `Employee`, `Period` ASC";
    
    $hiring = $cmodel->getEntities(null, array('criterion' => $criterion, 'key' => 'Employee'));
@@ -36,7 +36,7 @@ function onPost($event)
       throw new Exception('DataBase error');
    }
    
-   $criterion  = "WHERE `Period` > '".date('Y-m-d H:i:s', $start)."' AND `RegisteredEvent` = 'Firing' ";
+   $criterion  = "WHERE `Period` >= '".date('Y-m-d H:i:s', $start)."' AND `RegisteredEvent` = 'Firing' ";
    $criterion .= "GROUP BY `Employee`, `Period` DESC";
    
    $firing = $cmodel->getEntities(null, array('criterion' => $criterion, 'key' => 'Employee'));
