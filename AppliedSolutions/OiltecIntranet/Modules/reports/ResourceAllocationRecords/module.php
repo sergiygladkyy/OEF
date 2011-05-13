@@ -12,7 +12,7 @@ function onGenerate($event)
 
    /* Get data */
 
-   if (null === ($period = MGlobal::parseDatePeriodString($headline['Period'])))
+   if (null === ($period = MGlobal::parseDatePeriodString($headline['Period'], true)))
    {
       if (is_string($headline['Period']) && (-1 !== ($ts = strtotime($headline['Period']))))
       {

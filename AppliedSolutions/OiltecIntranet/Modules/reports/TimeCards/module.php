@@ -22,7 +22,7 @@ function onGenerate($event)
    
    if (!empty($headline['Period']))
    {
-      $period  = MGlobal::parseDatePeriodString($headline['Period']);
+      $period  = MGlobal::parseDatePeriodString($headline['Period'], true);
       $header .= ' from '.date('d.m.Y', strtotime($period[0]));
       $criterion[1] = "`StartDate` >= '".$period[0]."'";
       

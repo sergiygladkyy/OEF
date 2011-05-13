@@ -95,6 +95,7 @@ class MGlobal
     * ]
     * 
     * @param string $name - period name
+    * @param bool   $mode - if true, to = 31.01.2011 23:59:59 else 01.02.2011 00:00:00
     * @return array or null - 
     *    array(
     *       0 => '<from>',
@@ -103,8 +104,10 @@ class MGlobal
     *       'to'   => '<to>'
     *    )
     */
-   public static function parseDatePeriodString($name)
+   public static function parseDatePeriodString($name, $mode = false)
    {
+      $mode = $mode ? -1 : 0;
+      
       if ($name{1} != 'Q')
       {
          $pname = explode(' ', $name);
@@ -116,22 +119,24 @@ class MGlobal
             switch ($name)
             {
                case 'Now':
-                  $from = $to = date('Y-m-d H:i:s');
+                  $from = $to = time();
+                  $from = date('Y-m-d H:i:s', $from);
+                  $to   = date('Y-m-d H:i:s', $to + $mode + 1);
                   break;
 
                case 'Today':
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day+1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $month, $day+1, $year));
                   break;
 
                case 'Tomorrow':
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day+1, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day+2, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $month, $day+2, $year));
                   break;
 
                case 'Yesterday':
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day-1, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $month, $day, $year));
                   break;
 
                default:
@@ -151,23 +156,23 @@ class MGlobal
                   $start = $day + $shift*7 - $d;
                   
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $start, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $start+7, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $month, $start+7, $year));
                   break;
                   
                case 'Month':
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $month+$shift, 1, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month+$shift+1, 1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $month+$shift+1, 1, $year));
                   break;
                   
               case 'Quarter':
                   $beg  = $month - (($month-1)%3) + $shift*3;
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, $beg, 1, $year));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $beg+3, 1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $beg+3, 1, $year));
                   break;
                   
                case 'Year':
                   $from = date('Y-m-d H:i:s', mktime(0,0,0, 1,1, $year+$shift));
-                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, 1,1, $year+$shift+1));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, 1,1, $year+$shift+1));
                   break;
             }
          }
@@ -178,7 +183,7 @@ class MGlobal
          $end  = 3 * ((int) $name{0});
 
          $from = date('Y-m-d H:i:s', mktime(0,0,0, $end - 2, 1, $year));
-         $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $end + 1, 1, $year));
+         $to   = date('Y-m-d H:i:s', mktime(0,0,$mode, $end + 1, 1, $year));
       }
       
       return array(0 => $from, 1 => $to, 'from' => $from, 'to' => $to);
@@ -1187,7 +1192,7 @@ class MEmployees
     * 
     * @param int $employee
     * @param string $from
-    * @param string $to
+    * @param string $to   - not including
     * @return array
     */
    public static function retrieveSchedulesByPeriod($employee, $from, $to)
@@ -1930,7 +1935,7 @@ class MProjects
       $odb   = $container->getODBManager();
       $query = "SELECT `Employee`, `DateFrom`, `DateTo`, `SubProject`, `ProjectDepartment`, `EmployeeDepartment`, `Comment` ".
                "FROM information_registry.ProjectAssignmentPeriods ".
-               "WHERE `Project` IN (".implode(',', $projects).") AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
+               "WHERE `Project` IN (".implode(',', $projects).") AND (`DateTo` >= '".$date."' OR `DateFrom` <= '".$date."')";
       
       if (null === ($employees = $odb->loadAssocList($query, $options)))
       {
@@ -2013,7 +2018,7 @@ class MSchedules
     * 
     * @param int $id - schedule id
     * @param string $from - date from
-    * @param string $to   - date to
+    * @param string $to   - date to (not including)
     * @return array
     */
    public static function getSchedule($id, $from, $to)

@@ -21,7 +21,7 @@ function onGenerate($event)
    
    $odb = $container->getODBManager();
     
-   if (null === ($period = MGlobal::parseDatePeriodString($headline['Period'])))
+   if (null === ($period = MGlobal::parseDatePeriodString($headline['Period'], true)))
    {
       throw new Exception('Invalid period');
    }

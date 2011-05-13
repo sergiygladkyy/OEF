@@ -262,7 +262,7 @@ function getWorkingOnMyProjects(array $attributes)
    $query = "SELECT ap.`Project`, ap.`Employee`, SUM(ar.`Hours`) as `HoursAllocated`, SUM(tr.`Hours`) as `HoursSpent` ".
             "FROM information_registry.ProjectAssignmentPeriods AS `ap` ".
             "  INNER JOIN information_registry.ProjectAssignmentRecords AS `ar` ".
-            "    ON ap.`Project` IN (".implode(',', $prIDS).") AND ap.`DateFrom` <= '".$date."' AND ap.`DateTo` > '".$date."' ".
+            "    ON ap.`Project` IN (".implode(',', $prIDS).") AND ap.`DateFrom` <= '".$date."' AND ap.`DateTo` >= '".$date."' ".
             "      AND ap.`Project` = ar.`Project` AND ap.`Employee` = ar.`Employee` ".
             "  LEFT JOIN information_registry.TimeReportingRecords AS `tr` ".
             "    ON ar.`Project` = tr.`Project` AND ar.`Employee` = tr.`Employee` AND tr.`Date` <= '".$date."' ".
@@ -592,7 +592,7 @@ function getWorkingOnProjectsInMyDepartment(array $attributes)
    $odb   = $container->getODBManager();
    $query = "SELECT `Employee`, `Project` ".
             "FROM information_registry.ProjectAssignmentPeriods ".
-            "WHERE `ProjectDepartment` = ".$department." AND (`DateTo` > '".$date."' OR `DateFrom` <= '".$date."')";
+            "WHERE `ProjectDepartment` = ".$department." AND (`DateTo` >= '".$date."' OR `DateFrom` <= '".$date."')";
       
    if (null === ($res = $odb->executeQuery($query)))
    {
