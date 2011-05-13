@@ -51,7 +51,6 @@
     </div>
   </div>
   <div class="infomsg">
-    End date is NOT a part of period.<br/>
     HoursPerDay input sample: ‘7.50’ which means 7 hrs 30 min.
   </div>
 <div class="ae_tabular_section">
