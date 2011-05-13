@@ -39,7 +39,7 @@
      
      &lt;script type="text/javascript"&gt;"
         ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';
-        ae_name_prefix['"..js_uid.."_tabulars_TimeRecords'] = '"..name_prefix.."[tabulars][TimeRecords]';
+        ae_name_prefix['"..js_uid.."_tabulars_TimeRecords'] = '"..name_prefix.."[attributes][tabulars][TimeRecords]';
      "&lt;/script&gt;
   }}
   <eval:if test="item._id &gt; 0">

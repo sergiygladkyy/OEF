@@ -358,13 +358,15 @@ function onProcess($event)
       else $method = 'create';
       
       $tabresult[$i] = $controller->$method($vals);
-       
+      
+      if ($method != 'create') unset($tabresult[$i]['result']['_id']);
+      
       $status = $status && $tabresult[$i]['status'];
    }
    
    if ($status)
    {
-      $result['msg'] = 'Document '.(isset($attrs['_id']) ? 'updated' : 'created').' sucessfully';
+      $result['msg'] = 'Document '.(isset($attrs['_id']) ? 'updated' : 'created').' successfully';
    }
    else
    {
