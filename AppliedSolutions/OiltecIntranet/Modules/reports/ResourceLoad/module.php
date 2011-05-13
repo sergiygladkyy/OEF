@@ -26,8 +26,8 @@ function onGenerate($event)
       throw new Exception('Invalid period');
    }
     
-   $criterion[] = "`Date` >='".$period[0]."'";
-   $criterion[] = "`Date` < '".$period[1]."'";
+   $criterion[] = "`Date` >= '".$period[0]."'";
+   $criterion[] = "`Date` <= '".$period[1]."'";
    
    if (!empty($headline['ReportType']) && $headline['ReportType'] == 'Project Workload')
    {
@@ -52,7 +52,7 @@ function onGenerate($event)
    if (!empty($headline['PM']))
    {
       $query = "SELECT `Project` FROM information_registry.ProjectRegistrationRecords ".
-               "WHERE `ProjectManager` = ".((int) $headline['PM'])." AND `StartDate` < '".$period[1]."' ".
+               "WHERE `ProjectManager` = ".((int) $headline['PM'])." AND `StartDate` <= '".$period[1]."' ".
                "ORDER BY `Project`";
 
       if (null === ($ids = $odb->loadAssocList($query, array('field' => 'Project'))))

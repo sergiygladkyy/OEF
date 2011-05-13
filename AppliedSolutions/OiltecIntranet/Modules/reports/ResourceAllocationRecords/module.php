@@ -17,10 +17,10 @@ function onGenerate($event)
       if (is_string($headline['Period']) && (-1 !== ($ts = strtotime($headline['Period']))))
       {
          $period = array(
-            0 => date('Y-m-d', $ts),
-            1 => date('Y-m-d', $ts + 86400),
+            0 => date('Y-m-d', $ts),          // !!! $headline['Period'] is Y-m-d without H:i:s
+            1 => date('Y-m-d', $ts + 86399),
             'from' => date('Y-m-d', $ts),
-            'to'   => date('Y-m-d', $ts + 86400)
+            'to'   => date('Y-m-d', $ts + 86399)
          );
       }
       else throw new Exception('Invalid period');
@@ -61,7 +61,7 @@ function onGenerate($event)
    $odb   = $container->getODBManager();
    $query = "SELECT `Employee`, `Project`, `Date`, `Hours`, `_rec_type` AS `type`, `_rec_id` AS `id` ".
             "FROM information_registry.ProjectAssignmentRecords ".
-            "WHERE `Date` >= '".$period[0]."' AND `Date` < '".$period[1]."' ".
+            "WHERE `Date` >= '".$period[0]."' AND `Date` <= '".$period[1]."' ".
             ($employees ? 'AND `Employee` IN ('.implode(',', $employees).') ' : '').
             ($projects  ? 'AND `Project`  IN ('.implode(',', $projects ).') ' : '').
             "ORDER BY `_rec_type`, `_rec_id`, `Date`";

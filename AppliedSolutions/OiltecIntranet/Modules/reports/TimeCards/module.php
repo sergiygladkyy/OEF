@@ -29,7 +29,7 @@ function onGenerate($event)
       if (isset($period[1]))
       {
          $header .= ' to '.date('d.m.Y', strtotime($period[1]));
-         $criterion[2] = "`EndDate` < '".$period[1]."'";
+         $criterion[2] = "`EndDate` <= '".$period[1]."'";
       }
    }
    

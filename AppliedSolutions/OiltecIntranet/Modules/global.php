@@ -120,15 +120,18 @@ class MGlobal
                   break;
 
                case 'Today':
-                  $from = $to = date('Y-m-d');
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day+1, $year));
                   break;
 
                case 'Tomorrow':
-                  $from = $to = date('Y-m-d', mktime(0,0,0, $month, $day+1, $year));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day+1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day+2, $year));
                   break;
 
                case 'Yesterday':
-                  $from = $to = date('Y-m-d', mktime(0,0,0, $month, $day-1, $year));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $day-1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $day, $year));
                   break;
 
                default:
@@ -145,26 +148,26 @@ class MGlobal
                   $d = date('w');
                   $d = ($d == 0) ? 6 : $d - 1;
                   
-                  $start = $day + $shift*7 + $d;
+                  $start = $day + $shift*7 - $d;
                   
-                  $from = date('Y-m-d', mktime(0,0,0, $month, $start, $year));
-                  $to   = date('Y-m-d', mktime(0,0,0, $month, $start+7, $year));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $month, $start, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month, $start+7, $year));
                   break;
                   
                case 'Month':
-                  $from = date('Y-m-d', mktime(0,0,0, $month+$shift, 1, $year));
-                  $to   = date('Y-m-d', mktime(0,0,0, $month+$shift+1, 1, $year));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $month+$shift, 1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $month+$shift+1, 1, $year));
                   break;
                   
               case 'Quarter':
                   $beg  = $month - (($month-1)%3) + $shift*3;
-                  $from = date('Y-m-d', mktime(0,0,0, $beg, 1, $year));
-                  $to   = date('Y-m-d', mktime(0,0,0, $beg+3, 1, $year));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, $beg, 1, $year));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $beg+3, 1, $year));
                   break;
                   
                case 'Year':
-                  $from = date('Y-m-d', mktime(0,0,0, 1,1, $year+$shift));
-                  $to   = date('Y-m-d', mktime(0,0,0, 1,1, $year+$shift+1));
+                  $from = date('Y-m-d H:i:s', mktime(0,0,0, 1,1, $year+$shift));
+                  $to   = date('Y-m-d H:i:s', mktime(0,0,-1, 1,1, $year+$shift+1));
                   break;
             }
          }
@@ -174,8 +177,8 @@ class MGlobal
          $year = date('Y');
          $end  = 3 * ((int) $name{0});
 
-         $from = date('Y-m-d', mktime(0,0,0, $end - 2, 1, $year));
-         $to   = date('Y-m-d', mktime(0,0,0, $end + 1, 1, $year));
+         $from = date('Y-m-d H:i:s', mktime(0,0,0, $end - 2, 1, $year));
+         $to   = date('Y-m-d H:i:s', mktime(0,0,-1, $end + 1, 1, $year));
       }
       
       return array(0 => $from, 1 => $to, 'from' => $from, 'to' => $to);
@@ -877,7 +880,9 @@ class MVacation
     */
    public static function checkByPeriod($employee, $from, $to)
    {
-      $odb = Container::getInstance()->getODBManager();
+      $container = Container::getInstance();
+      
+      $odb = $container->getODBManager();
       
       $query = "SELECT * FROM information_registry.ScheduleVarianceRecords ".
                "WHERE `Employee`=".(int) $employee." AND `DateFrom` < '".$to."' AND `DateTo` >= '".$from."'";
@@ -889,7 +894,11 @@ class MVacation
       
       if (!empty($row))
       {
-         return array('Employee has vacation days in this period');
+         $model = $container->getModel('catalogs', 'Employees');
+         
+         $model->load($employee);
+         
+         return array($model->getAttribute('Description').' has vacation days in this period');
       }
       
       return array();
@@ -1547,7 +1556,7 @@ class MEmployees
       
       $odb = Container::getInstance()->getODBManager();
       
-      $query = "SELECT c.`Description`, ir.`Employee`, MAX(ir.`Period`) AS `Period` ".
+      $query = "SELECT c.`Description`, c.`_deleted`, ir.`Employee`, MAX(ir.`Period`) AS `Period` ".
                "FROM information_registry.StaffHistoricalRecords AS ir, catalogs.Employees AS c ".
                "WHERE ir.`OrganizationalPosition`=".(int) $PMPos." AND ir.`RegisteredEvent` <> 'Firing' AND ".
                "ir.`Period` <= '".$date."' AND ir.`Employee` = c.`_id` ".
@@ -1562,7 +1571,7 @@ class MEmployees
       
       while ($row = $odb->fetchAssoc($res))
       {
-         $select[$row['Employee']] = array('text' => $row['Description'], 'value' => $row['Employee']);
+         $select[$row['Employee']] = array('text' => $row['Description'], 'value' => $row['Employee'], 'deleted' => $row['_deleted']);
       }
       
       return $select;
