@@ -641,14 +641,14 @@ class MVacation
     */
    public static function getEndDate($schedule, $start, $days)
    {
-      if ($days == 0) return $start;
-      
-      $container = Container::getInstance();
-      
       if (($start = strtotime($start)) === -1)
       {
          throw new Exception('Date must be in the format YYYY-MM-DD');
       }
+      
+      if ($days == 0) return $start;
+      
+      $container = Container::getInstance();
       
       $cmodel = $container->getCModel('information_registry', 'BaseCalendar');
       $smodel = $container->getCModel('information_registry', 'Schedules');
