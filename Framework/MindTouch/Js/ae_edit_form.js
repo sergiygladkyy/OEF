@@ -1761,7 +1761,7 @@ function oefDynamicUpdate()
 				
 				if (m_data['tabulars'])
 				{
-					state = processTabularResponce(main_kind + '_' + main_type + '_tabulars', m_data['tabulars'], options);
+					state = state && processTabularResponce(main_kind + '_' + main_type + '_tabulars', m_data['tabulars'], options);
 				}
 				
 				/* Check close flag */
@@ -1783,7 +1783,7 @@ function oefDynamicUpdate()
 					
 					updateListOfOption(text, id);
 					
-					active = true;
+					appActive();
 					
 					return true;
 				}

@@ -654,7 +654,6 @@ class MVacation
       $smodel = $container->getCModel('information_registry', 'Schedules');
       
       $copt = array('attributes' => array('Date'));
-      $vacd = -1;
       
       while ($days > 0)
       {
@@ -692,12 +691,10 @@ class MVacation
             }
          }
          
-         $vacd++;
+         $start += 86400;
       }
       
-      if ($vacd) $start += 24*60*60*$vacd;
-      
-      return $start;
+      return $start - 86400;
    }
 
    /**
