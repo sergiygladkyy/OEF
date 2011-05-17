@@ -162,7 +162,7 @@
     	   jQuery(this).parent().change(function(event) {
     	      var status = false;
     	      "..(item._id &gt; 0 ? 'if (confirm(\'Tabular setions will be cleared. Continue?\')) {'..delTabs : '').."
-    	      status = notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {});
+    	      status = notifyFormEvent('"..uid.."', 'EditForm', 'onFormUpdateRequest', {});
     	      "..(item._id &gt; 0 ? '}': '').."
     	      if (!status)
     	      {

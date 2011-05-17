@@ -169,7 +169,7 @@
               <div class="oe_buttons">
                 {{
                    var fClick = "javascript: jQuery('#oe_fill_by_department').css('display','none'); ";
-                   let fClick = fClick.."notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {'action': 'Fill'});";
+                   let fClick = fClick.."notifyFormEvent('"..uid.."', 'EditForm', 'onFormUpdateRequest', {'action': 'Fill'});";
                 }}
                 <input type="button" value="Fill" onclick="{{ fClick }}" />&nbsp;
                 <input type="button" value="Cancel" onclick="jQuery('#oe_fill_by_department').css('display','none'); appActive();" />
@@ -183,7 +183,7 @@
             }}
             <input type="button" value="Fill by Department" onclick="{{ fClick }}" />
           </eval:if>
-          <input type="button" value="Calculate" onclick="{{ 'javascript: notifyFormEvent(\''..uid..'\', \'Default\', \'onFormUpdateRequest\', {\'action\': \'Calculate\'});' }}" />
+          <input type="button" value="Calculate" onclick="{{ 'javascript: notifyFormEvent(\''..uid..'\', \'EditForm\', \'onFormUpdateRequest\', {\'action\': \'Calculate\'});' }}" />
           {{ &lt;input type="button" value="Save and Close" class="ae_command" command="save_and_close" /&gt;&nbsp; }}
           {{ &lt;input type="button" value="Save" class="ae_command" command="save" /&gt;&nbsp; }}
           {{ &lt;input type="button" value="Close" class="ae_command" command="cancel" /&gt; }}

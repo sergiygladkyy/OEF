@@ -148,7 +148,7 @@
         ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';
         jQuery('#"..class.."_item .oef_catalogs_Projects').each(function(index) {
     	   jQuery(this).parent().change(function(event) {
-    	      notifyFormEvent('"..uid.."', 'Default', 'onFormUpdateRequest', {});
+    	      notifyFormEvent('"..uid.."', 'EditForm', 'onFormUpdateRequest', {});
     	   });
         });
      "&lt;/script&gt;
