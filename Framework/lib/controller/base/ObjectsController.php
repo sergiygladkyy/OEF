@@ -25,7 +25,7 @@ abstract class ObjectsController extends EntityController
       $tabdef = array();
       
       // Default values
-      $default = $this->getDefaultValuesForEditForm('Default', array('id' => $id));
+      $default = $this->getDefaultValuesForEditForm('EditForm', array('id' => $id));
       
       if ($default['status'])
       {

@@ -131,7 +131,7 @@ $_dictionary = array(
          ),
 
          'Forms' => array(
-            'LoginRecords'
+            'Custom' => array('LoginRecords')
          ),
 
          'Templates' => array(
@@ -184,11 +184,11 @@ $_dictionary = array(
          ), 
 
          'Forms' => array(
-            'UserProfile','UserBrowser'
+            'Custom' => array('UserProfile', 'UserBrowser')
          ),
 
          'Templates' => array(
-            'UserProfile','UserBrowser'
+            'UserProfile', 'UserBrowser'
          )
       ),
 
@@ -297,6 +297,12 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'ListForm' => array(
+               'columns' => array('Code', 'Description', 'Information', 'InvoicingInformation')
+            )
          )
       ),
 
@@ -326,7 +332,7 @@ $_dictionary = array(
          ),
 
          'Forms' => array(
-            'Schedule'
+            'Custom' => array('Schedule')
          ),
 
          'Templates' => array(
@@ -422,6 +428,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -468,6 +478,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -516,6 +530,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -523,6 +541,10 @@ $_dictionary = array(
       'PeriodicClosing' => array(
          'recorder_for' => array(
             'AccumulationRegisters.EmployeeVacationDays'
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -642,6 +664,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -673,6 +699,10 @@ $_dictionary = array(
                   'type' => "varchar(255) NOT NULL default ''"
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -747,6 +777,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
 
@@ -826,7 +860,7 @@ $_dictionary = array(
          ),
 
          'Forms' => array(
-            'TimeCard'
+            'Custom' => array('TimeCard')
          ),
 
          'Templates' => array(
@@ -938,6 +972,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       ),
       
@@ -1499,6 +1537,10 @@ $_dictionary = array(
             ),
          ),
          
+         'Forms' => array(
+            'EditForm' => array()
+         ),
+         
          'Layout' => array(
             'ProjectHandover'
          )
@@ -1556,6 +1598,10 @@ $_dictionary = array(
                   )
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          )
       )
    ),
@@ -1612,7 +1658,7 @@ $_dictionary = array(
          ),
 
          'Forms' => array(
-            'BaseCalendar'
+            'Custom' => array('BaseCalendar')
          ),
 
          'Templates' => array(
@@ -2176,6 +2222,10 @@ $_dictionary = array(
                   'required' => true
                )
             )
+         ),
+         
+         'Forms' => array(
+            'EditForm' => array()
          ),
          
          'recorders' => array(
@@ -2985,6 +3035,10 @@ $_dictionary = array(
             'PM' => array(
                'reference' => 'catalogs.Employees'
             )
+         ),
+         
+         'Forms' => array(
+            'ReportForm' => array()
          )
       ),
 

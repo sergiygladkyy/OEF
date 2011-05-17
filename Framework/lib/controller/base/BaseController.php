@@ -87,7 +87,7 @@ abstract class BaseController
     * @param array& $options
     * @return array
     */
-   protected function getDefaultValuesForEditForm($formName = 'Default', array $options = array())
+   protected function getDefaultValuesForEditForm($formName = 'EditForm', array $options = array())
    {
       $event = $this->container->getEvent($this, $this->kind.'.'.$this->type.'.forms.'.$formName.'.onBeforeOpening');
       $event->setReturnValue(null);

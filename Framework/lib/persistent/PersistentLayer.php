@@ -761,8 +761,11 @@ class PersistentLayer
          }
          else
          {
-            $valid[$name]['model'] = $conf['model'];
+            $valid[$name]['model']      = $conf['model'];
             $valid[$name]['controller'] = $conf['controller'];
+            $valid[$name]['Forms']      = $conf['Forms'];
+            $valid[$name]['Templates']  = $conf['Templates'];
+            $valid[$name]['Layout']     = $conf['Layout'];
          }
       }
 
@@ -1743,7 +1746,7 @@ class PersistentLayer
       
       if (!isset($conf['Forms']))
       {
-         $valid = array('Default');
+         $valid = array();
       }
       elseif (!is_array($conf['Forms']))
       {
@@ -1755,18 +1758,13 @@ class PersistentLayer
       }
       else
       {
-         if ($err = $this->checkFormsConfig($conf['Forms']))
+         if ($err = $this->checkFormsConfig($kind, $conf['Forms']))
          {
             $errors['Forms'] = $err;
          }
          else
          {
             $valid = $conf['Forms'];
-            
-            if (!in_array('Default', $valid))
-            {
-               $valid[] = 'Default';
-            }
          }
       }
        
@@ -1907,27 +1905,58 @@ class PersistentLayer
    /**
     * Check Forms configuration array
     * 
+    * @param string $kind   - entity kind
     * @param array& $config - !!! метод вносит изменения в передаваемый массив
     * @return array - errors
     */
-   protected function checkFormsConfig(array& $config)
+   protected function checkFormsConfig($kind, array& $config)
    {
       $errors = array();
       $valid  = array();
       
-      foreach ($config as $form)
+      $ftypes = $this->getAllowedFormTypes($kind);
+      
+      foreach ($config as $ftype => $params)
       {
-         if (!is_string($form))
+         $err = array();
+         
+         if (!in_array($ftype, $ftypes))
          {
-            $errors['global'][] = 'Form configuration is wrong';
+            $err[] = 'Unknow form type '.$ftype;
          }
-         elseif (!$this->checkName($form))
+         elseif (!is_array($params))
          {
-            $errors['global'][] = 'Invalid Form name "'.$form.'"';
+            $err[] = 'Invalid configuration for '.$ftype;
+         }
+         elseif ($ftype == 'Custom')
+         {
+            if (empty($params))
+            {
+               $err[] = 'Custom form configuration is empty';
+            }
+            elseif (!is_array($params))
+            {
+               $err[] = 'Custom form configuration is wrong';
+            }
+            else
+            {
+               foreach ($params as $fname)
+               {
+                  if (in_array($fname, $ftypes) || !$this->checkName($fname))
+                  {
+                     $err[] = 'Invalid custom form name "'.$form.'"';
+                  }
+               }
+            }
+         }
+         
+         if ($err)
+         {
+            $errors['global'] = empty($errors['global']) ? $err : array_merge($errors['global'], $err);
          }
          else
          {
-            $valid[] = $form;
+            $valid[$ftype] = $params;
          }
       }
 
@@ -2202,6 +2231,22 @@ class PersistentLayer
       }
       
       return $this->_default_controllers[$kind];
+   }
+   
+   /**
+    * Get allowed form types
+    * 
+    * @param string $kind - entity kind
+    * @return array
+    */
+   public function getAllowedFormTypes($kind)
+   {
+      if (!isset($this->_allowed_form_types))
+      {
+         $this->_allowed_form_types = $this->loadConfigFromFile(self::p_config_dir.'form_types.php');
+      }
+      
+      return empty($this->_allowed_form_types[$kind]) ? array() : $this->_allowed_form_types[$kind];
    }
    
    /**
@@ -2608,6 +2653,7 @@ class PersistentLayer
          'model'      => array(),
          'controller' => array(),
          'forms'      => array(),
+         'forms_view' => array(),
          'templates'  => array(),
          'layout'     => array()
       );
@@ -2882,6 +2928,33 @@ class PersistentLayer
             }
          }
          
+         /* Model */
+         
+         $result['model'][$type] = $params['model'];
+         
+         /* Controller */
+         
+         $result['controller'][$type] = $params['controller'];
+         
+         /* Templates */
+         
+         $result['templates'][$type] = $params['Templates'];
+         
+         /* Layout */
+         
+         $result['layout'][$type] = $params['Layout'];
+         
+         /* Forms */
+         
+         $res = $this->generateFormsInternalConfiguration($params['Forms'], $kind, $res, $options);
+         
+         if (!isset($res['errors']))
+         {
+            $result['forms'][$type]      = $res['forms'];
+            $result['forms_view'][$type] = $res['forms_view'];
+         }
+         else $errors = array_merge($errors, $res['errors']);
+         
          
          /* Tabular sections */
          
@@ -2895,27 +2968,6 @@ class PersistentLayer
             }
             else $errors = array_merge($errors, $res['errors']);
          }
-         
-         
-         /* Model */
-         
-         $result['model'][$type] = $params['model'];
-         
-         /* Controller */
-         
-         $result['controller'][$type] = $params['controller'];
-         
-         /* Forms */
-         
-         $result['forms'][$type] = $params['Forms'];
-         
-         /* Templates */
-         
-         $result['templates'][$type] = $params['Templates'];
-         
-         /* Layout */
-         
-         $result['layout'][$type] = $params['Layout'];
       }
       
       return empty($errors) ? $result : array('errors' => $errors);
@@ -2948,6 +3000,7 @@ class PersistentLayer
          'model'      => array(),
          'controller' => array(),
          'forms'      => array(),
+         'forms_view' => array(),
          'templates'  => array(),
          'layout'     => array()
       );
@@ -3043,17 +3096,24 @@ class PersistentLayer
          
          $result['controller'][$registry] = $params['controller'];
          
-         /* Forms */
-         
-         $result['forms'][$registry] = $params['Forms'];
-         
          /* Templates */
          
          $result['templates'][$registry] = $params['Templates'];
          
          /* Layout */
          
-         $result['layout'][$type] = $params['Layout'];
+         $result['layout'][$registry] = $params['Layout'];
+         
+         /* Forms */
+         
+         $res = $this->generateFormsInternalConfiguration($params['Forms'], $kind, $res, $options);
+         
+         if (!isset($res['errors']))
+         {
+            $result['forms'][$registry]      = $res['forms'];
+            $result['forms_view'][$registry] = $res['forms_view'];
+         }
+         else $errors = array_merge($errors, $res['errors']);
       }
       
       return empty($errors) ? $result : array('errors' => $errors);
@@ -3083,7 +3143,11 @@ class PersistentLayer
          'dynamic'    => array(),
          'files'      => array(),
          'model'      => array(),
-         'controller' => array()
+         'controller' => array(),
+         'forms'      => array(),
+         'forms_view' => array(),
+         'templates'  => array(),
+         'layout'     => array()
       );
       
       foreach ($tabular_dictionary as $tabular => $params)
@@ -3126,6 +3190,25 @@ class PersistentLayer
          /* Controller */
          
          $result['controller'][$type][$tabular] = $params['controller'];
+         
+         /* Templates */
+         
+         $result['templates'][$type][$tabular] = $params['Templates'];
+         
+         /* Layout */
+         
+         $result['layout'][$type][$tabular] = $params['Layout'];
+         
+         /* Forms */
+         
+         $res = $this->generateFormsInternalConfiguration($params['Forms'], 'tabular_sections', $res, $options);
+         
+         if (!isset($res['errors']))
+         {
+            $result['forms'][$type][$tabular]      = $res['forms'];
+            $result['forms_view'][$type][$tabular] = $res['forms_view'];
+         }
+         else $errors = array_merge($errors, $res['errors']);
       }
       
       return empty($errors) ? $result : array('errors' => $errors);
@@ -3526,6 +3609,61 @@ class PersistentLayer
          }
       }
 
+      return empty($errors) ? $result : array('errors' => $errors);
+   }
+   
+   /**
+    * Generate form internal configuration
+    * 
+    * @param array& $form_dictionary
+    * @param string $ckind
+    * @param array& $internal
+    * @param array& $options
+    * @return array
+    */
+   protected function generateFormsInternalConfiguration(array& $form_dictionary, $ckind, array& $internal, array& $options = array())
+   {
+      $errors = array();
+      $result = array(
+         'forms'      => array(),
+         'forms_view' => array()
+      );
+      
+      $allowed = $this->getAllowedFormTypes($ckind);
+      
+      foreach ($allowed as $ftype)
+      {
+         if ($ftype == 'Custom')
+         {
+            if (empty($form_dictionary[$ftype])) continue;
+            
+            $conf =& $form_dictionary[$ftype];
+            
+            foreach ($conf as $fname)
+            {
+               $result['forms'][] = $fname;
+               $result['forms_view'][$fname] = array();
+            }
+            
+            continue;
+         }
+         
+         if (isset($form_dictionary[$ftype]))
+         {
+            $result['forms'][] = $ftype;
+            
+            $conf =& $form_dictionary[$ftype];
+         }
+         else $conf = array();
+         
+         if (empty($conf['columns']))
+         {
+            $conf['columns'] = $internal['fields'];
+         }
+         
+         $result['forms_view'][$ftype] = $conf;
+      }
+      
       return empty($errors) ? $result : array('errors' => $errors);
    }
 
