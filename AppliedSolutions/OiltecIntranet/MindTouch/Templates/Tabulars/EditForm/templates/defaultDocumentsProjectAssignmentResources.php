@@ -7,9 +7,11 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var references = {}; 
    var required   = {};
    var dynamic    = {};
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var _list  = data.list;
@@ -31,16 +33,21 @@
       else {
          let kind = puid.kind;
       }
+      
       var name_prefix = args[5] ?? 'aeform['..kind..']';
       let name_prefix = name_prefix..'['..type..']';
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
-            
-      var class = string.replace(kind, '.', '_')..'_'..type;
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.EditForm ?? {};
+      
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <h3>{{ string.ToUpperFirst(type) }}</h3>
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
@@ -58,9 +65,9 @@
   <thead>
     <tr>
       <th style="width: 10px;"><input type="checkbox" onclick="{{ 'javascript:checkAll(\''..class..'\', this);' }}" /></th>
-      <eval:foreach var="field" in="fields">
+      <eval:foreach var="field" in="columns">
         <eval:if test="field != 'Owner'">
-          <th class="{{ class..'_'..field..'_header' }}">{{ string.ToUpperFirst(field); }}</th>
+          <th class="{{ class..'_'..field..'_header' }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
         </eval:if>
       </eval:foreach>
     </tr>
@@ -77,9 +84,11 @@
            fields: fields,
            field_type: field_type,
            field_prec: field_prec,
+           field_view: field_view,
            references: references,
            required: required,
            dynamic:  dynamic,
+           forms_view: forms_view,
            name_prefix: name_prefix,
            numb: i
          };
@@ -123,9 +132,11 @@
        fields: fields,
        field_type: field_type,
        field_prec: field_prec,
+       field_view: field_view,
        references: references,
        required: required,
        dynamic:  dynamic,
+       forms_view: forms_view,
        name_prefix: name_prefix,
        numb: '%%i%%'
      };

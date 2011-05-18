@@ -5,10 +5,12 @@
    var data     = args[3];
    var root     = args[4] ?? 'Template:Entities';
    var prefix   = args[5] ?? 'default';
-   var fields   = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
-   var required = []; 
+   var field_view = {};
+   var required   = [];
+   var forms_view = {};
    var kind     = '';
    var type     = puid.type;
    var select   = data.select;
@@ -39,14 +41,18 @@
       
       var name_prefix = 'aeform['..type..']';
       
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields   = entities.getInternalConfiguration(kind..'.fields', type);
-      let required = entities.getInternalConfiguration(kind..'.required', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
+      let required   = entities.getInternalConfiguration(kind..'.required', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ReportForm ?? {};
       
       let dates = dates.result;
       
-      var class = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <form method="post" action="#" class="ae_report_form" id="{{ class..'_report' }}">
     <div class="{{ class..'_message systemmsg' }}" style="display: none;">
@@ -58,9 +64,9 @@
     </div>
     <table>
     <tbody>
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <tr>
-        <td class="{{ class..'_name ae_editform_field_name' }}">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="{{ class..'_name ae_editform_field_name' }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}:</td>
         <td class="{{ class..'_value ae_editform_field_value' }}">
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           {{
@@ -81,7 +87,12 @@
           </eval:if>
           <eval:else>
             <pre class="script">
-              var params   = {select: select[field], required: list.contains(required, field), precision: field_prec[field]};
+              var params = {
+                 select:    select[field],
+                 required:  list.contains(required, field),
+                 precision: field_prec[field],
+                 view:      field_view[field]
+              };
               var template = root..'/EditFormFields';
               var content  = wiki.template(template, [field_type[field], name, value, params, type, template, prefix]);
               

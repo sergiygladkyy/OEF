@@ -1746,7 +1746,7 @@ class PersistentLayer
             {
                if (!$upper)
                {
-                  if (isset($field{$i}) && 96 < ord($field{$i}) && ord($field{$i}) < 123)
+                  if (isset($field{$i+1}) && 96 < ord($field{$i+1}) && ord($field{$i+1}) < 123)
                   {
                      $config['synonim'] .= ' '.chr($code+32);
                   }

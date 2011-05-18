@@ -237,6 +237,9 @@ $_dictionary = array(
                'use'  => 'For item',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'InvoicingInformation' => array(
@@ -247,6 +250,9 @@ $_dictionary = array(
                ),
                'precision' => array(
                   'required' => true
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'Customer' => array(
@@ -1143,6 +1149,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'ReportFormatAgreed' => array(
@@ -1158,6 +1167,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'PaymentScheduleGuaranteesInsurance' => array(
@@ -1173,6 +1185,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'HavePenalty' => array(
@@ -1188,6 +1203,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'DeliveryConditions' => array(
@@ -1203,6 +1221,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'DemandForDocumentation' => array(
@@ -1218,6 +1239,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'IsTotalBudget' => array(
@@ -1233,6 +1257,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'PriceStrategyUsed' => array(
@@ -1248,6 +1275,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1265,6 +1295,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'AnythingMissing' => array(
@@ -1280,6 +1313,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'HardwareDelivery' => array(
@@ -1295,6 +1331,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1312,6 +1351,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'AllBCCorrespondenceArhived' => array(
@@ -1327,6 +1369,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1344,6 +1389,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'IsSACASheet' => array(
@@ -1359,6 +1407,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'DemandsForReportingToEconomy' => array(
@@ -1374,6 +1425,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1391,6 +1445,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'NeedNewEmployments' => array(
@@ -1406,6 +1463,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'HasResources' => array(
@@ -1421,6 +1481,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1438,6 +1501,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'IsInternalDevelopment' => array(
@@ -1453,6 +1519,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1461,12 +1530,18 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             'CriticalFactorsComment' => array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1484,6 +1559,9 @@ $_dictionary = array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"
+               ),
+               'view' => array(
+                  'multiline' => true
                )
             ),
             
@@ -1508,12 +1586,18 @@ $_dictionary = array(
                      'type' => 'string',
                      'sql'  => array(
                         'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'view' => array(
+                        'multiline' => true
                      )
                   ),
                   'Comment' => array(
                      'type' => 'string',
                      'sql'  => array(
                         'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'view' => array(
+                        'multiline' => true
                      )
                   )
                )
@@ -1525,12 +1609,18 @@ $_dictionary = array(
                      'type' => 'string',
                      'sql'  => array(
                         'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'view' => array(
+                        'multiline' => true
                      )
                   ),
                   'Comment' => array(
                      'type' => 'string',
                      'sql'  => array(
                         'type' => "varchar(255) NOT NULL default ''"
+                     ),
+                     'view' => array(
+                        'multiline' => true
                      )
                   )
                )
@@ -1538,7 +1628,30 @@ $_dictionary = array(
          ),
          
          'Forms' => array(
-            'EditForm' => array()
+            'EditForm' => array(),
+            'ListForm' => array(
+               'columns' => array(
+                  'Code',
+                  'Date',
+                  'SalesManager',
+                  'ProjectManager',
+                  'TenderResonsible',
+                  'MainProject',
+                  'ProjectCode',
+                  'ProjectName',
+                  'Contract',
+                  'Customer',
+                  'CustomerMainContact',
+                  'SelligPrice',
+                  'MaterialsCost',
+                  'TotalIndirectLaborCost',
+                  'NumberOfHours',
+                  'GrossMargin',
+                  'AddedValuePerHour',
+                  'EstimatedStartDate',
+                  'EstimatedEndDate'
+               )
+            )
          ),
          
          'Layout' => array(

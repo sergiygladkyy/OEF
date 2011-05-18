@@ -69,27 +69,46 @@
       }
       
       var use_tabulars = true;
+      var columns = [];
       
-      if (htype == 2) {
-         if (item._folder == 1) {
+      if (htype == 2)
+      {
+         if (item._folder == 1)
+         {
             let fields = field_use[2];
             let use_tabulars = false;
          }
-         else {
+         else
+         {
             let fields = field_use[1];
          }
          
          let hidden ..= '&lt;input type="hidden" name="'..name_prefix..'[attributes][_folder]" value="'..item._folder..'" /&gt;';
+         
+         if (forms_view.columns is list)
+         {
+            foreach (var field in fields)
+            {
+               foreach (var column in forms_view.columns)
+               {
+                  if (column == field)
+                  {
+                     let columns ..= [field];
+                  }
+               }
+            }
+         }
+         else let columns = fields;
       }
+      else let columns = forms_view.columns ?? fields;
       
       if (#map.select(field_type, "$.value=='file'") > 0)
       {
          let enctype = 'multipart/form-data';
       }
       
-      var columns = forms_view.columns ?? fields;
-      var class   = string.replace(kind, '.', '_')..'_'..type;
-      var js_uid  = class;
+      var class  = string.replace(kind, '.', '_')..'_'..type;
+      var js_uid = class;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">

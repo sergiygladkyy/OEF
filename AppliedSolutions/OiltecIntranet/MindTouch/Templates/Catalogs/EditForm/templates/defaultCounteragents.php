@@ -4,15 +4,17 @@
    var data   = args[2];
    var root   = args[3] ?? 'Template:Entities';
    var prefix = args[4] ?? 'default';
-   var fields = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
    var field_use  = {};
+   var field_view = {};
    var required   = [];
    var dynamic    = {};
    var hierarchy  = {};
    var owners     = {};
    var references = [];
+   var forms_view = {};
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -36,19 +38,24 @@
       else {
          let kind = puid.kind;
       }
+      
       var enctype = '';
       var name_prefix = 'aeform['..kind..']['..type..']';
+      
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
       let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.EditForm ?? {};
       
-      var htype  = hierarchy.type is num ? hierarchy.type : 0;
+      var htype = hierarchy.type is num ? hierarchy.type : 0;
       
       if (item._id > 0) {
          var hidden = '&lt;input type="hidden" name="'..name_prefix..'[attributes][_id]" value="'..item._id..'" /&gt;';
@@ -62,18 +69,38 @@
       }
       
       var use_tabulars = true;
+      var columns = [];
       
-      if (htype == 2) {
-         if (item._folder == 1) {
+      if (htype == 2)
+      {
+         if (item._folder == 1)
+         {
             let fields = field_use[2];
             let use_tabulars = false;
          }
-         else {
+         else
+         {
             let fields = field_use[1];
          }
          
          let hidden ..= '&lt;input type="hidden" name="'..name_prefix..'[attributes][_folder]" value="'..item._folder..'" /&gt;';
+         
+         if (forms_view.columns is list)
+         {
+            foreach (var field in fields)
+            {
+               foreach (var column in forms_view.columns)
+               {
+                  if (column == field)
+                  {
+                     let columns ..= [field];
+                  }
+               }
+            }
+         }
+         else let columns = fields;
       }
+      else let columns = forms_view.columns ?? fields;
       
       if (#map.select(field_type, "$.value=='file'") > 0)
       {
@@ -218,15 +245,16 @@
 </style>
   
       {{
-         var field  = 'Code';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Code';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
-            precision: field_prec[field]
+            precision: field_prec[field],
+            view:      field_view[field]
          };
       }}
       <div class="oe_field oe_field_code">
@@ -248,17 +276,18 @@
         </div>
       </div>
       {{
-         var field  = 'Parent';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Parent';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             select:    select[field],
             required:  list.contains(required, field),
             dynamic:   list.contains(dynamic, field),
-            precision: field_prec[field]
+            precision: field_prec[field],
+            view:      field_view[field]
          };
       }}
       <div class="oe_field oe_field_parent">
@@ -280,15 +309,16 @@
         </div>
       </div>
       {{
-         var field  = 'Description';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = 'Desc';
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Description';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = 'Desc';
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
-            precision: field_prec[field]
+            precision: field_prec[field],
+            view:      field_view[field]
          };
       }}
       <div class="oe_field">
@@ -320,15 +350,16 @@
         <div style="width: 0; height: 0; clear: both;">&nbsp;</div>
       </div>
       {{
-         var field  = 'Customer';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Customer';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
-            precision: field_prec[field]
+            precision: field_prec[field],
+            view:      field_view[field]
          };
       }}
       <div class="oe_field_1">
@@ -347,15 +378,16 @@
         </div>
       </div>
       {{
-         var field  = 'Supplier';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Supplier';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
-            precision: field_prec[field]
+            precision: field_prec[field],
+            view:      field_view[field]
          };
       }}
       <div class="oe_field_1">
@@ -375,17 +407,17 @@
       </div>
     </div>
       {{
-         var field  = 'Information';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'Information';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
             precision: field_prec[field],
-            attrs:     {cols: 60, rows: 5},
-            options:   {text: true}
+            view:      field_view[field],
+            attrs:     {cols: 60, rows: 5}
          };
       }}
       <div class="oe_field_2">
@@ -407,17 +439,17 @@
         </div>
       </div>
       {{
-         var field  = 'InvoicingInformation';
-         let fields = list.select(fields, "$ != '"..field.."'");
-         var name   = name_prefix..'[attributes]['..field..']';
-         var value  = item[field];
-         var f_name = string.ToUpperFirst(field);
-         var f_type = field_type[field];
-         var params = {
+         var field   = 'InvoicingInformation';
+         let columns = list.select(columns, "$ != '"..field.."'");
+         var name    = name_prefix..'[attributes]['..field..']';
+         var value   = item[field];
+         var f_name  = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
+         var f_type  = field_type[field];
+         var params  = {
             required:  list.contains(required, field),
             precision: field_prec[field],
-            attrs:     {cols: 60, rows: 5},
-            options:   {text: true}
+            view:      field_view[field],
+            attrs:     {cols: 60, rows: 5}
          };
       }}
       <div class="oe_field_2">
@@ -457,7 +489,7 @@
   </eval:else>
   
   <eval:if test="#fields &gt 0 || !use_tabulars">
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <eval:if test="#owners == 0 || field != 'OwnerId'">
         {{
            if (#owners > 0 && field == 'OwnerType') {
@@ -470,19 +502,21 @@
                  select:    select[field],
                  required:  list.contains(required, field),
                  dynamic:   list.contains(dynamic, field),
-                 precision: field_prec[field]
+                 precision: field_prec[field],
+                 view:      field_view[field]
               };
            }
            else {
               var name   = name_prefix..'[attributes]['..field..']';
               var value  = item[field];
-              var f_name = string.ToUpperFirst(field);
+              var f_name = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
               var f_type = field_type[field];
               var params = {
                  select:    select[field],
                  required:  list.contains(required, field),
                  dynamic:   list.contains(dynamic, field),
-                 precision: field_prec[field]
+                 precision: field_prec[field],
+                 view:      field_view[field]
               };
               
               if (references[field]) {

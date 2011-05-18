@@ -53,18 +53,39 @@
       let forms_view = forms_view.ItemForm ?? {};
       
       var htype = hierarchy.type is num ? hierarchy.type : 0;
+      var use_tabulars = true;
+      var columns = [];
       
-      if (htype == 2 && item._folder == 1) {
-         let fields = field_use[2];
-         var use_tabulars = false;
+      if (htype == 2)
+      {
+         if (item._folder == 1)
+         {
+            let fields = field_use[2];
+            let use_tabulars = false;
+         }
+         else
+         {
+            let fields = field_use[1];
+         }
+         
+         if (forms_view.columns is list)
+         {
+            foreach (var field in fields)
+            {
+               foreach (var column in forms_view.columns)
+               {
+                  if (column == field)
+                  {
+                     let columns ..= [field];
+                  }
+               }
+            }
+         }
+         else let columns = fields;
       }
-      else {
-         let fields = field_use[1];
-         var use_tabulars = true;
-      }
+      else let columns = forms_view.columns ?? fields;
       
-      var columns = forms_view.columns ?? fields;
-      var class   = string.replace(kind, '.', '_')..'_'..type;
+      var class = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">

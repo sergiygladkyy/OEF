@@ -4,13 +4,15 @@
    var data   = args[2];
    var root   = args[3] ?? 'Template:Entities';
    var prefix = args[4] ?? 'default';
-   var fields = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var required   = [];
    var dynamic    = {};
    var references = [];
    var layout     = [];
+   var forms_view = {};
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -36,17 +38,22 @@
       else {
          let kind = puid.kind;
       }
+      
       var enctype = '';
       var name_prefix = 'aeform['..kind..']['..type..']';
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.EditForm ?? {};
       
-      var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      var tab_s = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
+      
       if (item._id > 0) {
          var header = 'Edit ';
          var hidden = '&lt;input type="hidden" name="'..name_prefix..'[attributes][_id]" value="'..item._id..'" /&gt;';
@@ -61,8 +68,9 @@
          let enctype = 'multipart/form-data';
       }
       
-      var class  = string.replace(kind, '.', '_')..'_'..type;
-      var js_uid = class;
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
+      var js_uid  = class;
   }}
   
 <style type="text/css">
@@ -177,7 +185,7 @@
     }}
     <eval:foreach var="field" in="_fields">
       <tr>
-        <td class="{{ class..'_name ae_editform_field_name'..(cnt%2 &gt; 0 ? ' oe_even' : '') }}">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="{{ class..'_name ae_editform_field_name'..(cnt%2 &gt; 0 ? ' oe_even' : '') }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}:</td>
         <td class="{{ class..'_value ae_editform_field_value'..(cnt%2 &gt; 0 ? ' oe_even' : '') }}">
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           <pre class="script">
@@ -186,7 +194,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -290,7 +299,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -301,7 +311,7 @@
             var content    = wiki.template(template, [field_type[field], name, item[field], params, type, template, prefix]);
       
             if (string.contains(content, 'href="'..template..'"')) {
-              let content = 'Template not found';
+               let content = 'Template not found';
             }
           
             content;
@@ -317,8 +327,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -391,7 +401,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -418,8 +429,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -486,7 +497,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -513,8 +525,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -587,7 +599,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -614,8 +627,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -688,7 +701,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -715,6 +729,7 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
+               view:      field_view[field],
                attrs:     {style: _conf.style ?? ''},
                options:   {text: true}
             };
@@ -783,7 +798,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -810,8 +826,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -870,8 +886,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -898,8 +914,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {
@@ -960,7 +976,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {
@@ -987,8 +1004,8 @@
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
                precision: field_prec[field],
-               attrs:     {style: _conf.style ?? ''},
-               options:   {text: true}
+               view:      field_view[field],
+               attrs:     {style: _conf.style ?? ''}
             };
             
             if (references[field]) {

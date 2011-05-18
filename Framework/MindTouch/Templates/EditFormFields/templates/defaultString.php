@@ -3,7 +3,7 @@
   var value   = args[1];
   var params  = args[2];
   var attrs   = params.attrs ?? {};
-  var options = params.options ?? {};
+  var view    = params.view  ?? {};
   var attributes = '';
   
   if (!(params.precision.max_length is nil)) {
@@ -18,7 +18,7 @@
     let name = name..attributes;
   }
   
-  if (options.text) {
+  if (view.multiline) {
      web.html('&lt;textarea name="'..name..'"&gt;'..value..'&lt;/textarea&gt;');
   }
   else {

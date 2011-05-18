@@ -10,7 +10,6 @@ $_templates_map = array(
    'Documents/EditForm/defaultTimeCard'            => '/Documents/EditForm/templates/defaultTimeCard.php',
    'Documents/EditForm/defaultVacationOrder'       => '/Documents/EditForm/templates/defaultVacationOrder.php',
    'Documents/EditForm/defaultProjectHandover'     => '/Documents/EditForm/templates/defaultProjectHandover.php',
-   'Documents/ListForm/defaultProjectHandover'     => '/Documents/ListForm/templates/defaultProjectHandover.php',
 
    'Tabulars/EditForm/defaultDocumentsProjectHandoverMisc'    => '/Tabulars/EditForm/templates/defaultDocumentsProjectHandoverMisc.php',
    'Tabulars/TabularItem/defaultDocumentsProjectHandoverMisc' => '/Tabulars/TabularItem/templates/defaultDocumentsProjectHandoverMisc.php',
