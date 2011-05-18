@@ -1298,7 +1298,9 @@ class PersistentLayer
    {
       $errors  = array();
       $valid   = array();
+      $objects = $this->getObjectTypes();
       $options = ($kind == 'catalogs') ? array('hierarchy' => true) : array();
+      $options['view'] = ($kind != 'web_services');
       
       foreach ($config as $field => $conf)
       {
@@ -1308,6 +1310,8 @@ class PersistentLayer
          {
             $errors['global'][] = 'Invalid name';
          }
+         
+         $options['field'] = $field;
          
          // is link?
          if (isset($conf['reference']))
@@ -1322,7 +1326,7 @@ class PersistentLayer
          }
          
          // is attribute
-         if ($kind == 'catalogs' && $field == 'Code')
+         if (in_array($kind, $objects) && $field == 'Code')
          {
             $valid[$field] = $conf;
             continue;
@@ -1402,7 +1406,34 @@ class PersistentLayer
          }
          else $valid['use'] = 1;
       }
+      
+      /* View */
+      
+      if (!empty($options['view']))
+      {
+         if (!isset($config['view']))
+         {
+            $config['view'] = array();
+         }
+         
+         if (!is_array($config['view']))
+         {
+            $errors[] = 'View configuration is wrong';
+         }
+         else
+         {
+            if (!$err = $this->checkFieldViewConfig($config['view'], $options['field'], 'reference'))
+            {
+               $valid['view'] = $config['view'];
+            }
+            else
+            {
+               $errors = array_merge($errors, $err);
+            }
+         }
+      }
 
+      
       $config = $valid;
       unset($valid);
 
@@ -1512,6 +1543,33 @@ class PersistentLayer
          }
          else $valid['use'] = 1;
       }
+      
+      /* View */
+      
+      if (!empty($options['view']))
+      {
+         if (!isset($config['view']))
+         {
+            $config['view'] = array();
+         }
+         
+         if (!is_array($config['view']))
+         {
+            $errors[] = 'View configuration is wrong';
+         }
+         else
+         {
+            if (!$err = $this->checkFieldViewConfig($config['view'], $options['field'], isset($valid['type']) ? $valid['type'] : null))
+            {
+               $valid['view'] = $config['view'];
+            }
+            else
+            {
+               $errors = array_merge($errors, $err);
+            }
+         }
+      }
+      
       
       $config = $valid;
       unset($valid);
@@ -1650,6 +1708,48 @@ class PersistentLayer
       
       $config = $valid;
       unset($valid);
+      
+      return $errors;
+   }
+   
+   /**
+    * Check field view configuration
+    * 
+    * @param array& $config - configuration
+    * @param string $field  - field name
+    * @param string $ftype  - field type
+    * @return array - errors
+    */
+   protected function checkFieldViewConfig(array& $config, $field, $ftype)
+   {
+      $errors = array();
+      
+      if (!isset($config['synonim']))
+      {
+         $config['synonim'] = '';
+         $code = ord($field{0});
+         
+         if (96 < $code && $code < 123)
+         {
+            $config['synonim'] = chr($code-32);
+         }
+         else $config['synonim'] = $field{0};
+            
+         for ($i = 1; $i < strlen($field); $i++)
+         {
+            $code = ord($field{$i});
+            
+            if (64 < $code && $code < 91)
+            {
+               $config['synonim'] .= ' '.chr($code+32);
+            }
+            elseif ($code == 95 && $i > 0)
+            {
+               $config['synonim'] .= ' ';
+            }
+            else $config['synonim'] .= $field{$i};
+         }
+      }
       
       return $errors;
    }
@@ -2647,6 +2747,7 @@ class PersistentLayer
          'fields'     => array(),
          'field_type' => array(),
          'field_prec' => array(),
+         'field_view' => array(),
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
@@ -2765,6 +2866,9 @@ class PersistentLayer
                'precision' => array(
                   'required'   => true,
                   'max_length' => $clength
+               ),
+               'view' => array(
+                  'synonim' => 'Code'
                )
             );
             unset($params['fields']['Code']);
@@ -2778,7 +2882,10 @@ class PersistentLayer
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL"
                ),
-               'precision' => array('required' => true)
+               'precision' => array('required' => true),
+               'view' => array(
+                  'synonim' => 'Description'
+               )
             );
             unset($params['fields']['Description']);
             
@@ -2798,6 +2905,9 @@ class PersistentLayer
                   'precision' => array(
                      'required' => true,
                      'in' => $params['Owners']
+                  ),
+                  'view' => array(
+                     'synonim' => 'Owner type'
                   )
                );
                
@@ -2809,6 +2919,9 @@ class PersistentLayer
                   ),
                   'precision' => array(
                      'required' => true
+                  ),
+                  'view' => array(
+                     'synonim' => 'Owner id'
                   )
                );
                
@@ -2823,7 +2936,10 @@ class PersistentLayer
             {
                $add_fields['Parent'] = array(
                   'reference' => 'catalogs.'.$type,
-                  'use'  => 3
+                  'use'  => 3,
+                  'view' => array(
+                     'synonim' => 'Parent'
+                  )
                );
                
                unset($params['fields']['Parent']);
@@ -2837,7 +2953,10 @@ class PersistentLayer
                'sql'  => array(
                   'type' => "DATETIME NOT NULL default '0000-00-00'"
                ),
-               'precision' => array('required' => true)
+               'precision' => array('required' => true),
+               'view' => array(
+                  'synonim' => 'Date'
+               )
             );
             unset($params['fields'][$field]);   
          }
@@ -2866,6 +2985,7 @@ class PersistentLayer
             $result['fields'][$type]     = $res['fields'];
             $result['field_type'][$type] = $res['field_type'];
             $result['field_prec'][$type] = $res['field_prec'];
+            $result['field_view'][$type] = $res['field_view'];
             $result['references'][$type] = $res['references'];
             $result['required'][$type]   = $res['required'];
             $result['dynamic'][$type]    = $res['dynamic'];
@@ -2992,6 +3112,7 @@ class PersistentLayer
          'field_sql'  => array(),
          'field_type' => array(),
          'field_prec' => array(),
+         'field_view' => array(),
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
@@ -3044,7 +3165,10 @@ class PersistentLayer
                   'sql'  => array(
                      'type' => "DATETIME NOT NULL default '0000-00-00 00:00:00'"
                   ),
-                  'precision' => array('required' => true)
+                  'precision' => array('required' => true),
+                  'view' => array(
+                     'synonim' => 'Period'
+                  )
                )
             );
             
@@ -3067,6 +3191,7 @@ class PersistentLayer
             $result['field_sql'][$registry]  = $res['field_sql'];
             $result['field_type'][$registry] = $res['field_type'];
             $result['field_prec'][$registry] = $res['field_prec'];
+            $result['field_view'][$registry] = $res['field_view'];
             $result['references'][$registry] = $res['references'];
             $result['required'][$registry]   = $res['required'];
             $result['dynamic'][$registry]    = $res['dynamic'];
@@ -3138,6 +3263,7 @@ class PersistentLayer
          'field_sql'  => array(),
          'field_type' => array(),
          'field_prec' => array(),
+         'field_view' => array(),
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
@@ -3160,7 +3286,10 @@ class PersistentLayer
          $add_fields = array(
             $field => array(
                'reference' => $type,
-               'precision' => array('required' => true)
+               'precision' => array('required' => true),
+               'view' => array(
+                  'synonim' => 'Owner'
+               )
             )
          );
          
@@ -3176,6 +3305,7 @@ class PersistentLayer
             $result['field_sql'][$type][$tabular]  = $res['field_sql'];
             $result['field_type'][$type][$tabular] = $res['field_type'];
             $result['field_prec'][$type][$tabular] = $res['field_prec'];
+            $result['field_view'][$type][$tabular] = $res['field_view'];
             $result['references'][$type][$tabular] = $res['references'];
             $result['required'][$type][$tabular]   = $res['required'];
             $result['dynamic'][$type][$tabular]    = $res['dynamic'];
@@ -3470,6 +3600,7 @@ class PersistentLayer
          $ret['field_sql'][$type]  = $res['field_sql'];
          $ret['field_type'][$type] = $res['field_type'];
          $ret['field_prec'][$type] = $res['field_prec'];
+         $ret['field_view'][$type] = $res['field_view'];
          $ret['references'][$type] = $res['references'];
          $ret['required'][$type]   = $res['required'];
          $ret['dynamic'][$type]    = $res['dynamic'];
@@ -3504,6 +3635,7 @@ class PersistentLayer
          'field_sql'  => array(),
          'field_type' => array(),
          'field_prec' => array(),
+         'field_view' => array(),
          'references' => array(),
          'required'   => array(),
          'dynamic'    => array(),
@@ -3607,6 +3739,11 @@ class PersistentLayer
             }
             else $errors[] = 'Unknow use type for attribute '.$name;
          }
+         
+         
+         /* View */
+         
+         $result['field_view'][$name] = $params['view'];
       }
 
       return empty($errors) ? $result : array('errors' => $errors);
