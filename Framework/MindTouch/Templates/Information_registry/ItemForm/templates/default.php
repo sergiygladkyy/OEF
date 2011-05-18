@@ -6,7 +6,9 @@
    var prefix = args[4] ?? 'default';
    var fields = {};
    var field_type = {};
-   var references = {}; 
+   var field_view = {};
+   var references = {};
+   var forms_view = {};
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
@@ -33,18 +35,24 @@
       else {
          let kind = puid.kind;
       }
-      let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
+      
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ItemForm ?? {};
+      
+      var columns = forms_view.columns ?? fields;
   }}
   <table>
   <tbody>
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <tr>
-        <td class="ae_itemform_field_name">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="ae_itemform_field_name">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field); }}:</td>
         <td class="ae_itemform_field_value">
           <pre class="script">
-            var params = {reference: references[field]};
+            var params = {reference: references[field], view: field_view[field]};
             
             var template = root..'/ItemFormFields';
             var content  = wiki.template(template, [field_type[field], item[field], params, type, template, prefix]);

@@ -8,8 +8,10 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var references = {}; 
    var recorders  = {};
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -39,14 +41,19 @@
       else {
          let kind = puid.kind;
       }
+      
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let recorders  = entities.getInternalConfiguration(kind..'.recorders', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ListForm ?? {};
       
-      var hasRec = #recorders > 0;
-      let class  = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      var hasRec  = #recorders > 0;
+      let class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -63,8 +70,8 @@
       <eval:if test="hasRec == true">
         <th width="200">Recorder</th>
       </eval:if>
-      <eval:foreach var="field" in="fields">
-        <th>{{ string.ToUpperFirst(field); }}</th>
+      <eval:foreach var="field" in="columns">
+        <th>{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
       </eval:foreach>
     </tr>
   </thead>
@@ -80,7 +87,7 @@
               <span><nobr>{{ links['_rec_id'][item._rec_type][item._rec_id]['text'] }}</nobr></span>
             </td>
           </eval:if>
-          <eval:foreach var="field" in="fields">
+          <eval:foreach var="field" in="columns">
             <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
               <pre class="script">
                 var value  = '';
@@ -95,7 +102,11 @@
                    let value = item[field];
                 }
               
-                var tpl_params = {reference: references[field], precision: field_prec[field]};
+                var tpl_params = {
+                   reference: references[field],
+                   precision: field_prec[field],
+                   view:      field_view[field]
+                };
               
                 var template = root..'/ListFormFields';
                 var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
@@ -110,7 +121,7 @@
           </eval:foreach>
         </eval:if>
         <eval:else>
-          <td colspan="{{ #fields }}">Wrong data</td>
+          <td colspan="{{ #columns + 1 + (hasRec == true ? 1 : 0) }}">Wrong data</td>
         </eval:else>
       </tr>
     </eval:foreach>

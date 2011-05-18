@@ -6,7 +6,9 @@
    var prefix = args[4] ?? 'default';
    var fields = {};
    var field_type = {};
-   var references = {}; 
+   var field_view = {};
+   var references = {};
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var _list  = data.list;
@@ -27,20 +29,24 @@
          let kind = puid.kind;
       }
 
-      let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
-            
-      var class = string.replace(kind, '.', '_')..'_'..type;
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ItemForm ?? {};
+      
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <h3>{{ string.ToUpperFirst(type) }}</h3>
 <div class="ae_tabular_section">
   <table class="{{ class }}">
   <thead>
     <tr>
-      <eval:foreach var="field" in="fields">
+      <eval:foreach var="field" in="columns">
         <eval:if test="field != 'Owner'">
-          <th>{{ string.ToUpperFirst(field); }}</th>
+          <th>{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
         </eval:if>
       </eval:foreach>
     </tr>
@@ -52,7 +58,7 @@
           <eval:if test="field != 'Owner'">
             <td class="tabular_col">
               <pre class="script">
-                var params = {reference: references[field]};
+                var params = {reference: references[field], view: field_view[field]};
                 
                 if (references[field] is nil)
                 {

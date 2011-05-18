@@ -4,13 +4,15 @@
    var data   = args[2];
    var root   = args[3] ?? 'Template:Entities';
    var prefix = args[4] ?? 'default';
-   var fields = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var required   = [];
    var dynamic    = {};
    var references = [];
    var layout     = [];
+   var forms_view = {};
    var kind     = '';
    var type     = puid.type;
    var item     = data.item is map ? data.item : {};
@@ -36,13 +38,16 @@
       }
       var enctype = '';
       var name_prefix = 'aeform['..kind..']['..type..']';
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let required   = entities.getInternalConfiguration(kind..'.required', type);
       let dynamic    = entities.getInternalConfiguration(kind..'.dynamic', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.EditForm ?? {};
       
       var tab_s    = entities.getInternalConfiguration(kind..'.'..type..'.tabulars.tabulars');
       if (item._id > 0) {
@@ -59,8 +64,9 @@
          let enctype = 'multipart/form-data';
       }
       
-      var class  = string.replace(kind, '.', '_')..'_'..type;
-      var js_uid = class;
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
+      var js_uid  = class;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -85,9 +91,9 @@
           </div>
         </td>
       </tr>
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <tr>
-        <td class="{{ class..'_name ae_editform_field_name' }}">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="{{ class..'_name ae_editform_field_name' }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}:</td>
         <td class="{{ class..'_value ae_editform_field_value' }}">
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           <pre class="script">
@@ -96,7 +102,8 @@
                select:    select[field],
                required:  list.contains(required, field),
                dynamic:   list.contains(dynamic, field),
-               precision: field_prec[field]
+               precision: field_prec[field],
+               view:      field_view[field]
             };
             
             if (references[field]) {

@@ -25,9 +25,10 @@
    
      let data = data.result;
      var name_prefix = 'aeform['..kind..']';
+     var fields      = entities.getInternalConfiguration(kind..'.fields', type);
      var field_type  = entities.getInternalConfiguration(kind..'.field_type', type);
      var field_prec  = entities.getInternalConfiguration(kind..'.field_prec', type);
-     var fields      = entities.getInternalConfiguration(kind..'.fields', type);
+     var field_view  = entities.getInternalConfiguration(kind..'.field_view', type);
      var required    = entities.getInternalConfiguration(kind..'.required', type);
      var references  = entities.getInternalConfiguration(kind..'.references', type);
      var item   = data.item is map ? data.item : {};
@@ -48,12 +49,17 @@
     <tbody>
     <eval:foreach var="field" in="fields">
       <tr>
-        <td class="{{ class..'_name ae_editform_field_name' }}">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="{{ class..'_name ae_editform_field_name' }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}:</td>
         <td class="{{ class..'_value ae_editform_field_value' }}">
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           <pre class="script">
             var name   = name_prefix..'[attributes]['..field..']';
-            var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field]};
+            var params = {
+               select:    select[field],
+               required:  list.contains(required, field),
+               precision: field_prec[field],
+               view:      field_view[field]
+            };
             
             if (references[field]) {
               let params ..= {reference: references[field]};

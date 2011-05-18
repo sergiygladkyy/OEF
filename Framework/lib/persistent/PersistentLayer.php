@@ -1727,23 +1727,41 @@ class PersistentLayer
       if (!isset($config['synonim']))
       {
          $config['synonim'] = '';
-         $code = ord($field{0});
+         $code  = ord($field{0});
+         $upper = false;
          
          if (96 < $code && $code < 123)
          {
             $config['synonim'] = chr($code-32);
          }
          else $config['synonim'] = $field{0};
-            
+         
+         if (64 < $code && $code < 91) $upper = true;
+         
          for ($i = 1; $i < strlen($field); $i++)
          {
             $code = ord($field{$i});
             
             if (64 < $code && $code < 91)
             {
-               $config['synonim'] .= ' '.chr($code+32);
+               if (!$upper)
+               {
+                  if (isset($field{$i}) && 96 < ord($field{$i}) && ord($field{$i}) < 123)
+                  {
+                     $config['synonim'] .= ' '.chr($code+32);
+                  }
+                  else $config['synonim'] .= ' '.$field{$i};
+                  
+                  $upper = true;
+               }
+               else $config['synonim'] .= $field{$i};
+               
+               continue;
             }
-            elseif ($code == 95 && $i > 0)
+            
+            $upper = false;
+            
+            if ($code == 95)
             {
                $config['synonim'] .= ' ';
             }

@@ -7,10 +7,12 @@
    var fields = {};
    var field_type = {};
    var field_use  = {};
+   var field_view = {};
    var hierarchy  = {};
    var owners     = {};
    var references = {};
-   var layout     = []; 
+   var layout     = [];
+   var forms_view = {}; 
    var kind     = '';
    var type     = puid.type;
    var item     = data.item;
@@ -42,10 +44,13 @@
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_use  = entities.getInternalConfiguration(kind..'.field_use', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ItemForm ?? {};
       
       var htype = hierarchy.type is num ? hierarchy.type : 0;
       
@@ -58,7 +63,8 @@
          var use_tabulars = true;
       }
       
-      var class = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      var class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -73,19 +79,19 @@
   <div style="clear: both; height: 0;">&nbsp;</div>
   <table>
   <tbody>
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <eval:if test="#owners == 0 || field != 'OwnerId'">
         {{
            if (field == 'OwnerType' && #owners > 0) {
               var value  = item['OwnerId'];
-              var params = {reference: {kind: kind, type: item[field]}};
+              var params = {reference: {kind: kind, type: item[field]}, view: field_view[field]};
               var f_name = 'Owner';
               var c_field_type = 'reference';
            }
            else {
               var value  = item[field];
-              var params = {reference: references[field]};
-              var f_name = string.ToUpperFirst(field);
+              var params = {reference: references[field], view: field_view[field]};
+              var f_name = field_view[field]['synonim'] ?? string.ToUpperFirst(field);
               var c_field_type = field_type[field];
            }
         }}

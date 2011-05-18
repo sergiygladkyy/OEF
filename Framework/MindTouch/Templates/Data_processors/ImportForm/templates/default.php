@@ -7,6 +7,7 @@
    var fields   = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var required = []; 
    var kind     = '';
    var type     = puid.type;
@@ -26,11 +27,13 @@
       else {
          let kind = puid.kind;
       }
+      
       var name_prefix = 'aeform['..type..']';
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields   = entities.getInternalConfiguration(kind..'.fields', type);
-      let required = entities.getInternalConfiguration(kind..'.required', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
+      let required   = entities.getInternalConfiguration(kind..'.required', type);
       
       var class  = string.replace(kind, '.', '_')..'_'..type;
   }}
@@ -46,12 +49,17 @@
     <tbody>
     <eval:foreach var="field" in="fields">
       <tr>
-        <td class="{{ class..'_name ae_editform_field_name' }}">{{ string.ToUpperFirst(field); }}:</td>
+        <td class="{{ class..'_name ae_editform_field_name' }}">{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}:</td>
         <td class="{{ class..'_value ae_editform_field_value' }}">
           <ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>
           <pre class="script">
             var name   = name_prefix..'[attributes]['..field..']';
-            var params = {select: select[field], required: list.contains(required, field), precision: field_prec[field]};
+            var params = {
+               select:    select[field],
+               required:  list.contains(required, field),
+               precision: field_prec[field],
+               view:      field_view[field]
+            };
           
             var template = root..'/EditFormFields';
             var content  = wiki.template(template, [field_type[field], name, nil, params, type, template, prefix]);

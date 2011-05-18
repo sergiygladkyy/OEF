@@ -5,12 +5,14 @@
    var params = args[3] ?? {};
    var root   = args[4] ?? 'Template:Entities';
    var prefix = args[5] ?? 'default';
-   var fields = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var references = {}; 
    var basis_for  = {};
    var layout     = [];
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -41,14 +43,18 @@
          let kind = puid.kind;
       }
       
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ListForm ?? {};
       
-      let class  = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      let class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -62,8 +68,8 @@
   <thead>
     <tr>
       <th style="display: none;">ID</th>
-      <eval:foreach var="field" in="fields">
-        <th>{{ string.ToUpperFirst(field); }}</th>
+      <eval:foreach var="field" in="columns">
+        <th>{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
       </eval:foreach>
     </tr>
   </thead>
@@ -74,7 +80,7 @@
           <td style="display: none;">
             <span class="{{ class..'_item_id ae_item_id' }}" style="display: none;">{{ item._id }}</span>
           </td>
-          <eval:foreach var="field" in="fields">
+          <eval:foreach var="field" in="columns">
             <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
               <pre class="script">
                 var value  = '';
@@ -89,7 +95,11 @@
                    let value = item[field];
                 }
               
-                var tpl_params = {reference: references[field], precision: field_prec[field]};
+                var tpl_params = {
+                   reference: references[field],
+                   precision: field_prec[field],
+                   view:      field_view[field]
+                };
               
                 var template = root..'/ListFormFields';
                 var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);

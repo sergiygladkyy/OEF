@@ -13,11 +13,14 @@
    var field_type = data.field_type;
    var field_prec = data.field_prec;
    var field_use  = data.field_use[(item._folder == 1 ? 2 : 1)];
+   var field_view = data.field_view;
    var hierarchy  = data.hierarchy;
    var owners     = data.owners;
    var references = data.references;
+   var forms_view = data.forms_view;
    var params     = data.params ?? {};
    var htype      = hierarchy.type is num ? hierarchy.type : 0;
+   var columns    = forms_view.columns ?? fields;
 }}
 <tr class="{{ class..'_list_item ae_list_item'..(item._deleted != 0  ? ' ae_deleted_col' : '') }}">
   <eval:if test="item._id &gt; 0">
@@ -43,7 +46,7 @@
         <div class="oef_tree_desc"><nobr>{{ item['Description'] }}</nobr></div>
       </div>
     </td>
-    <eval:foreach var="field" in="fields">
+    <eval:foreach var="field" in="columns">
       <eval:if test="field != 'Description' && field != 'Parent'">
         <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
           <pre class="script">
@@ -63,7 +66,12 @@
             
             let params ..= {not_used: not_used};
             
-            var tpl_params = {reference: references[field], precision: field_prec[field], params: params};
+            var tpl_params = {
+               reference: references[field],
+               precision: field_prec[field],
+               view:      field_view[field],
+               params: params
+            };
             
             var template = root..'/ListFormFields';
             var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
@@ -79,6 +87,6 @@
     </eval:foreach>
   </eval:if>
   <eval:else>
-    <td colspan="{{ #fields }}">Wrong data</td>
+    <td colspan="{{ #columns }}">Wrong data</td>
   </eval:else>
 </tr>

@@ -8,8 +8,10 @@
    var fields = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var references = {};
    var reg_type   = '';
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -39,13 +41,18 @@
       else {
          let kind = puid.kind;
       }
+      
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let reg_type   = entities.getInternalConfiguration(kind..'.register_type', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ListForm ?? {};
       
-      let class  = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      let class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -62,9 +69,9 @@
       <th>Period</th>
       <th>Recorder</th>
       <th>Line</th>
-      <eval:foreach var="field" in="fields">
+      <eval:foreach var="field" in="columns">
         <eval:if test="field != 'Period'">
-          <th>{{ string.ToUpperFirst(field); }}</th>
+          <th>{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
         </eval:if>
       </eval:foreach>
     </tr>
@@ -98,7 +105,7 @@
           <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
             <span>{{ item._line }}</span>
           </td>
-          <eval:foreach var="field" in="fields">
+          <eval:foreach var="field" in="columns">
             <eval:if test="field != 'Period'">
               <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
                 <nobr>
@@ -115,7 +122,11 @@
                      let value = item[field];
                   }
                   
-                  var tpl_params = {reference: references[field], precision: field_prec[field]};
+                  var tpl_params = {
+                     reference: references[field],
+                     precision: field_prec[field],
+                     view:      field_view[field]
+                  };
                   
                   var template = root..'/ListFormFields';
                   var content  = wiki.template(template, [field_type[field], value, tpl_params, type, template, prefix]);
@@ -132,7 +143,7 @@
           </eval:foreach>
         </eval:if>
         <eval:else>
-          <td colspan="{{ #fields }}">Wrong data</td>
+          <td colspan="{{ 4 + #columns }}">Wrong data</td>
         </eval:else>
       </tr>
     </eval:foreach>

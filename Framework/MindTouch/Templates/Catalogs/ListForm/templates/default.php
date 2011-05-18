@@ -5,14 +5,16 @@
    var params = args[3] ?? {};
    var root   = args[4] ?? 'Template:Entities';
    var prefix = args[5] ?? 'default';
-   var fields = {};
+   var fields     = {};
    var field_type = {};
    var field_prec = {};
+   var field_view = {};
    var hierarchy  = {};
    var owners     = {};
    var references = {};
    var basis_for  = {};
    var layout     = [];
+   var forms_view = {};
    var kind   = '';
    var type   = puid.type;
    var list   = data.list;
@@ -43,17 +45,22 @@
       else {
          let kind = puid.kind;
       }
+      
+      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
       let field_type = entities.getInternalConfiguration(kind..'.field_type', type);
       let field_prec = entities.getInternalConfiguration(kind..'.field_prec', type);
-      let fields     = entities.getInternalConfiguration(kind..'.fields', type);
+      let field_view = entities.getInternalConfiguration(kind..'.field_view', type);
       let references = entities.getInternalConfiguration(kind..'.references', type);
       let hierarchy  = entities.getInternalConfiguration(kind..'.hierarchy', type);
       let owners     = entities.getInternalConfiguration(kind..'.owners', type);
       let basis_for  = entities.getInternalConfiguration(kind..'.basis_for', type);
       let layout     = entities.getInternalConfiguration(kind..'.layout', type);
+      let forms_view = entities.getInternalConfiguration(kind..'.forms_view', type);
+      let forms_view = forms_view.ListForm ?? {};
       
-      var htype  = hierarchy.type is num ? hierarchy.type : 0;
-      let class  = string.replace(kind, '.', '_')..'_'..type;
+      var columns = forms_view.columns ?? fields;
+      var htype   = hierarchy.type is num ? hierarchy.type : 0;
+      let class   = string.replace(kind, '.', '_')..'_'..type;
   }}
   <div class="{{ class..'_message systemmsg' }}" style="display: none;">
     <div class="inner">
@@ -67,14 +74,14 @@
   <thead>
     <tr>
       <th style="display: none;">ID</th>
-      <th>Description</th>
-      <eval:foreach var="field" in="fields">
+      <th>{{ field_view['Description']['synonim'] ?? 'Description' }}</th>
+      <eval:foreach var="field" in="columns">
         <eval:if test="field != 'Description' && (htype == 0 || field != 'Parent') && (#owners == 0 || field != 'OwnerId')">
           <eval:if test="field == 'OwnerType'">
             <th>Owner</th>
           </eval:if>
           <eval:else>
-            <th>{{ string.ToUpperFirst(field); }}</th>
+            <th>{{ field_view[field]['synonim'] ?? string.ToUpperFirst(field) }}</th>
           </eval:else>
         </eval:if>
       </eval:foreach>
@@ -98,7 +105,7 @@
               <div class="oef_desc"><nobr>{{ item['Description'] }}</nobr></div>
             </div>
           </td>
-          <eval:foreach var="field" in="fields">
+          <eval:foreach var="field" in="columns">
             <eval:if test="(field != 'Description' && (htype == 0 || field != 'Parent') && (#owners == 0 || field != 'OwnerId'))">
               <td onclick="{{ 'javascript:selectColumn(this, \''..class..'\');' }}">
                 <pre class="script">
@@ -110,7 +117,8 @@
                      var c_field_type = 'reference';
                      var tpl_params   = {
                         reference: {kind: kind, type: item[field]},
-                        precision: {}
+                        precision: {},
+                        view:      field_view[field]
                      };
                   }
                   else {
@@ -129,6 +137,7 @@
                      var tpl_params   = {
                         reference: references[field],
                         precision: field_prec[field],
+                        view:      field_view[field],
                         params: {default_value: defval}
                      };
                   }
