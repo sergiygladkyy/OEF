@@ -195,7 +195,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
       $db = $this->container->getDBManager($options);
       
       $db_map =& $this->conf['db_map'];
-      $wh_add = ($this->conf['hierarchy']['type'] == 2) ? " AND `".$db_map['folder']."`=1" : '';
+      $wh_add = ($this->conf['hierarchy']['type'] == 2) ? "`".$db_map['folder']."`=1" : '';
       
       if (isset($options['pkey']) && is_numeric($options['pkey']) && 0 < (int) $options['pkey'])
       {
@@ -217,7 +217,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
                continue;
             }
             
-            $query = "SELECT `".$db_map['pkey']."` FROM `".$db_map['table']."` WHERE `Parent`=".$row[1].$wh_add;
+            $query = "SELECT `".$db_map['pkey']."` FROM `".$db_map['table']."` WHERE `Parent`=".$row[1].($wh_add ? ' AND '.$wh_add : '');
             
             if (null === ($res = $db->executeQuery($query)))
             {
@@ -239,7 +239,7 @@ class CatalogsHierarchyModel extends CatalogsModel implements IHierarchyCModel
             }
          }
          
-         $wh_add .= " AND `".$db_map['pkey']."` NOT IN(".implode(',', $ids).")";
+         $wh_add .= ($wh_add ? ' AND ' : '')."`".$db_map['pkey']."` NOT IN(".implode(',', $ids).")";
       }
       
       $query = "SELECT `".$db_map['pkey']."`, `Description`, `".$db_map['deleted']."` FROM `".$db_map['table']."`".($wh_add ? ' WHERE '.$wh_add : '')." ORDER BY `Description` ASC";
