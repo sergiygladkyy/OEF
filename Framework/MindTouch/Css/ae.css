@@ -772,3 +772,10 @@ a.v2ddbox {
     padding: 0;
     text-align: center;
 }
+#close_cal {
+	padding: 0 3px;
+}
+#calBorder .calClose {
+	height: 2.1em;
+	padding: 2px 4px;
+}

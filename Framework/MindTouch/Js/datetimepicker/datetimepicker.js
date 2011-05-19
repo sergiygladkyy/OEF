@@ -388,8 +388,9 @@ function RenderCssCal(bNewCal) {
 
     vCalData=vCalData+"\n</table></td></tr>";
 
-
     //Time picker
+    vCalTime="\n<tr>\n<td align='center'>\n";
+    
     if (Cal.ShowTime) {
         var showHour;
         var ShowArrows=false;
@@ -401,7 +402,6 @@ function RenderCssCal(bNewCal) {
             HourCellWidth="10px";
         }
 
-        vCalTime="\n<tr>\n<td colspan='7' align='center'><center>\n";
         vCalTime="<table border='0' cellpadding='0' cellspacing='0' width='100%'><tr>";
         vCalTime="<td align='center'><table border='0' cellpadding='0' cellspacing='2'>\n<tr>\n<td height='5px' width='"+HourCellWidth+"px'>&nbsp;</td>\n";
 
@@ -430,22 +430,21 @@ function RenderCssCal(bNewCal) {
         if (ShowArrows && UseImageFiles) {
             vCalTime+="</td>\n<td align='center'><table cellspacing='0' cellpadding='0' style='line-height:0pt'><tr><td><img onmousedown='startSpin(\"Minute\", \"plus\");' onmouseup='stopSpin();' src='"+ImageRoot+"images/cal_plus.gif' width='13px' height='9px' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td></tr><tr><td><img onmousedown='startSpin(\"Minute\", \"minus\");' onmouseup='stopSpin();' src='"+ImageRoot+"images/cal_minus.gif' width='13px' height='9px' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td></tr></table>";
         }
-        vCalTime+="</td>\n<td align='right' valign='bottom' width='"+HourCellWidth+"px'>";
+        vCalTime+="</td></tr></table>";
     } else {
-        vCalTime+="\n<tr>\n<td colspan='7' align='right'>";
+        vCalTime+="&nbsp;";
     }
 
-    vCalTime+="</td></tr></table></td>";
-    vCalTime+="<td align='center' width='12px'>";
+    vCalTime+="</td><td align='center' width='12px' class='calClose'>";
 
     if (UseImageFiles) {
         vCalTime+="<img onmousedown='javascript:closewin(\"" + Cal.Ctrl + "\"); stopSpin();' src='"+ImageRoot+"images/cal_close.gif' width='16px' height='14px' onmouseover='changeBorder(this,0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'>";
     } else {
         vCalTime+="<span id='close_cal' title='close'onmousedown='javascript:closewin(\"" + Cal.Ctrl + "\");' onmouseover='changeBorder(this, 0)'onmouseout='changeBorder(this, 1)' style='border:1px solid white; font-family: Arial;font-size: 10pt;'><b>X</b></span>";
     }
-
+    
     vCalTime+="</td></tr></table>";
-    vCalTime+="</center>\n</td>\n</tr>";
+    vCalTime+="\n</td>\n</tr>";
     vCalTime+="\n</table>\n</span>";
     calHeight += 5;
 
