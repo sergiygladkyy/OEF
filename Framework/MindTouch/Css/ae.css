@@ -1,10 +1,6 @@
 .ae_current { background-color: #DEEDED !important; }
 .ae_deleted { color: #801020 !important; }
 .ae_deleted_col { background-color: #FFD0C0; }
-#calBorder table {border: 1px ridge black;}
-#calBorder td {border: 1px ridge black; line-height: 14px; margin: 0; padding: 2px 5px;}
-#calBorder td > table {border: 0 none !important;}
-#calBorder td td {border: 0 none !important;}
 
 td.ae_editform_field_name, td.ae_itemform_field_name {
 	width: 30%;
@@ -746,3 +742,33 @@ a.v2ddbox {
 }
 
 
+/********************************* Datetimepicker *****************************************/
+
+#calBorder table {border: 1px ridge #c0c0c0;}
+#calBorder td {border: 1px ridge #c0c0c0; border-top: 0 none; line-height: 14px; margin: 0; padding: 2px 5px;}
+#calBorder td > table {border: 0 none !important;}
+#calBorder td td {border: 0 none !important;}
+#calBorder td.monthSelector { border: 0 none !important; }
+#calBorder .monthSelector td { padding: 2px 1px; }
+#calBorder .monthSelector span { padding: 0 4px; }
+#calBorder input {
+    border: 1px solid #b0b0b0;
+    padding: 0 3px 0 2px;
+    text-align: center;
+}
+#calBorder table.weekDays {
+	border: 0 none;
+    border-collapse: separate;
+    border-spacing: 1px;
+}
+#calBorder .calTD .weekDayName {
+    color: #3F3F3F;
+    font-size: 11px;
+    font-weight: bold;
+    padding-top: 1px;
+    border: 1px solid white;
+    border-collapse: separate;
+    font-family: Arial,sans-serif !important;
+    padding: 0;
+    text-align: center;
+}

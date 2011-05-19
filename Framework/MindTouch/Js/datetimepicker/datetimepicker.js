@@ -25,7 +25,7 @@ var cnTop="0";//top coordinate of calendar span
 var xpos=0; // mouse x position
 var ypos=0; // mouse y position
 var calHeight=0; // calendar height
-var CalWidth=208;// calendar width
+var CalWidth=212;// calendar width
 var CellWidth=30;// width of day cell.
 var TimeMode=24;// TimeMode value. 12 or 24
 var StartYear=1990; //First Year in drop down year selection
@@ -40,22 +40,23 @@ var DateSeparator="-";//Date Separator, you can change it to "-" if you want.
 var ShowLongMonth=true;//Show long month name in Calendar header. example: "January".
 var ShowMonthYear=true;//Show Month and Year in Calendar header.
 var MonthYearColor="#cc0033";//Font Color of Month and Year in Calendar header.
-var WeekHeadColor="#18861B";//var WeekHeadColor="#18861B";//Background Color in Week header.
-var SundayColor="#C0F64F";//var SundayColor="#C0F64F";//Background color of Sunday.
-var SaturdayColor="#C0F64F";//Background color of Saturday.
+var WeekHeadColor="#ffffff";//var WeekHeadColor="#18861B";//Background Color in Week header.
+var SundayColor="#FFAAB0";//var SundayColor="#C0F64F";//Background color of Sunday.
+var SaturdayColor="#FFAAB0";//Background color of Saturday.
 var WeekDayColor="white";//Background color of weekdays.
 var FontColor="blue";//color of font in Calendar day cell.
-var TodayColor="#FFFF33";//var TodayColor="#FFFF33";//Background color of today.
-var SelDateColor = "#8DD53C";//var SelDateColor="#8DD53C";//Backgrond color of selected date in textbox.
-var YrSelColor="#cc0033";//color of font of Year selector.
+var TodayColor="#FFFF77";//var TodayColor="#FFFF33";//Background color of today.
+var SelDateColor = "#bdf57c";//var SelDateColor="#8DD53C";//Backgrond color of selected date in textbox.
+var YrSelColor="#303030";//color of font of Year selector.
+var YrSelBgColor="#ffeeff";
 var MthSelColor="#cc0033";//color of font of Month selector if "MonthSelector" is "arrow".
-var HoverColor="#E0FF38"; //color when mouse move over.
+var HoverColor="#ffccff"; //color when mouse move over.
 var ThemeBg="";//Background image of Calendar window.
 var CalBgColor="";//Backgroud color of Calendar window.
 var PrecedeZero=true;//Preceding zero [true|false]
 var MondayFirstDay=true;//true:Use Monday as first day; false:Sunday as first day. [true|false]  //added in version 1.7
 var UseImageFiles=false;//Use image files with "arrows" and "close" button
-var ImageRoot="";
+var ImageRoot="/ext/OEF/Framework/MindTouch/Js/datetimepicker/";
 
 //use the Month and Weekday in your preferred language.
 
@@ -244,9 +245,9 @@ function RenderCssCal(bNewCal) {
     if (ThemeBg==""){
         CalBgColor="bgcolor='"+WeekDayColor+"'"
     }
-    vCalHeader="<table "+CalBgColor+" background='"+ThemeBg+"' border='1' cellpadding='3' cellspacing='1' width='200px' valign='top'>\n";
+    vCalHeader="<table "+CalBgColor+" background='"+ThemeBg+"' border='0' cellpadding='3' cellspacing='1' width='200px' valign='top'>\n";
     //Table for Month & Year Selector
-    vCalHeader+="<tr>\n<td colspan='7'>\n<table border='0' width='200px' cellpadding='0' cellspacing='0'>\n<tr>\n";
+    vCalHeader+="<tr>\n<td colspan='7' class='monthSelector' style='background-color:"+YrSelBgColor+";'>\n<table border='0' width='200px' cellpadding='0' cellspacing='0'>\n<tr>\n";
     //******************Month and Year selector in dropdown list************************
     if (Cal.Scroller=="DROPDOWN") {
         vCalHeader+="<td align='center'><select name=\"MonthSelector\" onChange=\"javascript:Cal.SwitchMth(this.selectedIndex);RenderCssCal();\">\n";
@@ -272,18 +273,18 @@ function RenderCssCal(bNewCal) {
         calHeight += 30;
     } else if (Cal.Scroller=="ARROW") {
         if (UseImageFiles) {
-            vCalHeader+="<td><img onmousedown='javascript:Cal.DecYear();RenderCssCal();' src='"+ImageRoot+"images/cal_fastreverse.gif' width='13px' height='9' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td>\n";//Year scroller (decrease 1 year)
-            vCalHeader+="<td><img onmousedown='javascript:Cal.DecMonth();RenderCssCal();' src='"+ImageRoot+"images/cal_reverse.gif' width='13px' height='9' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td>\n";//Month scroller (decrease 1 month)
+            vCalHeader+="<td><img onmousedown='javascript:Cal.DecYear();RenderCssCal();' src='"+ImageRoot+"images/cal_fastreverse.gif' width='13px' height='9' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'></td>\n";//Year scroller (decrease 1 year)
+            vCalHeader+="<td><img onmousedown='javascript:Cal.DecMonth();RenderCssCal();' src='"+ImageRoot+"images/cal_reverse.gif' width='13px' height='9' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'></td>\n";//Month scroller (decrease 1 month)
             vCalHeader+="<td width='70%' class='calR'><font color='"+YrSelColor+"'>"+Cal.GetMonthName(ShowLongMonth)+" "+Cal.Year+"</font></td>\n"//Month and Year
-            vCalHeader+="<td><img onmousedown='javascript:Cal.IncMonth();RenderCssCal();' src='"+ImageRoot+"images/cal_forward.gif' width='13px' height='9' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td>\n";//Month scroller (increase 1 month)
-            vCalHeader+="<td><img onmousedown='javascript:Cal.IncYear();RenderCssCal();' src='"+ImageRoot+"images/cal_fastforward.gif' width='13px' height='9' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'></td>\n";//Year scroller (increase 1 year)
+            vCalHeader+="<td><img onmousedown='javascript:Cal.IncMonth();RenderCssCal();' src='"+ImageRoot+"images/cal_forward.gif' width='13px' height='9' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'></td>\n";//Month scroller (increase 1 month)
+            vCalHeader+="<td><img onmousedown='javascript:Cal.IncYear();RenderCssCal();' src='"+ImageRoot+"images/cal_fastforward.gif' width='13px' height='9' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'></td>\n";//Year scroller (increase 1 year)
             calHeight += 22;
         } else {
-            vCalHeader+="<td><span id='dec_year' title='reverse year' onmousedown='javascript:Cal.DecYear();RenderCssCal();' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white; color:"+YrSelColor+"'>&lt;&lt;</span>&nbsp;</td>";//Year scroller (decrease 1 year)
-            vCalHeader+="<td><span id='dec_month' title='reverse month' onmousedown='javascript:Cal.DecMonth();RenderCssCal();' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'>&lt;</span></td>\n";//Month scroller (decrease 1 month)
+            vCalHeader+="<td><span id='dec_year' title='reverse year' onmousedown='javascript:Cal.DecYear();RenderCssCal();' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "; color:"+YrSelColor+"'>&lt;&lt;</span>&nbsp;</td>";//Year scroller (decrease 1 year)
+            vCalHeader+="<td><span id='dec_month' title='reverse month' onmousedown='javascript:Cal.DecMonth();RenderCssCal();' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'>&lt;</span></td>\n";//Month scroller (decrease 1 month)
             vCalHeader+="<td width='70%' class='calR'><font color='"+YrSelColor+"'>"+Cal.GetMonthName(ShowLongMonth)+" "+Cal.Year+"</font></td>\n"//Month and Year
-            vCalHeader+="<td><span id='inc_month' title='forward month' onmousedown='javascript:Cal.IncMonth();RenderCssCal();' onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white'>&gt;</span></td>\n";//Month scroller (increase 1 month)
-            vCalHeader+="<td>&nbsp;<span id='inc_year' title='forward year' onmousedown='javascript:Cal.IncYear();RenderCssCal();'  onmouseover='changeBorder(this, 0)' onmouseout='changeBorder(this, 1)' style='border:1px solid white; color:"+YrSelColor+"'>&gt;&gt;</span></td>\n";//Year scroller (increase 1 year)
+            vCalHeader+="<td><span id='inc_month' title='forward month' onmousedown='javascript:Cal.IncMonth();RenderCssCal();' onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "'>&gt;</span></td>\n";//Month scroller (increase 1 month)
+            vCalHeader+="<td>&nbsp;<span id='inc_year' title='forward year' onmousedown='javascript:Cal.IncYear();RenderCssCal();'  onmouseover='changeBorder(this, 0, YrSelBgColor)' onmouseout='changeBorder(this, 1, YrSelBgColor)' style='border:1px solid " + YrSelBgColor + "; color:"+YrSelColor+"'>&gt;&gt;</span></td>\n";//Year scroller (increase 1 year)
             calHeight += 22;
         }
     }
@@ -300,14 +301,14 @@ function RenderCssCal(bNewCal) {
 
     //Week day header
 
-    vCalHeader+="<tr><td colspan=\"7\"><table cellspacing=1><tr>\n";
+    vCalHeader+="<tr><td colspan=\"7\"><table class='weekDays'><tr>\n";
     var WeekDayName=new Array();//Added version 1.7
     if (MondayFirstDay==true)
         WeekDayName=WeekDayName2;
     else
         WeekDayName=WeekDayName1;
     for (i=0;i<7;i++) {
-        vCalHeader+="<td bgcolor="+WeekHeadColor+" width='"+CellWidth+"px' class='calTD'><font color='white'>"+WeekDayName[i].substr(0,WeekChar)+"</font></td>\n";
+        vCalHeader+="<td bgcolor="+WeekHeadColor+" width='"+CellWidth+"px' class='calTD'><font class='weekDayName' color='white'>"+WeekDayName[i].substr(0,WeekChar)+"</font></td>\n";
     }
 
     calHeight += 19;
@@ -888,11 +889,12 @@ function changeBorder(element, col, oldBgColor) {
 
     else {
         if(oldBgColor) {
-            element.style.background = oldBgColor;
+            element.style.background  = oldBgColor;
+            element.style.borderColor = oldBgColor;
         } else {
-            element.style.background = "white";
+            element.style.background  = "white";
+            element.style.borderColor = "white";
         }
-        element.style.borderColor = "white";
         element.style.cursor = "auto";
     }
 }
