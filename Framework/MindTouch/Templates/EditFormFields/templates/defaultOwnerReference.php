@@ -2,6 +2,8 @@
     var name    = args[0];
     var value   = args[1];
     var params  = args[2];
+    var uid     = params.uid;
+    var id      = params.id &gt; 0 ? params.id : 0;
     var select  = params.select ?? {};
     var attrs   = params.attrs ?? {};
     var owners  = params.owners ?? {};
@@ -37,7 +39,7 @@
     <eval:foreach var="owner" in="owners">
       <tr>
         {{ 
-           &lt;td class="oef_edit_box_item" uid="catalogs.TestHierarchy" id="1" otype=(owner)&gt;
+           &lt;td class="oef_edit_box_item" uid=(uid) id=(id) otype=(owner)&gt;
              owner;
            &lt;/&gt;;
         }}

@@ -237,6 +237,8 @@ function oefEditBox ()
 			switch (node.nodeName)
 			{
 				case 'SELECT':
+					if (node.selectedIndex < 0) break;
+					
 					var otype = params['otype'];
 					var oid   = node.options[node.selectedIndex].value;
 					var text  = node.options[node.selectedIndex].text;

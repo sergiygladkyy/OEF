@@ -133,6 +133,8 @@
               var f_name = 'Owner';
               var f_type = 'OwnerReference';
               var params = {
+                 uid:       uid,
+                 id:        item._id,
                  owners:    owners,
                  select:    select[field],
                  required:  list.contains(required, field),
