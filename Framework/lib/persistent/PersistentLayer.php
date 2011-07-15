@@ -4101,10 +4101,11 @@ class PersistentLayer
             {
                $q .= ', `'.$db_map[$type]['folder'].'` tinyint(1) NOT NULL default 0';
             }
-         }
-         elseif ($kind == 'documents')
-         {
-            $q .= ', `'.$db_map[$type]['post'].'` tinyint(1) NOT NULL default 0';
+         
+            if ($kind == 'documents')
+            {
+               $q .= ', `'.$db_map[$type]['post'].'` tinyint(1) NOT NULL default 0';
+            }
          }
          elseif ($kind == 'information_registry')
          {
