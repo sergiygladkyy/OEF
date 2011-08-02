@@ -222,4 +222,62 @@
   <eval:if test="item._id &gt; 0">
     {{ &lt;script type="text/javascript"&gt;" generateActionsMenu('."..class.."_actions', '"..kind.."', '"..type.."', "..item._id..", {print: "..(#layout > 0 ? '\''..Json.Emit(layout)..'\'' : 'false').."});"&lt;/script&gt; }}
   </eval:if>
+  <eval:if test="#owners &gt; 0">
+    {{ 
+       &lt;script type="text/javascript"&gt;"
+          /**
+           * Add listeners
+           */
+          Context.addListener('"..js_uid.."_start_process', onBeforeStandardProcess_"..js_uid..");
+
+          /**
+           * Called before standard responce process
+           */
+          function onBeforeStandardProcess_"..js_uid.."(params)
+          {
+             if (params['status'] == true) return;
+             
+             if (!params['errors'] || !params['errors']['OwnerId']) return;
+             
+             if (!params['errors']['OwnerType'])
+             {
+                params['errors']['OwnerType'] = params['errors']['OwnerId'];
+             }
+             else
+             {
+                if (typeof params['errors']['OwnerType'] != 'object')
+                {
+                   params['errors']['OwnerType'] = [params['errors']['OwnerType']];
+                }
+                
+                var find, owner_type = params['errors']['OwnerType'];
+                
+                if (typeof params['errors']['OwnerId'] != 'object')
+                {
+                   params['errors']['OwnerId'] = [params['errors']['OwnerId']];
+                }
+                
+                for (var i in params['errors']['OwnerId'])
+                {
+                   var find = false;
+                   
+                   for (var j in owner_type)
+                   {
+                      if (owner_type[j] == params['errors']['OwnerId'][i])
+                      {
+                         find = true;
+                         
+                         break;
+                      }
+                   }
+                   
+                   if (!find) params['errors']['OwnerType'].push(params['errors']['OwnerId'][i]);
+                }
+             }
+             
+             delete params['errors']['OwnerId'];
+          }
+       "&lt;/script&gt;
+    }}
+  </eval:if>
 </eval:else>

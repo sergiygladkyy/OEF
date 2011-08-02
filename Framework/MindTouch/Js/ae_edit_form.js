@@ -441,6 +441,8 @@ function processObjectResponse(data, status, options)
 			var m_data = data[main_kind][main_type];
 			var msg = '';
 			
+			Context.notify(main_kind + '_' + main_type + '_start_process', m_data);
+			
 			/* Check object result */
 			
 			if (m_data['status'] != true) // Print main errors
