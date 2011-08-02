@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+	<item title="Catalogs" url="">
+	    <item title="Counteragents" url="%root_path%/Catalog_Counteragents" />
+		<item title="Employees"     url="%root_path%/Catalog_Employees" />
+		<item title="Learners"      url="%root_path%/Catalog_Learners" />
+		<item title="Rooms"         url="%root_path%/Catalog_Rooms" />
+		<item title="Course Groups" url="%root_path%/Catalog_CourseGroups" />
+		<item title="Courses"       url="%root_path%/Catalog_Courses" />
+	</item>
+	<item title="Documents" url="">
+	    <item title="Price List"            url="%root_path%/Document_PriceList" />
+	    <item title="Application Form"      url="%root_path%/Document_ApplicationForm" />
+	    <item title="Course Event"          url="%root_path%/Document_CourseEvent" />
+	    <item title="Learners Registration" url="%root_path%/Document_LearnersRegistration" />
+	    <item title="PO"                    url="%root_path%/Document_PO" />
+	    <item title="Invoice"               url="%root_path%/Document_Invoice" />
+	</item>
+	<item title="Reports" url="">
+	</item>
+	<item title="Other" url="">
+	    <item title="Course Instructors" url="%root_path%/CourseInstructors" />
+		<!--<item title="Constants"    url="%root_path%/Constants" />-->
+	    <item title="Delete Marked For Deletion" url="%root_path%/Delete_Marked_For_Deletion" />
+	</item>
+</menu>
