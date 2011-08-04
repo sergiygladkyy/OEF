@@ -488,6 +488,11 @@ class ModulesManager
                }
             }
             
+            if ($module_type == 'forms')
+            {
+               $code .= "\$dispatcher->connect('".$kind.'.'.$type.'.'.$module_type.'.'.$module_name.".onCustomEvent', array('".$classname."', 'onCustomEvent'));\n\n";
+            }
+            
             // Add tabular events
             if (in_array($kind, self::$object_types))
             {
@@ -515,6 +520,33 @@ class ModulesManager
             $code .= "class ".$classname."\n{\n   ";
             $code .= "protected static \$templates_dir = '".self::$template_dir.$kind.'/'.$type."/';\n   \n   ";
             $code .= "protected static \$layout_dir    = '".self::$layout_dir.  $kind.'/'.$type."/';\n   \n   ";
+            
+            if ($module_type == 'forms' && !in_array('onCustomEvent', $matches[1]))
+            {
+               $code .= <<<OnCustomEvent
+/**
+    * Process custom event
+    * 
+    * @param object \$event
+    * @return void
+    */
+   public static function onCustomEvent(\$event)
+   {
+      \$params = \$event['parameters'];
+      
+      if (!isset(\$params['eventName']) || !is_callable(self, \$params['eventName']))
+      {
+         return;
+      }
+      
+      call_user_func(array(self, \$params['eventName']), \$event);
+   }
+   
+   
+OnCustomEvent;
+;
+            }
+            
             $code .= str_replace("\n", "\n   ", $content)."\n}";
          }
          elseif ($res === false)

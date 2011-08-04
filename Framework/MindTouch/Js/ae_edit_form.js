@@ -1072,13 +1072,9 @@ function oeEventDispatcher()
 		var retval   = false;
 		var callback = this.getCallback(eventName);
 		
-		if (callback === null)
-		{
-			displayMessage(uid.replace(/\./g, '_'), "Unknow form event " + eventName, false);
-			return false;
-		}
-		
 		var formData = jQuery('#' + uid.replace(/\./g, '_') + '_item').formSerialize();
+		
+		if (callback === null) params['eventName'] = eventName;
 		
 		jQuery.ajax({
 		    url: '/Special:OEController',
@@ -1087,7 +1083,7 @@ function oeEventDispatcher()
 		    data: ({
 		    	action: 'notifyFormEvent',
 		    	uid:   uid,
-		    	event: eventName,
+		    	event: (callback === null ? 'onCustomEvent' : eventName),
 		    	formName: formName,
 		    	formData: formData,
 		    	parameters: params,
@@ -1105,6 +1101,12 @@ function oeEventDispatcher()
 					}
 					displayMessage(uid.replace(/\./g, '_'), msg, false);
 				}
+				else if (callback === null)
+				{
+					Context.notify(eventName + 'Response', {uid: uid, data: data['result']});
+					
+					retval = true;
+				}
 				else
 				{
 					retval = callback.call(new oeEventDispatcher(), uid, data['result']);
@@ -1113,7 +1115,6 @@ function oeEventDispatcher()
 		    error: function (XMLHttpRequest, textStatus, errorThrown)
 		    {
 				alert('Request error');
-				;
 		    }
 		});
 		
@@ -1138,7 +1139,7 @@ function oeEventDispatcher()
 				return null;
 		}
 	};
-    
+	
 	/**
 	 * Process response to event 'onFormUpdateRequest'
 	 * 
