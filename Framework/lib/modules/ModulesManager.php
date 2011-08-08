@@ -534,12 +534,12 @@ class ModulesManager
    {
       \$params = \$event['parameters'];
       
-      if (!isset(\$params['eventName']) || !is_callable(self, \$params['eventName']))
+      if (!isset(\$params['eventName']) || !is_callable('self', \$params['eventName']))
       {
          return;
       }
       
-      call_user_func(array(self, \$params['eventName']), \$event);
+      call_user_func(array('self', \$params['eventName']), \$event);
    }
    
    

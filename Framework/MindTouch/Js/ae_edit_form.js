@@ -1103,7 +1103,7 @@ function oeEventDispatcher()
 				}
 				else if (callback === null)
 				{
-					Context.notify(eventName + 'Response', {uid: uid, data: data['result']});
+					Context.notify(eventName + 'Response', {uid: uid, response: data['result']});
 					
 					retval = true;
 				}

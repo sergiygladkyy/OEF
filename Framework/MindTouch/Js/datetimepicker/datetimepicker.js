@@ -465,7 +465,7 @@ function RenderCssCal(bNewCal) {
     funcCalback+=" CalId.value+=' '+Cal.getShowHour()+':'+Cal.Minutes;\n";
     funcCalback+=" if (Cal.ShowSeconds)\n  CalId.value+=':'+Cal.Seconds;\n";
     funcCalback+=" if (TimeMode==12)\n  CalId.value+=''+Cal.getShowAMorPM();\n";
-    funcCalback+="}\n winCal.style.visibility='hidden';\n}\n";
+    funcCalback+="}\n winCal.style.visibility='hidden';\nCalId.onchange();\n}\n";
 
 
     // determines if there is enough space to open the cal above the position where it is called
