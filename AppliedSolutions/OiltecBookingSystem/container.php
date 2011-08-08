@@ -27,7 +27,8 @@ $_conf = array(
       'options'   => array(
          'modules_dir'  => '../AppliedSolutions/OiltecBookingSystem/Modules/',
          'cache_dir'    => '../AppliedSolutions/OiltecBookingSystem/Cache/',
-         'template_dir' => '../AppliedSolutions/OiltecBookingSystem/Templates/'
+         'template_dir' => '../AppliedSolutions/OiltecBookingSystem/Templates/',
+         'layout_dir'   => '../AppliedSolutions/OiltecBookingSystem/Layout/'
       )
    ),
    
