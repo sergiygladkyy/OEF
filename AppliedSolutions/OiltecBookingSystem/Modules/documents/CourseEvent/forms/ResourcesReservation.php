@@ -125,7 +125,12 @@ function onChangeCourse($event)
       $schedule[$key]['Instructor']   = $instructor;
    }
    
-   $html = self::include_template('schedule', array('kind' => 'documents', 'type' => 'CourseEvent', 'schedule' => $schedule));
+   $html = self::include_template('schedule', array(
+      'kind'  => 'documents',
+      'type'  => 'CourseEvent',
+      'owner' => (empty($doc['_id']) ? 0 : $doc['_id']),
+      'schedule' => $schedule
+   ));
    
    $event->setReturnValue(array('type' => 'html', 'data' => $html));
 }
@@ -152,12 +157,15 @@ function onScheduleItemUpdate($event)
    }
    
    $item = $formData['aeform']['documents']['CourseEvent']['attributes']['tabulars']['Schedule'][$index];
+   $doc  = $formData['aeform']['documents']['CourseEvent']['attributes']['attributes'];
+   
+   $doc_id = empty($doc['_id']) ? 0 : $doc['_id'];
    
    $event->setReturnValue(array(
       'type' => 'array',
       'data' => array(
          'index' => $index,
-         'html'  => self::generateScheduleItem($item, $index)
+         'html'  => self::generateScheduleItem($item, $index, $doc_id)
       )
    ));
 }
@@ -168,12 +176,13 @@ function onScheduleItemUpdate($event)
 
 /**
  * Generate edit form for tabular section Schedule record
- *  
+ * 
  * @param array $item  - attributes
  * @param int   $index - unique index
+ * @param int   $owner - owner id
  * @return string - HTML
  */
-function generateScheduleItem($item, $index)
+function generateScheduleItem($item, $index, $owner = 0)
 {
    $room_recs = array();
    $inst_recs = array();
@@ -232,6 +241,7 @@ function generateScheduleItem($item, $index)
       'index'     => $index,
       'kind'      => 'documents',
       'type'      => 'CourseEvent',
+      'owner'     => $owner,
       'options'   => $options,
       'ts_from'   => $ts_from, 
       'ts_to'     => $ts_to,

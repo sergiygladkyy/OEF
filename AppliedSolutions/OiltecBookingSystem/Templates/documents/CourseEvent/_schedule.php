@@ -1,19 +1,20 @@
 <script type="text/javascript">
     var options = {};
+    var win_map = {};
 </script>
 
 <h3>Schedule</h3>
 <?php $i = 0; ?>
 <?php foreach ($schedule as $item): ?>
 <div class="schedule_item_container">
-  <?php echo self::generateScheduleItem($item, $i++) ?>
+  <?php echo self::generateScheduleItem($item, $i++, $owner) ?>
 </div>
 <?php endforeach; ?>
 
 <script type="text/javascript">
 	var t_wins  = {};
 	var current = null;
-
+	
 	jQuery(document).mouseup(function(e){
 		if (current === null) return;
 
@@ -225,6 +226,8 @@
 		}
 
 		t_wins[index]['first_cell'] = first_cell;
+
+		updateWinMap(index, first_cell, last_cell);
 	}
 
 	/**
@@ -338,4 +341,148 @@
 
 		jQuery(item).find('.current_time_window').bind('mousedown', function(e) { onActivateTimeWindow(e, index); });	
 	}
+
+
+	/**
+	 * Mark selected in current items
+	 *
+	 * @return void
+	 */
+	function onWinMapUpdated()
+	{
+		var res = jQuery('.schedule_item_container .schedule_item');
+
+		if (res.size() < 2) return;
+
+		res.each(function(i) {
+			jQuery(this).find('.grid').each(function(i){
+				if (jQuery(this).hasClass('selected_in_other_items'))
+					jQuery(this).removeClass('selected_in_other_items');
+			});
+			
+			var date = jQuery(this).find('.schedule_date').attr('value');
+
+			if (date)
+			{
+				var room  = jQuery(this).find('.schedule_room option:selected').attr('value');
+				var inst  = jQuery(this).find('.schedule_instructor option:selected').attr('value');
+				var index = jQuery(this).attr('index');
+
+				if (win_map[date])
+				{
+					if (win_map[date]['room'] && win_map[date]['room'][room])
+					{
+						for (var ind in win_map[date]['room'][room])
+						{
+							if (index <= ind) continue;
+
+							var params = win_map[date]['room'][room][ind];
+
+							if (params['beg'] === undefined || params['end']=== undefined)
+							{
+								continue;
+							}
+
+							for (var n = params['beg']; n <= params['end']; n++)
+							{
+								jQuery(this).find('*[grid="room"] *[cell="' + n + '"]').addClass('selected_in_other_items');
+							}
+						}
+					}
+
+					if (win_map[date]['instructor'] && win_map[date]['instructor'][inst])
+					{
+						for (var ind in win_map[date]['instructor'][inst])
+						{
+							if (index <= ind) continue;
+
+							var params = win_map[date]['instructor'][inst][ind];
+							
+							if (params['beg'] === undefined || params['end']=== undefined)
+							{
+								continue;
+							}
+							
+							for (var n = params['beg']; n <= params['end']; n++)
+							{
+								jQuery(this).find('*[grid="instructor"] *[cell="' + n + '"]').addClass('selected_in_other_items');
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+
+	/**
+	 * Update win_map
+	 *
+	 * @param string index   - current item index
+	 * @param int first_cell
+	 * @param int last_cell
+	 * @return void
+	 */
+	function updateWinMap(index, first_cell, last_cell)
+	{
+		var item = jQuery('#schedule_item_' + index).get(0);
+		var date = jQuery(item).find('.schedule_date').attr('value');
+
+		if (!date) return;
+		
+		var room  = jQuery(item).find('.schedule_room option:selected').attr('value');
+		var inst  = jQuery(item).find('.schedule_instructor option:selected').attr('value');
+
+		if (!win_map[date]) win_map[date] = {};
+		if (!win_map[date]['room'])
+		{
+			win_map[date]['room'] = {};
+			win_map[date]['room'][room] = {};
+		}
+		else if (!win_map[date]['room'][room])
+		{
+			win_map[date]['room'][room] = {};
+		}
+
+		win_map[date]['room'][room][index] = {beg: first_cell, end: last_cell};
+
+		if (!win_map[date]) win_map[date] = {};
+		if (!win_map[date]['instructor'])
+		{
+			win_map[date]['instructor'] = {};
+			win_map[date]['instructor'][inst] = {};
+		}
+		else if (!win_map[date]['instructor'][inst])
+		{
+			win_map[date]['instructor'][inst] = {};
+		}
+
+		win_map[date]['instructor'][inst][index] = {beg: first_cell, end: last_cell};
+
+
+		onWinMapUpdated();
+	}
+
+	/**
+	 * Remove all records for specified item
+	 *
+	 * @param string index - item index
+	 * @return void 
+	 */
+	function clearWinMap(index)
+	{
+		for (var date in win_map)
+		{
+			for (var type in win_map[date])
+			{
+				for (var id in win_map[date][type])
+				{
+					if (win_map[date][type][id][index])
+						delete win_map[date][type][id][index];
+				}
+			}
+		}
+	}
+	
+	onWinMapUpdated();
 </script>

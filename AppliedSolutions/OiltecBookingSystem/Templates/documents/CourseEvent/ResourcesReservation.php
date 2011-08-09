@@ -66,7 +66,14 @@
     </tr>
     <tr>
       <td colspan="2" id="schedule_container">
-        <?php echo self::include_template('schedule', array('kind' => $kind, 'type' => $type, 'schedule' => $schedule)) ?>
+        <?php echo self::include_template('schedule', array('kind' => $kind, 'type' => $type, 'owner' => (isset($attrs['_id']) ? $attrs['_id'] : 0), 'schedule' => $schedule)) ?>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" class="ae_submit">
+        <input type="button" command="save_and_close" class="ae_command" value="Save and Close">
+        <input type="button" command="save" class="ae_command" value="Save">
+        <input type="button" command="cancel" class="ae_command" value="Close">
       </td>
     </tr>
   </tbody>
@@ -180,6 +187,8 @@
 		}
 
 		repaintTimeWindow(index, new_beg, new_end);
+
+		updateWinMap(index, new_beg, new_end);
 	}
 
 	/**
@@ -252,6 +261,8 @@
 		}
 
 		jQuery('#schedule_item_' + params.response.data.index).parent().html(params.response.data.html);
+
+		onWinMapUpdated();
 	}
 </script>
 
@@ -324,6 +335,9 @@
     
     .busy {
         background-color: #ffccff !important;
+    }
+    .schedule_item .selected_in_other_items {
+        background-color: #ffff77;
     }
     
     .time_window {

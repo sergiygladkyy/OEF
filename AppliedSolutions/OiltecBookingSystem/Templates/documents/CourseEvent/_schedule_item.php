@@ -3,7 +3,7 @@
    $tprefix = 'aeform['.$kind.']['.$type.'][attributes][tabulars][Schedule]['.$index.']';
    $n = 0;
 ?>
-<table id="schedule_item_<?php echo $index ?>" class="schedule_item">
+<table id="schedule_item_<?php echo $index ?>" class="schedule_item" index="<?php echo $index ?>">
 <tbody>
   <tr>
     <td class="no_border label">Duration:</td>
@@ -68,7 +68,7 @@
         $t_win_class = 'current_time_window';
      }
   ?>
-  <tr class="first_row">
+  <tr class="first_row" grid="room">
     <td class="no_border small_padding_label label">Room:</td>
     <td class="small_padding">
       <?php
@@ -92,6 +92,11 @@
        {
           foreach ($room_recs as $rec)
           {
+             if ($rec['_rec_type'] == $type && $rec['_rec_id'] == $owner)
+             {
+                continue;
+             }
+             
              $b_beg = strtotime($rec['DateTimeFrom']);
              $b_end = strtotime($rec['DateTimeTo']);
              
@@ -110,7 +115,7 @@
        
        for ($i = 0; $i < $n; $i++)
        {
-          $html = '<td cell="'.$i.'" class="small_padding'.(empty($busy[$i]) ? '' : ' busy');
+          $html = '<td cell="'.$i.'" class="grid small_padding'.(empty($busy[$i]) ? '' : ' busy');
           
           if ($i == $win_beg)
           {
@@ -135,7 +140,7 @@
        }
     ?>
   </tr>
-  <tr class="last_row">
+  <tr class="last_row" grid="instructor">
     <td class="no_border small_padding_label label">Instructor:</td>
     <td class="small_padding">
       <?php
@@ -159,6 +164,11 @@
        {
           foreach ($inst_recs as $rec)
           {
+             if ($rec['_rec_type'] == $type && $rec['_rec_id'] == $owner)
+             {
+                continue;
+             }
+             
              $b_beg = strtotime($rec['DateTimeFrom']);
              $b_end = strtotime($rec['DateTimeTo']);
              
@@ -177,7 +187,7 @@
        
        for ($i = 0; $i < $n; $i++)
        {
-          $html = '<td cell="'.$i.'" class="small_padding'.(empty($busy[$i]) ? '' : ' busy');
+          $html = '<td cell="'.$i.'" class="grid small_padding'.(empty($busy[$i]) ? '' : ' busy');
           
           if ($i == $win_beg)
           {
@@ -212,10 +222,32 @@
 
 	options[<?php echo $index?>] = {};
 	options[<?php echo $index?>]['time_from'] = <?php $arr = explode(':', $options['time_from']); echo $arr[0]*3600 + $arr[1]*60; ?>;
-	options[<?php echo $index?>]['time_to'] = <?php $arr = explode(':', $options['time_to']); echo $arr[0]*3600 + $arr[1]*60; ?>;
-	options[<?php echo $index?>]['step'] = <?php echo $step ?>;
-	options[<?php echo $index?>]['cells'] = <?php echo $n - 1 ?>;
+	options[<?php echo $index?>]['time_to']   = <?php $arr = explode(':', $options['time_to']); echo $arr[0]*3600 + $arr[1]*60; ?>;
+	options[<?php echo $index?>]['step']      = <?php echo $step ?>;
+	options[<?php echo $index?>]['cells']     = <?php echo $n - 1 ?>;
+
+	clearWinMap(<?php echo $index?>);
+	
+<?php 
+   if ($d_value && $ts_from && $ts_to)
+   {
+      $js = "if (!win_map['".$d_value."']) win_map['".$d_value."'] = {};\n";
+      
+      if (!empty($item['Room']))
+      {
+         $js .= "if (!win_map['".$d_value."']['room']) win_map['".$d_value."']['room'] = {".$item['Room'].": {}};\n";
+         $js .= "else if (!win_map['".$d_value."']['room']['".$item['Room']."']) win_map['".$d_value."']['room']['".$item['Room']."'] = {};\n";
+         $js .= "win_map['".$d_value."']['room']['".$item['Room']."']['".$index."'] = {beg: ".$win_beg.", end: ".$win_end."};\n";
+      }
+      
+      if (!empty($item['Instructor']))
+      {
+         $js .= "if (!win_map['".$d_value."']['instructor']) win_map['".$d_value."']['instructor'] = {".$item['Instructor'].": {}};\n";
+         $js .= "else if (!win_map['".$d_value."']['instructor']['".$item['Instructor']."']) win_map['".$d_value."']['instructor']['".$item['Instructor']."'] = {};\n";
+         $js .= "win_map['".$d_value."']['instructor']['".$item['Instructor']."']['".$index."'] = {beg: ".$win_beg.", end: ".$win_end."};\n";
+      }
+      
+      echo $js;
+   }
+?>
 </script>
-<pre><?php //print_r($options); ?></pre>
-<pre><?php //print_r($room_recs); ?></pre>
-<pre><?php //print_r($inst_recs); ?></pre>
