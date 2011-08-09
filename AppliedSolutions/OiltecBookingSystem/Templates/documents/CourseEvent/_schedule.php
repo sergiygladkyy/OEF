@@ -4,14 +4,33 @@
 </script>
 
 <h3>Schedule</h3>
-<?php $i = 0; ?>
+<div id="schedule_edit_block">
+<?php $i = 0 ?>
 <?php foreach ($schedule as $item): ?>
-<div class="schedule_item_container">
-  <?php echo self::generateScheduleItem($item, $i++, $owner) ?>
-</div>
+  <div id="schedule_<?php echo $i ?>_item" class="tabular_item schedule_item_container">
+    <?php echo self::generateScheduleItem($item, $i++, $owner) ?>
+  </div>
 <?php endforeach; ?>
+</div>
+<?php if ($i > 0): ?>
+<div style="margin: 25px 10px 15px 10px;">
+  <a href="#" id="AddScheduleItem" class="green_link" onclick="addScheduleItem(); return false;">
+     add new schedule item
+  </a>
+</div>
+<?php endif; ?>
 
+<?php    
+   $template  = '<div id="schedule_%%i%%_item" class="schedule_item_container">'.
+   $template .= self::generateScheduleItem(array(), '%%i%%', $owner).'</div>';
+   
+   $template = str_replace(array(chr(0), chr(9), chr(10), chr(11), chr(13)), ' ', $template);
+   $template = str_replace(array("/script", "'") , array("/%%script%%", "\'"), $template);
+?>
 <script type="text/javascript">
+	ae_index['documents_CourseEvent_tabulars_Schedule'] = <?php echo $i - 1 ?>;
+	ae_template['documents_CourseEvent_tabulars_Schedule'] = '<?php echo $template ?>';
+
 	var t_wins  = {};
 	var current = null;
 	
@@ -257,9 +276,18 @@
 
 		date_to = new Date(p_date[0], p_date[1], p_date[2]);
 		date_to.setSeconds(to);
+
+		var df_str = formattedDate(date_from);
+		var dt_str = formattedDate(date_to);
+
+		if (date_str == '0000-00-00')
+		{
+			df_str = df_str.replace(/^\d{4}-\d{2}-\d{2}\s/gi, '0000-00-00 ');
+			dt_str = dt_str.replace(/^\d{4}-\d{2}-\d{2}\s/gi, '0000-00-00 ');
+		}
 		
-		jQuery(item).find('.datetime_from').attr('value', formattedDate(date_from));
-		jQuery(item).find('.datetime_to').attr('value', formattedDate(date_to));
+		jQuery(item).find('.datetime_from').attr('value', df_str);
+		jQuery(item).find('.datetime_to').attr('value', dt_str);
 	}
 
 	function formattedDate(date)
@@ -303,6 +331,8 @@
 		
 		jQuery(item).find('.current_time_window').removeClass(classes).unbind('mousedown');
 
+		if (first_cell > last_cell) return;
+		
 		jQuery(item).find('*[cell="' + first_cell + '"]').each(function(index){
 			if (jQuery(this).parent().hasClass('first_row'))
 			{

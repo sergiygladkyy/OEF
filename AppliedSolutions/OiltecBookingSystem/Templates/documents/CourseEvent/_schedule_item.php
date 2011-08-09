@@ -12,10 +12,8 @@
          $d_value = ($ts_to && $ts_from) ? ($ts_to - $ts_from)/3600 : 0;
       ?>
       <input class="schedule_duration" onChange="onChangeScheduleDuration(this, '<?php echo $index ?>');" type="text" name="<?php echo $tprefix.'[Duration]' ?>" value="<?php echo $d_value ?>" />
-      <?php if ($ts_to && $ts_from): ?>
-        <input class="datetime_from" type="hidden" name="<?php echo $tprefix.'[DateTimeFrom]' ?>" value="<?php echo date('Y-m-d H:i:s', $ts_from) ?>">
-        <input class="datetime_to" type="hidden" name="<?php echo $tprefix.'[DateTimeTo]' ?>" value="<?php echo date('Y-m-d H:i:s', $ts_to) ?>">
-      <?php endif;?>
+      <input class="datetime_from" type="hidden" name="<?php echo $tprefix.'[DateTimeFrom]' ?>" value="<?php echo $ts_from ? date('Y-m-d H:i:s', $ts_from) : '' ?>">
+      <input class="datetime_to" type="hidden" name="<?php echo $tprefix.'[DateTimeTo]' ?>" value="<?php echo $ts_to ? date('Y-m-d H:i:s', $ts_to) : '' ?>">
     </td>
     <?php
        $start = $end = date('Y-m-d');
@@ -64,6 +62,11 @@
                 
         $win_beg = floor(($t_win_beg - $p_beg)/$step);
         $win_end = ceil(($t_win_end - $p_beg)/$step) - 1;
+        
+        if ($win_beg > $win_end)
+        {
+           $win_beg = $win_end = -1;
+        }
         
         $t_win_class = 'current_time_window';
      }
@@ -214,6 +217,11 @@
   </tr>
 </tbody>
 </table>
+<div style="padding: 8px 0 0 5px;">
+    <a href="#" class="green_link" onclick="deleteScheduleItem(this, <?php echo $index ?>); return false;">
+      delete
+    </a>
+</div>
 <div id="time_window_<?php echo $index ?>" class="time_window">&nbsp;</div>
 <script type="text/javascript">
 	jQuery('#schedule_item_<?php echo $index ?> .current_time_window').mousedown(function(e){
@@ -229,7 +237,7 @@
 	clearWinMap(<?php echo $index?>);
 	
 <?php 
-   if ($d_value && $ts_from && $ts_to)
+   if ($d_value && $ts_from && $ts_to && $win_beg != -1)
    {
       $js = "if (!win_map['".$d_value."']) win_map['".$d_value."'] = {};\n";
       

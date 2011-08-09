@@ -194,7 +194,14 @@ function generateScheduleItem($item, $index, $owner = 0)
    
    if (empty($item['DateTimeFrom']))
    {
-      $check_period = false;
+      if (empty($item['Date']))
+      {
+         $check_period = false;
+      }
+      else if (($ts_from = strtotime($item['Date'].' '.$options['time_from'])) === -1)
+      {
+         throw new Exception('Invalid date format');
+      }
    }
    else if (($ts_from = strtotime($item['DateTimeFrom'])) === -1)
    {
@@ -203,7 +210,22 @@ function generateScheduleItem($item, $index, $owner = 0)
    
    if (empty($item['DateTimeTo']))
    {
-      $check_period = false;
+      if (empty($item['Date']))
+      {
+         $check_period = false;
+      }
+      else
+      {
+         if (($ts_to = strtotime($item['Date'].' '.date('H:i:s', $ts_from))) === -1)
+         {
+            throw new Exception('Invalid date format');
+         }
+         
+         if (!empty($item['Duration']))
+         {
+            $ts_to += $item['Duration'] * 3600;
+         }
+      }
    }
    else if (($ts_to = strtotime($item['DateTimeTo'])) === -1)
    {

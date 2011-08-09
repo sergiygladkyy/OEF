@@ -143,8 +143,8 @@
 		var f_node = jQuery(node).parents('.schedule_item').find('.datetime_from').get(0);
 		var t_node = jQuery(node).parents('.schedule_item').find('.datetime_to').get(0);
 
-		f_node.value = f_node.value.replace(/^\d{4}-\d{2}-\d{2}\s/gi, date_str + ' ');
-		t_node.value = t_node.value.replace(/^\d{4}-\d{2}-\d{2}\s/gi, date_str + ' ');
+		f_node.value = (f_node.value.length ? f_node.value.replace(/^\d{4}-\d{2}-\d{2}\s/gi, date_str + ' ') : '');
+		t_node.value = (t_node.value.length ? t_node.value.replace(/^\d{4}-\d{2}-\d{2}\s/gi, date_str + ' ') : '');
 		
 		onScheduleItemUpdate({index: index});
 	}
@@ -160,8 +160,17 @@
 	{
 		var item = jQuery('#schedule_item_' + index).get(0);
 
-		var beg = parseInt(jQuery(item).find('.time_window_begin_top').attr('cell'), 10);
-		var end = parseInt(jQuery(item).find('.time_window_end_top').attr('cell'), 10);
+		var beg = end = 0;
+
+		if (jQuery(item).find('.time_window_begin_top').size() != 0)
+		{
+			beg = parseInt(jQuery(item).find('.time_window_begin_top').attr('cell'), 10);
+		}
+
+		if (jQuery(item).find('.time_window_end_top').size() != 0)
+		{
+			end = parseInt(jQuery(item).find('.time_window_end_top').attr('cell'), 10);
+		}
 
 		var new_numb = Math.ceil(parseFloat(node.value, 10) * 3600 / options[index]['step']); 
 
@@ -174,7 +183,7 @@
 		
 		var new_beg = beg;
 		var new_end = beg + new_numb - 1;
-
+		
 		if (new_end > options[index]['cells'])
 		{
 			new_beg -= new_end - options[index]['cells'];
@@ -188,6 +197,8 @@
 
 		repaintTimeWindow(index, new_beg, new_end);
 
+		setDateTime(index);
+		
 		updateWinMap(index, new_beg, new_end);
 	}
 
@@ -263,6 +274,39 @@
 		jQuery('#schedule_item_' + params.response.data.index).parent().html(params.response.data.html);
 
 		onWinMapUpdated();
+	}
+
+
+
+	/**
+	 * Add new schedule item
+	 * 
+	 * @return void
+	 */
+	function addScheduleItem()
+	{
+		addTabularSectionItem('documents_CourseEvent_tabulars_Schedule', 'schedule');
+	}
+
+	/**
+	 * Delete schedule item
+	 *
+	 * @return void
+	 */
+	function deleteScheduleItem(elem, index)
+	{
+		var item = jQuery(elem).parents('.tabular_item').get(0);
+
+		if (jQuery(item).find('input.pkey').size() == 0)
+		{
+			jQuery(item).remove();
+		}
+		else
+		{
+			jQuery(item).css('display', 'none');
+		}
+
+		clearWinMap(index);
 	}
 </script>
 
@@ -380,5 +424,15 @@
     .time_window_begin_top, .time_window_top, .time_window_end_top , 
     .time_window_begin_bottom, .time_window_bottom, .time_window_end_bottom {
         background-color: #d0ffd0;
+    }
+    
+    .oef_content a.green_link {
+    	color: #93B52D !important;
+    	text-decoration: none;
+    	font-size: 15px !important;
+    	font-variant: small-caps;
+    	font-weight: bold;
+    	font-family: Arial !important;
+    	line-height: 1.2em !important;
     }
 </style>

@@ -27,9 +27,9 @@
       echo $option;
    }
    
-   if (!$hasCurrent)
+   if (!$hasCurrent && !empty($current))
    {
-      echo '<option value="'.$row['value'].'" current="true" selected>Element &lt;'.$row['value'].'&gt; not found</option>';
+      echo '<option value="'.$row['value'].'" current="true" selected>Element &lt;'.$current.'&gt; not found</option>';
    }
 ?>
 </select>
