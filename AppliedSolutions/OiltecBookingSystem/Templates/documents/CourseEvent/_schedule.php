@@ -33,6 +33,7 @@
 
 	var t_wins  = {};
 	var current = null;
+	var deact_selector = '#rightSide'; // 'body *'
 	
 	jQuery(document).mouseup(function(e){
 		if (current === null) return;
@@ -71,7 +72,7 @@
 	 */
 	function onActivateTimeWindow(e, index)
 	{
-		jQuery('body *').disableSelection();
+		jQuery(deact_selector).disableSelection();
 		
 		current = index;
 
@@ -110,7 +111,7 @@
 
 		delete t_wins[current];
 		
-		jQuery('body *').enableSelection();
+		jQuery(deact_selector).enableSelection();
 
 		current = null;
 	}
@@ -374,73 +375,126 @@
 
 
 	/**
-	 * Mark selected in current items
+	 * Update marked as selected in items related with specified item if specified been moved
 	 *
+	 * @param int index_changed_item
+	 * @param bool mode
 	 * @return void
 	 */
-	function onWinMapUpdated()
+	function onWinMapUpdatedItemMoved(index_changed_item, mode)
 	{
-		var res = jQuery('.schedule_item_container .schedule_item');
+		var res = jQuery('#schedule_edit_block .schedule_item');
 
 		if (res.size() < 2) return;
 
-		res.each(function(i) {
-			jQuery(this).find('.grid').each(function(i){
-				if (jQuery(this).hasClass('selected_in_other_items'))
-					jQuery(this).removeClass('selected_in_other_items');
-			});
+		var item   = jQuery('#schedule_item_' + index_changed_item).get(0);
+		var c_date = jQuery(item).find('.schedule_date').attr('value');
+		var c_room = jQuery(item).find('.schedule_room option:selected').attr('value');
+		var c_inst = jQuery(item).find('.schedule_instructor option:selected').attr('value');
+		
+		res.each(function(i)
+		{
+			var index = parseInt(jQuery(this).attr('index'), 10);
 			
-			var date = jQuery(this).find('.schedule_date').attr('value');
-
-			if (date)
+			if (index > index_changed_item)
 			{
-				var room  = jQuery(this).find('.schedule_room option:selected').attr('value');
-				var inst  = jQuery(this).find('.schedule_instructor option:selected').attr('value');
-				var index = jQuery(this).attr('index');
+				var date = jQuery(this).find('.schedule_date').attr('value');
 
-				if (win_map[date])
+				if (mode || date == c_date)
 				{
-					if (win_map[date]['room'] && win_map[date]['room'][room])
+					jQuery(this).find('.grid').removeClass('selected_in_other_items');
+					
+					var room = jQuery(this).find('.schedule_room option:selected').attr('value');
+					var inst = jQuery(this).find('.schedule_instructor option:selected').attr('value');
+
+					var marked = {};
+						
+					for (var ind in win_map[date]['room'][room])
 					{
-						for (var ind in win_map[date]['room'][room])
+						if (index <= ind) continue;
+
+						var params = win_map[date]['room'][room][ind];
+
+						if (params['beg'] === undefined || params['end']=== undefined)
 						{
-							if (index <= ind) continue;
+							continue;
+						}
 
-							var params = win_map[date]['room'][room][ind];
+						for (var n = params['beg']; n <= params['end']; n++)
+						{
+							if (marked[n]) continue;
+							
+							jQuery(this).find('*[grid="room"] *[cell="' + n + '"]').addClass('selected_in_other_items');
 
-							if (params['beg'] === undefined || params['end']=== undefined)
-							{
-								continue;
-							}
-
-							for (var n = params['beg']; n <= params['end']; n++)
-							{
-								jQuery(this).find('*[grid="room"] *[cell="' + n + '"]').addClass('selected_in_other_items');
-							}
+							marked[n] = true;
 						}
 					}
 
-					if (win_map[date]['instructor'] && win_map[date]['instructor'][inst])
+					marked = {};
+					
+					for (var ind in win_map[date]['instructor'][inst])
 					{
-						for (var ind in win_map[date]['instructor'][inst])
-						{
-							if (index <= ind) continue;
+						if (index <= ind) continue;
 
-							var params = win_map[date]['instructor'][inst][ind];
+						var params = win_map[date]['instructor'][inst][ind];
+						
+						if (params['beg'] === undefined || params['end']=== undefined)
+						{
+							continue;
+						}
+						
+						for (var n = params['beg']; n <= params['end']; n++)
+						{
+							if (marked[n]) continue;
 							
-							if (params['beg'] === undefined || params['end']=== undefined)
-							{
-								continue;
-							}
-							
-							for (var n = params['beg']; n <= params['end']; n++)
-							{
-								jQuery(this).find('*[grid="instructor"] *[cell="' + n + '"]').addClass('selected_in_other_items');
-							}
+							jQuery(this).find('*[grid="instructor"] *[cell="' + n + '"]').addClass('selected_in_other_items');
+
+							marked[n] = true;
 						}
 					}
 				}
 			}
+		});
+	}
+
+	/**
+	 * Update marked as selected in items related with specified item if specified been updated
+	 *
+	 * @param int index_changed_item
+	 * @return void
+	 */
+	function onWinMapUpdatedItemUpdated(index_changed_item)
+	{
+		var res = jQuery('#schedule_edit_block .schedule_item');
+
+		if (res.size() < 2) return;
+
+		res.each(function(i) {
+			
+			var index = parseInt(jQuery(this).attr('index'), 10);
+
+			if (index >= index_changed_item)
+			{
+				onWinMapUpdatedItemMoved(index, true);
+			}
+		});
+	}
+	
+	/**
+	 * Mark selected in related items
+	 *
+	 * @return void
+	 */
+	function onWinMapUpdatedAll()
+	{
+		var res = jQuery('#schedule_edit_block .schedule_item');
+
+		if (res.size() < 2) return;
+
+		res.each(function(i) {
+			var index = parseInt(jQuery(this).attr('index'), 10);
+
+			onWinMapUpdatedItemMoved(index);
 		});
 	}
 
@@ -490,7 +544,7 @@
 		win_map[date]['instructor'][inst][index] = {beg: first_cell, end: last_cell};
 
 
-		onWinMapUpdated();
+		onWinMapUpdatedItemMoved(index);
 	}
 
 	/**
@@ -514,5 +568,5 @@
 		}
 	}
 	
-	onWinMapUpdated();
+	onWinMapUpdatedAll();
 </script>

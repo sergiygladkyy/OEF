@@ -101,6 +101,12 @@
 
 		displayCustomForm('<?php echo $kind.'.'.$type ?>', '<?php echo $name ?>', {document: <?php echo (int) $attrs['_id'] ?>, ApplicationForm: app_f_id}, 'oef_custom_ResourcesReservation_form');
 
+		jQuery('#oef_custom_ResourcesReservation_form .ae_command').each(function(index) {
+	    	jQuery(this).click(function() { 
+	    		processFormCommand(this);
+	    	});
+	    });
+	    
 		appActive();
 	}
 
@@ -273,7 +279,7 @@
 
 		jQuery('#schedule_item_' + params.response.data.index).parent().html(params.response.data.html);
 
-		onWinMapUpdated();
+		onWinMapUpdatedItemUpdated(params.response.data.index);
 	}
 
 
