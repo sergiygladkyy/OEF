@@ -11,13 +11,30 @@
   <?php endif; ?>
   <table class="documents_CourseEvent_form">
   <tbody>
-    <tr id="<?php echo $class.'_post_flag' ?>" style="<?php echo $attrs['_id'] > 0 ? '' : 'display: none;' ?>">
+    <tr id="<?php echo $class.'_post_flag' ?>" style="<?php echo empty($attrs['_id']) ? 'display: none;' : '' ?>">
       <td class="<?php echo $class.'_name ae_editform_field_name label' ?>">Status:</td>
       <td class="<?php echo $class.'_value ae_editform_field_value' ?>">
-        <div class="<?php echo $attrs['_post'] > 0 ? 'ae_field_posted' : 'ae_field_not_posted' ?>">
-          <span class="ae_field_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: block;' : 'display: none;' ?>">This document is posted.</span>
-          <span class="ae_field_not_posted_text" style="<?php echo $attrs['_post'] > 0 ? 'display: none;' : 'display: block;' ?>">This document is not posted.</span>
+        <div class="<?php echo empty($attrs['_post']) ? 'ae_field_not_posted' : 'ae_field_posted' ?>">
+          <span class="ae_field_posted_text" style="<?php echo empty($attrs['_post']) ? 'display: none;' : 'display: block;' ?>">This document is posted.</span>
+          <span class="ae_field_not_posted_text" style="<?php echo empty($attrs['_post']) ? 'display: block;' : 'display: none;' ?>">This document is not posted.</span>
         </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="<?php echo $class.'_name ae_editform_field_name label' ?>">Code:</td>
+      <td class="<?php echo $class.'_value ae_editform_field_value' ?>">
+        <ul style="display: none;" class="<?php echo $class.'_Code_errors ae_editform_field_errors' ?>"><li>&nbsp;</li></ul>
+        <input type="text" value="<?php echo isset($attrs['Code']) ? $attrs['Code'] : '' ?>" name="<?php echo $aprefix.'[Code]' ?>">
+      </td>
+    </tr>
+    <tr>
+      <td class="<?php echo $class.'_name ae_editform_field_name label' ?>">Date:</td>
+      <td class="<?php echo $class.'_value ae_editform_field_value' ?>">
+        <ul style="display: none;" class="<?php echo $class.'_Date_errors ae_editform_field_errors' ?>"><li>&nbsp;</li></ul>   
+        <nobr>
+          <input type="text" value="<?php echo isset($attrs['Date']) ? $attrs['Date'] : '' ?>" id="aeform_documents_CourseEvent_attributes_Date" name="<?php echo $aprefix.'[Date]' ?>">
+          <img style="vertical-align: top; padding-top: 1px;" src="/ext/OEF/Framework/MindTouch/Js/datetimepicker/images/cal.gif" alt="Pick a date" onclick="if (!document.getElementById('aeform_documents_CourseEvent_attributes_Date').disabled) NewCssCal('aeform_documents_CourseEvent_attributes_Date','yyyymmdd','arrow',true, 24, false)" class="oef_datetime_picker">
+        </nobr>
       </td>
     </tr>
     <tr>
@@ -166,16 +183,16 @@
 	{
 		var item = jQuery('#schedule_item_' + index).get(0);
 
-		var beg = end = 0;
+		var beg = end = -1;
 
 		if (jQuery(item).find('.time_window_begin_top').size() != 0)
 		{
 			beg = parseInt(jQuery(item).find('.time_window_begin_top').attr('cell'), 10);
-		}
 
-		if (jQuery(item).find('.time_window_end_top').size() != 0)
-		{
-			end = parseInt(jQuery(item).find('.time_window_end_top').attr('cell'), 10);
+			if (jQuery(item).find('.time_window_end_top').size() != 0)
+			{
+				end = parseInt(jQuery(item).find('.time_window_end_top').attr('cell'), 10);
+			}
 		}
 
 		var new_numb = Math.ceil(parseFloat(node.value, 10) * 3600 / options[index]['step']); 
@@ -186,9 +203,9 @@
 
 			return;
 		}
-		
-		var new_beg = beg;
-		var new_end = beg + new_numb - 1;
+
+		var new_beg = (beg == -1 ? 0 : beg);
+		var new_end = new_beg + new_numb - 1;
 		
 		if (new_end > options[index]['cells'])
 		{
@@ -291,7 +308,7 @@
 	 */
 	function addScheduleItem()
 	{
-		addTabularSectionItem('documents_CourseEvent_tabulars_Schedule', 'schedule');
+		addTabularSectionItem('documents_CourseEvent_tabulars_Schedule', 'documents_CourseEvent_tabulars_Schedule');
 	}
 
 	/**
@@ -313,15 +330,24 @@
 		}
 
 		clearWinMap(index);
+
+		onWinMapUpdatedAll();
 	}
 </script>
 
 <style type="text/css">
+    .documents_CourseEvent_form td {
+    	vertical-align: bottom;
+    }
     .documents_CourseEvent_form td.label {
         border-right: 0 none;
         font-weight: bold;
         width: 115px;
     }
+    .documents_CourseEvent_form input[type="text"] {
+        width: 239px;
+    }
+    
     .documents_CourseEvent_form select {
         width: 245px;
     }

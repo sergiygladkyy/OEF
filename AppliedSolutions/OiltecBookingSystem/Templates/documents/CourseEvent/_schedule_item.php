@@ -3,6 +3,13 @@
    $tprefix = 'aeform['.$kind.']['.$type.'][attributes][tabulars][Schedule]['.$index.']';
    $n = 0;
 ?>
+<div style="display: none;" class="documents_CourseEvent_tabulars_Schedule_<?php echo $index ?>_Errors_errors systemmsg">
+  <div class="inner">
+    <ul class="flashMsg">
+      <li>&nbsp;</li>
+    </ul>
+  </div>
+</div>
 <table id="schedule_item_<?php echo $index ?>" class="schedule_item" index="<?php echo $index ?>">
 <tbody>
   <tr>

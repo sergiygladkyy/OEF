@@ -1,27 +1,46 @@
 <script type="text/javascript">
     var options = {};
     var win_map = {};
+
+    /**
+	 * Remove all records for specified item
+	 *
+	 * @param string index - item index
+	 * @return void 
+	 */
+	function clearWinMap(index)
+	{
+		for (var date in win_map)
+		{
+			for (var type in win_map[date])
+			{
+				for (var id in win_map[date][type])
+				{
+					if (win_map[date][type][id][index])
+						delete win_map[date][type][id][index];
+				}
+			}
+		}
+	}
 </script>
 
 <h3>Schedule</h3>
-<div id="schedule_edit_block">
+<div id="documents_CourseEvent_tabulars_Schedule_edit_block">
 <?php $i = 0 ?>
 <?php foreach ($schedule as $item): ?>
-  <div id="schedule_<?php echo $i ?>_item" class="tabular_item schedule_item_container">
+  <div id="documents_CourseEvent_tabulars_Schedule_<?php echo $i ?>_item" class="tabular_item schedule_item_container">
     <?php echo self::generateScheduleItem($item, $i++, $owner) ?>
   </div>
 <?php endforeach; ?>
 </div>
-<?php if ($i > 0): ?>
 <div style="margin: 25px 10px 15px 10px;">
   <a href="#" id="AddScheduleItem" class="green_link" onclick="addScheduleItem(); return false;">
      add new schedule item
   </a>
 </div>
-<?php endif; ?>
 
 <?php    
-   $template  = '<div id="schedule_%%i%%_item" class="schedule_item_container">'.
+   $template  = '<div id="documents_CourseEvent_tabulars_Schedule_%%i%%_item" class="tabular_item schedule_item_container">';
    $template .= self::generateScheduleItem(array(), '%%i%%', $owner).'</div>';
    
    $template = str_replace(array(chr(0), chr(9), chr(10), chr(11), chr(13)), ' ', $template);
@@ -260,6 +279,14 @@
 	{
 		var item = jQuery('#schedule_item_' + index).get(0);
 
+		if (jQuery(item).find('.time_window_begin_top').size() == 0)
+		{
+			jQuery(item).find('.datetime_from').attr('value', '');
+			jQuery(item).find('.datetime_to').attr('value', '');
+
+			return;
+		}
+		
 		var beg = parseInt(jQuery(item).find('.time_window_begin_top').attr('cell'), 10);
 		var end = parseInt(jQuery(item).find('.time_window_end_top').attr('cell'), 10);
 
@@ -383,7 +410,7 @@
 	 */
 	function onWinMapUpdatedItemMoved(index_changed_item, mode)
 	{
-		var res = jQuery('#schedule_edit_block .schedule_item');
+		var res = jQuery('#documents_CourseEvent_tabulars_Schedule_edit_block .schedule_item');
 
 		if (res.size() < 2) return;
 
@@ -465,7 +492,7 @@
 	 */
 	function onWinMapUpdatedItemUpdated(index_changed_item)
 	{
-		var res = jQuery('#schedule_edit_block .schedule_item');
+		var res = jQuery('#documents_CourseEvent_tabulars_Schedule_edit_block .schedule_item');
 
 		if (res.size() < 2) return;
 
@@ -487,14 +514,23 @@
 	 */
 	function onWinMapUpdatedAll()
 	{
-		var res = jQuery('#schedule_edit_block .schedule_item');
+		var res = jQuery('#documents_CourseEvent_tabulars_Schedule_edit_block .schedule_item');
 
 		if (res.size() < 2) return;
 
+		var first_cleared = false;		
+
 		res.each(function(i) {
+			if (!first_cleared)
+			{
+				jQuery(this).find('.grid').removeClass('selected_in_other_items');
+				
+				first_cleared = true;
+			}
+			
 			var index = parseInt(jQuery(this).attr('index'), 10);
 
-			onWinMapUpdatedItemMoved(index);
+			onWinMapUpdatedItemMoved(index, true);
 		});
 	}
 
@@ -545,27 +581,6 @@
 
 
 		onWinMapUpdatedItemMoved(index);
-	}
-
-	/**
-	 * Remove all records for specified item
-	 *
-	 * @param string index - item index
-	 * @return void 
-	 */
-	function clearWinMap(index)
-	{
-		for (var date in win_map)
-		{
-			for (var type in win_map[date])
-			{
-				for (var id in win_map[date][type])
-				{
-					if (win_map[date][type][id][index])
-						delete win_map[date][type][id][index];
-				}
-			}
-		}
 	}
 	
 	onWinMapUpdatedAll();

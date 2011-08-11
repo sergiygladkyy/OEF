@@ -66,20 +66,156 @@ function onGenerate($event)
  */
 function onProcess($event)
 {
-   /*$errors = array();
+   $errors = array();
    $values = $event['values'];
-   $object = new self();
-   $method = isset($_POST['tab']) ? 'process'.ucfirst($_POST['tab']) : null;
    
-   if (!$method || !is_callable(array($object, $method), true))
+   $attrs  = empty($values['attributes']) ? array() : $values['attributes'];
+   $action = isset($attrs['_id']) ? 'update' : 'create';
+   
+   if (!empty($attrs['ApplicationForm']))
    {
-      $event->setReturnValue(array('status' => false, 'result' => array('msg' => 'Unknow form')));
+      $model = Container::getInstance()->getModel('documents', 'ApplicationForm');
+      
+      if ($model->load($attrs['ApplicationForm']))
+      {
+         $attrs['LearnersOrganization'] = $model->getAttribute('LearnersOrganization')->getId();
+      }
+   }
+   
+   if (!empty($attrs['Course']))
+   {
+      $course = explode('/', $attrs['Course']);
+      
+      $attrs['Course'] = isset($course[0]) ? $course[0] : 0;
+      $attrs['CourseNumber'] = isset($course[1]) ? $course[1] : 0;
+   }
+   
+   $controller = Container::getInstance()->getController('documents', 'CourseEvent');
+   $return     = $controller->$action(Utility::escaper($attrs));
+
+   if (!$return['status'])
+   {
+      if (isset($return['errors']['LearnersOrganization']))
+      {
+         if ($return['errors']['LearnersOrganization'] != 'Required')
+         {
+            if (empty($return['errors']['ApplicationForm']))
+            {
+               $return['errors']['ApplicationForm'] = $return['errors']['LearnersOrganization'];
+            }
+            else if (is_array($return['errors']['ApplicationForm']))
+            {
+               $return['errors']['ApplicationForm'][] = $return['errors']['LearnersOrganization'];
+            }
+            else
+            {
+               $return['errors']['ApplicationForm'] = array($return['errors']['ApplicationForm'], $return['errors']['LearnersOrganization']);
+            }
+         }
+         
+         unset($return['errors']['LearnersOrganization']);
+      }
+      
+      if (isset($return['errors']['CourseNumber']))
+      {
+         if ($return['errors']['CourseNumber'] != 'Required')
+         {
+            if (empty($return['errors']['Course']))
+            {
+               $return['errors']['Course'] = $return['errors']['CourseNumber'];
+            }
+            else if (is_array($return['errors']['Course']))
+            {
+               $return['errors']['Course'][] = $return['errors']['CourseNumber'];
+            }
+            else
+            {
+               $return['errors']['Course'] = array($return['errors']['Course'], $return['errors']['CourseNumber']);
+            }
+         }
+         
+         unset($return['errors']['CourseNumber']);
+      }
+      
+      
+      $event->setReturnValue($return);
+      
       return;
    }
    
-   $return = call_user_func(array($object, $method), $values);
+   // Save tabular section
+   $owner_id = $return['result']['_id'];
+   
+   if ($action != 'create') unset($return['result']['_id']);
+   
+   if (empty($values['tabulars']['Schedule']))
+   {
+      $return['tabulars']['Schedule'] = array('status' => false, 'result' => array('msg' => 'Schedule can\'t be empty'));
+   }
+   else
+   {
+      $return['tabulars']['Schedule'] = self::processTabularSection('documents.CourseEvent.tabulars', 'Schedule', $values['tabulars']['Schedule'], $owner_id);
+   }
 
-   $event->setReturnValue($return);*/
+   /*$return = array(
+      'status' => false,
+      'result' => array(),
+      'errors' => array('<pre>'.print_r($values, true).'</pre>')
+   );*/
+   
+   $event->setReturnValue($return);
+}
+
+/**
+ * Process tabular section form
+ *
+ * @param string $kind
+ * @param string $type
+ * @param array $params
+ * @param int $owner_id
+ * @return array
+ */
+function processTabularSection($kind, $type, array $params, $owner_id)
+{
+   $result = array();
+   $ids    = array();
+
+   $controller = Container::getInstance()->getController($kind, $type);
+
+   // Check values
+   $params = Utility::escapeRecursive($params);
+
+   // Delete
+   if (isset($params['deleted']))
+   {
+      if (!empty($params['deleted']))
+      {
+         $options = array(
+            'attributes' => array('%pkey', 'Owner'),
+            'criterion'  => '`Owner` = %%Owner%% AND `%pkey` IN (%%pkey%%)'
+         );
+         $result['delete'] = $controller->delete(array('%pkey' => $params['deleted'], 'Owner' => $owner_id), $options);
+      }
+
+      unset($params['deleted']);
+   }
+
+   // Save all
+   foreach ($params as $key => $values)
+   {
+      $values['Owner'] = $owner_id;
+
+      $action = isset($values['_id']) ? 'update' : 'create';
+
+      $result[$key] = $controller->$action($values);
+
+      if ($result[$key]['status'] && $action == 'update')
+      {
+         unset($result[$key]['result']['_id']);
+      }
+   }
+
+   return $result;
 }
 
 /**

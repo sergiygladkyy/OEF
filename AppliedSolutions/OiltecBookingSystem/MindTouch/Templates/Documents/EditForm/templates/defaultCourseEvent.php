@@ -38,7 +38,7 @@
      &lt;script type="text/javascript"&gt;"displayCustomForm('"..uid.."', 'ResourcesReservation', {document: "..(item._id > 0 ? item._id : 0).."}, 'oef_custom_ResourcesReservation_form');"&lt;/script&gt;;
      
      &lt;script type="text/javascript"&gt;"
-        ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes]';
+        ae_name_prefix['"..js_uid.."'] = '"..name_prefix.."[attributes][attributes]';
         ae_name_prefix['"..js_uid.."_tabulars_Schedule'] = '"..name_prefix.."[attributes][tabulars][Schedule]';
      "&lt;/script&gt;
   }}
