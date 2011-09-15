@@ -54,6 +54,12 @@
     border-bottom: 1px solid #eeeeee;
 }
 
+#catalogs_UserBrowser_container {
+	overflow: auto;
+    padding: 7px 0 4px;
+    width: 721px;
+}
+
 #catalogs_UserBrowser_list_block .photo {
 	text-align: center;
 }
@@ -67,7 +73,7 @@
 </div>
 
 <?php $prefix = $form_prefix.'[attributes]' ?>
-
+<div id="catalogs_UserBrowser_container">
 <form method="post" action="#" class="oe_custom_edit_form" id="catalogs_Employees_item" enctype="multipart/form-data">
   <input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
   <table>

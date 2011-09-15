@@ -32,16 +32,16 @@
          </div>
       </td>
       <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser'); document.getElementById('selectedUser').value='<?php echo $item['NaturalPerson'] ?>';">
-         <?php echo $item['Name'] ?>
+         <nobr><?php echo $item['Name'] ?></nobr>
       </td>
       <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser'); document.getElementById('selectedUser').value='<?php echo $item['NaturalPerson'] ?>';">
-         <?php echo $item['Surname'] ?>
+         <nobr><?php echo $item['Surname'] ?></nobr>
       </td>
       <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser'); document.getElementById('selectedUser').value='<?php echo $item['NaturalPerson'] ?>';">
-         <?php echo $item['Phone'] ?>
+         <nobr><?php echo $item['Phone'] ?></nobr>
       </td>
       <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $item['NaturalPerson'] ?>';">
-         <?php echo isset($item['OrganizationalPosition']['text']) ? $item['OrganizationalPosition']['text'] : '&nbsp;' ?>
+         <nobr><?php echo isset($item['OrganizationalPosition']['text']) ? $item['OrganizationalPosition']['text'] : '&nbsp;' ?></nobr>
       </td>
   <?php endif; ?>
 </tr>
