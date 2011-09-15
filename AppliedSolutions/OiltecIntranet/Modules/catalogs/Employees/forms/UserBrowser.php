@@ -18,24 +18,7 @@ function onGenerate($event)
    $form_prefix = 'aeform['.$kind.']['.$type.']';
    $container   = Container::getInstance();
    
-   if (empty($params['filter']) || !is_string($params['filter']))
-   {
-      $params['filter'] = 'All';
-   }
-   
-   switch($params['filter'])
-   {
-      case 'ActiveEmployee':
-         $data = self::getActiveEmployees();
-         break;
-         
-      case 'AllEmployee':
-         $data = self::getAllEmployees();
-         break;
-         
-      default:
-         $data = self::getAllNaturalPersons();
-   }
+   $data = self::getNotFiredEmployeesGroupByUnit();
    
    include(self::$templates_dir.$name.'.php');
 }
@@ -80,19 +63,30 @@ function onProcess($event)
 
 
 /**
- * Return list of active Employee
+ * Return list of not fired Employees
  * 
  * @return array
  */
-function getActiveEmployees()
+function getNotFiredEmployeesGroupByUnit()
 {
    $data    = array();
    $staff   = array();
    $empIDS  = array();
-   $unitIDS = array();
    $posIDS  = array();
    $odb     = Container::getInstance()->getODBManager();
-    
+   
+   $query = "SELECT `_id`, `Description`, `_deleted` FROM catalogs.OrganizationalUnits ORDER BY `Description` ASC";
+   
+   if (!($res = $odb->executeQuery($query)))
+   {
+      throw new Exception('Database error');
+   }
+
+   while ($row = $odb->fetchAssoc($res))
+   {
+      $data[$row['_id']] = array('unit' => $row, 'list' => array());
+   }
+   
    $query = "SELECT `Employee`, MAX(`Period`) AS `Period`, `OrganizationalUnit`, `OrganizationalPosition`, `RegisteredEvent` ".
             "FROM information_registry.StaffHistoricalRecords ".
             "GROUP BY `Employee`";
@@ -108,14 +102,13 @@ function getActiveEmployees()
        
       $staff[$row['Employee']]  = $row;
       $empIDS[$row['Employee']] = $row['Employee'];
-      $unitIDS[$row['OrganizationalUnit']]    = $row['OrganizationalUnit'];
       $posIDS[$row['OrganizationalPosition']] = $row['OrganizationalPosition'];
    }
 
-   $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
+   $query = "SELECT np.`Description`, np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
             "FROM catalogs.Employees AS e, catalogs.NaturalPersons AS np ".
             "WHERE e.`_id` IN (".implode(',', $empIDS).") AND e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0 ".
-            "ORDER BY np.`Name`";
+            "ORDER BY np.`Surname`";
 
    if (!($res = $odb->executeQuery($query)))
    {
@@ -123,14 +116,6 @@ function getActiveEmployees()
    }
 
    // Link Description
-   if (!empty($unitIDS))
-   {
-      if (null === ($links['OrganizationalUnit'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalUnits')->retrieveLinkData($unitIDS)))
-      {
-         throw new Exception('Database error');
-      }
-   }
-
    if(!empty($posIDS))
    {
       if (null === ($links['OrganizationalPosition'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS)))
@@ -142,191 +127,30 @@ function getActiveEmployees()
    // Prepare data
    while ($row = $odb->fetchAssoc($res))
    {
-      $pid = $row['NaturalPerson'];
+      $pid  = $row['NaturalPerson'];
+      $unit = $staff[$row['Employee']]['OrganizationalUnit'];
       
-      $data[$pid] = array_merge($row, $staff[$row['Employee']]);
-      
-      $data[$pid]['OrganizationalUnit']     = $links['OrganizationalUnit'][$data[$pid]['OrganizationalUnit']];
-      $data[$pid]['OrganizationalPosition'] = $links['OrganizationalPosition'][$data[$pid]['OrganizationalPosition']];
+      $data[$unit]['list'][$pid] = array_merge($row, $staff[$row['Employee']]);
+      $data[$unit]['list'][$pid]['OrganizationalPosition'] = $links['OrganizationalPosition'][$data[$unit]['list'][$pid]['OrganizationalPosition']];
    }
    
    return $data;
 }
 
 /**
- * Return list of all Employee
+ * Include template
  * 
- * @return array
+ * @param string $name - template name
+ * @param $params      - list of attributes
+ * @return string
  */
-function getAllEmployees()
+function include_template($name, $params)
 {
-   $data    = array();
-   $np      = array();
-   $empIDS  = array();
-   $staff   = array();
-   $unitIDS = array();
-   $posIDS  = array();
-   $odb     = Container::getInstance()->getODBManager();
+   extract($params, EXTR_OVERWRITE);
    
-   $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
-            "FROM catalogs.Employees AS e, catalogs.NaturalPersons AS np ".
-            "WHERE e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0 ".
-            "ORDER BY np.`Name`";
-
-   if (!($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-
-   while ($row = $odb->fetchAssoc($res))
-   {
-      $data[$row['NaturalPerson']] = $row;
-      
-      if (empty($row['Employee'])) continue;
-      
-      $empIDS[$row['Employee']] = $row['Employee'];
-      $np[$row['Employee']] = $row['NaturalPerson'];
-   }
+   ob_start();
    
-   if (!empty($empIDS))
-   {
-      $query = "SELECT `Employee`, MAX(`Period`) AS `Period`, `OrganizationalUnit`, `OrganizationalPosition`, `RegisteredEvent` ".
-               "FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee` IN (".implode(',', $empIDS).")".
-               "GROUP BY `Employee`";
-
-      if (!($res = $odb->executeQuery($query)))
-      {
-         throw new Exception('Database error');
-      }
-       
-      while ($row = $odb->fetchAssoc($res))
-      {
-         $staff[$row['Employee']] = $row;
-         $unitIDS[$row['OrganizationalUnit']]    = $row['OrganizationalUnit'];
-         $posIDS[$row['OrganizationalPosition']] = $row['OrganizationalPosition'];
-      }
-       
-      // Link Description
-      if (!empty($unitIDS))
-      {
-         if (null === ($links['OrganizationalUnit'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalUnits')->retrieveLinkData($unitIDS)))
-         {
-            throw new Exception('Database error');
-         }
-      }
-
-      if(!empty($posIDS))
-      {
-         if (null === ($links['OrganizationalPosition'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS)))
-         {
-            throw new Exception('Database error');
-         }
-      }
-       
-      // Prepare data
-      foreach ($staff as $eid => $row)
-      {
-         if (isset($np[$eid]) && isset($data[$np[$eid]]))
-         {
-            $pid = $np[$eid];
-            
-            $data[$pid] = array_merge($data[$np[$eid]], $row);
-            
-            $data[$pid]['OrganizationalUnit']     = $links['OrganizationalUnit'][$data[$pid]['OrganizationalUnit']];
-            $data[$pid]['OrganizationalPosition'] = $links['OrganizationalPosition'][$data[$pid]['OrganizationalPosition']];
-         }
-      }
-   }
+   include(self::$templates_dir.'_'.$name.'.php');
    
-   return $data;
-}
-
-/**
- * Return list of all Natural Persons
- * 
- * @return array
- */
-function getAllNaturalPersons()
-{
-   $data    = array();
-   $np      = array();
-   $empIDS  = array();
-   $staff   = array();
-   $unitIDS = array();
-   $posIDS  = array();
-   $odb     = Container::getInstance()->getODBManager();
-    
-   $query = "SELECT np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
-            "FROM catalogs.NaturalPersons AS np LEFT JOIN catalogs.Employees AS e ".
-            "ON (e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0) ".
-            "ORDER BY np.`Name`";
-
-   if (!($res = $odb->executeQuery($query)))
-   {
-      throw new Exception('Database error');
-   }
-
-   while ($row = $odb->fetchAssoc($res))
-   {
-      $data[$row['NaturalPerson']] = $row;
-      
-      if (empty($row['Employee'])) continue;
-      
-      $empIDS[$row['Employee']] = $row['Employee'];
-      $np[$row['Employee']] = $row['NaturalPerson'];
-   }
-   
-   if (!empty($empIDS))
-   {
-      $query = "SELECT `Employee`, MAX(`Period`) AS `Period`, `OrganizationalUnit`, `OrganizationalPosition`, `RegisteredEvent` ".
-               "FROM information_registry.StaffHistoricalRecords ".
-               "WHERE `Employee` IN (".implode(',', $empIDS).")".
-               "GROUP BY `Employee`";
-
-      if (!($res = $odb->executeQuery($query)))
-      {
-         throw new Exception('Database error');
-      }
-
-      while ($row = $odb->fetchAssoc($res))
-      {
-         $staff[$row['Employee']] = $row;
-         $unitIDS[$row['OrganizationalUnit']]    = $row['OrganizationalUnit'];
-         $posIDS[$row['OrganizationalPosition']] = $row['OrganizationalPosition'];
-      }
-      
-      // Link Description
-      if (!empty($unitIDS))
-      {
-         if (null === ($links['OrganizationalUnit'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalUnits')->retrieveLinkData($unitIDS)))
-         {
-            throw new Exception('Database error');
-         }
-      }
-      
-      if(!empty($posIDS))
-      {
-         if (null === ($links['OrganizationalPosition'] = Container::getInstance()->getCModel('catalogs', 'OrganizationalPositions')->retrieveLinkData($posIDS)))
-         {
-            throw new Exception('Database error');
-         }
-      }
-      
-      // Prepare data
-      foreach ($staff as $eid => $row)
-      {
-         if (isset($np[$eid]) && isset($data[$np[$eid]]))
-         {
-            $pid = $np[$eid];
-            
-            $data[$pid] = array_merge($data[$np[$eid]], $row);
-            
-            $data[$pid]['OrganizationalUnit']     = $links['OrganizationalUnit'][$data[$pid]['OrganizationalUnit']];
-            $data[$pid]['OrganizationalPosition'] = $links['OrganizationalPosition'][$data[$pid]['OrganizationalPosition']];
-         }
-      }
-   }
-   
-   return $data;
+   return ob_get_clean();
 }

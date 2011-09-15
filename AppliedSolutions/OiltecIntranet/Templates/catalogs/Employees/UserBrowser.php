@@ -22,7 +22,7 @@
 	border: 1px solid #FFF;
 }
 #blanket {
-   background-color:#111;
+   background-color: transparent;
    opacity: 0.65;
    position:absolute;
    z-index: 9001; /*ooveeerrrr nine thoussaaaannnd*/
@@ -53,6 +53,10 @@
 #popUpDiv .userTabs td.active {
     border-bottom: 1px solid #eeeeee;
 }
+
+#catalogs_UserBrowser_list_block .photo {
+	text-align: center;
+}
 </style>
 <div class="catalogs_UserBrowser_message systemmsg" style="display: none;">
   <div class="inner">
@@ -69,41 +73,40 @@
   <table>
     <thead>
     <tr>
-        <th>Photo</th>
+        <th style="width: 190px;">Unit</th>
+        <th style="width: 38px;">Photo</th>
         <th>Name</th>
         <th>Surname</th>
         <th>Phone</th>
-        <th>Unit</th>
         <th>Position</th>
     </tr>
     </thead>
     <tbody id="catalogs_UserBrowser_list_block" class="ae_list_block">
-<?php foreach ($data as $pid => $values): ?>
-   <?php $prewiev = empty($values['Photo']) ? '/skins/common/icons/mrab_no_profile_image.png' : $uploadDir.'preview'.$values['Photo'] ?>
-    <tr class="catalogs_UserBrowser_list_item ae_list_item">
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
-            <a onmouseover="ShowABPhotoDialog('photo_img_ctl_<?php echo $values['NaturalPerson'] ?>', '<?php echo $prewiev ?>'); return true;"
-               onmouseout="HideABPhotoDialog('<?php echo $prewiev ?>'); return true;">
-                <img id="photo_img_ctl_<?php echo $values['NaturalPerson'] ?>" width="23" height="16" src="/skins/aconawellpro/images/photo_icn.gif">
-            </a>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
-            <?php echo $values['Name'] ?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
-            <?php echo $values['Surname'] ?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
-            <?php echo $values['Phone'] ?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $values['NaturalPerson'] ?>';">
-            <?php echo isset($values['OrganizationalUnit']['text']) ? $values['OrganizationalUnit']['text'] : '&nbsp;' ?>
-        </td>
-        <td onclick="javascript:selectColumn(this, 'catalogs_UserBrowser');document.getElementById('selectedUser').value='<?php echo $value["Employee"]["_id"];?>';">
-            <?php echo isset($values['OrganizationalPosition']['text']) ? $values['OrganizationalPosition']['text'] : '&nbsp;' ?>
-        </td>
-    </tr>
-<?php endforeach; ?>
+    <?php
+       foreach ($data as $unit => $values)
+       {
+          $params = array(
+             'level'     => 0,
+             'is_folder' => true,
+             'item'      => $values['unit']
+          );
+          
+          echo self::include_template('user_browser_item', $params);
+          
+          foreach ($values['list'] as $pid => $item)
+          {
+             $params = array(
+                'level'      => 1,
+                'parent'     => $unit,
+                'is_folder'  => false,
+                'item'       => $item,
+                'upload_dir' => $uploadDir
+             );
+             
+             echo self::include_template('user_browser_item', $params);
+          }
+       }
+    ?>
     </tbody>
 </table>
 
@@ -168,7 +171,7 @@ function ShowABPhotoDialog(control, url)
 
     var posOffset = FindElementPos(ctlDiv);
 
-    ctlDiv.style.left = (pos.x - posOffset.x + 28) + 'px';
+    ctlDiv.style.left = (pos.x - posOffset.x + 37) + 'px';
     ctlDiv.style.top = (pos.y - posOffset.y - 5) + 'px';
     ctlDiv.style.display = 'block';
 
@@ -235,7 +238,7 @@ function toggle(layer_ref) {
 function toggle(div_id) {
 	var el = document.getElementById(div_id);
 	if ( el.style.display == 'none' ) {	el.style.display = 'block';}
-	else {el.style.display = 'none';}
+	else {el.style.display = 'none'; appActive();}
 }
 function blanket_size(popUpDivVar) {
 	if (typeof window.innerWidth != 'undefined') {
@@ -302,7 +305,7 @@ function popup(windowname)
 	toggle('blanket');
 	toggle(windowname);
 
-	appActive(); 
+	appDisplayLoader(false); 
 }
 function selectColumn(element, prefix)
 {
@@ -310,6 +313,119 @@ function selectColumn(element, prefix)
 	jQuery(element).parent().addClass('ae_current');
 
 	return false;
+}
+
+
+
+
+
+jQuery(document).ready(function() {
+	
+	jQuery('.oef_tree_active').click(clickTree);
+});
+
+function clickTree(event)
+{
+	hideMessages();
+	
+	event = event || window.event;
+	
+	var node = event.target || event.srcElement;
+	
+	event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+	
+	var item = jQuery(node).parents('.ae_list_item').get(0);
+	var tree = new oefTree();
+	
+	tree.onClick(item);
+}
+
+function oefTree()
+{
+	var uid    = null;
+	var prefix = null;
+	var item   = null;
+	
+	/**
+	 * Process onClick event
+	 * 
+	 * @param DOMElement _item
+	 * @return void
+	 */
+	this.onClick = function(_item)
+	{
+		item = _item;
+		
+		prefix = jQuery(item).parents('.ae_list_block').attr('id');
+		prefix = prefix.replace('_list_block', '');
+		uid    = prefix.replace('_', '.');
+		
+		var nodeId = jQuery(item).find('.ae_item_id').text();
+		
+		if (jQuery(item).find('.oef_tree_active').hasClass('oef_tree_closed'))
+		{
+			this.open(nodeId);
+		}
+		else
+		{
+			this.close(nodeId);
+		}
+	};
+	
+	/**
+	 * Open node
+	 * 
+	 * @return boolean
+	 */
+	this.open = function(nodeId)
+	{
+		jQuery(item).find('.oef_tree_active').removeClass('oef_tree_closed').end().
+			find('.oef_tree_folder, .oef_tree_item').removeClass('oef_tree_closed');
+
+		var fid = jQuery(item).find('.ae_item_id').text();
+
+		jQuery(item).parents('.ae_list_block').find('.ae_list_item[parent="' + fid + '"]').css('display', 'table-row');
+		
+		return true;
+	};
+	
+	/**
+	 * Close node
+	 * 
+	 * @return boolean
+	 */
+	this.close = function(nodeId)
+	{
+		jQuery(item).find('.oef_tree_active').addClass('oef_tree_closed').end().
+			find('.oef_tree_folder, .oef_tree_item').addClass('oef_tree_closed');
+		
+		var padding = jQuery(item).find('.oef_tree_control').css('padding-left');
+		padding = parseInt(padding.replace("px", ""), 10);
+		
+		var current = jQuery(item).next().get(0);
+		
+		if (!current) return true;
+		
+		var padd = jQuery(current).find('.oef_tree_control').css('padding-left');
+		padd = parseInt(padd.replace("px", ""), 10);
+		
+		while (padd > padding)
+		{
+			var prev = current;
+			current  = jQuery(current).next().get(0);
+			
+			if (padd > padding) {
+				jQuery(prev).css('display', 'none');
+			}
+			
+			if (!current) return true;
+			
+			padd = jQuery(current).find('.oef_tree_control').css('padding-left');
+			padd = parseInt(padd.replace("px", ""), 10);
+		}
+		
+		return true;
+	};	
 }
 </script>
 </body>
