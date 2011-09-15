@@ -63,7 +63,14 @@
 #catalogs_UserBrowser_list_block .photo {
 	text-align: center;
 }
+
+.show_btn {
+	margin-top: 4px;
+}
 </style>
+
+<h3>User Browser</h3>
+
 <div class="catalogs_UserBrowser_message systemmsg" style="display: none;">
   <div class="inner">
     <ul class="flashMsg">
@@ -74,6 +81,7 @@
 
 <?php $prefix = $form_prefix.'[attributes]' ?>
 <div id="catalogs_UserBrowser_container">
+
 <form method="post" action="#" class="oe_custom_edit_form" id="catalogs_Employees_item" enctype="multipart/form-data">
   <input type="hidden" name="<?php echo $form_prefix."[name]"; ?>" value="<?php echo $name ?>" />
   <table>
@@ -118,6 +126,9 @@
 
 <input type="hidden" id="selectedUser" value=""/>
 </form>
+
+</div>
+
 <div style="display: none;" id="divShowABPhotoDialog" class="popup_photo">
     <div class="popup_padd">
         <div style="width: 82px; height:82px; overflow: hidden; text-align: center; vertical-align: middle;">
@@ -132,7 +143,7 @@
         <div id="userProfilePopUp" style="padding: 20px 20px 0 20px;"></div>
 	</div>
 
-<h1><a href="#" onclick="popup('popUpDiv'); return false;">Show selected user profile</a></h1>
+<h1 class="show_btn"><a href="#" onclick="popup('popUpDiv'); return false;">Show selected user profile</a></h1>
 
 
 <script type="text/javascript">
