@@ -65,7 +65,7 @@
 }
 
 .show_btn {
-	margin-top: 4px;
+	margin-top: 6px;
 }
 </style>
 
@@ -150,22 +150,18 @@
 function FindElementPos(element)
 {
     var x = y = 0;
-//        Works for FF
-//        if (element.x && element.y)
-//        {
-//            x = element.x;
-//            y = element.y;
-//        }
-//        else
-//    {
-    while ((element = element.offsetParent) != null)
-    {
-                x += element.offsetLeft;
-                y += element.offsetTop;
-    }
-//   }
 
-    return {'x':x,'y':y};
+	do
+	{
+		x += element.offsetLeft;
+		y += element.offsetTop;
+	}
+	while (element = element.offsetParent);
+	
+	x -= document.getElementById('catalogs_UserBrowser_container').scrollLeft;
+	y -= document.getElementById('catalogs_UserBrowser_container').scrollTop;
+
+	return {'x':x,'y':y};
 }
 
 function ShowABPhotoDialog(control, url)
@@ -186,10 +182,8 @@ function ShowABPhotoDialog(control, url)
     ctlDiv.style.top = '0px';
     ctlDiv.style.display = 'block';
 
-    var posOffset = FindElementPos(ctlDiv);
-
-    ctlDiv.style.left = (pos.x - posOffset.x + 37) + 'px';
-    ctlDiv.style.top = (pos.y - posOffset.y - 5) + 'px';
+    ctlDiv.style.left = (pos.x + 22) + 'px';
+    ctlDiv.style.top = (pos.y - 12) + 'px';
     ctlDiv.style.display = 'block';
 
     var ctlImage = document.getElementById("divShowABPhotoDialogImg");

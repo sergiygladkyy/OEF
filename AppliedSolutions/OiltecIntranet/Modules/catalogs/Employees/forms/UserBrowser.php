@@ -108,7 +108,7 @@ function getNotFiredEmployeesGroupByUnit()
    $query = "SELECT np.`Description`, np.`Name`, np.`Surname`, np.`Phone`, np.`Photo`, np.`_id` AS `NaturalPerson`, e.`_id` AS `Employee` ".
             "FROM catalogs.Employees AS e, catalogs.NaturalPersons AS np ".
             "WHERE e.`_id` IN (".implode(',', $empIDS).") AND e.`NaturalPerson`=np.`_id` AND e.`_deleted` = 0 ".
-            "ORDER BY np.`Surname`";
+            "ORDER BY np.`Description`";
 
    if (!($res = $odb->executeQuery($query)))
    {
