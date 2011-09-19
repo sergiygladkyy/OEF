@@ -21,6 +21,10 @@
   else {
     var id = attrs.id;
   }
+  
+  if (value == '0000-00-00') {
+    let value = '';
+  }
 }}
 <nobr>
   {{ web.html('&lt;input type="text" name="'..name..'" value="'..value..'" /&gt;'); }}
