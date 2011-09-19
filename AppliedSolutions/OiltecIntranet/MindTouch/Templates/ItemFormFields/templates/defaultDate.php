@@ -7,6 +7,8 @@
     foreach (var name in  map.Keys(attrs)) {
       let attributes = attributes..' '..name..'="'..attrs[name]..'"';
     }
-  
-    web.html('&lt;span'..attributes..'&gt;'..(#value > 0 ? value : 'not set')..'&lt;/span&gt;');
+    
+    let value = (#value > 0 && value != '0000-00-00') ? value : 'not set';
+    
+    web.html('&lt;span'..attributes..'&gt;'..value..'&lt;/span&gt;');
 }}
