@@ -410,14 +410,6 @@ input.userBusinessCard {
             <div class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["Schedule"]["text"] : '&nbsp;' ?></div>
           </div>
         </div>
-
-        <div class="userRow">
-          <div class="errors_msg"> </div>
-          <div class="userRowLeft">Vacation Days:</div>
-          <div class="userRowRight" >
-            <div class="userValue"><?php echo $attrs["StaffRecord"] ? $attrs["StaffRecord"]["YearlyVacationDays"] : '&nbsp;' ?></div>
-          </div>
-        </div>
         
         <div class="userRowClear" style="padding-left: 13px;">
           <a href="#" id="AddLocation" class="green_link" onclick="addLocation(); return false;" style="margin-top: 6px; display: none;">
@@ -532,11 +524,10 @@ function show(num)
     {
     	if (isHired)
     	{
-        	var msg = "The information you see is available only since it is contributed by the following document: " +
-        		'<?php echo '<a target="_blank" href="#" onclick="_dispalyEF(this, \\\'documents\\\', \\\''.$doc['type'].'\\\', '.$doc['id'].'); return false;">'.$doc['desc'].'</a>' ?>' +
-        		" If you want to update the information you may need to re-submit the document." +
-            	" For making so, click the link above, perform \"Clear Posting\", then update the data and perform \"Post\"." +
-            	" Attention, you must have the sufficient access rights for this"
+        	var msg = "Some of the information is contributed by the following document " +
+    			'<?php echo '<a target="_blank" href="#" onclick="_dispalyEF(this, \\\'documents\\\', \\\''.$doc['type'].'\\\', '.$doc['id'].'); return false;">'.$doc['desc'].'</a>' ?>' +
+    			" If you want to update the information you might need to re-submit the Document. To make changes click the link above, perform \"Clear Posting\", then update the data and perform \"Post\"." +
+    			" Note: you must have sufficient access rights"
             ;
         }
     	else
