@@ -43,6 +43,12 @@ $_templates_map = array(
    'Widgets/ResourcesSpentVsBudgetedNok'     => '/Widgets/ResourcesSpentVsBudgetedNok.php',
    'Widgets/ResourcesWorkload'               => '/Widgets/ResourcesWorkload.php',
    'Widgets/WorkingOnMyProjects'             => '/Widgets/WorkingOnMyProjects.php',
-   'Widgets/WorkingOnProjectsInMyDepartment' => '/Widgets/WorkingOnProjectsInMyDepartment.php'
+   'Widgets/WorkingOnProjectsInMyDepartment' => '/Widgets/WorkingOnProjectsInMyDepartment.php',
+   
+   'ItemFormFields/defaultDate'      => '/ItemFormFields/templates/defaultDate.php',
+   'ItemFormFields/defaultDatetime'  => '/ItemFormFields/templates/defaultDatetime.php',
+   
+   'ListFormFields/defaultDate'      => '/ListFormFields/templates/defaultDate.php',
+   'ListFormFields/defaultDatetime'  => '/ListFormFields/templates/defaultDatetime.php'
 );
 ?>
