@@ -80,7 +80,7 @@ $_dictionary = array(
                   'type' => "DATE NOT NULL default '0000-00-00'"
                ),
                'precision' => array(
-                  'required' => true
+                  'required' => false
                )
             ),
             'Gender' => array(
@@ -109,6 +109,12 @@ $_dictionary = array(
                )
             ),
             'Phone' => array(
+               'type' => 'string',
+               'sql'  => array(
+                  'type' => "varchar(255) NOT NULL default ''"
+               )
+            ),
+            'Address' => array(
                'type' => 'string',
                'sql'  => array(
                   'type' => "varchar(255) NOT NULL default ''"

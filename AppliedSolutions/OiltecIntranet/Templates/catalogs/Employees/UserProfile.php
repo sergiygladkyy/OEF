@@ -155,6 +155,10 @@ input.userBusinessCard {
     font-family: Arial !important;
     line-height: 1.2em !important;
 }
+
+#aeform_catalogs_Employees_attributes_Birthday {
+	margin-right: 1px !important;
+}
 </style>
 <!--<ul class="{{ class..'_'..field..'_errors ae_editform_field_errors' }}" style="display: none;"><li>&nbsp;</li></ul>-->
 <div class="catalogs_Employees_message systemmsg" style="display: none;">
@@ -283,7 +287,23 @@ input.userBusinessCard {
             </div>
           </div>
         </div>
-
+        
+        <div class="userRow">
+          <div class="errors_msg">
+            <ul class="catalogs_Employees_Birthday_errors ae_editform_field_errors" style="display: none;"><li>&nbsp;</li></ul>
+          </div>
+          <div class="userRowLeft">Date of Birth:</div>
+          <div class="userRowRight">
+            <div class="values userValue"><?php echo $attrs["Person"]["Birthday"]?></div>
+            <div class="fields" style="display:none;">
+              <nobr>
+                <input type="text" class="input onBlur" id="aeform_catalogs_Employees_attributes_Birthday" name="<?php echo $prefix."[Birthday]"; ?>" value="<?php echo $attrs["Person"]["Birthday"]?>" onblur="blurF(this);" onfocus="focusF(this);" />
+                <img style="vertical-align: top; padding-top: 5px;" src="/ext/OEF/Framework/MindTouch/Js/datetimepicker/images/cal.gif" alt="Pick a date" onclick="if (!document.getElementById('aeform_catalogs_Employees_attributes_Birthday').disabled) NewCssCal('aeform_catalogs_Employees_attributes_Birthday','yyyymmdd','arrow',false, 24, false)" class="oef_datetime_picker">
+              </nobr>
+            </div>
+          </div>
+        </div>
+        
         <div class="userRow">
           <div class="errors_msg">
             <ul class="catalogs_Employees_Email_errors ae_editform_field_errors" style="display: none;"><li>&nbsp;</li></ul>
@@ -309,6 +329,19 @@ input.userBusinessCard {
             </div>
           </div>
         </div>
+        
+        <div class="userRow">
+          <div class="errors_msg">
+            <ul class="catalogs_Employees_Address_errors ae_editform_field_errors" style="display: none;"><li>&nbsp;</li></ul>
+          </div>
+          <div class="userRowLeft">Address:</div>
+          <div class="userRowRight" >
+            <div class="values userValue"><?php echo $attrs["Person"]["Address"]?></div>
+            <div class="fields" style="display:none;">
+              <input type="text" class="input onBlur" name="<?php echo $prefix."[Address]"; ?>" value="<?php echo $attrs["Person"]["Address"]?>" onblur="blurF(this);" onfocus="focusF(this);"/>
+            </div>
+          </div>
+        </div>
 
         <div class="userRow" id="photo_id" style="display:none;">
           <div class="errors_msg">
@@ -321,12 +354,6 @@ input.userBusinessCard {
             </div>
           </div>
         </div>
-        <div class="userRowClear">   </div>
-        <div class="userRow"></div>
-        <div class="userRow"></div>
-        <div class="userRow"></div>
-        <div class="userRow"></div>
-        <div class="userRow"></div>
       </div>
     </div>
   </form>
