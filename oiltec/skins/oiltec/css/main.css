@@ -14,7 +14,8 @@ h1 { font-family:Arial;font-weight:normal;letter-spacing:-1px; }
 h2 { font-size:20px;font-family:Arial;letter-spacing:-1px;font-weight:normal }
 /** Header */
 #header { width:100%;height:100px; background:#fff; float:left; }
-#logo { width:217px;height:88px;float:left;display:block;padding:3px 8px 9px; }
+#logo { width:217px;height:88px;float:left;display:block; padding:3px 0 9px; }
+#logo img { margin: 0 8px; }
 #tmenu { width:335px;padding-left:10px;height:42px;float:left;margin-top:58px;font-family:Arial;font-size:16px; overflow:hidden; }
 #tmenu a, #tmenu a:visited { text-transform:uppercase;color:#7ea800;text-decoration:none;letter-spacing:-1px;padding:11px 18px 15px 18px;float:left;min-width:33px; }
 #tmenu a:hover { background:url(../images/tmenu.png) repeat-x left top;color:#fff; }
