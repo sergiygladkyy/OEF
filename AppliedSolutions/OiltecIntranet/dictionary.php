@@ -139,10 +139,10 @@ $_dictionary = array(
          'Forms' => array(
             'Custom' => array('LoginRecords'),
             'ListForm' => array(
-               'columns' => array('Description', 'Code', 'Photo', 'Name', 'Surname', 'Birthday', 'Gender', 'PlaceOfBirh', 'Email', 'Phone', 'Address')
+               'columns' => array('Description', 'Code', 'Name', 'Surname', 'Birthday', 'Gender', 'PlaceOfBirh', 'Email', 'Phone', 'Address')
             ),
             'ItemForm' => array(
-               'columns' => array('Description', 'Code', 'Photo', 'Name', 'Surname', 'Birthday', 'Gender', 'PlaceOfBirh', 'Email', 'Phone', 'Address')
+               'columns' => array('Description', 'Code', 'Name', 'Surname', 'Birthday', 'Gender', 'PlaceOfBirh', 'Email', 'Phone', 'Address')
             ),
             'EditForm' => array(
                'columns' => array('Description', 'Code', 'Photo', 'Name', 'Surname', 'Birthday', 'Gender', 'PlaceOfBirh', 'Email', 'Phone', 'Address')
